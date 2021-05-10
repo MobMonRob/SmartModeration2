@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".group.create.CreateGroup">
+
+    <TextView
+        android:id="@+id/groupNameText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
+        android:text="@string/groupName"
+        android:textStyle="bold"/>
+
+    <EditText
+        android:id="@+id/groupNameInput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/groupNameText"
+        app:layout_constraintStart_toStartOf="@+id/groupNameText"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="12dp"
+        android:layout_marginEnd="20dp"
+        android:ems="18"
+        android:inputType="textPersonName" />
+
+    <TextView
+        android:id="@+id/contactText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/groupNameInput"
+        app:layout_constraintStart_toStartOf="@+id/groupNameInput"
+        android:layout_marginTop="20dp"
+        android:text="@string/contacts"
+        android:textStyle="bold"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/contactList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintHeight_default="wrap"
+        app:layout_constraintHeight_max="200dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/contactText"
+        app:layout_constraintTop_toBottomOf="@+id/contactText"
+        app:layout_constraintVertical_chainStyle="spread_inside"
+        android:background="@drawable/border"/>
+
+    <TextView
+        android:id="@+id/createGroupText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintTop_toTopOf="@+id/createGroupFab"
+        app:layout_constraintEnd_toStartOf="@+id/createGroupFab"
+        app:layout_constraintBottom_toBottomOf="@+id/createGroupFab"
+        android:text="@string/createGroup"
+        android:textStyle="bold"
+        android:textColor="@color/default_black"
+        android:background="@color/colorPrimary"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/createGroupFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:fabSize="mini"
+        android:layout_marginEnd="25dp"
+        android:layout_marginBottom="10dp"
+        android:src="@drawable/group_add_fab_icon"
+        android:backgroundTint="@color/colorPrimary"
+        app:layout_constraintBottom_toTopOf="@id/addGhostFab"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:borderWidth="0dp" />
+
+    <TextView
+        android:id="@+id/addGhostText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintTop_toTopOf="@+id/addGhostFab"
+        app:layout_constraintEnd_toStartOf="@+id/addGhostFab"
+        app:layout_constraintBottom_toBottomOf="@+id/addGhostFab"
+        android:text="@string/addGhost"
+        android:textStyle="bold"
+        android:textColor="@color/default_black"
+        android:background="@color/colorPrimary"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addGhostFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:fabSize="mini"
+        android:layout_marginEnd="25dp"
+        android:layout_marginBottom="10dp"
+        android:src="@drawable/ghost"
+        android:backgroundTint="@color/colorPrimary"
+        app:layout_constraintBottom_toTopOf="@id/generalFab"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:borderWidth="0dp" />
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/generalFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:src="@drawable/general_fab_icon"
+        android:backgroundTint="@color/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:borderWidth="0dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+

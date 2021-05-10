@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".group.personInfo.PersonInfoActivity">
+
+    <TextView
+        android:id="@+id/personInfoNameTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
+        android:text="@string/surname"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/personInfoName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/personInfoNameTag"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="120dp"
+        android:text="@string/title" />
+
+    <TextView
+        android:id="@+id/moderatorTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/personInfoNameTag"
+        app:layout_constraintStart_toStartOf="@id/personInfoNameTag"
+        android:layout_marginTop="35dp"
+        android:text="@string/moderator"
+        android:textStyle="bold"/>
+
+    <RadioGroup
+        android:checkedButton="@+id/moderatorOn"
+        android:id="@+id/moderatorSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_marginRight="60dp"
+        android:background="@drawable/toggle_widget_background"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/personInfoName"
+        app:layout_constraintStart_toStartOf="@id/personInfoName"
+        android:layout_marginTop="30dp">
+
+        <RadioButton
+            android:id="@+id/moderatorOff"
+            android:background="@drawable/toggle_widget_background"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:button="@null"
+            android:gravity="center"
+            android:text="@string/off"
+            android:textColor="@color/default_color" />
+
+        <RadioButton
+            android:id="@+id/moderatorOn"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/toggle_widget_background"
+            android:button="@null"
+            android:gravity="center"
+            android:text="@string/on"
+            android:textColor="@color/default_color" />
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/guestTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/moderatorTag"
+        app:layout_constraintStart_toStartOf="@id/moderatorTag"
+        android:layout_marginTop="35dp"
+        android:text="@string/guest"
+        android:textStyle="bold"/>
+
+    <RadioGroup
+        android:checkedButton="@+id/guestOn"
+        android:id="@+id/guestSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_marginRight="60dp"
+        android:background="@drawable/toggle_widget_background"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/moderatorSwitch"
+        app:layout_constraintStart_toStartOf="@id/moderatorSwitch"
+        android:layout_marginTop="30dp">
+
+        <RadioButton
+            android:id="@+id/guestOff"
+            android:background="@drawable/toggle_widget_background"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:button="@null"
+            android:gravity="center"
+            android:text="@string/off"
+            android:textColor="@color/default_color" />
+
+        <RadioButton
+            android:id="@+id/guestOn"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/toggle_widget_background"
+            android:button="@null"
+            android:gravity="center"
+            android:text="@string/on"
+            android:textColor="@color/default_color" />
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/linkContactButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        android:layout_marginBottom="20dp"
+        android:textStyle="bold"
+        android:text="@string/linkContact"
+        android:background="@drawable/rounded" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

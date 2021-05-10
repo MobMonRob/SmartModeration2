@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<color name="colorPrimary">#ffcc33</color>
+	<color name="colorAccent">#03DAC5</color>
+	<color name="pressed_color">#4d90fe</color>
+	<color name="default_color">#ffffff</color>
+	<color name="default_red">#ff0000</color>
+	<color name="default_blue">#4ca6eb</color>
+	<color name="dark_red">#990000</color>
+	<color name="default_green">#00CC00</color>
+	<color name="colorPrimaryDark">#f4b701</color>
+	<color name="default_grey">#999999</color>
+	<color name="default_black">#000000</color>
+	<color name="default_drag_color">#cccccc</color>
+	<color name="transparent">#00000000</color>
+	<color name="light_grey">#d4d4d4</color>
+</resources>

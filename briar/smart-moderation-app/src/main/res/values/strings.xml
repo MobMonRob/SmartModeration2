@@ -1,0 +1,252 @@
+<resources>
+    <string name="app_name">Smart Moderation</string>
+
+
+
+    <string name="consensuslvl">Select Consensus Level:</string>
+    <string name="button_submit">Submit</string>
+    <string name="button_info">Info</string>
+    <string name="button_card">Show Card</string>
+    <string name="title_activity_group_overview">Group Overview</string>
+    <string name="title_activity_group_detail">Group: %1$s</string>
+    <string name="role_moderator">Moderator</string>
+    <string name="role_participant">Participant</string>
+    <string name="role_spectator">Spectator</string>
+    <string name="online">Online</string>
+    <string name="members">Members</string>
+    <string name="meetings">Meetings</string>
+    <string name="deleteGroupWithNewLine">Delete\nGroup</string>
+    <string name="leaveGroupWithNewLine">Leave\nGroup</string>
+    <string name="deleteGroup">Delete Group</string>
+    <string name="leaveGroup">Leave Group</string>
+    <string name="GroupNotFoundException_Message">Group not found</string>
+    <string name="MeetingNotFoundException_Message">Meeting not found</string>
+    <string name="PollNotFoundException_Message">Poll not found</string>
+    <string name="VoiceNotFoundException_Message">Voice not found</string>
+    <string name="MemberNotFoundException_Message">Member not found</string>
+    <string name="GroupNotFoundException_Action">Create Group</string>
+    <string name="MemberNotFoundException_Action">Add Contact</string>
+    <string name="NoContactsFoundException_Message">No contacts found</string>
+    <string name="NoContactsFoundException_Action">Add Contact</string>
+
+    <!-- Reuseable -->
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="retry">Retry</string>
+    <string name="already_exists">Already Exists</string>
+    <string name="continue_">Continue</string>
+    <string name="ok">OK</string>
+    <string name="connect_to_phone">Connect to smartphone ...</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="delete">Delete</string>
+    <string name="detail">Details</string>
+
+    <string name="open">Open</string>
+    <!-- __________________EXCEPTIONS__________________ -->
+    <string name="CantCreateGroupException_Message">Group could not be created</string>
+    <string name="CantReceiveInvitationsException_Message">Something went wrong with your invitations</string>
+    <string name="CantSendConsensusProposal_Message">Consensus Proposal could not be send</string>
+    <string name="CantSendVoiceException_Message">Voice could not be send</string>
+    <string name="PollCantBeDeletedException_Message">Poll could not be deleted</string>
+    <string name="PollCantBeCreatedException_Message">Poll could not be created</string>
+    <string name="PollCantBeOpenedException_Message">Poll could not be opened</string>
+    <string name="PollCantBeClosedException_Message">Poll could not be closed</string>
+    <string name="CantLinkContactToMember_Message">Could not link contact to member</string>
+    <string name="GroupSettingsNotFoundException_Message">GroupSettings could not be found</string>
+    <string name="CouldNotAddConsensusLevel_Message">Consensus Level could not be added</string>
+    <string name="CouldNotChangeConsensusLevel_Message">Consensus Level could not be changed</string>
+    <string name="CouldNotDeleteConsensusLevel_Message">Consensus Level could not be deleted</string>
+    <string name="ParitcipationCouldNotBeChangedException_Message">Participation could not be changed</string>
+    <string name="ParticipationCantBeAddedException_Message">Participation could not be added</string>
+    <string name="ParticipationCantBeCreatedException_Message">Participation could not be created</string>
+    <string name="ParticipationCantBeDeletedException_Message">Participation could not be deleted</string>
+    <string name="SpeechCantBeStartedException_Message">Speech could not be started</string>
+    <string name="ParticipationListCouldNotBeCleared_Message">Speech could not be cleared</string>
+    <string name="CantDeleteCurrentSpeakerException_Message">Current speaker can not be deleted</string>
+    <string name="CantSubMitMeetingException_Message">Meeting could not be submitted</string>
+    <string name="MemberCantBeChangedException_Message">Member could not be changed</string>
+    <string name="MemberCantBeDeleteException_Message">Member could not be deleted</string>
+    <string name="TopicCantBeChangedException_Message">Topic could not be changed</string>
+    <string name="TopicCantBeDeletedException_Message">Topic could not be deleted</string>
+
+    <!-- Errors-->
+    <string name="CameraException_Message">Camera had an exception</string>
+    <string name="qrcode_old">The QR-Code is from an older version. Ask your contact to update to the latest version.</string>
+    <string name="qrcode_new">The QR-Code is from a newer version. Please update to the latest version.</string>
+    <string name="qrcode_invalid">The QR-Code is invalid.</string>
+    <string name="titleAndConsensusproposalCantBeEmpty">Title and Consensus Proposal can\'t be empty!</string>
+    <string name="necessaryToChoseConsensusLevel">It is necessary to select a Consensus Level</string>
+    <string name="ConsensusProposalIsNotUnlocked">The Consensus Proposal is not open for evaluation!</string>
+    <string name="novoteTaken">Not voted yet</string>
+    <string name="SingleModerator">You can\'t leave the group because you are the only Moderator. Please give another person moderator rights before leaving.</string>
+    <string name="canNotLeaveGroupThisWay">You can\'t leave the group this way. Please click \'Leave Group\' in Settings to leave.</string>
+    <string name="canNotRemoveModeratorRights">Moderator rights can\'t be removed. Please give Moderator rights to another Member before removing Moderator rights.</string>
+    <string name="canNotBeMarkedAsSpectator">This Member can\'t be marked as Spectator, because one Consensus Proposal is still open.</string>
+    <string name="lastParticipant">This Member can\'t be marked as Spectator, because at least one Participant is necessary</string>
+    <string name="noConsensusLevelName">Consensus Level Name is mandatory.</string>
+    <string name="speechListCanNotBeEmptiedWhileRunning">List of Speakers can\'t be emptied while another speech is running!</string>
+    <string name="statusMustBePresentToAddToSpeechList">Your status has to be present to add yourself to the List of Speakers!</string>
+    <string name="cantRemoveYourselfFromTheListWhileRunningSpeech">You can\'t remove yourself from the List of Speakers while another speech is running!</string>
+    <string name="wrongPassword">Wrong Password!</string>
+    <string name="createMeeting_title">Create Meeting</string>
+    <string name="allFieldsMustBeFilled">All fields must be filled out!</string>
+    <string name="bothFieldNeedToBeFilled">Either not all fields are filled out or duration doesn\'t contain only numbers!</string>
+    <string name="participantAlreadyVoted">The Participant has already voted and therefore he can\'t be deleted!</string>
+    <string name="removeYourselfFromMeeting">You can\'t remove yourself from the Meeting!</string>
+    <string name="couldNotEstablishConnection">Connection to the contact could not be established!</string>
+    <string name="CouldNotSynchronizeDataException_Message">Data could not be synchronized!</string>
+    <!-- Titles -->
+    <string name="CreateGroup_title">Create Group</string>
+    <string name="ContactExchangeActivity_Title">Add Contact</string>
+    <string name="CreateAccount_title">Create Account</string>
+    <string name="CreateConsensusProposal_title">Create Consensus Proposal</string>
+    <string name="ConsensusProposalDetail_title">Consensus Proposal Details</string>
+    <string name="EvaluateConsensusProposal_title">Evaluation</string>
+    <string name="consensusProposalOverviewFragment_title">Consensus Proposals</string>
+    <string name="consensusproposalResultFragement_title">Results of the Consensus Proposal</string>
+    <string name="AddContact_PersonInfo_title">Link Contact</string>
+    <string name="PersonInfo_title">Person Information</string>
+    <string name="CreateConsensusLevel_title">Create Consensus Level</string>
+    <string name="settings_title">Settings</string>
+    <string name="home_title">Home</string>
+    <string name="cumulativeSpeakingTimesFragment_title">Cumulative Speaking Times</string>
+    <string name="speechList_title">List of Speakers</string>
+    <string name="login_title">Login</string>
+    <string name="meetingDetail_title">Meeting: %1$s</string>
+    <!-- reaffirmation-->
+    <string name="consensusproposal_reaffirmation">Are you sure you want to delete the Consensus Proposal?</string>
+    <string name="group_reaffirmation">Are you sure you want to delete the Group?</string>
+    <string name="group_leave_reaffirmation">Are you sure you want to leave the Group?</string>
+    <string name="meeting_reaffirmation">Are you sure you want to delete the Meeting %1$s?</string>
+    <string name="member_reaffirmation">Are you sure you want to delete the Member %1$s?</string>
+    <string name="consensusproposal_reaffirmation_dynamic">Are you sure you want to delete the Consensus Proposal %1$s?</string>
+    <!--server -->
+    <string name="stop_server">Stop Server</string>
+    <string name="start_server">Start Server</string>
+    <string name="running_server">Server is running at: %1$s:%2$s</string>
+
+    <!--textviews-->
+    <string name="legend">Legend</string>
+    <string name="count">Count</string>
+    <string name="participationInPercentage">Share in %</string>
+    <string name="name">Last Name</string>
+    <string name="explanation">Explanation</string>
+    <string name="accumulatedSpeakingTime">Cumulated Speaking Time</string>
+    <string name="speakingTimeInPercent">Speaking Time\nin %</string>
+    <string name="NoDataAvailableYet">No data available yet</string>
+    <string name="nextSpeaker">Next Speaker</string>
+    <string name="currentSpeaker">Current Speaker</string>
+    <string name="isTalking">Is speaking</string>
+    <string name="estimatedEnd">Estimated ending</string>
+    <string name="plannedEnd">Planned End</string>
+    <string name="puffer">Puffer</string>
+    <string name="selectTime">Select time</string>
+    <string name="consensusProposal_title">Title</string>
+    <string name="detailedConsensusProposal">Consensus Proposal</string>
+    <string name="annotations">Notes</string>
+    <string name="scanQrCode">Scan QR Code</string>
+    <string name="NoSmartModerationAccount">You don\'t have a SmartModeration account on this device, so let\'s create one.</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="label">Label</string>
+    <string name="description">Description</string>
+    <string name="enterTitle">Enter Title</string>
+    <string name="enterConsensusProposal">Enter Consensus Proposal</string>
+    <string name="groupName">Group Name</string>
+    <string name="contacts">Contacts</string>
+    <string name="createGroup">Create Group</string>
+    <string name="onlineMeeting">Online Meeting</string>
+    <string name="openEnd">Open End</string>
+    <string name="on">ON</string>
+    <string name="off">OFF</string>
+    <string name="cause">Cause</string>
+    <string name="date">Date</string>
+    <string name="time">Time</string>
+    <string name="location">Location</string>
+    <string name="topics">Topics</string>
+    <string name="title">Title</string>
+    <string name="noTopicsAddedYet">No Topics added yet</string>
+    <string name="selectConsensusProposal">Select Consensus Proposal</string>
+    <string name="groups">Groups</string>
+    <string name="guest">Guest</string>
+    <string name="surname">First Name</string>
+    <string name="linkContact">Link Contact</string>
+    <string name="duration">Duration</string>
+    <string name="cumulatedSpeakingTime">Cumulated Speaking Time</string>
+    <string name="participants">Participants</string>
+    <string name="beginning">Beginning</string>
+    <string name="durationInMinutes">Duration in Minutes</string>
+    <string name="showQrCodeInFullScreen">Show QR code in fullscreen</string>
+    <!-- buttons -->
+    <string name="ChangeEvaluation">Change Evaluation</string>
+    <string name="end_evaluation">End Evaluation</string>
+    <string name="show_evaluation">Show Evaluation</string>
+    <string name="create">Create</string>
+    <string name="save">Save</string>
+    <string name="addGhost">Add Ghost</string>
+    <string name="addMember">Add Member</string>
+    <string name="createMeeting">Create Meeting</string>
+    <string name="addTopic">Add Topic</string>
+    <string name="groupChat">Group Chat</string>
+    <string name="send">Send</string>
+    <string name="addContact">Add Contact</string>
+    <string name="sendMessage">Send Message</string>
+    <string name="newGroup">New Group</string>
+    <string name="groupInvitations">Group Invitations</string>
+    <string name="addConsensusLevel">Add Consensus Level</string>
+    <string name="addConsensusProposal">Add Consensus Proposal</string>
+    <string name="addSpeaker">Add Speaker</string>
+    <string name="addSpeakerWithLineBreak">Add\nSpeaker</string>
+    <string name="emptySpeakersList">Empty List\nof Speakers</string>
+    <string name="addMe">Add Me</string>
+    <string name="removeMe">Remove Me</string>
+    <string name="add">Add</string>
+    <string name="speakingTime">Speaking Times</string>
+    <string name="consensusProposals">Consensus Proposals</string>
+
+    <!-- permission -->
+    <string name="camera_permission_title">Camera Permission</string>
+    <string name="camera_permissions_message">You denied the permission to use the camera. Camera usage is necessary for contact exchange. Please allow camera usage in settings.</string>
+    <string name="location_permission_title">Location permission</string>
+    <string name="location_permissions_message">You denied permission to use your current location. Location permission is necessary for the contact exchange. Please allow the usage of your current location in settings.</string>
+    <!--keyagreement-->
+    <string name="keyagreement_wait">Waiting for the contact to scan and connect ...</string>
+    <string name="keyagreement_started">Authenticate contact ...</string>
+    <string name="keyagreement_finished">Contact information is being exchanged ...</string>
+    <string name="keyagreement_intro">You need to meet up with the person you want to add to your contacts</string>
+    <!-- model -->
+    <string name="participant">Participant</string>
+    <string name="contributions">Inputs</string>
+    <string name="absent">Absent</string>
+    <string name="excused">Excused</string>
+    <string name="present">Present</string>
+    <string name="running">Running</string>
+    <string name="finished">Finished</string>
+    <string name="moderator">Moderator</string>
+    <string name="ghost">Ghost</string>
+    <string name="color">Color</string>
+    <!--einheiten-->
+    <string name="minute">min</string>
+
+    <!--Standard Konsensstufen-->
+    <string name="vorbehaltloseZustimmung">Unconditional Approval</string>
+    <string name="vorbehaltloseZustimmungBeschreibung">I agree to the proposed solution.</string>
+    <string name="leichteBedenken">Slight Concerns</string>
+    <string name="leichteBedenkenBeschreibung">I agree, but I have slight concerns..</string>
+    <string name="enthaltung">Abstention</string>
+    <string name="enthaltungBeschreibung">I leave the decision up to you, but I will be involved into the implementation.</string>
+    <string name="beiseiteStehen">Stand aside</string>
+    <string name="beiseiteStehenBeschreibung">I cannot advocate the proposal, but I will let is pass anyway (but I will not particpate).</string>
+    <string name="schwereBedenken">Serious Concerns</string>
+    <string name="veto">Veto</string>
+    <string name="schwereBedenkenBeschreibung">I have serious concerns and would like to have another decision.</string>
+    <string name="vetoBeschreibung">The proposal fundamentally contradicts my ideas. It may not be decided or carried out.</string>
+
+    <!--PollStatus-->
+    <string name="angelegt">Created</string>
+    <string name="offen">Open</string>
+    <string name="bewertet">Voted</string>
+    <string name="abgeschlossen">Completed</string>
+    <string name="deaktiviert">Deactivated</string>
+</resources>
