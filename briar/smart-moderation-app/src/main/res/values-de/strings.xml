@@ -7,6 +7,7 @@
 	<string name="button_card">Karte anzeigen</string>
 	<string name="title_activity_group_overview">Gruppenübersicht</string>
 	<string name="title_activity_group_detail">Gruppe: %1$s</string>
+	<string name="title_invitations">Gruppeneinladungen</string>
 
 	<string name="role_moderator">Moderator</string>
 	<string name="role_participant">Teilnehmer</string>
@@ -211,7 +212,7 @@
 	<string name="keyagreement_wait">Auf Scannen und Verbinden des Kontaktes warten...</string>
 	<string name="keyagreement_started">Mit Gerät authentifizieren...</string>
 	<string name="keyagreement_finished">Kontaktinformationen austauschen...</string>
-	<string name="keyagreement_intro">Sie muüssen sich mit der Person treffen, die Sie als Kontakt hinzufügen möchten.</string>
+	<string name="keyagreement_intro">Sie müssen sich mit der Person treffen, die Sie als Kontakt hinzufügen möchten.</string>
 	<!-- model -->
 	<string name="participant">Teilnehmer</string>
 	<string name="contributions">Beiträge</string>

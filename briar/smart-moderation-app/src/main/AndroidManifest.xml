@@ -46,7 +46,8 @@
         tools:replace="android:allowBackup,android:icon">
         <activity android:name=".consensus.result.ConsensusProposalResult">
         </activity>
-        <activity android:name=".consensus.evaluate.EvaluateConsensusProposal">
+        <activity android:name=".consensus.evaluate.EvaluateConsensusProposal"
+            android:windowSoftInputMode="adjustPan" >
         </activity>
         <activity android:name=".consensus.evaluate.CardActivity" />
         <activity android:name=".consensus.detail.ConsensusProposalDetail" />

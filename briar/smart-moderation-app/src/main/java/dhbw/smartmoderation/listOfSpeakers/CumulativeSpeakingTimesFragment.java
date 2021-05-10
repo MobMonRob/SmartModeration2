@@ -153,7 +153,7 @@ public class  CumulativeSpeakingTimesFragment extends Fragment {
             totalDuration.setTypeface(totalDuration.getTypeface(), Typeface.BOLD);
             totalDuration.setGravity(Gravity.CENTER);
             totalDuration.setBackground(rb_layerDrawable);
-            String duration = Util.convertMilliSecondsToMinutesTimeString(participation.getTime()) + getString(R.string.minute);
+            String duration = Util.convertMilliSecondsToMinutesTimeString(participation.getTime()) + " " + getString(R.string.minute);
             totalDuration.setText(duration);
             totalDuration.setSingleLine(true);
             row.addView(totalDuration);

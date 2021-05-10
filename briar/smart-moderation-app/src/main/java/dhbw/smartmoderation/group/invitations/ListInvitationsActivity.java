@@ -37,6 +37,7 @@ public class ListInvitationsActivity extends ExceptionHandlingActivity implement
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_list_invitations);
+		setTitle(R.string.title_invitations);
 
 		controller = new ListInvitationsController();
 

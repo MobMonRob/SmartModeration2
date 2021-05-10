@@ -74,9 +74,17 @@ public class BaseActivity extends UpdateableExceptionHandlingActivity {
         }
 
         meetingDetailFragment = new MeetingDetailFragment();
-        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, meetingDetailFragment, "1").commit();
-        selectedFragment = meetingDetailFragment;
+        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, meetingDetailFragment, "1").hide(meetingDetailFragment).commit();
 
+        if(selectedFragment == null) {
+
+            selectedFragment = meetingDetailFragment;
+        }
+
+        if(selectedFragment == meetingDetailFragment) {
+
+            getSupportFragmentManager().beginTransaction().show(meetingDetailFragment).commit();
+        }
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navigationListener = new BottomNavigationView.OnNavigationItemSelectedListener() {

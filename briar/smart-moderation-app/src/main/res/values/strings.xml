@@ -28,6 +28,7 @@
     <string name="MemberNotFoundException_Action">Add Contact</string>
     <string name="NoContactsFoundException_Message">No contacts found</string>
     <string name="NoContactsFoundException_Action">Add Contact</string>
+    <string name="title_invitations">Group Invitations</string>
 
     <!-- Reuseable -->
     <string name="confirm">Confirm</string>
