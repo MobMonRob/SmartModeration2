@@ -1,6 +1,7 @@
 package dhbw.smartmoderation.group.overview;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -38,6 +39,7 @@ public class OverviewGroupActivity extends UpdateableExceptionHandlingActivity i
     private GroupAdapter groupAdapter;
     private LinearLayoutManager groupLayoutManager;
     private FloatingActionButton createGroupButton;
+    private SwipeRefreshLayout pullToRefresh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,10 +47,10 @@ public class OverviewGroupActivity extends UpdateableExceptionHandlingActivity i
         setContentView(R.layout.activity_overview_group);
         setTitle(R.string.title_activity_group_overview);
 
-        SwipeRefreshLayout pullToRefresh = findViewById(R.id.pullToRefresh);
+        pullToRefresh = findViewById(R.id.pullToRefresh);
         pullToRefresh.setOnRefreshListener(() -> {
+
             updateUI();
-            pullToRefresh.setRefreshing(false);
         });
 
         controller = new OverviewGroupController();
@@ -94,12 +96,29 @@ public class OverviewGroupActivity extends UpdateableExceptionHandlingActivity i
 
     @Override
     protected void updateUI() {
-        Handler handler = new Handler();
-        handler.post(() -> {
+
+        OverviewGroupAsyncTask overviewGroupAsyncTask = new OverviewGroupAsyncTask();
+        overviewGroupAsyncTask.execute();
+    }
+
+
+    public class OverviewGroupAsyncTask extends AsyncTask<String, String, String> {
+
+        @Override
+        protected String doInBackground(String... strings) {
+
             controller.update();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
             Collection<Group> groups = controller.getGroups();
             groupAdapter.updateGroups(groups);
             Log.d(TAG, "Available groups: " + groups);
-        });
+            pullToRefresh.setRefreshing(false);
+        }
     }
 }

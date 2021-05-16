@@ -1,6 +1,8 @@
 package dhbw.smartmoderation.login;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -11,6 +13,7 @@ import android.widget.EditText;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import dhbw.smartmoderation.R;
+import dhbw.smartmoderation.account.create.CreateAccountActivity;
 import dhbw.smartmoderation.home.HomeActivity;
 import dhbw.smartmoderation.util.Util;
 
@@ -24,6 +27,7 @@ public class LoginActivity extends AppCompatActivity {
 	private EditText edtUsername;
 	private EditText edtPassword;
 	private Button btnLogin;
+	private ProgressDialog progressDialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -70,26 +74,55 @@ public class LoginActivity extends AppCompatActivity {
 
 	public void onLogin(View v) {
 
-		boolean success = controller.login(Util.getText(edtPassword));
+		LoginAsyncTask loginAsyncTask = new LoginAsyncTask();
+		loginAsyncTask.execute(Util.getText(edtPassword));
 
-		if(success) {
+	}
 
-			Intent homeIntent = new Intent(LoginActivity.this, HomeActivity.class);
-			startActivity(homeIntent);
+	public class LoginAsyncTask extends AsyncTask<String, String, Boolean> {
 
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+
+			progressDialog = new ProgressDialog(LoginActivity.this, R.style.MyAlertDialogStyle);
+			progressDialog.setMessage(getString(R.string.login));
+			progressDialog.setCancelable(false);
+			progressDialog.show();
 		}
 
-		else {
 
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setMessage(getString(R.string.wrongPassword));
-			builder.setCancelable(false);
-			builder.setNeutralButton(R.string.ok, (dialog, which) -> dialog.cancel());
-			AlertDialog alertDialog = builder.create();
-			alertDialog.show();
+		@Override
+		protected Boolean doInBackground(String... strings) {
 
+			String password = strings[0];
+			return controller.login(password);
 		}
 
+		@Override
+		protected void onPostExecute(Boolean aBoolean) {
+			super.onPostExecute(aBoolean);
+
+			progressDialog.dismiss();
+
+			if(aBoolean) {
+
+				Intent homeIntent = new Intent(LoginActivity.this, HomeActivity.class);
+				startActivity(homeIntent);
+
+			}
+
+			else {
+
+				AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+				builder.setMessage(getString(R.string.wrongPassword));
+				builder.setCancelable(false);
+				builder.setNeutralButton(R.string.ok, (dialog, which) -> dialog.cancel());
+				AlertDialog alertDialog = builder.create();
+				alertDialog.show();
+
+			}
+		}
 	}
 
 }

@@ -155,6 +155,7 @@ public class SettingsController extends SmartModerationController  {
         Collection<ModelClass> pushData = new ArrayList<>();
         pushData.add(consensusLevel);
         synchronizationService.push(group, pushData);
+        dataService.mergeConsensusLevel(consensusLevel);
 
     }
 

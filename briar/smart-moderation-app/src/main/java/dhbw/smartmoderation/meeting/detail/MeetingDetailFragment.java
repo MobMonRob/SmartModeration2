@@ -1,6 +1,9 @@
 package dhbw.smartmoderation.meeting.detail;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -108,17 +111,13 @@ public class MeetingDetailFragment extends Fragment {
             intent.putExtra("meetingId", this.meetingId);
             intent.putExtra("groupId", this.groupId);
             this.endProgressBarThread();
-            startActivityForResult(intent, 1);
+            startActivity(intent);
+            getActivity().finish();
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        update();
-    }
 
     @Nullable
     @Override
@@ -198,6 +197,7 @@ public class MeetingDetailFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
         update();
     }
 
@@ -220,51 +220,8 @@ public class MeetingDetailFragment extends Fragment {
 
     public void update() {
 
-        Handler handler = new Handler();
-
-        handler.post(() -> {
-
-            meetingDetailController.update();
-
-            this.meeting = meetingDetailController.getMeeting();
-
-            this.causeInfo.setText(meeting.getCause());
-            String beginTimeString = this.meeting.getDateAsString() + ", " + Util.convertMilliSecondsToTimeString(this.meeting.getStartTime());
-            this.beginInfo.setText(beginTimeString);
-            this.locationInfo.setText(this.meeting.getLocation());
-
-            if(isAdded()) {
-
-                if (this.meeting.getOpen()) {
-
-                    this.endTag.setText(getString(R.string.estimatedEnd));
-                    String expectedEndTimeString = Util.convertMilliSecondsToTimeString(this.meeting.getExpectedEndTime());
-                    this.endInfo.setText(expectedEndTimeString);
-                    this.progressBar.setVisibility(View.GONE);
-                    this.stateProgressBar.setVisibility(View.VISIBLE);
-                    this.switchButton.setVisibility(View.GONE);
-                    changeConstraints();
-
-                } else {
-
-                    this.endTag.setText(getString(R.string.plannedEnd));
-                    String plannedEndTimeString = Util.convertMilliSecondsToTimeString(this.meeting.getEndTime());
-                    this.endInfo.setText(plannedEndTimeString);
-                    this.progressBar.setVisibility(View.VISIBLE);
-                    this.stateProgressBar.setVisibility(View.GONE);
-                    changeConstraints();
-                    this.switchButton.setVisibility(View.VISIBLE);
-                    this.switchButton.setImageResource(R.drawable.ic_baseline_linear_scale_24);
-
-                }
-
-                this.memberAdapter.updateMemberList(this.meetingDetailController.getMembers());
-                this.topicAdapter.updateTopics(this.meetingDetailController.getTopics());
-                this.updateStateProgressBar();
-            }
-        });
-
-        this.runProgressBarThread();
+        MeetingDetailAsyncTask meetingDetailAsyncTask = new MeetingDetailAsyncTask("update");
+        meetingDetailAsyncTask.execute();
     }
 
     private void changeConstraints() {
@@ -401,6 +358,24 @@ public class MeetingDetailFragment extends Fragment {
         }
     }
 
+
+    public void createAlertDialog(String message) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(message);
+        builder.setCancelable(false);
+        builder.setNeutralButton(getString(R.string.ok), ((dialog, which) -> {
+
+            dialog.cancel();
+
+        }));
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+
+
+    }
+
     public void instantiateMemberSwipeHelper() {
 
         new SwipeHelper(getActivity(), memberList) {
@@ -415,53 +390,8 @@ public class MeetingDetailFragment extends Fragment {
                         ResourcesCompat.getColor(SmartModerationApplication.getApp().getApplicationContext().getResources(), R.color.default_red, null),
                         (UnderLayButtonClickListener) position -> {
 
-                            if(!meetingDetailController.getLocalAuthorId().equals(currentMember.getMemberId())) {
-
-                                try {
-
-                                    if(meetingDetailController.hasMemberAlreadyVoted(currentMember)) {
-
-                                        meetingDetailController.deleteMember(currentMember);
-                                        memberAdapter.updateMemberList(meetingDetailController.getMembers());
-                                    }
-
-                                    else {
-
-                                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                                        builder.setMessage(getString(R.string.participantAlreadyVoted));
-                                        builder.setCancelable(false);
-                                        builder.setNeutralButton(getString(R.string.ok), ((dialog, which) -> {
-
-                                            dialog.cancel();
-
-                                        }));
-
-                                        AlertDialog alertDialog = builder.create();
-                                        alertDialog.show();
-
-                                    }
-
-
-                                } catch (MemberCantBeDeleteException e) {
-
-                                    ((ExceptionHandlingActivity)getActivity()).handleException(e);
-                                }
-                            }
-
-                            else {
-
-                                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                                builder.setMessage(getString(R.string.removeYourselfFromMeeting));
-                                builder.setCancelable(false);
-                                builder.setNeutralButton(getString(R.string.ok), ((dialog, which) -> {
-
-                                    dialog.cancel();
-
-                                }));
-
-                                AlertDialog alertDialog = builder.create();
-                                alertDialog.show();
-                            }
+                            MeetingDetailAsyncTask meetingDetailAsyncTask = new MeetingDetailAsyncTask("deleteMember");
+                            meetingDetailAsyncTask.execute(currentMember);
 
                         }));
 
@@ -470,23 +400,19 @@ public class MeetingDetailFragment extends Fragment {
                     underLayButtons.add(new UnderLayButton(getString(R.string.absent), 0,
                             ResourcesCompat.getColor(SmartModerationApplication.getApp().getApplicationContext().getResources(), R.color.default_blue, null),
                             (UnderLayButtonClickListener) position -> {
-                                try {
-                                    meetingDetailController.changeMemberStatus(currentMember, Attendance.ABSENT);
-                                    memberAdapter.updateMemberList(meetingDetailController.getMembers());
-                                } catch (MemberCantBeChangedException e) {
-                                    ((ExceptionHandlingActivity)getActivity()).handleException(e);
-                                }
+
+                                MeetingDetailAsyncTask meetingDetailAsyncTask = new MeetingDetailAsyncTask("changeMemberStatus");
+                                meetingDetailAsyncTask.execute(currentMember, Attendance.ABSENT);
+
                             }));
 
                     underLayButtons.add(new UnderLayButton(getString(R.string.excused), 0,
                             ResourcesCompat.getColor(SmartModerationApplication.getApp().getApplicationContext().getResources(), R.color.colorPrimaryDark, null),
                             (UnderLayButtonClickListener) position -> {
-                                try {
-                                    meetingDetailController.changeMemberStatus(currentMember, Attendance.EXCUSED);
-                                    memberAdapter.updateMemberList(meetingDetailController.getMembers());
-                                } catch (MemberCantBeChangedException e) {
-                                    ((ExceptionHandlingActivity)getActivity()).handleException(e);
-                                }
+
+                                MeetingDetailAsyncTask meetingDetailAsyncTask = new MeetingDetailAsyncTask("changeMemberStatus");
+                                meetingDetailAsyncTask.execute(currentMember, Attendance.EXCUSED);
+
                             }));
                 }
 
@@ -495,23 +421,19 @@ public class MeetingDetailFragment extends Fragment {
                     underLayButtons.add(new UnderLayButton(getString(R.string.absent), 0,
                             ResourcesCompat.getColor(SmartModerationApplication.getApp().getApplicationContext().getResources(), R.color.default_blue, null),
                             (UnderLayButtonClickListener) position -> {
-                                try {
-                                    meetingDetailController.changeMemberStatus(currentMember, Attendance.ABSENT);
-                                    memberAdapter.updateMemberList(meetingDetailController.getMembers());
-                                } catch (MemberCantBeChangedException e) {
-                                    ((ExceptionHandlingActivity)getActivity()).handleException(e);
-                                }
+
+                                MeetingDetailAsyncTask meetingDetailAsyncTask = new MeetingDetailAsyncTask("changeMemberStatus");
+                                meetingDetailAsyncTask.execute(currentMember, Attendance.ABSENT);
+
                             }));
 
                     underLayButtons.add(new UnderLayButton(getString(R.string.present), 0,
                             ResourcesCompat.getColor(SmartModerationApplication.getApp().getApplicationContext().getResources(), R.color.default_green, null),
                             (UnderLayButtonClickListener) position -> {
-                                try {
-                                    meetingDetailController.changeMemberStatus(currentMember, Attendance.PRESENT);
-                                    memberAdapter.updateMemberList(meetingDetailController.getMembers());
-                                } catch (MemberCantBeChangedException e) {
-                                    ((ExceptionHandlingActivity)getActivity()).handleException(e);
-                                }
+
+                                MeetingDetailAsyncTask meetingDetailAsyncTask = new MeetingDetailAsyncTask("changeMemberStatus");
+                                meetingDetailAsyncTask.execute(currentMember, Attendance.PRESENT);
+
                             }));
                 }
 
@@ -520,23 +442,19 @@ public class MeetingDetailFragment extends Fragment {
                     underLayButtons.add(new UnderLayButton(getString(R.string.excused), 0,
                             ResourcesCompat.getColor(SmartModerationApplication.getApp().getApplicationContext().getResources(), R.color.colorPrimaryDark, null),
                             (UnderLayButtonClickListener) position -> {
-                                try {
-                                    meetingDetailController.changeMemberStatus(currentMember, Attendance.EXCUSED);
-                                    memberAdapter.updateMemberList(meetingDetailController.getMembers());
-                                } catch (MemberCantBeChangedException e) {
-                                    ((ExceptionHandlingActivity)getActivity()).handleException(e);
-                                }
+
+                                MeetingDetailAsyncTask meetingDetailAsyncTask = new MeetingDetailAsyncTask("changeMemberStatus");
+                                meetingDetailAsyncTask.execute(currentMember, Attendance.EXCUSED);
+
                             }));
 
                     underLayButtons.add(new UnderLayButton(getString(R.string.present), 0,
                             ResourcesCompat.getColor(SmartModerationApplication.getApp().getApplicationContext().getResources(), R.color.default_green, null),
                             (UnderLayButtonClickListener) position -> {
-                                try {
-                                    meetingDetailController.changeMemberStatus(currentMember, Attendance.PRESENT);
-                                    memberAdapter.updateMemberList(meetingDetailController.getMembers());
-                                } catch (MemberCantBeChangedException e) {
-                                    ((ExceptionHandlingActivity)getActivity()).handleException(e);
-                                }
+
+                                MeetingDetailAsyncTask meetingDetailAsyncTask = new MeetingDetailAsyncTask("changeMemberStatus");
+                                meetingDetailAsyncTask.execute(currentMember, Attendance.PRESENT);
+
                             }));
                 }
             }
@@ -557,13 +475,10 @@ public class MeetingDetailFragment extends Fragment {
                 underLayButtons.add(new UnderLayButton(getString(R.string.delete), 0,
                         ResourcesCompat.getColor(SmartModerationApplication.getApp().getApplicationContext().getResources(), R.color.default_red, null),
                         (UnderLayButtonClickListener) position -> {
-                            try {
-                                meetingDetailController.deleteTopic(currentTopic);
-                                topicAdapter.updateTopics(meetingDetailController.getTopics());
-                                updateStateProgressBar();
-                            } catch (TopicCantBeDeletedException e) {
-                                ((ExceptionHandlingActivity)getActivity()).handleException(e);
-                            }
+
+                            MeetingDetailAsyncTask meetingDetailAsyncTask = new MeetingDetailAsyncTask("deleteTopic");
+                            meetingDetailAsyncTask.execute(currentTopic);
+
                         }));
 
                 if(currentTopic.getTopicStatus() == TopicStatus.UPCOMING) {
@@ -571,13 +486,10 @@ public class MeetingDetailFragment extends Fragment {
                     underLayButtons.add(new UnderLayButton(getString(R.string.running), 0,
                             ResourcesCompat.getColor(SmartModerationApplication.getApp().getApplicationContext().getResources(), R.color.colorPrimaryDark, null),
                             (UnderLayButtonClickListener) position -> {
-                                try {
-                                    meetingDetailController.changeTopicStatus(currentTopic, TopicStatus.RUNNING);
-                                    topicAdapter.updateTopics(meetingDetailController.getTopics());
-                                    updateStateProgressBar();
-                                } catch (TopicCantBeChangedException e) {
-                                    ((ExceptionHandlingActivity)getActivity()).handleException(e);
-                                }
+
+                                MeetingDetailAsyncTask meetingDetailAsyncTask = new MeetingDetailAsyncTask("changeTopicStatus");
+                                meetingDetailAsyncTask.execute(currentTopic, TopicStatus.RUNNING);
+
                             }));
                 }
 
@@ -586,17 +498,202 @@ public class MeetingDetailFragment extends Fragment {
                     underLayButtons.add(new UnderLayButton(getString(R.string.finished), 0,
                             ResourcesCompat.getColor(SmartModerationApplication.getApp().getApplicationContext().getResources(), R.color.default_green, null),
                             (UnderLayButtonClickListener) position -> {
-                                try {
-                                    meetingDetailController.changeTopicStatus(currentTopic, TopicStatus.FINISHED);
-                                    topicAdapter.updateTopics(meetingDetailController.getTopics());
-                                    updateStateProgressBar();
-                                } catch (TopicCantBeChangedException e) {
-                                    ((ExceptionHandlingActivity)getActivity()).handleException(e);
-                                }
+
+                                MeetingDetailAsyncTask meetingDetailAsyncTask = new MeetingDetailAsyncTask("changeTopicStatus");
+                                meetingDetailAsyncTask.execute(currentTopic, TopicStatus.FINISHED);
+
                             }));
                 }
             }
         };
+    }
+
+    public class MeetingDetailAsyncTask extends AsyncTask<Object, Object, String> {
+
+        String flag;
+
+        public MeetingDetailAsyncTask(String flag) {
+
+            this.flag = flag;
+        }
+
+        @Override
+        protected void onProgressUpdate(Object... values) {
+            super.onProgressUpdate(values);
+
+            String action = values[0].toString();
+
+            if(action.equals("exception")) {
+
+                ((ExceptionHandlingActivity)getActivity()).handleException((Exception)values[1]);
+            }
+
+            else {
+
+                createAlertDialog(values[1].toString());
+            }
+
+        }
+
+        @Override
+        protected String doInBackground(Object... objects) {
+
+            String returnString = "";
+
+            switch(flag) {
+
+                case "update":
+                    meetingDetailController.update();
+                    meeting = meetingDetailController.getMeeting();
+                    returnString = "update";
+                    break;
+
+                case "deleteMember":
+
+                    Member currentMember = (Member)objects[0];
+
+                    if(!meetingDetailController.getLocalAuthorId().equals(currentMember.getMemberId())) {
+
+                        try {
+
+                            if(meetingDetailController.hasMemberAlreadyVoted(currentMember)) {
+
+                                meetingDetailController.deleteMember(currentMember);
+                            }
+
+                            else {
+
+                                publishProgress("alert", getString(R.string.participantAlreadyVoted));
+                            }
+
+
+                        } catch (MemberCantBeDeleteException exception) {
+
+                            publishProgress("exception", exception);
+
+                        }
+                    }
+
+                    else {
+
+                        publishProgress("alert", getString(R.string.removeYourselfFromMeeting));
+                    }
+
+                    returnString = "updateMember";
+                    break;
+
+                case "changeMemberStatus":
+
+                    Member member = (Member)objects[0];
+                    Attendance attendance = (Attendance)objects[1];
+
+                    try {
+
+                        meetingDetailController.changeMemberStatus(member, attendance);
+
+                    } catch (MemberCantBeChangedException exception) {
+
+                       publishProgress("exception", exception);
+
+                    }
+
+                    returnString = "updateMember";
+                    break;
+
+                case "deleteTopic":
+
+                    Topic currentTopic = (Topic)objects[0];
+
+                    try {
+
+                        meetingDetailController.deleteTopic(currentTopic);
+
+                    } catch (TopicCantBeDeletedException exception) {
+
+                        publishProgress("exception", exception);
+                    }
+
+                    returnString = "updateTopic";
+                    break;
+
+                case "changeTopicStatus":
+
+                    Topic topic = (Topic)objects[0];
+                    TopicStatus topicStatus = (TopicStatus)objects[1];
+
+                    try {
+
+                        meetingDetailController.changeTopicStatus(topic, topicStatus);
+
+                    } catch (TopicCantBeChangedException exception) {
+
+                        publishProgress("exception", exception);
+                    }
+
+                    returnString = "updateTopic";
+                    break;
+            }
+
+            return returnString;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            switch(s) {
+
+                case "update":
+                    causeInfo.setText(meeting.getCause());
+                    String beginTimeString = meeting.getDateAsString() + ", " + Util.convertMilliSecondsToTimeString(meeting.getStartTime());
+                    beginInfo.setText(beginTimeString);
+                    locationInfo.setText(meeting.getLocation());
+
+                    if(isAdded()) {
+
+                        if (meeting.getOpen()) {
+
+                            endTag.setText(getString(R.string.estimatedEnd));
+                            String expectedEndTimeString = Util.convertMilliSecondsToTimeString(meeting.getExpectedEndTime());
+                            endInfo.setText(expectedEndTimeString);
+                            progressBar.setVisibility(View.GONE);
+                            stateProgressBar.setVisibility(View.VISIBLE);
+                            switchButton.setVisibility(View.GONE);
+                            changeConstraints();
+
+                        } else {
+
+                            endTag.setText(getString(R.string.plannedEnd));
+                            String plannedEndTimeString = Util.convertMilliSecondsToTimeString(meeting.getEndTime());
+                            endInfo.setText(plannedEndTimeString);
+                            progressBar.setVisibility(View.VISIBLE);
+                            stateProgressBar.setVisibility(View.GONE);
+                            changeConstraints();
+                            switchButton.setVisibility(View.VISIBLE);
+                            switchButton.setImageResource(R.drawable.ic_baseline_linear_scale_24);
+                        }
+
+                        memberAdapter.updateMemberList(meetingDetailController.getMembers());
+                        topicAdapter.updateTopics(meetingDetailController.getTopics());
+                        updateStateProgressBar();
+                    }
+
+                    runProgressBarThread();
+                    ((BaseActivity)getActivity()).getPullToRefresh().setRefreshing(false);
+                    break;
+
+                case "updateMember":
+
+                    memberAdapter.updateMemberList(meetingDetailController.getMembers());
+                    break;
+
+                case "updateTopic":
+
+                    topicAdapter.updateTopics(meetingDetailController.getTopics());
+                    updateStateProgressBar();
+                    break;
+            }
+        }
     }
 
 }

@@ -13,6 +13,7 @@ import android.app.ActionBar;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -54,15 +55,13 @@ public class ConsensusProposalResult extends UpdateableExceptionHandlingActivity
     private ChartFragment chartFragment;
     private TableRow selectedTableRow;
     private Long pollId;
+    private SwipeRefreshLayout pullToRefresh;
 
 
     private View.OnClickListener endButtonClickListener = v -> {
-        try {
-            this.controller.closePoll();
-        }catch(PollCantBeClosedException exception){
-            handleException(exception);
-        }
-        createButtonPanel();
+
+        ConsensusProposalResultAsyncTask consensusProposalResultAsyncTask = new ConsensusProposalResultAsyncTask("closePoll");
+        consensusProposalResultAsyncTask.execute();
     };
 
     private View.OnClickListener showButtonClickListener = v -> {
@@ -151,11 +150,10 @@ public class ConsensusProposalResult extends UpdateableExceptionHandlingActivity
         setContentView(R.layout.activity_consensus_proposal_result);
         setTitle(getString(R.string.consensusproposalResultFragement_title));
 
-        SwipeRefreshLayout pullToRefresh = findViewById(R.id.pullToRefresh);
+        pullToRefresh = findViewById(R.id.pullToRefresh);
         pullToRefresh.setOnRefreshListener(() -> {
 
             updateUI();
-            pullToRefresh.setRefreshing(false);
 
         });
 
@@ -290,16 +288,70 @@ public class ConsensusProposalResult extends UpdateableExceptionHandlingActivity
     @Override
     protected void updateUI() {
 
-        Handler handler = new Handler();
-        handler.post(() ->   {
+        ConsensusProposalResultAsyncTask consensusProposalResultAsyncTask = new ConsensusProposalResultAsyncTask("update");
+        consensusProposalResultAsyncTask.execute();
 
-            controller.update();
-            createButtonPanel();
-            this.chartFragment.createDonutChart();
-            this.legendTableFragment.update();
-            this.resultTableFragment.update();
-        });
+    }
 
+    public class ConsensusProposalResultAsyncTask extends AsyncTask<Object, Exception, String> {
 
+        String flag;
+
+        public ConsensusProposalResultAsyncTask(String flag) {
+
+            this.flag = flag;
+        }
+
+        @Override
+        protected void onProgressUpdate(Exception... values) {
+            super.onProgressUpdate(values);
+            handleException(values[0]);
+        }
+
+        @Override
+        protected String doInBackground(Object... objects) {
+
+            switch(flag) {
+
+                case "update":
+                    controller.update();
+                    break;
+
+                case "closePoll":
+                    try {
+
+                        controller.closePoll();
+
+                    } catch(PollCantBeClosedException exception){
+
+                        publishProgress(exception);
+                    }
+                    break;
+
+            }
+            return null;
+        }
+
+        @RequiresApi(api = Build.VERSION_CODES.O)
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            switch(flag) {
+
+                case "update":
+                    createButtonPanel();
+                    chartFragment.createDonutChart();
+                    legendTableFragment.update();
+                    resultTableFragment.update();
+                    pullToRefresh.setRefreshing(false);
+                    break;
+
+                case "closePoll":
+                    createButtonPanel();
+                    break;
+
+            }
+        }
     }
 }

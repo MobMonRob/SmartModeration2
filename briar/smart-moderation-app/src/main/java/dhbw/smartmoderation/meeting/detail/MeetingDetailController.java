@@ -123,29 +123,23 @@ public class MeetingDetailController extends SmartModerationController {
 
     public Long getLocalAuthorId() {
 
-        return Util.bytesToLong(connectionService.getLocalAuthor().getId().getBytes());
+        return connectionService.getLocalAuthorId();
     }
 
     public boolean isLocalAuthorModerator() {
 
         Group group = getGroup();
 
-        LocalAuthor localAuthor = connectionService.getLocalAuthor();
+        Long authorId = connectionService.getLocalAuthorId();
+        Member member = group.getMember(authorId);
 
-        if(localAuthor != null) {
+        if(member != null && member.getRoles(group).contains(Role.MODERATOR)) {
 
-            Long authorId = Util.bytesToLong(localAuthor.getId().getBytes());
-            Member member = group.getMember(authorId);
-
-            if(member.getRoles(group).contains(Role.MODERATOR)) {
-
-                return true;
-            }
-
-            return false;
+            return true;
         }
 
         return false;
+
     }
 
     public void changeMemberStatus(Member member, Attendance attendance) throws MemberCantBeChangedException {

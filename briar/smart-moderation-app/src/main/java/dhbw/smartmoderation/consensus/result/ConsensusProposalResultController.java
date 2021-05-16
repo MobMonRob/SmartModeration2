@@ -126,10 +126,10 @@ public class ConsensusProposalResultController extends SmartModerationController
     public boolean isLocalAuthorModerator() {
 
         Group group = getPoll().getMeeting().getGroup();
-        Long authorId = Util.bytesToLong(connectionService.getLocalAuthor().getId().getBytes());
+        Long authorId = connectionService.getLocalAuthorId();
         Member member = group.getMember(authorId);
 
-        if(member.getRoles(group).contains(Role.MODERATOR)) {
+        if(member != null && member.getRoles(group).contains(Role.MODERATOR)) {
 
             return true;
         }
@@ -139,11 +139,12 @@ public class ConsensusProposalResultController extends SmartModerationController
 
     public Member getMemberFromLocalAuthor() {
 
-        Long authorId = Util.bytesToLong(connectionService.getLocalAuthor().getId().getBytes());
+        Long authorId = connectionService.getLocalAuthorId();
 
         for (Member member : getPoll().getMeeting().getMembers()) {
 
             if(member.getMemberId().equals(authorId)) {
+
                 return member;
 
             }

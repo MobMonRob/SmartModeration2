@@ -7,7 +7,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -20,7 +22,9 @@ import java.util.Collection;
 
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.connection.synchronization.SynchronizableDataType;
+import dhbw.smartmoderation.consensus.create.CreateConsensusProposal;
 import dhbw.smartmoderation.consensus.result.ConsensusProposalResult;
+import dhbw.smartmoderation.data.model.ConsensusLevel;
 import dhbw.smartmoderation.data.model.Poll;
 import dhbw.smartmoderation.data.model.Status;
 import dhbw.smartmoderation.data.model.Voice;
@@ -42,17 +46,18 @@ public class EvaluateConsensusProposal extends UpdateableExceptionHandlingActivi
     private ItemTouchHelper itemTouchHelper;
     private boolean isPrefilled;
     private Long voiceId;
+    private ProgressDialog progressDialog;
+    private SwipeRefreshLayout pullToRefresh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_evaluate_consensus_proposal);
 
-        SwipeRefreshLayout pullToRefresh = findViewById(R.id.pullToRefresh);
+        pullToRefresh = findViewById(R.id.pullToRefresh);
         pullToRefresh.setOnRefreshListener(() -> {
 
             updateUI();
-            pullToRefresh.setRefreshing(false);
 
         });
 
@@ -144,34 +149,17 @@ public class EvaluateConsensusProposal extends UpdateableExceptionHandlingActivi
 
         if(this.sendButton.getText() == getText(R.string.ChangeEvaluation)) {
 
-            try {
-
-                this.controller.createVoice(this.poll.getVoice(voiceId), this.consensusLevelAdapter.getSelectedConsensusLevel(), this.description.getText().toString());
-
-            } catch(CantSendVoiceException exception){
-
-                handleException(exception);
-            }
+            EvaluateConsensusProposalAsyncTask evaluateConsensusProposalAsyncTask = new EvaluateConsensusProposalAsyncTask("sendVoice");
+            evaluateConsensusProposalAsyncTask.execute("change", this.consensusLevelAdapter.getSelectedConsensusLevel(),  this.description.getText().toString(), this.poll.getVoice(voiceId));
 
         }
 
         else{
 
-            try {
-
-                this.controller.createVoice(null, this.consensusLevelAdapter.getSelectedConsensusLevel(), this.description.getText().toString());
-
-            }catch(CantSendVoiceException exception){
-
-                handleException(exception);
-            }
+            EvaluateConsensusProposalAsyncTask evaluateConsensusProposalAsyncTask = new EvaluateConsensusProposalAsyncTask("sendVoice");
+            evaluateConsensusProposalAsyncTask.execute("new", this.consensusLevelAdapter.getSelectedConsensusLevel(),  this.description.getText().toString());
 
         }
-
-        Intent intent = new Intent(this, ConsensusProposalResult.class);
-        intent.putExtra("pollId", poll.getPollId());
-        finish();
-        this.startActivity(intent);
     }
 
     @Override
@@ -185,16 +173,102 @@ public class EvaluateConsensusProposal extends UpdateableExceptionHandlingActivi
     @Override
     protected void updateUI() {
 
-        Handler handler = new Handler();
-        handler.post(() ->  {
+        EvaluateConsensusProposalAsyncTask evaluateConsensusProposalAsyncTask = new EvaluateConsensusProposalAsyncTask("update");
+        evaluateConsensusProposalAsyncTask.execute();
 
-            controller.update();
-            poll = controller.getPoll();
-            this.consensusLevelAdapter.updateConsensusLevelList(this.controller.getConsensusLevels());
-            this.title.setText(this.poll.getTitle());
-            this.consensusProposal.setText(this.poll.getConsensusProposal());
-        });
+    }
+
+    public class EvaluateConsensusProposalAsyncTask extends AsyncTask<Object, Exception, String> {
+
+        String flag;
+
+        public EvaluateConsensusProposalAsyncTask(String flag) {
+
+            this.flag = flag;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            if(flag.equals("sendVoice")) {
+
+                progressDialog = new ProgressDialog(EvaluateConsensusProposal.this, R.style.MyAlertDialogStyle);
+                progressDialog.setMessage(getString(R.string.creating_consensusProposal));
+                progressDialog.setCancelable(false);
+                progressDialog.show();
+
+            }
+        }
+
+        @Override
+        protected void onProgressUpdate(Exception... values) {
+            super.onProgressUpdate(values);
+            progressDialog.dismiss();
+            handleException(values[0]);
+        }
+
+        @Override
+        protected String doInBackground(Object... objects) {
+
+            switch(flag) {
+
+                case "update":
+                    controller.update();
+                    poll = controller.getPoll();
+                    break;
+
+                case "sendVoice":
+
+                    String mode = objects[0].toString();
+                    ConsensusLevel consensusLevel = (ConsensusLevel)objects[1];
+                    String description = objects[2].toString();
+
+                    try {
+
+                        if(mode == "change") {
+
+                            Voice voice = (Voice)objects[3];
+                            controller.createVoice(voice, consensusLevel, description);
+                        }
+
+                        else {
+
+                            controller.createVoice(null, consensusLevel, description);
+                        }
 
 
+                    } catch(CantSendVoiceException exception){
+
+                        publishProgress(exception);
+                    }
+                    break;
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            switch(flag) {
+
+                case "update":
+                    consensusLevelAdapter.updateConsensusLevelList(controller.getConsensusLevels());
+                    title.setText(poll.getTitle());
+                    consensusProposal.setText(poll.getConsensusProposal());
+                    pullToRefresh.setRefreshing(false);
+                    break;
+
+                case "sendVoice":
+                    progressDialog.dismiss();
+                    Intent intent = new Intent(EvaluateConsensusProposal.this, ConsensusProposalResult.class);
+                    intent.putExtra("pollId", poll.getPollId());
+                    finish();
+                    startActivity(intent);
+                    break;
+            }
+        }
     }
 }

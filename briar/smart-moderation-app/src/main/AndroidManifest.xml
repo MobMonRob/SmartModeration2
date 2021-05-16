@@ -44,43 +44,106 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup,android:icon">
-        <activity android:name=".consensus.result.ConsensusProposalResult">
+
+        <activity
+            android:name=".consensus.result.ConsensusProposalResult"
+            android:screenOrientation="portrait" >
         </activity>
-        <activity android:name=".consensus.evaluate.EvaluateConsensusProposal"
-            android:windowSoftInputMode="adjustPan" >
+
+        <activity
+            android:name=".consensus.evaluate.EvaluateConsensusProposal"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait" >
         </activity>
-        <activity android:name=".consensus.evaluate.CardActivity" />
-        <activity android:name=".consensus.detail.ConsensusProposalDetail" />
-        <activity android:name=".consensus.create.CreateConsensusProposal" />
-        <activity android:name=".meeting.detail.BaseActivity">
+
+        <activity
+            android:name=".consensus.evaluate.CardActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".consensus.detail.ConsensusProposalDetail"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".consensus.create.CreateConsensusProposal"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".meeting.detail.BaseActivity"
+            android:screenOrientation="portrait" >
         </activity>
-        <activity android:name=".meeting.create.CreateMeetingActivity">
+
+        <activity
+            android:name=".meeting.create.CreateMeetingActivity"
+            android:screenOrientation="portrait" >
         </activity>
-        <activity android:name=".group.personInfo.AddContactActivity" />
-        <activity android:name=".group.personInfo.PersonInfoActivity">
+
+        <activity
+            android:name=".group.personInfo.AddContactActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".group.personInfo.PersonInfoActivity"
+            android:screenOrientation="portrait" >
         </activity>
-        <activity android:name=".group.settings.CreateConsensusLevelActivity" />
-        <activity android:name=".group.settings.SettingsActivity">
+
+        <activity
+            android:name=".group.settings.CreateConsensusLevelActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".group.settings.SettingsActivity"
+            android:screenOrientation="portrait" >
         </activity>
-        <activity android:name=".group.create.CreateGroup">
+
+        <activity
+            android:name=".group.create.CreateGroup"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".group.invitations.ListInvitationsActivity" />
-        <activity android:name=".home.HomeActivity" />
-        <activity android:name=".group.overview.OverviewGroupActivity">
+
+        <activity
+            android:name=".group.invitations.ListInvitationsActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".home.HomeActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".group.overview.OverviewGroupActivity"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".group.detail.DetailGroupActivity">
+
+        <activity
+            android:name=".group.detail.DetailGroupActivity"
+            android:screenOrientation="portrait" >
         </activity>
-        <activity android:name=".launcher.LauncherActivity">
+
+        <activity
+            android:name=".launcher.LauncherActivity"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".group.chat.GroupChatActivity"></activity>
-        <activity android:name=".account.create.CreateAccountActivity" />
-        <activity android:name=".login.LoginActivity" />
+
+        <activity
+            android:name=".group.chat.GroupChatActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+
+        <activity
+            android:name=".account.create.CreateAccountActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".login.LoginActivity"
+            android:screenOrientation="portrait" />
+
         <activity android:name=".account.contactexchange.ContactExchangeActivity" />
+
         <activity
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
             android:screenOrientation="fullSensor"

@@ -100,9 +100,19 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberView
         builder.setNegativeButton(context.getString(R.string.yes), ((dialog, which) -> {
 
             Long memberId = members.get(position).getMemberId();
-            members.remove(position);
-            notifyItemRemoved(position);
-            onMemberListener.onMemberDismiss(memberId);
+            boolean success = onMemberListener.onMemberDismiss(memberId);
+
+            if(success) {
+
+                members.remove(position);
+                notifyItemRemoved(position);
+
+            }
+
+            else {
+
+                ((DetailGroupActivity)context).reloadMemberItemTouchHelper();
+            }
 
         }));
 
@@ -288,6 +298,6 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberView
 
         void onMemberClick(Long memberId);
 
-        void onMemberDismiss(Long memberId);
+        boolean onMemberDismiss(Long memberId);
     }
 }

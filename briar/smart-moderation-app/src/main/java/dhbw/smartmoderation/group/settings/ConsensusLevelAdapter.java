@@ -146,6 +146,7 @@ public class ConsensusLevelAdapter extends RecyclerView.Adapter<ConsensusLevelAd
 
     @Override
     public void onItemDismiss(int position) {
+
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage(context.getString(R.string.consensusproposal_reaffirmation_dynamic, consensusLevelList.get(position).getName()));
         builder.setNegativeButton(context.getString(R.string.yes), ((dialog, which) -> {

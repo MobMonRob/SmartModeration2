@@ -29,24 +29,21 @@ public class BaseActivity extends UpdateableExceptionHandlingActivity {
     private BottomNavigationView bottomNavigationView;
     private ListOfSpeakersController listOfSpeakersController;
     private MeetingDetailController meetingDetailController;
+    private SwipeRefreshLayout pullToRefresh;
     private Fragment meetingDetailFragment = new MeetingDetailFragment();
     private final Fragment consensusProposalOverviewFragment = new ConsensusProposalOverviewFragment();
     private final Fragment listOfSpeakersFragment = new ListOfSpeakersFragment();
     private Fragment cumulativeSpeakingTimesFragment = new CumulativeSpeakingTimesFragment();
     Fragment selectedFragment;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
 
-        SwipeRefreshLayout pullToRefresh = findViewById(R.id.pullToRefresh);
-        pullToRefresh.setOnRefreshListener(() -> {
-
-            updateUI();
-            pullToRefresh.setRefreshing(false);
-
-        });
+        pullToRefresh = findViewById(R.id.pullToRefresh);
+        pullToRefresh.setOnRefreshListener(this::updateUI);
 
         Intent intent = getIntent();
         Long meetingId = intent.getLongExtra("meetingId", 0);
@@ -211,6 +208,11 @@ public class BaseActivity extends UpdateableExceptionHandlingActivity {
 
             ((CumulativeSpeakingTimesFragment)cumulativeSpeakingTimesFragment).update();
         }
+    }
+
+    public SwipeRefreshLayout getPullToRefresh() {
+
+        return pullToRefresh;
     }
 
 }

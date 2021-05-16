@@ -96,7 +96,7 @@ public class ConsensusProposalOverviewController extends SmartModerationControll
 
         for(Member member : getMeeting().getMembers()) {
 
-            if(member.getMemberId().equals(Util.bytesToLong(connectionService.getLocalAuthor().getId().getBytes()))) {
+            if(member.getMemberId().equals(connectionService.getLocalAuthorId())) {
 
                 return member;
             }
@@ -109,23 +109,16 @@ public class ConsensusProposalOverviewController extends SmartModerationControll
 
         Group group = getGroup();
 
-        LocalAuthor localAuthor = connectionService.getLocalAuthor();
+        Long authorId = connectionService.getLocalAuthorId();
 
-        if(localAuthor != null) {
+        Member member = group.getMember(authorId);
 
-            Long authorId = Util.bytesToLong(localAuthor.getId().getBytes());
-            Member member = group.getMember(authorId);
+        if(member != null && member.getRoles(group).contains(Role.MODERATOR)) {
 
-            if(member.getRoles(group).contains(Role.MODERATOR)) {
-
-                return true;
-            }
-
-            return false;
+            return true;
         }
 
         return false;
-
     }
 
     public void deletePoll(Long pollId) throws PollCantBeDeletedException {

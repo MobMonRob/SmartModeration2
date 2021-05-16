@@ -3,6 +3,7 @@ package dhbw.smartmoderation.listOfSpeakers;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Gravity;
@@ -200,20 +201,39 @@ public class  CumulativeSpeakingTimesFragment extends Fragment {
 
     public void update() {
 
-        this.participations = this.controller.getParticipations();
-
-        if(this.participations.size() > 0) {
-
-            this.speakingTimesTable.removeAllViews();
-            createTableHeader();
-            createSpeakingTimesTable();
-        }
-
-        else {
-            createNoDataLabel();
-        }
+        CumulativeSpeakingTimesAsyncTask cumulativeSpeakingTimesAsyncTask = new CumulativeSpeakingTimesAsyncTask();
+        cumulativeSpeakingTimesAsyncTask.execute();
 
     }
 
+    public class CumulativeSpeakingTimesAsyncTask extends AsyncTask<String, String, String> {
+
+        @Override
+        protected String doInBackground(String... strings) {
+
+            participations = controller.getParticipations();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            if(participations.size() > 0) {
+
+                speakingTimesTable.removeAllViews();
+                createTableHeader();
+                createSpeakingTimesTable();
+            }
+
+            else {
+
+                createNoDataLabel();
+            }
+
+            ((BaseActivity) getActivity()).getPullToRefresh().setRefreshing(false);
+        }
+
+    }
 
 }

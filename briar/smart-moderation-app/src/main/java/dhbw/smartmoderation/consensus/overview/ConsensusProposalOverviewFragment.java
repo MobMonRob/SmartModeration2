@@ -6,6 +6,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.format.Formatter;
@@ -41,6 +42,7 @@ import dhbw.smartmoderation.data.model.Poll;
 import dhbw.smartmoderation.exceptions.PollCantBeCreatedException;
 import dhbw.smartmoderation.exceptions.PollCantBeDeletedException;
 import dhbw.smartmoderation.exceptions.PollCantBeOpenedException;
+import dhbw.smartmoderation.meeting.detail.BaseActivity;
 import dhbw.smartmoderation.uiUtils.SwipeHelper;
 import dhbw.smartmoderation.uiUtils.UnderLayButton;
 import dhbw.smartmoderation.uiUtils.UnderLayButtonClickListener;
@@ -213,13 +215,9 @@ public class ConsensusProposalOverviewFragment extends Fragment {
 
     public void update() {
 
-        Handler handler = new Handler();
-        handler.post(() -> {
+        ConsensusProposalOverviewAsyncTask consensusProposalOverviewAsyncTask = new ConsensusProposalOverviewAsyncTask("update");
+        consensusProposalOverviewAsyncTask.execute();
 
-            controller.update();
-            this.pollAdapter.updatePollList(this.controller.getPolls());
-
-        });
     }
 
     @Override
@@ -272,9 +270,9 @@ public class ConsensusProposalOverviewFragment extends Fragment {
 
                             pollAdapter.getPollList().remove(position);
                             pollAdapter.notifyItemRemoved(position);
-                            deletePoll(currentPoll.getPollId());
-                            pollAdapter.updatePollList(controller.getPolls());
 
+                            ConsensusProposalOverviewAsyncTask consensusProposalOverviewAsyncTask = new ConsensusProposalOverviewAsyncTask("deletePoll");
+                            consensusProposalOverviewAsyncTask.execute(currentPoll);
                         }));
 
                 underLayButtons.add(new UnderLayButton(getString(R.string.detail), 0,
@@ -290,17 +288,86 @@ public class ConsensusProposalOverviewFragment extends Fragment {
                     underLayButtons.add(new UnderLayButton(getString(R.string.open), 0,
                             ResourcesCompat.getColor(getActivity().getResources(), R.color.colorPrimary, null),
                             (UnderLayButtonClickListener) position -> {
-                        try {
-                            controller.openPoll(currentPoll.getPollId());
-                            pollAdapter.updatePollList(controller.getPolls());
-                        }catch(PollCantBeOpenedException exception){
-                            ((ExceptionHandlingActivity)getActivity()).handleException(exception);
-                        }
+
+                                ConsensusProposalOverviewAsyncTask consensusProposalOverviewAsyncTask = new ConsensusProposalOverviewAsyncTask("openPoll");
+                                consensusProposalOverviewAsyncTask.execute(currentPoll);
+
                             }));
 
                 }
             }
         };
+    }
 
+    public class ConsensusProposalOverviewAsyncTask extends AsyncTask<Object, Exception, String> {
+
+        String flag;
+
+        public ConsensusProposalOverviewAsyncTask(String flag) {
+
+            this.flag = flag;
+        }
+
+        @Override
+        protected void onProgressUpdate(Exception... values) {
+            super.onProgressUpdate(values);
+            ((ExceptionHandlingActivity)getActivity()).handleException(values[0]);
+        }
+
+        @Override
+        protected String doInBackground(Object... objects) {
+
+            String returnString = "";
+
+            switch(flag) {
+
+                case "update":
+                    controller.update();
+                    returnString = "update";
+                    break;
+
+                case "deletePoll":
+                    Poll currentPoll = (Poll)objects[0];
+                    deletePoll(currentPoll.getPollId());
+                    returnString = "updatePoll";
+                    break;
+
+                case "openPoll":
+
+                    Poll pollToOpen = (Poll)objects[0];
+
+                    try {
+
+                        controller.openPoll(pollToOpen.getPollId());
+
+                    } catch(PollCantBeOpenedException exception){
+
+                        publishProgress(exception);
+                    }
+                    returnString = "updatePoll";
+                    break;
+
+
+            }
+
+            return returnString;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            switch(s) {
+
+                case "update":
+                    pollAdapter.updatePollList(controller.getPolls());
+                    ((BaseActivity)getActivity()).getPullToRefresh().setRefreshing(false);
+                    break;
+
+                case "updatePoll":
+                    pollAdapter.updatePollList(controller.getPolls());
+                    break;
+            }
+        }
     }
 }

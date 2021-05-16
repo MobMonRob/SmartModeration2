@@ -205,7 +205,7 @@ public class CreateMeetingController extends SmartModerationController {
         return data;
     }
 
-    public void submitMeeting(Long id, boolean isOpenEnd,boolean online, String cause, long date, long begin, String location, long end, Collection<Topic> topics) throws CantSubMitMeetingException {
+    public void submitMeeting(Long id, boolean isOpenEnd, boolean online, String cause, long date, long begin, String location, long end, Collection<Topic> topics) throws CantSubMitMeetingException {
 
         PrivateGroup group;
 

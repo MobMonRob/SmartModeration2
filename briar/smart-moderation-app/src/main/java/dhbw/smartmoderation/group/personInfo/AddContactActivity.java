@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.TextView;
 
@@ -45,32 +46,66 @@ public class AddContactActivity extends ExceptionHandlingActivity {
         doneFab = findViewById(R.id.doneFab);
         doneFab.setOnClickListener(v -> {
 
-            try {
-                Contact selectedContact = contactAdapter.getSelectedContact();
-                Long memberId = controller.linkContactToMember(selectedContact, this.memberId);
+            AddContactAsyncTask addContactAsyncTask = new AddContactAsyncTask();
+            addContactAsyncTask.execute();
 
-                Intent i = new Intent();
-                i.putExtra("memberId", memberId);
-                setResult(Activity.RESULT_OK, i);
-                finish();
-
-            } catch (CantLinkContactToMember cantLinkContactToMember) {
-                handleException(cantLinkContactToMember);
-            }
         });
 
         controller = new PersonInfoController(this.groupId);
         ghostName.setText(controller.getGroup().getMember(this.memberId).getName());
         contactLayoutManager = new LinearLayoutManager(this);
         addContactList.setLayoutManager(contactLayoutManager);
+
         try {
+
             contactAdapter = new ContactAdapter(this, controller.getContacts());
             addContactList.setAdapter(contactAdapter);
-        }catch (SmartModerationException exception){
+
+        } catch (SmartModerationException exception){
+
             handleException(exception);
         }
 
         DividerItemDecoration contactsDividerItemDecoration = new DividerItemDecoration(addContactList.getContext(), contactLayoutManager.getOrientation());
         addContactList.addItemDecoration(contactsDividerItemDecoration);
+    }
+
+    public class AddContactAsyncTask extends AsyncTask<String, Exception, Long> {
+
+        @Override
+        protected void onProgressUpdate(Exception... values) {
+            super.onProgressUpdate(values);
+            handleException(values[0]);
+        }
+
+        @Override
+        protected Long doInBackground(String... strings) {
+
+            try {
+
+                Contact selectedContact = contactAdapter.getSelectedContact();
+                Long memberId = controller.linkContactToMember(selectedContact, AddContactActivity.this.memberId);
+                return memberId;
+
+            } catch (CantLinkContactToMember exception) {
+
+                publishProgress(exception);
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Long l) {
+            super.onPostExecute(l);
+
+            if(l != null) {
+
+                Intent i = new Intent();
+                i.putExtra("memberId", l);
+                setResult(Activity.RESULT_OK, i);
+                finish();
+            }
+        }
     }
 }

@@ -5,6 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.app.ProgressDialog;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,6 +47,7 @@ public class CreateGroup extends ExceptionHandlingActivity {
     private View popup;
     private AlertDialog alertDialog;
     enum Answer {YES, NO};
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,10 +127,14 @@ public class CreateGroup extends ExceptionHandlingActivity {
         createGroupController = new CreateGroupController(this);
         contactLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(contactLayoutManager);
+
         try {
+
             contactAdapter = new ContactAdapter(this, createGroupController.getContacts());
             recyclerView.setAdapter(contactAdapter);
-        }catch(NoContactsFoundException exception){
+
+        } catch(NoContactsFoundException exception){
+
             handleException(exception);
         }
 
@@ -152,10 +160,14 @@ public class CreateGroup extends ExceptionHandlingActivity {
 
     @Override
     protected void onResume() {
+
         super.onResume();
+
         try {
+
             contactAdapter.updateContacts(createGroupController.getContacts());
-        }catch (NoContactsFoundException exception){
+
+        } catch (NoContactsFoundException exception){
             handleException(exception);
         }
 
@@ -164,16 +176,10 @@ public class CreateGroup extends ExceptionHandlingActivity {
 
     private void onCreateGroup(View view) {
 
-
         String groupName = Util.getText(this.groupName);
-        try {
-            createGroupController.createGroup(groupName, this.contactAdapter.getSelectedContacts());
-            Toast toast = Toast.makeText(getApplicationContext(), "Group created", Toast.LENGTH_SHORT);
-            toast.show();
-            finish();
-        }catch(CantCreateGroupException exception){
-            handleException(exception);
-        }
+        CreateGroupAsyncTask createGroupAsyncTask = new CreateGroupAsyncTask();
+        createGroupAsyncTask.execute(groupName);
+
     }
 
     private void onAddGhost(View view) {
@@ -222,6 +228,55 @@ public class CreateGroup extends ExceptionHandlingActivity {
         else {
 
             alertDialog.cancel();
+        }
+    }
+
+
+    public class CreateGroupAsyncTask extends AsyncTask<String, Exception, String> {
+
+        @Override
+        protected void onPreExecute() {
+
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(CreateGroup.this, R.style.MyAlertDialogStyle);
+            progressDialog.setMessage(getString(R.string.creating_group));
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+
+            String groupName = strings[0];
+
+            try {
+
+                createGroupController.createGroup(groupName, CreateGroup.this.contactAdapter.getSelectedContacts());
+
+            } catch(CantCreateGroupException exception){
+
+               publishProgress(exception);
+            }
+
+            return groupName;
+
+        }
+
+        @Override
+        protected void onProgressUpdate(Exception... values) {
+            super.onProgressUpdate(values);
+            progressDialog.dismiss();
+            handleException(values[0]);
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+
+            super.onPostExecute(s);
+            progressDialog.dismiss();
+            Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.group_created), Toast.LENGTH_SHORT);
+            toast.show();
+            finish();
         }
     }
 }

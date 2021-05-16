@@ -2,6 +2,7 @@ package dhbw.smartmoderation.group.invitations;
 
 import android.util.Log;
 
+import org.briarproject.bramble.api.identity.LocalAuthor;
 import org.briarproject.briar.api.privategroup.PrivateGroup;
 
 import java.util.ArrayList;
@@ -70,8 +71,9 @@ class ListInvitationsController extends SmartModerationController {
 				success = synchronizationService.pull(joinedGroup);
 			}
 
-			Member local = new Member(connectionService.getLocalAuthor());
-			local.setName(connectionService.getLocalAuthor().getName());
+			LocalAuthor localAuthor = connectionService.getLocalAuthor();
+			Member local = new Member(localAuthor);
+			local.setName(localAuthor.getName());
 			dataService.saveMember(local);
 
 			Group group = dataService.getGroup(joinedGroup);

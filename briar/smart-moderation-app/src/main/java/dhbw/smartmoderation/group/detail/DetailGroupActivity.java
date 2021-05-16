@@ -2,6 +2,7 @@ package dhbw.smartmoderation.group.detail;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -87,6 +88,8 @@ public class DetailGroupActivity extends UpdateableExceptionHandlingActivity imp
     private TextView createMeetingText;
     private TextView createGhostText;
 
+    private SwipeRefreshLayout pullToRefresh;
+
     private final ContactAdapter adapter = getContactAdapter();
 
     private ContactAdapter getContactAdapter() {
@@ -99,12 +102,10 @@ public class DetailGroupActivity extends UpdateableExceptionHandlingActivity imp
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_group);
 
-        SwipeRefreshLayout pullToRefresh = findViewById(R.id.pullToRefresh);
+        pullToRefresh = findViewById(R.id.pullToRefresh);
         pullToRefresh.setOnRefreshListener(() -> {
 
             updateUI();
-            pullToRefresh.setRefreshing(false);
-
         });
 
         Intent intent = getIntent();
@@ -223,7 +224,8 @@ public class DetailGroupActivity extends UpdateableExceptionHandlingActivity imp
         try {
             memberAdapter = new MemberAdapter(this, controller.getMembers(),this,controller.getGroup(),this, controller);
             meetingAdapter = new MeetingAdapter(this,controller.getMeetings(),this);
-        }catch(GroupNotFoundException exception){
+
+        } catch(GroupNotFoundException exception){
             handleException(exception);
 
             Log.d(TAG,exception.getMessage(),exception);
@@ -447,17 +449,14 @@ public class DetailGroupActivity extends UpdateableExceptionHandlingActivity imp
 
         confirmButton.setOnClickListener(v -> {
 
-            try {
-                controller.addContacts(adapter.getSelectedContacts());
-
-            } catch (SmartModerationException e) {
-
-                handleException(e);
-            }
             alertDialog.cancel();
+            DetailGroupAsyncTask detailGroupAsyncTask = new DetailGroupAsyncTask("addMember");
+            detailGroupAsyncTask.execute();
+
         });
 
         cancelButton.setOnClickListener(v -> {
+
             alertDialog.cancel();
         });
 
@@ -475,23 +474,8 @@ public class DetailGroupActivity extends UpdateableExceptionHandlingActivity imp
             String firstName = String.valueOf(firstNameInput.getText());
             String lastName = String.valueOf(lastNameInput.getText());
 
-            try {
-
-                controller.addGhost(firstName,lastName);
-                memberAdapter.updateMembers(controller.getMembers());
-
-            }
-
-            catch (GroupNotFoundException exception){
-
-                handleException(exception);
-            }
-
-        }
-
-        else {
-
-            alertDialog.cancel();
+            DetailGroupAsyncTask detailGroupAsyncTask = new DetailGroupAsyncTask("addGhost");
+            detailGroupAsyncTask.execute(firstName, lastName);
         }
     }
 
@@ -510,25 +494,8 @@ public class DetailGroupActivity extends UpdateableExceptionHandlingActivity imp
     @Override
     public void updateUI(){
 
-        Handler handler = new Handler();
-        handler.post(() -> {
-            controller.update();
-
-            try {
-
-                Collection<Member> members = controller.getMembers();
-                memberAdapter.updateMembers(members);
-                Log.d(TAG, "Available Members: " + members);
-
-                Collection<Meeting> meetings = controller.getMeetings();
-                meetingAdapter.updateMeetings(meetings);
-                Log.d(TAG, "Available Meetings: " + meetings);
-
-            } catch (GroupNotFoundException exception) {
-
-                handleException(exception);
-            }
-        });
+        DetailGroupAsyncTask detailGroupAsyncTask = new DetailGroupAsyncTask("update");
+        detailGroupAsyncTask.execute();
     }
 
     private void onDeleteGroup(){
@@ -538,17 +505,9 @@ public class DetailGroupActivity extends UpdateableExceptionHandlingActivity imp
         builder.setCancelable(false);
         builder.setNegativeButton(getString(R.string.yes), ((dialog, which) -> {
 
-            try {
-
-                controller.deleteGroup();
-                onBackPressed();
-                finish();
-            }
-
-            catch(GroupNotFoundException exception){
-
-                handleException(exception);
-            }
+            dialog.cancel();
+            DetailGroupAsyncTask detailGroupAsyncTask = new DetailGroupAsyncTask("deleteGroup");
+            detailGroupAsyncTask.execute();
 
         }));
 
@@ -560,7 +519,6 @@ public class DetailGroupActivity extends UpdateableExceptionHandlingActivity imp
 
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
-
 
     }
 
@@ -586,16 +544,9 @@ public class DetailGroupActivity extends UpdateableExceptionHandlingActivity imp
         builder.setCancelable(false);
         builder.setNegativeButton(getString(R.string.yes), ((dialog, which) -> {
 
-            try {
-
-                controller.leaveGroup();
-
-            }
-
-            catch(GroupNotFoundException exception){
-
-                handleException(exception);
-            }
+            dialog.cancel();
+            DetailGroupAsyncTask detailGroupAsyncTask = new DetailGroupAsyncTask("leaveGroup");
+            detailGroupAsyncTask.execute();
 
         }));
 
@@ -619,11 +570,8 @@ public class DetailGroupActivity extends UpdateableExceptionHandlingActivity imp
     @Override
     public void onMeetingDismiss(Long meetingId) {
 
-        try {
-            controller.deleteMeeting(meetingId);
-        }catch(GroupNotFoundException exception){
-            handleException(exception);
-        }
+        DetailGroupAsyncTask detailGroupAsyncTask = new DetailGroupAsyncTask("deleteMeeting");
+        detailGroupAsyncTask.execute(meetingId.toString());
 
     }
 
@@ -637,34 +585,30 @@ public class DetailGroupActivity extends UpdateableExceptionHandlingActivity imp
     }
 
     @Override
-    public void onMemberDismiss(Long memberId) {
+    public boolean onMemberDismiss(Long memberId) {
 
-        try {
+        if(!controller.getLocalAuthorId().equals(memberId)) {
 
-            if(!controller.getLocalAuthorId().equals(memberId)) {
+            DetailGroupAsyncTask detailGroupAsyncTask = new DetailGroupAsyncTask("deleteMember");
+            detailGroupAsyncTask.execute(memberId.toString());
+            return true;
+        }
 
-                controller.removeMember(memberId);
-            }
-
-            else {
-
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage(getString(R.string.canNotLeaveGroupThisWay));
-                builder.setCancelable(false);
-                builder.setNeutralButton(getString(R.string.ok), ((dialog, which) -> {
-
-                    dialog.cancel();
-
-                }));
-
-                AlertDialog alertDialog = builder.create();
-                alertDialog.show();
-            }
+        else {
 
 
-        }catch(GroupNotFoundException exception){
-            handleException(exception);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage(getString(R.string.canNotLeaveGroupThisWay));
+            builder.setCancelable(false);
+            builder.setNeutralButton(getString(R.string.ok), ((dialog, which) -> {
+
+                dialog.cancel();
+
+            }));
+
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+            return false;
         }
 
 
@@ -673,5 +617,163 @@ public class DetailGroupActivity extends UpdateableExceptionHandlingActivity imp
     @Override
     public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
 
+    }
+
+    public class DetailGroupAsyncTask extends AsyncTask<String, Exception, String> {
+
+        String flag;
+
+        public DetailGroupAsyncTask(String flag) {
+
+            this.flag = flag;
+        }
+
+        @Override
+        protected void onProgressUpdate(Exception... values) {
+            super.onProgressUpdate(values);
+            handleException(values[0]);
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+
+            String returnString = "";
+
+            switch(flag) {
+
+                case "update":
+                    controller.update();
+                    returnString = "update";
+                    break;
+
+                case "deleteGroup":
+
+                    try {
+
+                        controller.deleteGroup();
+                    }
+
+                    catch(GroupNotFoundException exception){
+
+                        publishProgress(exception);
+                    }
+                    returnString = "deleteGroup";
+                    break;
+
+                case "leaveGroup":
+
+                    try {
+
+                        controller.leaveGroup();
+                    }
+
+                    catch(GroupNotFoundException exception){
+
+                        publishProgress(exception);
+                    }
+                    returnString = "deleteGroup";
+                    break;
+
+                case "addMember":
+
+                    try {
+
+                        controller.addContacts(adapter.getSelectedContacts());
+
+                    } catch (SmartModerationException exception) {
+
+                        publishProgress(exception);
+                    }
+                    returnString = "addMember";
+                    break;
+
+                case "addGhost":
+
+                    try {
+
+                        controller.addGhost(strings[0], strings[1]);
+
+                    }
+
+                    catch (GroupNotFoundException exception){
+
+                        publishProgress(exception);
+                    }
+                    returnString = "addGhost";
+                    break;
+
+                case "deleteMeeting":
+
+                    try {
+
+                        controller.deleteMeeting(Long.valueOf(strings[0]));
+
+                    } catch(GroupNotFoundException exception){
+
+                        publishProgress(exception);
+                    }
+                    returnString = "deleteMeeting";
+                    break;
+
+                case "deleteMember":
+
+                    try {
+
+                        controller.removeMember(Long.valueOf(strings[0]));
+
+                    } catch (GroupNotFoundException exception) {
+
+                        publishProgress(exception);
+                    }
+                    returnString = "deleteMember";
+                    break;
+            }
+
+            return returnString;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            switch(s) {
+
+                case "update":
+                    try {
+
+                        Collection<Member> members = controller.getMembers();
+                        memberAdapter.updateMembers(members);
+                        Log.d(TAG, "Available Members: " + members);
+
+                        Collection<Meeting> meetings = controller.getMeetings();
+                        meetingAdapter.updateMeetings(meetings);
+                        Log.d(TAG, "Available Meetings: " + meetings);
+
+                    } catch (GroupNotFoundException exception) {
+
+                        handleException(exception);
+                    }
+
+                    pullToRefresh.setRefreshing(false);
+                    break;
+
+                case "deleteGroup":
+                    finish();
+                    break;
+
+                case "addGhost":
+
+                    try {
+
+                        memberAdapter.updateMembers(controller.getMembers());
+
+                    } catch (GroupNotFoundException exception) {
+
+                        handleException(exception);
+                    }
+                    break;
+
+            }
+        }
     }
 }

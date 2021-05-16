@@ -30,6 +30,21 @@
     <string name="NoContactsFoundException_Action">Add Contact</string>
     <string name="title_invitations">Group Invitations</string>
 
+
+    <string name="create_account">Creating account...</string>
+    <string name="account_created">Account was created</string>
+    <string name="login">Login...</string>
+    <string name="creating_group">Creating Group...</string>
+    <string name="group_created">Group was created</string>
+    <string name="creating_meeting">Creating Meeting...</string>
+    <string name="meeting_created">Meeting was created</string>
+    <string name="updating_meeting">Updating Meeting...</string>
+    <string name="meeting_updated">Meeting was updated</string>
+    <string name="creating_consensusProposal">Creating Consensus Proposal...</string>
+    <string name="consensusProposal_created">Consensus Proposal was created</string>
+    <string name="sending_voice">Sending voice...</string>
+    <string name="voice_sent">Voice was sent</string>
+
     <!-- Reuseable -->
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>

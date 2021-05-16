@@ -8,19 +8,24 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.TextView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.connection.synchronization.SynchronizableDataType;
 import dhbw.smartmoderation.data.model.ConsensusLevel;
 import dhbw.smartmoderation.exceptions.ConsensusLevelsNotFoundException;
+import dhbw.smartmoderation.exceptions.CouldNotAddConsensusLevel;
+import dhbw.smartmoderation.exceptions.CouldNotChangeConsensusLevel;
 import dhbw.smartmoderation.exceptions.CouldNotDeleteConsensusLevel;
 import dhbw.smartmoderation.exceptions.GroupNotFoundException;
 import dhbw.smartmoderation.exceptions.SmartModerationException;
@@ -123,28 +128,15 @@ public class SettingsActivity extends UpdateableExceptionHandlingActivity implem
 
                 if(extra.getInt("position") == -1) {
 
-                    int number = consensusLevelAdapter.consensusLevelList.size() + 1;
-                    ConsensusLevel consensusLevel = controller.createConsensusLevel(extra.getString("name"), extra.getInt("color"), extra.getString("description"), number);
-                    try {
-                        controller.addConsensusLevel(consensusLevel);
-                        consensusLevelAdapter.updateConsensusLevelList(controller.getConsensusLevels());
-                    } catch (SmartModerationException exception) {
-                        handleException(exception);
-                    }
+                    SettingsAsyncTask settingsAsyncTask = new SettingsAsyncTask("add");
+                    settingsAsyncTask.execute(extra.getString("name"), extra.getInt("color"), extra.getString("description"));
                 }
 
                 else {
 
-                    int position = extra.getInt("position");
-                    ConsensusLevel consensusLevel = consensusLevelAdapter.consensusLevelList.get(position);
-                    consensusLevel.setColor(extra.getInt("color"));
-                    consensusLevel.setDescription(extra.getString("description"));
-                    try {
-                        controller.changeConsensusLevel(consensusLevel);
-                        consensusLevelAdapter.updateConsensusLevelList(controller.getConsensusLevels());
-                    } catch (SmartModerationException exception) {
-                        handleException(exception);
-                    }
+
+                    SettingsAsyncTask settingsAsyncTask = new SettingsAsyncTask("change");
+                    settingsAsyncTask.execute(extra.getInt("position"), extra.getInt("color"), extra.getString("description"));
                 }
             }
         }
@@ -161,16 +153,8 @@ public class SettingsActivity extends UpdateableExceptionHandlingActivity implem
     @Override
     protected void updateUI() {
 
-        Handler handler = new Handler();
-        handler.post(() ->  controller.update());
-
-        try {
-            consensusLevelAdapter.updateConsensusLevelList(controller.getConsensusLevels());
-
-        } catch (ConsensusLevelsNotFoundException consensusLevelsNotFoundException) {
-
-            handleException(consensusLevelsNotFoundException);
-        }
+        SettingsAsyncTask settingsAsyncTask = new SettingsAsyncTask("update");
+        settingsAsyncTask.execute();
     }
 
     public void reloadConsensusLevelItemTouchHelper() {
@@ -191,6 +175,7 @@ public class SettingsActivity extends UpdateableExceptionHandlingActivity implem
 
     @Override
     public void changeNumberingAfterOrderChange(ArrayList<ConsensusLevel> collection) {
+
         for (int i = 0; i < collection.size(); i++) {
 
             collection.get(i).setNumber(i+1);
@@ -203,21 +188,149 @@ public class SettingsActivity extends UpdateableExceptionHandlingActivity implem
             handler.post(() -> consensusLevelAdapter.notifyItemChanged(j));
         }
 
-        try {
-            controller.changeConsensusLevelNumbering(collection);
-        }catch(SmartModerationException exception){
-            handleException(exception);
-        }
-
+        SettingsAsyncTask settingsAsyncTask = new SettingsAsyncTask("numbering");
+        settingsAsyncTask.execute(collection);
     }
 
     @Override
     public void onConsensusLevelDismiss(Long consensusLevelId) {
 
-        try {
-            controller.deleteConsensusLevel(consensusLevelId);
-        } catch (CouldNotDeleteConsensusLevel couldNotDeleteConsensusLevel) {
-            couldNotDeleteConsensusLevel.printStackTrace();
+        SettingsAsyncTask settingsAsyncTask = new SettingsAsyncTask("delete");
+        settingsAsyncTask.execute(consensusLevelId);
+    }
+
+    public class SettingsAsyncTask extends AsyncTask<Object, Exception, String> {
+
+        String flag;
+
+        public SettingsAsyncTask(String flag) {
+
+            this.flag = flag;
+
+        }
+
+        @Override
+        protected void onProgressUpdate(Exception... values) {
+            super.onProgressUpdate(values);
+            handleException(values[0]);
+        }
+
+        @Override
+        protected String doInBackground(Object... objects) {
+
+            String returnString = "";
+
+            switch(flag) {
+
+                case "add":
+
+                    int number = consensusLevelAdapter.consensusLevelList.size() + 1;
+                    String name = (String)objects[0];
+                    int color = (int)objects[1];
+                    String description = (String)objects[2];
+                    ConsensusLevel consensusLevel = controller.createConsensusLevel(name, color, description, number);
+
+                    try {
+
+                        controller.addConsensusLevel(consensusLevel);
+
+                    } catch (CouldNotAddConsensusLevel exception) {
+
+                        publishProgress(exception);
+                    }
+                    returnString = "update";
+                    break;
+
+                case "change":
+
+                    int position = (int)objects[0];
+                    ConsensusLevel consensusLevelToChange = consensusLevelAdapter.consensusLevelList.get(position);
+                    int newColor = (int)objects[1];
+                    consensusLevelToChange.setColor(newColor);
+                    String newDescription = (String)objects[2];
+                    consensusLevelToChange.setDescription(newDescription);
+
+                    try {
+
+                        controller.changeConsensusLevel(consensusLevelToChange);
+
+                    } catch (CouldNotChangeConsensusLevel exception) {
+
+                        publishProgress(exception);
+                    }
+                    returnString = "update";
+                    break;
+
+                case "update":
+                    controller.update();
+                    returnString = "update";
+                    break;
+
+                case "numbering":
+
+                    ArrayList<?> collection = (ArrayList<?>)objects[0];
+
+                    ArrayList<ConsensusLevel> consensusLevels = new ArrayList<>();
+
+                    for(Object o : collection) {
+
+                        if(o instanceof ConsensusLevel) {
+
+                            consensusLevels.add((ConsensusLevel) o);
+                        }
+                    }
+
+                    try {
+
+                        controller.changeConsensusLevelNumbering(consensusLevels);
+
+                    } catch(CouldNotChangeConsensusLevel exception){
+
+                        publishProgress(exception);
+                    }
+                    break;
+
+                case "delete":
+
+                    Long consensusLevelId = Long.valueOf(objects[0].toString());
+
+                    try {
+
+                        controller.deleteConsensusLevel(consensusLevelId);
+
+                    } catch (CouldNotDeleteConsensusLevel exception) {
+
+                        publishProgress(exception);
+                    }
+                    break;
+
+            }
+
+            return returnString;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            switch(s) {
+
+                case "update":
+
+                    try {
+
+                        consensusLevelAdapter.updateConsensusLevelList(controller.getConsensusLevels());
+
+                    } catch (ConsensusLevelsNotFoundException exception) {
+
+                        handleException(exception);
+                    }
+                    break;
+
+                case "":
+                    break;
+
+            }
         }
     }
 }

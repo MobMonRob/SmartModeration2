@@ -108,30 +108,23 @@ public class ListOfSpeakersController extends SmartModerationController {
 
     public Long getLocalAuthorId() {
 
-        return Util.bytesToLong(connectionService.getLocalAuthor().getId().getBytes());
+        return connectionService.getLocalAuthorId();
     }
 
     public boolean isLocalAuthorModerator() {
 
         Group group = getMeeting().getGroup();
 
-        LocalAuthor localAuthor = connectionService.getLocalAuthor();
+        Long authorId =  connectionService.getLocalAuthorId();
+        Member member = group.getMember(authorId);
 
-        if(localAuthor != null) {
+        if(member != null && member.getRoles(group).contains(Role.MODERATOR)) {
 
-            Long authorId = Util.bytesToLong(connectionService.getLocalAuthor().getId().getBytes());
-            Member member = group.getMember(authorId);
-
-            if(member.getRoles(group).contains(Role.MODERATOR)) {
-
-                return true;
-            }
-
-            return false;
-
+            return true;
         }
 
         return false;
+
     }
 
     public boolean isLocalAuthorPresent() {
@@ -218,23 +211,14 @@ public class ListOfSpeakersController extends SmartModerationController {
 
     public boolean isLocalAuthorInSpeechList() {
 
-        LocalAuthor localAuthor = connectionService.getLocalAuthor();
+        Long authorId = connectionService.getLocalAuthorId();
 
-        if(localAuthor != null) {
+        for(Participation participation : getParticipationsInList()) {
 
-            Long authorId = Util.bytesToLong(localAuthor.getId().getBytes());
+            if(participation.getMember().getMemberId().equals(authorId) && participation.getIsInListOfSpeakers()) {
 
-            for(Participation participation : getParticipationsInList()) {
-
-                if(participation.getMember().getMemberId().equals(authorId) && participation.getIsInListOfSpeakers()) {
-
-                    return true;
-                }
+                return true;
             }
-
-            return false;
-
-
         }
 
         return false;
@@ -295,7 +279,7 @@ public class ListOfSpeakersController extends SmartModerationController {
         try {
 
             group = getPrivateGroup();
-            member = dataService.getMember(connectionService.getLocalAuthor());
+            member = dataService.getMember(connectionService.getLocalAuthorId());
 
         } catch (GroupNotFoundException |MemberNotFoundException exception){
 

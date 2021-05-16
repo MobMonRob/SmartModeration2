@@ -57,7 +57,7 @@ public class PersonInfoController extends SmartModerationController {
 
     public boolean isLocalAuthor(Long memberId) {
 
-        if(memberId.equals(Util.bytesToLong(connectionService.getLocalAuthor().getId().getBytes()))) {
+        if(memberId.equals(connectionService.getLocalAuthorId())) {
 
             return true;
         }
@@ -98,7 +98,7 @@ public class PersonInfoController extends SmartModerationController {
     public boolean isLocalAuthorModerator() {
 
         Group group = getGroup();
-        Long authorId = Util.bytesToLong(connectionService.getLocalAuthor().getId().getBytes());
+        Long authorId = connectionService.getLocalAuthorId();
         Member member = group.getMember(authorId);
 
         if(member.getRoles(group).contains(Role.MODERATOR)) {

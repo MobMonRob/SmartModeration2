@@ -110,7 +110,7 @@ public class MeetingAdapter extends RecyclerView.Adapter<MeetingAdapter.MeetingV
     public void onItemDismiss(int position) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setMessage(context.getString(R.string.meeting_reaffirmation,meetings.get(position)));
+        builder.setMessage(context.getString(R.string.meeting_reaffirmation, meetings.get(position).getCause()));
         builder.setCancelable(false);
         builder.setNegativeButton(context.getString(R.string.yes), ((dialog, which) -> {
 

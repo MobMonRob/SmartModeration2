@@ -6,6 +6,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
 import android.graphics.text.LineBreaker;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -26,6 +27,7 @@ public class ConsensusProposalDetail extends UpdateableExceptionHandlingActivity
     private TextView consensusProposalText;
     private TextView notesText;
     private ConsensusProposalDetailController controller;
+    private SwipeRefreshLayout pullToRefresh;
 
     private Poll poll;
 
@@ -39,11 +41,10 @@ public class ConsensusProposalDetail extends UpdateableExceptionHandlingActivity
         setTitle(getString(R.string.ConsensusProposalDetail_title));
 
 
-        SwipeRefreshLayout pullToRefresh = findViewById(R.id.pullToRefresh);
+        pullToRefresh = findViewById(R.id.pullToRefresh);
         pullToRefresh.setOnRefreshListener(() -> {
 
             updateUI();
-            pullToRefresh.setRefreshing(false);
 
         });
 
@@ -73,11 +74,8 @@ public class ConsensusProposalDetail extends UpdateableExceptionHandlingActivity
     @Override
     protected void updateUI() {
 
-        Handler handler = new Handler();
-        handler.post(() ->  controller.update());
-
-        this.poll = controller.getPoll();
-        initializeTextViews();
+        ConsensusProposalDetailAsyncTask consensusProposalDetailAsyncTask = new ConsensusProposalDetailAsyncTask();
+        consensusProposalDetailAsyncTask.execute();
     }
 
     @Override
@@ -86,4 +84,25 @@ public class ConsensusProposalDetail extends UpdateableExceptionHandlingActivity
         dataTypes.add(SynchronizableDataType.POLL);
         return dataTypes;
     }
+
+
+    public class ConsensusProposalDetailAsyncTask extends AsyncTask<Object, Exception, String> {
+
+        @Override
+        protected String doInBackground(Object... objects) {
+
+            controller.update();
+            poll = controller.getPoll();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            initializeTextViews();
+            pullToRefresh.setRefreshing(false);
+        }
+    }
+
+
 }

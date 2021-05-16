@@ -8,8 +8,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +19,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -28,7 +31,10 @@ import java.util.Locale;
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.data.model.Meeting;
 import dhbw.smartmoderation.data.model.Topic;
+import dhbw.smartmoderation.exceptions.CantCreateGroupException;
 import dhbw.smartmoderation.exceptions.CantSubMitMeetingException;
+import dhbw.smartmoderation.group.create.CreateGroup;
+import dhbw.smartmoderation.meeting.detail.BaseActivity;
 import dhbw.smartmoderation.uiUtils.SimpleItemTouchHelperCallback;
 import dhbw.smartmoderation.util.ExceptionHandlingActivity;
 import dhbw.smartmoderation.util.Util;
@@ -61,6 +67,7 @@ public class CreateMeetingActivity extends ExceptionHandlingActivity implements 
     private ArrayList<FloatingActionButton> fabList;
     private ArrayList<TextView> textList;
     private boolean allFabVisible;
+    private ProgressDialog progressDialog;
 
     @Override
     public void onTopicClick(View view, Topic topic) {
@@ -344,31 +351,14 @@ public class CreateMeetingActivity extends ExceptionHandlingActivity implements 
         }
 
         long end = 0;
+
         if(!open) {
+
             end = Util.convertTimeStringToMilliSeconds(plannedEndInput.getText().toString());
         }
 
-            try {
-
-                if(isPrefilled) {
-
-                    createMeetingController.submitMeeting(meetingId, open,online, causeInput.getText().toString(), date, begin, locationInput.getText().toString(),end, topicAdapter.getTopicList());
-                    Intent intent = new Intent();
-                    setResult(1, intent);
-                    finish();
-                }
-
-                else {
-
-                    createMeetingController.submitMeeting(null, open,online, causeInput.getText().toString(), date, begin, locationInput.getText().toString(),end, topicAdapter.getTopicList());
-                    finish();
-                }
-
-
-            } catch (CantSubMitMeetingException e) {
-                handleException(e);
-            }
-
+        CreateMeetingAsyncTask createMeetingAsyncTask = new CreateMeetingAsyncTask();
+        createMeetingAsyncTask.execute(open, online, causeInput.getText().toString(), date, begin, locationInput.getText().toString(), end);
     }
 
     private void onSetStartTime(View view) {
@@ -559,6 +549,94 @@ public class CreateMeetingActivity extends ExceptionHandlingActivity implements 
             expectedEndInput.setText("");
         }
 
+    }
+
+    public class CreateMeetingAsyncTask extends AsyncTask<Object, Exception, String> {
+
+        @Override
+        protected void onPreExecute() {
+
+            super.onPreExecute();
+
+            progressDialog = new ProgressDialog(CreateMeetingActivity.this, R.style.MyAlertDialogStyle);
+
+            if(isPrefilled) {
+
+                progressDialog.setMessage(getString(R.string.updating_meeting));
+            }
+
+            else {
+
+                progressDialog.setMessage(getString(R.string.creating_meeting));
+            }
+
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+        }
+
+        @Override
+        protected String doInBackground(Object... objects) {
+
+            boolean open = (Boolean)objects[0];
+            boolean online = (Boolean)objects[1];
+            String cause = objects[2].toString();
+            long date = (long)objects[3];
+            long begin = (long)objects[4];
+            String location = objects[5].toString();
+            long end = (long)objects[6];
+
+            try {
+
+                if(isPrefilled) {
+
+                    createMeetingController.submitMeeting(meetingId, open, online, cause, date, begin, location, end, topicAdapter.getTopicList());
+                }
+
+                else {
+
+                    createMeetingController.submitMeeting(null, open,online, cause, date, begin, location, end, topicAdapter.getTopicList());
+                }
+
+
+            } catch (CantSubMitMeetingException exception) {
+
+                publishProgress(exception);
+            }
+
+            return null;
+
+        }
+
+        @Override
+        protected void onProgressUpdate(Exception... values) {
+            super.onProgressUpdate(values);
+            progressDialog.dismiss();
+            handleException(values[0]);
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            progressDialog.dismiss();
+            Toast toast;
+
+            if(isPrefilled) {
+
+                Intent meetingDetailIntent = new Intent(CreateMeetingActivity.this, BaseActivity.class);
+                meetingDetailIntent.putExtra("meetingId", meetingId);
+                startActivity(meetingDetailIntent);
+                toast = Toast.makeText(getApplicationContext(), getString(R.string.meeting_updated), Toast.LENGTH_SHORT);
+            }
+
+            else {
+
+                toast = Toast.makeText(getApplicationContext(), getString(R.string.meeting_created), Toast.LENGTH_SHORT);
+            }
+
+            toast.show();
+            finish();
+        }
     }
 
 

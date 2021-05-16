@@ -10,7 +10,6 @@ import org.briarproject.bramble.api.contact.ContactManager;
 import org.briarproject.bramble.api.crypto.DecryptionException;
 import org.briarproject.bramble.api.crypto.SecretKey;
 import org.briarproject.bramble.api.db.DbException;
-import org.briarproject.bramble.api.db.Transaction;
 import org.briarproject.bramble.api.event.EventBus;
 import org.briarproject.bramble.api.identity.IdentityManager;
 import org.briarproject.bramble.api.identity.LocalAuthor;
@@ -47,30 +46,27 @@ import org.briarproject.briar.api.privategroup.PrivateGroupFactory;
 import org.briarproject.briar.api.privategroup.PrivateGroupManager;
 import org.briarproject.briar.api.privategroup.invitation.GroupInvitationFactory;
 import org.briarproject.briar.api.privategroup.invitation.GroupInvitationManager;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executor;
-
-import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
-
+import dhbw.smartmoderation.SmartModerationApplication;
+import dhbw.smartmoderation.data.model.LocalAuthorDao;
 import dhbw.smartmoderation.exceptions.CantCreateGroupException;
 import dhbw.smartmoderation.exceptions.CantReceiveInvitationsException;
 import dhbw.smartmoderation.exceptions.GroupNotFoundException;
 import dhbw.smartmoderation.exceptions.NoContactsFoundException;
 import dhbw.smartmoderation.exceptions.NoGroupHeadersFoundException;
 import dhbw.smartmoderation.exceptions.NoGroupMessageTextFoundException;
+import dhbw.smartmoderation.util.Util;
 
 import static java.lang.Math.max;
-import static org.briarproject.bramble.util.LogUtils.now;
 
 /**
  * A service for everything regarding the Briar-communication.
@@ -80,6 +76,8 @@ import static org.briarproject.bramble.util.LogUtils.now;
 public class ConnectionService {
 
 	private static final String TAG = ConnectionService.class.getSimpleName();
+
+	LocalAuthorDao localAuthorDao = ((SmartModerationApplication)SmartModerationApplication.getApp()).getDaoSession().getLocalAuthorDao();
 
 	private final AccountManager accountManager;
 	private final ContactManager contactManager;
@@ -143,10 +141,6 @@ public class ConnectionService {
 		ContactExchangeUtil.init(this);
 
 		groupInvitationVisitor = new GroupInvitationVisitor();
-
-		/*ContactExchangeEventListener contactExchangeEventListener = new ContactExchangeEventListener(this);
-		eventBus.addListener(contactExchangeEventListener);*/
-
 	}
 
 	public boolean isConnected(ContactId contactId) {
@@ -156,9 +150,13 @@ public class ConnectionService {
 
 
 	public void setLocalAuthor() {
+
 		try {
+
 			this.localAuthor = identityManager.getLocalAuthor();
+
 		} catch (DbException e) {
+
 			e.printStackTrace();
 		}
 	}
@@ -493,13 +491,35 @@ public class ConnectionService {
 	 * @return The current author
 	 */
 	public LocalAuthor getLocalAuthor(){
-		/*try {
+
+		try {
+
 			return identityManager.getLocalAuthor();
+
 		} catch (DbException e) {
+
 			e.printStackTrace();
-			return null;
-		*/
-		return localAuthor;
+			return localAuthor;
+
+		}
+	}
+
+	public Long getLocalAuthorId() {
+
+		LocalAuthor briarLocalAuthor = getLocalAuthor();
+
+		if(briarLocalAuthor != null) {
+
+			return Util.bytesToLong(briarLocalAuthor.getId().getBytes());
+		}
+
+		else {
+
+			dhbw.smartmoderation.data.model.LocalAuthor localAuthor = localAuthorDao.loadAll().get(0);
+
+			return localAuthor.getLocalAuthorId();
+
+		}
 	}
 
 	/**

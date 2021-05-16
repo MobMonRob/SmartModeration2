@@ -1,7 +1,9 @@
 package dhbw.smartmoderation.group.personInfo;
 
 import android.app.AlertDialog;
+import android.app.Person;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -32,7 +34,6 @@ public class PersonInfoActivity extends ExceptionHandlingActivity {
     private PersonInfoController controller;
     private Group group;
     private Member member;
-    private ContactAdapter contactAdapter;
     private RadioGroup.OnCheckedChangeListener moderatorListener = new RadioGroup.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -40,7 +41,8 @@ public class PersonInfoActivity extends ExceptionHandlingActivity {
 
             if(id == R.id.moderatorOn) {
 
-                controller.addRole(member, Role.MODERATOR);
+                PersonInfoAsyncTask personInfoAsyncTask = new PersonInfoAsyncTask("addRole");
+                personInfoAsyncTask.execute(member, Role.MODERATOR);
             }
 
             else {
@@ -49,7 +51,8 @@ public class PersonInfoActivity extends ExceptionHandlingActivity {
 
                     if(controller.countModeratorsInGroup() > 1) {
 
-                        controller.removeRole(member, Role.MODERATOR);
+                        PersonInfoAsyncTask personInfoAsyncTask = new PersonInfoAsyncTask("removeRole");
+                        personInfoAsyncTask.execute(member, Role.MODERATOR);
                     }
 
                     else {
@@ -67,8 +70,11 @@ public class PersonInfoActivity extends ExceptionHandlingActivity {
                         moderatorSwitch.setOnCheckedChangeListener(moderatorListener);
                     }
                 }
+
                 else {
-                    controller.removeRole(member, Role.MODERATOR);
+
+                    PersonInfoAsyncTask personInfoAsyncTask = new PersonInfoAsyncTask("removeRole");
+                    personInfoAsyncTask.execute(member, Role.MODERATOR);
                 }
             }
         }
@@ -95,13 +101,14 @@ public class PersonInfoActivity extends ExceptionHandlingActivity {
                     return;
                 }
 
-                controller.removeRole(member, Role.PARTICIPANT);
-                controller.addRole(member, Role.SPECTATOR);
+                PersonInfoAsyncTask personInfoAsyncTask = new PersonInfoAsyncTask("changeRole");
+                personInfoAsyncTask.execute(member, Role.PARTICIPANT, Role.SPECTATOR);
             }
 
             else {
-                controller.removeRole(member, Role.SPECTATOR);
-                controller.addRole(member, Role.PARTICIPANT);
+
+                PersonInfoAsyncTask personInfoAsyncTask = new PersonInfoAsyncTask("changeRole");
+                personInfoAsyncTask.execute(member, Role.SPECTATOR, Role.PARTICIPANT);
             }
         }
     };
@@ -180,14 +187,8 @@ public class PersonInfoActivity extends ExceptionHandlingActivity {
     protected void onPause() {
         super.onPause();
 
-        try {
-            controller.submitChanges();
-            finish();
-
-        } catch (GroupNotFoundException e) {
-
-            e.printStackTrace();
-        }
+        PersonInfoAsyncTask personInfoAsyncTask = new PersonInfoAsyncTask("submit");
+        personInfoAsyncTask.execute();
     }
 
     public void update() {
@@ -238,5 +239,73 @@ public class PersonInfoActivity extends ExceptionHandlingActivity {
 
         moderatorSwitch.setOnCheckedChangeListener(moderatorListener);
         guestSwitch.setOnCheckedChangeListener(guestListener);
+    }
+
+
+    public class PersonInfoAsyncTask extends AsyncTask<Object, Exception, String> {
+
+        String flag;
+
+        public PersonInfoAsyncTask(String flag) {
+
+            this.flag = flag;
+
+        }
+
+        @Override
+        protected void onProgressUpdate(Exception... values) {
+            super.onProgressUpdate(values);
+            handleException(values[0]);
+        }
+
+        @Override
+        protected String doInBackground(Object... objects) {
+
+            switch(flag) {
+
+                case "addRole":
+                    Member memberToAdd = (Member)objects[0];
+                    Role roleToAdd = (Role)objects[1];
+                    controller.addRole(memberToAdd, roleToAdd);
+                    break;
+
+                case "removeRole":
+                    Member memberToRemove = (Member)objects[0];
+                    Role roleToRemove = (Role)objects[1];
+                    controller.removeRole(memberToRemove, roleToRemove);
+                    break;
+
+                case "changeRole":
+                    Member member = (Member)objects[0];
+                    Role previousRole = (Role)objects[1];
+                    controller.removeRole(member, previousRole);
+                    Role role = (Role)objects[2];
+                    controller.addRole(member, role);
+                    break;
+
+                case "submit":
+                    try {
+
+                        controller.submitChanges();
+
+                    } catch (GroupNotFoundException exception) {
+
+                        publishProgress(exception);
+                    }
+            }
+
+            return flag;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            switch (flag) {
+
+                case "submit":
+                    finish();
+            }
+        }
     }
 }

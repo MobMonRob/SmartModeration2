@@ -46,7 +46,7 @@ public class EvaluateConsensusProposalController extends SmartModerationControll
 
     public Member getMember() {
 
-        Long authorId = Util.bytesToLong(connectionService.getLocalAuthor().getId().getBytes());
+        Long authorId = connectionService.getLocalAuthorId();
 
         for(Member member : dataService.getMembers()) {
 
