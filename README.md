@@ -28,7 +28,7 @@ When you open the project Android Studio should automatically start the process 
 It's possible that an error occurs during this process. Typically, the error is associated with the Gradle task "Could not create task ':smart-moderation-app:minifyOfficialReleaseWithR8'. This is a type of misleading error. In this case you are likely missing Android SKD 29, because Android Studio only installs SKD 30 by default. 
 
 #### Installing Android SDK
-You need to open the SKD Manager and install SDK 29. You can open the SDK Manager by clicking **Tools -> SDK Manager** or **File -> Settings -> Appearance & Behaviour -> System Settings -> Android SDK**. Here you can select the necessarry SDK and download it. You can also open the SDK Manager without an open project. In the start screen you can hover over **configure** and select sdk manager from the menu.
+You need to open the SDK Manager and install SDK 29. You can open the SDK Manager by clicking **Tools -> SDK Manager** or **File -> Settings -> Appearance & Behaviour -> System Settings -> Android SDK**. Here you can select the necessarry SDK and download it. You can also open the SDK Manager without an open project. In the start screen you can hover over **configure** and select sdk manager from the menu.
 
 ![opensdkmanager](./extras/Android_Studio_SDK_Manager.png)
 
