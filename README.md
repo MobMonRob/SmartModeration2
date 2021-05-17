@@ -23,7 +23,7 @@ If you are reading this README than you probably have access to the source code.
 
 ### Open the project in Android Studio 
 Open Android Studio and click on "Open an existing project" and make sure to select **SmartModeration/Briar** as your project.   
-When you open the project Android Studio should automatically start the process "Sync Project with Gradle Files". You can also start this process by yourself by clicking **File -> Sync Project with Gradle Files** in the top menu. 
+When you open the project Android Studio should automatically start the process "Sync Project with Gradle Files". Sometimes this fails. In this case you can also start this process by yourself by clicking **File -> Sync Project with Gradle Files** in the top menu. 
 
 It's possible that an error occurs during this process. Typically, the error is associated with the Gradle task "Could not create task ':smart-moderation-app:minifyOfficialReleaseWithR8'. This is a type of misleading error. In this case you are likely missing Android SKD 29, because Android Studio only installs SKD 30 by default. 
 
