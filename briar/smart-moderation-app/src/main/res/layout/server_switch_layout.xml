@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+         android:layout_marginEnd="20dp"
+        android:layout_gravity="center"
+        android:gravity="center">
+
+        <RadioGroup
+            android:checkedButton="@+id/serverOff"
+            android:id="@+id/radioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="25dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <RadioButton
+                android:id="@+id/serverOff"
+                android:background="@drawable/server_toggle_widget_background_red"
+                android:layout_width="45dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:button="@null"
+                android:gravity="center"
+                android:text="@string/off"
+                android:textColor="@color/default_color" />
+
+            <RadioButton
+                android:id="@+id/serverOn"
+                android:layout_width="45dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/server_toggle_widget_background_green"
+                android:button="@null"
+                android:gravity="center"
+                android:text="@string/on"
+                android:textColor="@color/default_color" />
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/serverStartedLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@id/radioGroup"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginBottom="5dp"
+            android:textColor="@color/default_color"
+            android:text="@string/start_server"
+            android:textStyle="bold"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</RelativeLayout>

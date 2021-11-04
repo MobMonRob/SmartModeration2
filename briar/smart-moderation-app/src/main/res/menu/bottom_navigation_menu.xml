@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/meetingNavigation"
+        android:enabled="true"
+        android:icon="@drawable/meeting"
+        android:title="@string/meetings" />
+    <item
+        android:id="@+id/consensNavigation"
+        android:enabled="true"
+        android:icon="@drawable/chart"
+        android:title="@string/consensusProposals"/>
+    <item
+        android:id="@+id/speechNavigation"
+        android:enabled="true"
+        android:icon="@drawable/speech"
+        android:title="@string/speechList_title"/>
+    <item
+        android:id="@+id/speechTimesNavigation"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_speaker_notes_24"
+        android:title="@string/speakingTime"/>
+</menu>

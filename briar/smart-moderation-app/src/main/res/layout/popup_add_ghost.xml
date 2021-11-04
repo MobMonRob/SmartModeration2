@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/add_ghost_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/addGhost"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"/>
+
+    <TextView
+        android:id="@+id/firstName_Text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/surname"
+        app:layout_constraintTop_toBottomOf="@+id/add_ghost_header"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"/>
+
+    <EditText
+        android:id="@+id/firstNameInput"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/firstName_Text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp">
+    </EditText>
+
+    <TextView
+        android:id="@+id/lastName_Text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/name"
+        app:layout_constraintTop_toBottomOf="@+id/firstNameInput"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"/>
+
+    <EditText
+        android:id="@+id/lastNameInput"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/lastName_Text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp">
+    </EditText>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/addButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/lastNameInput"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.1"
+        android:layout_margin="20dp"
+        android:text="@string/add"
+        android:background="@drawable/rounded"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/cancelButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/lastNameInput"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.9"
+        android:layout_margin="20dp"
+        android:text="@string/cancel"
+        android:textAllCaps="false"
+        android:background="@drawable/rounded"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="your_defined_minimum_height">48dp</dimen>
+    <dimen name="font_size">18dp</dimen>
+    <dimen name="title_font_size">36dp</dimen>
+    <dimen name="default_round_button_dimen">75dp</dimen>
+    <dimen name="default_margin">16dp</dimen>
+    <dimen name="default_small_margin">8dp</dimen>
+    <dimen name="default_padding">8dp</dimen>
+</resources>

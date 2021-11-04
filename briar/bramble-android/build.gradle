@@ -1,0 +1,115 @@
+import com.android.build.gradle.tasks.MergeResources
+
+apply plugin: 'com.android.library'
+apply plugin: 'witness'
+apply from: 'witness.gradle'
+
+android {
+	compileSdkVersion 30
+	buildToolsVersion '30.0.2'
+
+	packagingOptions {
+		doNotStrip '**/*.so'
+	}
+
+	defaultConfig {
+		minSdkVersion 23
+		targetSdkVersion 29
+		versionCode 10218
+		versionName "1.2.18"
+		consumerProguardFiles 'proguard-rules.txt'
+
+		testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+	}
+
+	compileOptions {
+		sourceCompatibility JavaVersion.VERSION_1_8
+		targetCompatibility JavaVersion.VERSION_1_8
+	}
+
+	lintOptions {
+		// FIXME
+		warning "LintError"
+		warning "InvalidPackage"
+		warning "MissingPermission"
+		warning "InlinedApi", "ObsoleteSdkInt", "Override", "NewApi", "UnusedAttribute"
+	}
+}
+
+configurations {
+	tor
+}
+
+dependencies {
+	implementation project(path: ':bramble-core', configuration: 'default')
+	tor 'org.briarproject:tor-android:0.3.5.13@zip'
+	tor 'org.briarproject:obfs4proxy-android:0.0.12-dev-40245c4a@zip'
+
+	annotationProcessor 'com.google.dagger:dagger-compiler:2.24'
+
+	compileOnly 'javax.annotation:jsr250-api:1.0'
+
+	testImplementation project(path: ':bramble-api', configuration: 'testOutput')
+	testImplementation 'junit:junit:4.12'
+	testImplementation "org.jmock:jmock:2.8.2"
+	testImplementation "org.jmock:jmock-junit4:2.8.2"
+	testImplementation "org.jmock:jmock-legacy:2.8.2"
+}
+
+def torBinariesDir = 'src/main/res/raw'
+def torLibsDir = 'src/main/jniLibs'
+
+task cleanTorBinaries {
+	doLast {
+		delete fileTree(torBinariesDir) { include '*.zip' }
+		delete fileTree(torLibsDir) { include '**/*.so' }
+	}
+}
+
+clean.dependsOn cleanTorBinaries
+
+task unpackTorBinaries {
+	doLast {
+		copy {
+			from configurations.tor.collect { zipTree(it) }
+			into torBinariesDir
+			include 'geoip.zip'
+		}
+		configurations.tor.each { outer ->
+			zipTree(outer).each { inner ->
+				if (inner.name.endsWith('_arm_pie.zip')) {
+					copy {
+						from zipTree(inner)
+						into torLibsDir
+						rename '(.*)', 'armeabi-v7a/lib$1.so'
+					}
+				} else if (inner.name.endsWith('_arm64_pie.zip')) {
+					copy {
+						from zipTree(inner)
+						into torLibsDir
+						rename '(.*)', 'arm64-v8a/lib$1.so'
+					}
+				} else if (inner.name.endsWith('_x86_pie.zip')) {
+					copy {
+						from zipTree(inner)
+						into torLibsDir
+						rename '(.*)', 'x86/lib$1.so'
+					}
+				} else if (inner.name.endsWith('_x86_64_pie.zip')) {
+					copy {
+						from zipTree(inner)
+						into torLibsDir
+						rename '(.*)', 'x86_64/lib$1.so'
+					}
+				}
+			}
+		}
+	}
+	dependsOn cleanTorBinaries
+}
+
+tasks.withType(MergeResources) {
+	inputs.dir torBinariesDir
+	inputs.dir torLibsDir
+	dependsOn unpackTorBinaries
+}

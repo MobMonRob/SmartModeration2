@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="dhbw.smartmoderation.consensus.create.CreateConsensusProposal">
+
+    <TextView
+        android:id="@+id/titleTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
+        android:text="@string/enterTitle"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/titleCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/titleTag"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="5dp"
+        android:textStyle="bold"/>
+
+    <EditText
+        android:id="@+id/titleInput"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/titleTag"
+        app:layout_constraintStart_toStartOf="@+id/titleTag"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:gravity="top|left"
+        android:background="@drawable/border"
+        android:inputType="textMultiLine"
+        android:maxLength="25"
+        android:minLines="1"
+        android:maxLines="1"/>
+
+    <TextView
+        android:id="@+id/consensusProposalTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/titleInput"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
+        android:text="@string/enterConsensusProposal"
+        android:maxLength="250"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/consensusProposalCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/consensusProposalTag"
+        app:layout_constraintStart_toEndOf="@id/consensusProposalTag"
+        android:layout_marginStart="5dp"
+        android:textStyle="bold"/>
+
+    <EditText
+        android:id="@+id/consensusProposalInput"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/consensusProposalTag"
+        app:layout_constraintStart_toStartOf="@+id/consensusProposalTag"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:maxLength="250"
+        android:gravity="top|left"
+        android:background="@drawable/border"
+        android:inputType="textMultiLine"
+        android:minLines="5"
+        android:maxLines="5" />
+
+    <TextView
+        android:id="@+id/notesTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/consensusProposalInput"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
+        android:text="@string/annotations"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/notesCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/notesTag"
+        app:layout_constraintStart_toEndOf="@id/notesTag"
+        android:layout_marginStart="5dp"
+        android:textStyle="bold"/>
+
+    <EditText
+        android:id="@+id/notesInput"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/notesTag"
+        app:layout_constraintStart_toStartOf="@+id/notesTag"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:maxLength="250"
+        android:gravity="top|left"
+        android:background="@drawable/border"
+        android:inputType="textMultiLine"
+        android:minLines="5"
+        android:maxLines="5"/>
+
+    <Button
+        android:id="@+id/createButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        android:layout_marginBottom="20dp"
+        android:textStyle="bold"
+        android:text="@string/create"
+        android:background="@drawable/rounded" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

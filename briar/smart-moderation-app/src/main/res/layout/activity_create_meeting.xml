@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".meeting.create.CreateMeetingActivity">
+
+    <TextView
+        android:id="@+id/onlineMeetingTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
+        android:text="@string/onlineMeeting"
+        android:textStyle="bold"/>
+
+    <RadioGroup
+        android:checkedButton="@+id/onlineOff"
+        android:id="@+id/onlineMeetingSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_marginRight="60dp"
+        android:background="@drawable/toggle_widget_background"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <RadioButton
+            android:id="@+id/onlineOff"
+            android:background="@drawable/toggle_widget_background"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:button="@null"
+            android:gravity="center"
+            android:text="@string/off"
+            android:textColor="@color/default_color" />
+
+        <RadioButton
+            android:id="@+id/onlineOn"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/toggle_widget_background"
+            android:button="@null"
+            android:gravity="center"
+            android:text="@string/on"
+            android:textColor="@color/default_color" />
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/openEndTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/onlineMeetingTag"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="20dp"
+        android:text="@string/openEnd"
+        android:textStyle="bold"/>
+
+    <RadioGroup
+        android:checkedButton="@+id/openOff"
+        android:id="@+id/openEndSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_marginRight="60dp"
+        android:background="@drawable/toggle_widget_background"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="@id/openEndTag"
+        app:layout_constraintStart_toStartOf="@id/onlineMeetingSwitch">
+
+        <RadioButton
+            android:id="@+id/openOff"
+            android:background="@drawable/toggle_widget_background"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:button="@null"
+            android:gravity="center"
+            android:text="@string/off"
+            android:textColor="@color/default_color" />
+
+        <RadioButton
+            android:id="@+id/openOn"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/toggle_widget_background"
+            android:button="@null"
+            android:gravity="center"
+            android:text="@string/on"
+            android:textColor="@color/default_color" />
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/causeTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/openEndTag"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
+        android:text="@string/cause"
+        android:textStyle="bold"/>
+
+    <EditText
+        android:id="@+id/causeInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/causeTag"
+        app:layout_constraintStart_toStartOf="@+id/causeTag"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/border" />
+
+    <TextView
+        android:id="@+id/beginDateTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/causeInput"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="20dp"
+        android:text="@string/date"
+        android:textStyle="bold"/>
+
+    <EditText
+        android:id="@+id/beginDateInput"
+        android:clickable="true"
+        android:inputType="date"
+        android:background="@drawable/border"
+        android:focusable="false"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/beginDateTag"
+        app:layout_constraintStart_toEndOf="@+id/beginDateTag"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:ems="5" />
+
+    <TextView
+        android:id="@+id/beginTimeTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/beginDateInput"
+        app:layout_constraintStart_toEndOf="@id/beginDateInput"
+        android:layout_marginTop="40dp"
+        android:layout_marginStart="20dp"
+        android:text="@string/time"
+        android:textStyle="bold"/>
+
+    <EditText
+        android:id="@+id/beginTimeInput"
+        android:clickable="true"
+        android:inputType="time"
+        android:background="@drawable/border"
+        android:focusable="false"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/beginTimeTag"
+        app:layout_constraintStart_toEndOf="@+id/beginTimeTag"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:ems="3" />
+
+    <TextView
+        android:id="@+id/locationTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/beginDateTag"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="20dp"
+        android:text="@string/location"
+        android:textStyle="bold"/>
+
+    <EditText
+        android:id="@+id/locationInput"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/locationTag"
+        app:layout_constraintStart_toEndOf="@+id/locationTag"
+        android:layout_marginStart="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/border" />
+
+    <TextView
+        android:id="@+id/plannedEndTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/locationTag"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="20dp"
+        android:text="@string/plannedEnd"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/expectedEndInput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/plannedEndTag"
+        app:layout_constraintStart_toEndOf="@id/plannedEndTag"
+        android:layout_marginStart="20dp" />
+
+    <EditText
+        android:id="@+id/plannedEndInput"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:inputType="time"
+        android:focusable="false"
+        app:layout_constraintBottom_toBottomOf="@id/plannedEndTag"
+        app:layout_constraintStart_toEndOf="@id/plannedEndTag"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/border"
+        android:ems="9" />
+
+    <TextView
+        android:id="@+id/topicTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/plannedEndTag"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="20dp"
+        android:text="@string/topics"
+        android:textStyle="bold"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/topicList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintHeight_default="wrap"
+        app:layout_constraintHeight_max="130dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/topicTag"
+        app:layout_constraintVertical_chainStyle="spread_inside"
+        android:background="@drawable/border"/>
+
+    <TextView
+        android:id="@+id/createMeetingText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintTop_toTopOf="@+id/createMeetingFab"
+        app:layout_constraintEnd_toStartOf="@+id/createMeetingFab"
+        app:layout_constraintBottom_toBottomOf="@+id/createMeetingFab"
+        android:text="@string/createMeeting"
+        android:textStyle="bold"
+        android:textColor="@color/default_black"
+        android:background="@color/colorPrimary"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/createMeetingFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:fabSize="mini"
+        android:layout_marginEnd="25dp"
+        android:layout_marginBottom="10dp"
+        android:src="@drawable/done"
+        android:backgroundTint="@color/colorPrimary"
+        app:layout_constraintBottom_toTopOf="@id/addTopicFab"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:borderWidth="0dp" />
+
+    <TextView
+        android:id="@+id/addTopicText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintTop_toTopOf="@+id/addTopicFab"
+        app:layout_constraintEnd_toStartOf="@+id/addTopicFab"
+        app:layout_constraintBottom_toBottomOf="@+id/addTopicFab"
+        android:text="@string/addTopic"
+        android:textStyle="bold"
+        android:textColor="@color/default_black"
+        android:background="@color/colorPrimary"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addTopicFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:fabSize="mini"
+        android:layout_marginEnd="25dp"
+        android:layout_marginBottom="10dp"
+        android:src="@drawable/add_topic"
+        android:backgroundTint="@color/colorPrimary"
+        app:layout_constraintBottom_toTopOf="@id/generalFab"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:borderWidth="0dp" />
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/generalFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:src="@drawable/general_fab_icon"
+        android:backgroundTint="@color/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:borderWidth="0dp"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/list_empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/noTopicsAddedYet" />
+
+</LinearLayout>
