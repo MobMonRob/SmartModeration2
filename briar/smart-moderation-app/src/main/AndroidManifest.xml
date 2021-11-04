@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="dhbw.smartmoderation">
+
+    <uses-feature
+        android:name="android.hardware.bluetooth"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!--suppress DeprecatedClassUsageInspection -->
+    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <uses-permission-sdk-23 android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission-sdk-23 android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <uses-permission-sdk-23 android:name="android.permission.USE_BIOMETRIC" />
+    <uses-permission-sdk-23 android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+
+    <application
+        android:name=".SmartModerationApplication"
+        android:allowBackup="false"
+
+        android:icon="@mipmap/ic_launcher_smart_moderation"
+        android:label="@string/app_name"
+        android:largeHeap="true"
+        android:roundIcon="@mipmap/ic_launcher_smart_moderation_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        tools:replace="android:allowBackup,android:icon">
+
+        <activity
+            android:name=".consensus.result.ConsensusProposalResult"
+            android:screenOrientation="portrait" >
+        </activity>
+
+        <activity
+            android:name=".consensus.evaluate.EvaluateConsensusProposal"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait" >
+        </activity>
+
+        <activity
+            android:name=".consensus.evaluate.CardActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".consensus.detail.ConsensusProposalDetail"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".consensus.create.CreateConsensusProposal"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".meeting.detail.BaseActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+
+        <activity
+            android:name=".meeting.create.CreateMeetingActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+
+        <activity
+            android:name=".group.personInfo.AddContactActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".group.personInfo.PersonInfoActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+
+        <activity
+            android:name=".group.settings.CreateConsensusLevelActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".group.settings.SettingsActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+
+        <activity
+            android:name=".group.create.CreateGroup"
+            android:screenOrientation="portrait">
+        </activity>
+
+        <activity
+            android:name=".group.invitations.ListInvitationsActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".home.HomeActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".group.overview.OverviewGroupActivity"
+            android:screenOrientation="portrait">
+        </activity>
+
+        <activity
+            android:name=".group.detail.DetailGroupActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+
+        <activity
+            android:name=".launcher.LauncherActivity"
+            android:screenOrientation="portrait" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".group.chat.GroupChatActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+
+        <activity
+            android:name=".account.create.CreateAccountActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".login.LoginActivity"
+            android:screenOrientation="portrait" />
+
+        <activity android:name=".account.contactexchange.ContactExchangeActivity" />
+
+        <activity
+            android:name="com.journeyapps.barcodescanner.CaptureActivity"
+            android:screenOrientation="fullSensor"
+            tools:replace="screenOrientation" />
+
+        <meta-data
+            android:name="DOMAIN_PACKAGE_NAME"
+            android:value="dhbw.smartmoderation.data.entities" />
+    </application>
+
+</manifest>

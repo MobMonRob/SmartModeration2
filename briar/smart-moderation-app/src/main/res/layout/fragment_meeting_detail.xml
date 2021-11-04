@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/constraintLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/causeTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
+        android:text="@string/cause"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/causeInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/causeTag"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="130dp"/>
+
+    <TextView
+        android:id="@+id/beginTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/causeTag"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="20dp"
+        android:text="@string/beginning"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/beginInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/causeInfo"
+        app:layout_constraintStart_toStartOf="@id/causeInfo"
+        android:layout_marginTop="10dp"/>
+
+    <TextView
+        android:id="@+id/endTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/beginTag"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="20dp"
+        android:text="@string/plannedEnd"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/endInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/beginInfo"
+        app:layout_constraintStart_toStartOf="@id/beginInfo"
+        android:layout_marginTop="10dp"/>
+
+    <TextView
+        android:id="@+id/locationTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/endTag"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="20dp"
+        android:text="@string/location"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/locationInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/endInfo"
+        app:layout_constraintStart_toStartOf="@id/endInfo"
+        android:layout_marginTop="10dp"/>
+
+    <com.beardedhen.androidbootstrap.BootstrapProgressBar
+        android:id="@+id/progressBar"
+        app:layout_constraintTop_toBottomOf="@id/locationTag"
+        app:layout_constraintStart_toStartOf="@id/locationTag"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="20dp"
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        app:animated="true"
+        app:bootstrapBrand="success" />
+
+    <params.com.stepview.StatusViewScroller
+        android:id="@+id/stepView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/locationTag"
+        app:drawLabels="true"
+        app:layout_constraintStart_toStartOf="@id/locationTag"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="20dp"
+        app:circleColorType="fillStroke"
+        app:lineGap="0dp"
+        app:lineWidth="7dp"
+        app:lineColor="@color/default_green"
+        app:lineColorCurrent="@color/colorPrimary"
+        app:lineColorIncomplete="@color/default_grey"
+        app:circleColor="@color/default_green"
+        app:circleColorCurrent="@color/colorPrimary"
+        app:circleColorIncomplete="@color/default_grey"
+        app:textColorLabels="@color/default_color"
+        app:textColorLabelsCurrent="@color/default_color"
+        app:textColorLabelsIncomplete="@color/default_color"
+        app:circleStrokeWidth="4dp"
+        app:circleStrokeColor="@color/default_green"
+        app:circleStrokeColorCurrent="@color/colorPrimary"
+        app:circleStrokeColorIncomplete="@color/default_grey"
+        app:textSizeLabels="15sp"
+        app:completeDrawable="@drawable/ic_baseline_done_10" />
+
+    <TextView
+        android:id="@+id/memberTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/stepView"
+        app:layout_constraintStart_toStartOf="@id/stepView"
+        android:text="@string/participants"
+        android:layout_marginTop="20dp"
+        android:textStyle="bold"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/memberList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintHeight_default="wrap"
+        app:layout_constraintHeight_max="100dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/memberTag"
+        app:layout_constraintVertical_chainStyle="spread_inside"
+        android:background="@drawable/border"/>
+
+    <TextView
+        android:id="@+id/topicTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/memberList"
+        app:layout_constraintStart_toStartOf="@id/memberList"
+        android:text="@string/topics"
+        android:layout_marginTop="15dp"
+        android:textStyle="bold"/>
+
+    <ImageButton
+        android:id="@+id/switchViewButton"
+        android:layout_width="30dp"
+        android:layout_height="20dp"
+        app:layout_constraintTop_toTopOf="@id/topicTag"
+        app:layout_constraintBottom_toTopOf="@id/topicList"
+        app:layout_constraintStart_toEndOf="@id/topicTag"
+        android:layout_marginStart="15dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/rounded" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/topicList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintHeight_default="wrap"
+        app:layout_constraintHeight_max="100dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/topicTag"
+        app:layout_constraintVertical_chainStyle="spread_inside"
+        android:background="@drawable/border"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
