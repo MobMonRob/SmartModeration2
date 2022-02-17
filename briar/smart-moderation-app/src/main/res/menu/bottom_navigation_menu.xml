@@ -20,4 +20,9 @@
         android:enabled="true"
         android:icon="@drawable/ic_baseline_speaker_notes_24"
         android:title="@string/speakingTime"/>
+    <item
+        android:id="@+id/moderationCards"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_sticky_note_2_24"
+        android:title="@string/moderationCard"/>
 </menu>

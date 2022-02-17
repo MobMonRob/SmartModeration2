@@ -220,6 +220,7 @@
     <string name="add">Add</string>
     <string name="speakingTime">Speaking Times</string>
     <string name="consensusProposals">Consensus Proposals</string>
+    <string name="moderationCard">Moderation Card</string>
 
     <!-- permission -->
     <string name="camera_permission_title">Camera Permission</string>
