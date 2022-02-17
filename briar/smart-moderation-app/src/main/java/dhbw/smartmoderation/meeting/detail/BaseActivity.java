@@ -21,6 +21,7 @@ import dhbw.smartmoderation.consensus.overview.ConsensusProposalOverviewFragment
 import dhbw.smartmoderation.listOfSpeakers.CumulativeSpeakingTimesFragment;
 import dhbw.smartmoderation.listOfSpeakers.ListOfSpeakersController;
 import dhbw.smartmoderation.listOfSpeakers.ListOfSpeakersFragment;
+import dhbw.smartmoderation.moderationcards.overview.ModerationCardsFragment;
 import dhbw.smartmoderation.util.ExceptionHandlingActivity;
 import dhbw.smartmoderation.util.UpdateableExceptionHandlingActivity;
 
@@ -34,6 +35,7 @@ public class BaseActivity extends UpdateableExceptionHandlingActivity {
     private final Fragment consensusProposalOverviewFragment = new ConsensusProposalOverviewFragment();
     private final Fragment listOfSpeakersFragment = new ListOfSpeakersFragment();
     private Fragment cumulativeSpeakingTimesFragment = new CumulativeSpeakingTimesFragment();
+    private Fragment moderationCardsFragment = new ModerationCardsFragment();
     Fragment selectedFragment;
 
 
@@ -58,6 +60,7 @@ public class BaseActivity extends UpdateableExceptionHandlingActivity {
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, consensusProposalOverviewFragment, "2").hide(consensusProposalOverviewFragment).commit();
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, listOfSpeakersFragment, "3").hide(listOfSpeakersFragment).commit();
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, cumulativeSpeakingTimesFragment, "4").hide(cumulativeSpeakingTimesFragment).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, moderationCardsFragment, "5").hide(moderationCardsFragment).commit();
 
     }
 
@@ -122,6 +125,16 @@ public class BaseActivity extends UpdateableExceptionHandlingActivity {
                     cumulativeSpeakingTimesFragment = newCumulativeSpeakingTimesFragment;
                     getSupportFragmentManager().beginTransaction().hide(selectedFragment).show(cumulativeSpeakingTimesFragment).commit();
                     selectedFragment = cumulativeSpeakingTimesFragment;
+                    return true;
+                case R.id.moderationCards:
+                    setTitle(getString(R.string.moderationCardTitle));
+//                    ModerationCardsFragment newModerationCardsFragment = new ModerationCardsFragment();
+//                    getSupportFragmentManager().beginTransaction().remove(moderationCardsFragment).commit();
+//                    getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, newModerationCardsFragment).commit();
+//                    moderationCardsFragment = newModerationCardsFragment;
+//                    getSupportFragmentManager().beginTransaction().hide(selectedFragment).show(moderationCardsFragment).commit();
+//                    selectedFragment = moderationCardsFragment;
+//                    setTitle(((ModerationCardsFragment)moderationCardsFragment).getTitle());
                     return true;
 
             }

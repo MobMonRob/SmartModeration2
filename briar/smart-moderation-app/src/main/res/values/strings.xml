@@ -221,6 +221,7 @@
     <string name="speakingTime">Speaking Times</string>
     <string name="consensusProposals">Consensus Proposals</string>
     <string name="moderationCard">Moderation Card</string>
+    <string name="moderationCardTitle">Moderation Cards</string>
 
     <!-- permission -->
     <string name="camera_permission_title">Camera Permission</string>

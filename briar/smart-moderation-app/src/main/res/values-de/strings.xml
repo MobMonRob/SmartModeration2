@@ -23,6 +23,7 @@
 	<string name="sending_voice">Stimme abgeben...</string>
 	<string name="voice_sent">Stimme wurde abgegeben</string>
 	<string name="moderationCard">Moderationskarte</string>
+	<string name="moderationCardTitle">Moderationskarten</string>
 
 	<string name="role_moderator">Moderator</string>
 	<string name="role_participant">Teilnehmer</string>
