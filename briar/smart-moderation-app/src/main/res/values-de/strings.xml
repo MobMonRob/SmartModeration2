@@ -192,6 +192,7 @@
 	<string name="beginning">Beginn</string>
 	<string name="durationInMinutes">Dauer in Minuten</string>
 	<string name="showQrCodeInFullScreen">QR-Code im Vollbildmodus anzeigen</string>
+	<string name="moderationCardText">Inhalt der Moderationskarte</string>
 	<!-- buttons -->
 	<string name="ChangeEvaluation">Bewertung ändern</string>
 	<string name="end_evaluation">Bewertung\nbeenden</string>
@@ -218,6 +219,7 @@
 	<string name="add">Hinzufügen</string>
 	<string name="speakingTime">Redezeiten</string>
 	<string name="consensusProposals">Konsensvorschläge</string>
+	<string name="selectColor">Farbe auswählen</string>
 
 	<!-- permission -->
 	<string name="camera_permission_title">Kamerazugriff</string>
