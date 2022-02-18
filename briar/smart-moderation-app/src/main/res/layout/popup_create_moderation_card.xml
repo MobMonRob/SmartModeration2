@@ -28,7 +28,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/pickColorButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
@@ -38,14 +38,14 @@
         app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName" />
 
     <SurfaceView
-        android:id="@+id/surfaceView"
+        android:id="@+id/colorViewer"
         android:layout_width="42dp"
         android:layout_height="34dp"
         android:layout_marginTop="28dp"
         android:layout_marginEnd="120dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/button"
+        app:layout_constraintStart_toEndOf="@+id/pickColorButton"
         app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName" />
 
     <Button
@@ -56,7 +56,7 @@
         android:layout_marginTop="48dp"
         android:text="@string/add"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button" />
+        app:layout_constraintTop_toBottomOf="@+id/pickColorButton" />
 
     <Button
         android:id="@+id/cancelButton"
@@ -66,6 +66,6 @@
         android:layout_marginEnd="24dp"
         android:text="@string/cancel"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/surfaceView" />
+        app:layout_constraintTop_toBottomOf="@+id/colorViewer" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
