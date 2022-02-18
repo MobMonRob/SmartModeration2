@@ -127,14 +127,12 @@ public class BaseActivity extends UpdateableExceptionHandlingActivity {
                     selectedFragment = cumulativeSpeakingTimesFragment;
                     return true;
                 case R.id.moderationCards:
-                    setTitle(getString(R.string.moderationCardTitle));
-//                    ModerationCardsFragment newModerationCardsFragment = new ModerationCardsFragment();
-//                    getSupportFragmentManager().beginTransaction().remove(moderationCardsFragment).commit();
-//                    getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, newModerationCardsFragment).commit();
-//                    moderationCardsFragment = newModerationCardsFragment;
-//                    getSupportFragmentManager().beginTransaction().hide(selectedFragment).show(moderationCardsFragment).commit();
-//                    selectedFragment = moderationCardsFragment;
-//                    setTitle(((ModerationCardsFragment)moderationCardsFragment).getTitle());
+                    ModerationCardsFragment newModerationCardsFragment = new ModerationCardsFragment();
+                    getSupportFragmentManager().beginTransaction().remove(moderationCardsFragment).commit();
+                    getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, newModerationCardsFragment).commit();
+                    moderationCardsFragment = newModerationCardsFragment;
+                    getSupportFragmentManager().beginTransaction().hide(selectedFragment).show(moderationCardsFragment).commit();
+                    selectedFragment = moderationCardsFragment;
                     return true;
 
             }
