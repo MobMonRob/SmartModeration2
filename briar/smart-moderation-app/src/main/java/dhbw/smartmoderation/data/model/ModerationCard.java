@@ -13,7 +13,7 @@ import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.annotation.NotNull;
 
 @Entity
-public class ModerationCard {
+public class ModerationCard extends ModelClass{
 
     @Id
     private Long cardId;

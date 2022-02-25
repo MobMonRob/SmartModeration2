@@ -14,6 +14,7 @@ import dhbw.smartmoderation.data.model.Meeting;
 import dhbw.smartmoderation.data.model.Member;
 import dhbw.smartmoderation.data.model.MemberGroupRelation;
 import dhbw.smartmoderation.data.model.MemberMeetingRelation;
+import dhbw.smartmoderation.data.model.ModerationCard;
 import dhbw.smartmoderation.data.model.Participation;
 import dhbw.smartmoderation.data.model.Poll;
 import dhbw.smartmoderation.data.model.PrivateGroup;
@@ -23,6 +24,7 @@ import dhbw.smartmoderation.exceptions.GroupNotFoundException;
 import dhbw.smartmoderation.exceptions.GroupSettingsNotFoundException;
 import dhbw.smartmoderation.exceptions.MeetingNotFoundException;
 import dhbw.smartmoderation.exceptions.MemberNotFoundException;
+import dhbw.smartmoderation.exceptions.ModerationCardNotFoundException;
 import dhbw.smartmoderation.exceptions.PollNotFoundException;
 import dhbw.smartmoderation.exceptions.VoiceNotFoundException;
 
@@ -138,5 +140,11 @@ public interface DataService {
 	void deleteMemberGroupRelation(MemberGroupRelation memberGroupRelation);
 
 	void deleteMemberMeetingRelation(MemberMeetingRelation memberMeetingRelation);
+
+    void mergeModerationCard(ModerationCard moderationCard);
+
+	void deleteModerationCard(ModerationCard moderationCard);
+
+	ModerationCard getModerationCard(Long cardId) throws ModerationCardNotFoundException;
 
 }
