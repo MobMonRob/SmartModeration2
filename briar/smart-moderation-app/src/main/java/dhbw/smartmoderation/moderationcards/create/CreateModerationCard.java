@@ -8,6 +8,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,12 +23,14 @@ import dhbw.smartmoderation.exceptions.ModerationCardNotFoundException;
 import dhbw.smartmoderation.moderationcards.overview.ModerationCardsController;
 
 public class CreateModerationCard extends Fragment {
-    private FloatingActionButton addButton;
     private Button pickColorButton;
     private SurfaceView cardColorViewer;
     private int cardColor;
     private View popUp;
     private CreateModerationCardController createModerationCardController;
+    private EditText moderationCardContentHolder;
+    private String moderationCardContent;
+    private AlertDialog addModerationCardDialog;
 
     private final View.OnClickListener pickColorButtonClickListener = v -> {
         ColorPicker colorPicker = new ColorPicker(getActivity());
@@ -38,32 +41,15 @@ public class CreateModerationCard extends Fragment {
             cardColorViewer.setBackgroundColor(cardColor);
         });
     };
-
-    private final View.OnClickListener addButtonClickListener = v -> {
-        LayoutInflater inflater = LayoutInflater.from(getActivity());
-        popUp = inflater.inflate(R.layout.popup_create_moderation_card, null);
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setView(this.popUp);
-        AlertDialog alertDialog = builder.create();
-
-        pickColorButton = this.popUp.findViewById(R.id.pickColorButton);
-        pickColorButton.setOnClickListener(pickColorButtonClickListener);
-        cardColorViewer = this.popUp.findViewById(R.id.colorViewer);
-        Button addButton = this.popUp.findViewById(R.id.addButton);
-        addButton.setOnClickListener(view ->{
-            //todo: get parameters for method addModerationCard()
-            try {
-                createModerationCardController.createModerationCard("test",1);
-            } catch (CantCreateModerationCardException | ModerationCardNotFoundException e) {
-                e.printStackTrace();
-            }
-            alertDialog.cancel();
-        });
-        Button cancelButton = this.popUp.findViewById(R.id.cancelButton);
-        cancelButton.setOnClickListener( view -> alertDialog.cancel());
-        alertDialog.show();
+    private final View.OnClickListener addModerationCardClickListener = v ->{
+        try {
+            moderationCardContent = moderationCardContentHolder.getText().toString();
+            createModerationCardController.createModerationCard(moderationCardContent,cardColor);
+        } catch (CantCreateModerationCardException | ModerationCardNotFoundException e) {
+            e.printStackTrace();
+        }
+        addModerationCardDialog.cancel();
     };
-
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -74,14 +60,22 @@ public class CreateModerationCard extends Fragment {
         createModerationCardController = new CreateModerationCardController(meetingId);
     }
 
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);
-        getActivity().setTitle(getString(R.string.moderationCardTitle));
-        addButton = this.getView().findViewById(R.id.floatingActionButton);
-        this.addButton.setOnClickListener(addButtonClickListener);
-        return getView();
+        popUp = inflater.inflate(R.layout.popup_create_moderation_card, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setView(this.popUp);
+        addModerationCardDialog = builder.create();
+        pickColorButton = this.popUp.findViewById(R.id.pickColorButton);
+        pickColorButton.setOnClickListener(pickColorButtonClickListener);
+        cardColorViewer = this.popUp.findViewById(R.id.colorViewer);
+        moderationCardContentHolder = this.popUp.findViewById(R.id.moderationCardContent);
+        Button addButton = this.popUp.findViewById(R.id.addButton);
+        addButton.setOnClickListener(addModerationCardClickListener);
+        Button cancelButton = this.popUp.findViewById(R.id.cancelButton);
+        cancelButton.setOnClickListener( view -> addModerationCardDialog.cancel());
+        addModerationCardDialog.show();
+        return popUp;
     }
 }
