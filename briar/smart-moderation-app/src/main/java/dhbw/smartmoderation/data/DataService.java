@@ -147,4 +147,5 @@ public interface DataService {
 
 	ModerationCard getModerationCard(Long cardId) throws ModerationCardNotFoundException;
 
+	Collection<ModerationCard> getModerationCards() ;
 }

@@ -1,6 +1,4 @@
-package dhbw.smartmoderation.moderationcards.create;
-
-import android.view.Display;
+package dhbw.smartmoderation.moderationCard;
 
 import org.briarproject.briar.api.privategroup.PrivateGroup;
 
@@ -11,17 +9,15 @@ import dhbw.smartmoderation.controller.SmartModerationController;
 import dhbw.smartmoderation.data.model.Meeting;
 import dhbw.smartmoderation.data.model.ModelClass;
 import dhbw.smartmoderation.data.model.ModerationCard;
-import dhbw.smartmoderation.data.model.Poll;
 import dhbw.smartmoderation.exceptions.CantCreateModerationCardException;
-import dhbw.smartmoderation.exceptions.CantSendConsensusProposal;
 import dhbw.smartmoderation.exceptions.GroupNotFoundException;
 import dhbw.smartmoderation.exceptions.ModerationCardNotFoundException;
 import dhbw.smartmoderation.util.Util;
 
-public class CreateModerationCardController extends SmartModerationController {
+public class ModerationCardsController extends SmartModerationController {
     public long meetingId;
 
-    public CreateModerationCardController(long meetingId) {
+    public ModerationCardsController(long meetingId) {
         this.meetingId = meetingId;
     }
     private Meeting getMeeting() {

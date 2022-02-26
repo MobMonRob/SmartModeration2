@@ -15,14 +15,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import dhbw.smartmoderation.R;
-import dhbw.smartmoderation.connection.synchronization.PullEvent;
 import dhbw.smartmoderation.connection.synchronization.SynchronizableDataType;
 import dhbw.smartmoderation.consensus.overview.ConsensusProposalOverviewFragment;
 import dhbw.smartmoderation.listOfSpeakers.CumulativeSpeakingTimesFragment;
 import dhbw.smartmoderation.listOfSpeakers.ListOfSpeakersController;
 import dhbw.smartmoderation.listOfSpeakers.ListOfSpeakersFragment;
-import dhbw.smartmoderation.moderationcards.overview.ModerationCardsFragment;
-import dhbw.smartmoderation.util.ExceptionHandlingActivity;
+import dhbw.smartmoderation.moderationCard.ModerationCardsFragment;
 import dhbw.smartmoderation.util.UpdateableExceptionHandlingActivity;
 
 public class BaseActivity extends UpdateableExceptionHandlingActivity {
