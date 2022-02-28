@@ -43,6 +43,9 @@ public class Meeting extends ModelClass {
 	@ToMany(referencedJoinProperty = "meetingId")
 	private List<Participation> participations;
 
+	@ToMany(referencedJoinProperty = "cardId")
+	private List<ModerationCard> moderationCards;
+
 	@ToMany
 	@JoinEntity(entity = MemberMeetingRelation.class, sourceProperty = "meetingId", targetProperty = "memberId")
 	private List<Member> members;
@@ -432,6 +435,34 @@ public class Meeting extends ModelClass {
 			throw new DaoException("Entity is detached from DAO context");
 		}
 		myDao.update(this);
+	}
+
+	/**
+	 * To-many relationship, resolved on first access (and after reset).
+	 * Changes to to-many relations are not persisted, make changes to the target entity.
+	 */
+	@Generated(hash = 1993358756)
+	public List<ModerationCard> getModerationCards() {
+		if (moderationCards == null) {
+			final DaoSession daoSession = this.daoSession;
+			if (daoSession == null) {
+				throw new DaoException("Entity is detached from DAO context");
+			}
+			ModerationCardDao targetDao = daoSession.getModerationCardDao();
+			List<ModerationCard> moderationCardsNew = targetDao._queryMeeting_ModerationCards(meetingId);
+			synchronized (this) {
+				if (moderationCards == null) {
+					moderationCards = moderationCardsNew;
+				}
+			}
+		}
+		return moderationCards;
+	}
+
+	/** Resets a to-many relationship, making the next get call to query for a fresh result. */
+	@Generated(hash = 1384012850)
+	public synchronized void resetModerationCards() {
+		moderationCards = null;
 	}
 
 	/** called by internal mechanisms, do not call yourself. */

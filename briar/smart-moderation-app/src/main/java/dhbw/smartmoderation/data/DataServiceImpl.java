@@ -8,6 +8,7 @@ import org.briarproject.bramble.api.identity.LocalAuthor;
 import org.briarproject.briar.api.privategroup.GroupMember;
 import org.greenrobot.greendao.database.Database;
 import org.jdom2.CDATA;
+import org.spongycastle.math.raw.Mod;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -33,6 +34,8 @@ import dhbw.smartmoderation.data.model.MemberGroupRelation;
 import dhbw.smartmoderation.data.model.MemberGroupRelationDao;
 import dhbw.smartmoderation.data.model.MemberMeetingRelation;
 import dhbw.smartmoderation.data.model.MemberMeetingRelationDao;
+import dhbw.smartmoderation.data.model.ModerationCard;
+import dhbw.smartmoderation.data.model.ModerationCardDao;
 import dhbw.smartmoderation.data.model.Participation;
 import dhbw.smartmoderation.data.model.ParticipationDao;
 import dhbw.smartmoderation.data.model.Poll;
@@ -47,6 +50,7 @@ import dhbw.smartmoderation.exceptions.GroupNotFoundException;
 import dhbw.smartmoderation.exceptions.GroupSettingsNotFoundException;
 import dhbw.smartmoderation.exceptions.MeetingNotFoundException;
 import dhbw.smartmoderation.exceptions.MemberNotFoundException;
+import dhbw.smartmoderation.exceptions.ModerationCardNotFoundException;
 import dhbw.smartmoderation.exceptions.PollNotFoundException;
 import dhbw.smartmoderation.exceptions.VoiceNotFoundException;
 import dhbw.smartmoderation.util.Util;
@@ -65,6 +69,7 @@ public class DataServiceImpl implements DataService {
 	private ConsensusLevelDao consensusLevelDao;
 	private MemberGroupRelationDao memberGroupRelationDao;
 	private MemberMeetingRelationDao memberMeetingRelationDao;
+    private ModerationCardDao moderationCardDao;
 
 	public DataServiceImpl() {
 
@@ -82,6 +87,7 @@ public class DataServiceImpl implements DataService {
 		consensusLevelDao = daoSession.getConsensusLevelDao();
 		memberGroupRelationDao = daoSession.getMemberGroupRelationDao();
 		memberMeetingRelationDao = daoSession.getMemberMeetingRelationDao();
+        moderationCardDao = daoSession.getModerationCardDao();
 	}
 
 	@Override
@@ -1103,6 +1109,62 @@ public class DataServiceImpl implements DataService {
 
 		memberMeetingRelationDao.delete(memberMeetingRelation);
 
+	}
+
+    @Override
+    public void mergeModerationCard(ModerationCard moderationCard) {
+        if(moderationCard.isDeleted()) {
+
+            deleteModerationCard(moderationCard);
+            return;
+        }
+
+        Meeting meeting = null;
+
+        try {
+
+            meeting = getMeeting(moderationCard.getMeetingId());
+
+        } catch (MeetingNotFoundException e) {
+
+            e.printStackTrace();
+        }
+
+        if(meeting == null) {
+
+            return;
+        }
+
+
+        moderationCardDao.insertOrReplaceInTx(moderationCard);
+    }
+
+    @Override
+    public void deleteModerationCard(ModerationCard moderationCard) {
+        moderationCardDao.deleteInTx(moderationCard);
+    }
+
+	@Override
+	public ModerationCard getModerationCard(Long cardId) throws ModerationCardNotFoundException {
+		if(moderationCardDao.load(cardId) != null) {
+
+			moderationCardDao.detach(moderationCardDao.load(cardId));
+		}
+
+		ModerationCard moderationCard = moderationCardDao.load(cardId);
+
+		if(moderationCard != null) {
+
+			return moderationCard;
+		}
+
+		throw new ModerationCardNotFoundException();
+
+	}
+
+	@Override
+	public Collection<ModerationCard> getModerationCards() {
+		return moderationCardDao.loadAll();
 	}
 
 }
