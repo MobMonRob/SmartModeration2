@@ -13,6 +13,7 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.pes.androidmaterialcolorpickerdialog.ColorPicker;
@@ -33,7 +34,8 @@ public class ModerationCardsFragment extends Fragment {
     private EditText moderationCardContentHolder;
     private String moderationCardContent;
     private AlertDialog alertDialog;
-
+    private ModerationCardAdapter moderationCardAdapter;
+    private RecyclerView moderationCardsRecyclerView;
     private final View.OnClickListener pickColorButtonClickListener = v -> {
         ColorPicker colorPicker = new ColorPicker(this.getActivity());
         colorPicker.show();
@@ -83,6 +85,10 @@ public class ModerationCardsFragment extends Fragment {
         getActivity().setTitle(getString(R.string.moderationCardTitle));
         addButton = this.view.findViewById(R.id.floatingActionButton);
         this.addButton.setOnClickListener(addButtonClickListener);
+        this.moderationCardsRecyclerView = this.view.findViewById(R.id.moderationCardList);
+        this.moderationCardAdapter = new ModerationCardAdapter(getActivity(), controller.getAllModerationCards());
+        this.moderationCardsRecyclerView.setAdapter(moderationCardAdapter);
+
         return this.view;
     }
 

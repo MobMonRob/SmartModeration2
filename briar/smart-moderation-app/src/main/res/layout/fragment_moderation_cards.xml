@@ -6,6 +6,7 @@
     android:layout_height="match_parent">
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/moderationCardList"
         android:layout_width="391dp"
         android:layout_height="493dp"
         app:layout_constraintBottom_toBottomOf="parent"

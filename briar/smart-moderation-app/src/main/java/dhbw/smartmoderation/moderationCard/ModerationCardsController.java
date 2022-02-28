@@ -70,4 +70,10 @@ public class ModerationCardsController extends SmartModerationController {
 
         }
     }
+
+    public Collection<String> getAllModerationCards() {
+        Collection<String> s = new ArrayList<>();
+        s.add("s");
+        return s;
+    }
 }
