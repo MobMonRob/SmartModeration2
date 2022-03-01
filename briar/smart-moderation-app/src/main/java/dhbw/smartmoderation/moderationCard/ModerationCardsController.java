@@ -71,9 +71,7 @@ public class ModerationCardsController extends SmartModerationController {
         }
     }
 
-    public Collection<String> getAllModerationCards() {
-        Collection<String> s = new ArrayList<>();
-        s.add("s");
-        return s;
+    public Collection<ModerationCard> getAllModerationCards() {
+        return dataService.getModerationCards();
     }
 }

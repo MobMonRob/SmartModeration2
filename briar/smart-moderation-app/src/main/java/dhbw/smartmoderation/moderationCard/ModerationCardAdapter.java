@@ -1,6 +1,7 @@
 package dhbw.smartmoderation.moderationCard;
 
 import android.content.Context;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,18 +12,22 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.spongycastle.math.raw.Mod;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
+import dhbw.smartmoderation.data.model.ModerationCard;
+
 public class ModerationCardAdapter extends RecyclerView.Adapter<ModerationCardAdapter.ModerationCardViewHolder>{
     private Context context;
-    private ArrayList<String> moderationCards = new ArrayList<String>();
+    private ArrayList<ModerationCard> moderationCards = new ArrayList<ModerationCard>();
 
-    public ModerationCardAdapter(Context context, Collection<String> moderationCards) {
+    public ModerationCardAdapter(Context context, Collection<ModerationCard> moderationCards) {
         this.context = context;
         updateModerationCards(moderationCards);
     }
-    public void updateModerationCards(Collection<String> moderationCards){
+    public void updateModerationCards(Collection<ModerationCard> moderationCards){
         this.moderationCards.clear();
         this.moderationCards.addAll(moderationCards);
     }
@@ -39,7 +44,7 @@ public class ModerationCardAdapter extends RecyclerView.Adapter<ModerationCardAd
 
     @Override
     public void onBindViewHolder(@NonNull ModerationCardAdapter.ModerationCardViewHolder holder, int position) {
-        holder.setModerationCardText(moderationCards.get(position));
+        holder.setModerationCardText(moderationCards.get(position).getContent());
     }
 
     @Override
