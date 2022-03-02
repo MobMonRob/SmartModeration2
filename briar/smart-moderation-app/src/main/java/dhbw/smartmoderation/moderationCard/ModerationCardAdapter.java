@@ -1,15 +1,19 @@
 package dhbw.smartmoderation.moderationCard;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import org.spongycastle.math.raw.Mod;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,6 +24,13 @@ import dhbw.smartmoderation.data.model.ModerationCard;
 public class ModerationCardAdapter extends RecyclerView.Adapter<ModerationCardAdapter.ModerationCardViewHolder>{
     private Context context;
     private ArrayList<ModerationCard> moderationCards = new ArrayList<ModerationCard>();
+    private RecyclerView recyclerView;
+
+    private View.OnClickListener onClickListener = view -> {
+        int position = this.recyclerView.getChildLayoutPosition(view);
+        ModerationCard moderationCard = this.moderationCards.get(position);
+        //todo: open popup or detail view here with the moderation card
+    };
 
     public ModerationCardAdapter(Context context, Collection<ModerationCard> moderationCards) {
         this.context = context;
@@ -30,10 +41,17 @@ public class ModerationCardAdapter extends RecyclerView.Adapter<ModerationCardAd
         this.moderationCards.addAll(moderationCards);
     }
 
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+
+        this.recyclerView = recyclerView;
+    }
+
     @NonNull
     @Override
     public ModerationCardAdapter.ModerationCardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View cardView = LayoutInflater.from(context).inflate(R.layout.moderationcardlistitem, null);
+        cardView.setOnClickListener(onClickListener);
         return new ModerationCardViewHolder(cardView);
     }
 

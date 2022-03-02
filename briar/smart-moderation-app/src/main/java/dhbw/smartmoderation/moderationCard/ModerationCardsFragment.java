@@ -57,7 +57,7 @@ public class ModerationCardsFragment extends Fragment {
         alertDialog.cancel();
     };
 
-    private final View.OnClickListener addButtonClickListener = v -> {
+    public final View.OnClickListener addButtonClickListener = v -> {
         LayoutInflater inflater = LayoutInflater.from(getActivity());
         popUp = inflater.inflate(R.layout.popup_create_moderation_card, null);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
