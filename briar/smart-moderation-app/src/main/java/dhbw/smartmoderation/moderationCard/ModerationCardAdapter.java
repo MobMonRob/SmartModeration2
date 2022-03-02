@@ -1,22 +1,20 @@
 package dhbw.smartmoderation.moderationCard;
 
 import android.content.Context;
-import android.view.Display;
+import android.graphics.Color;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.recyclerview.widget.RecyclerView;
-
-import org.spongycastle.math.raw.Mod;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
+import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.data.model.ModerationCard;
 
 public class ModerationCardAdapter extends RecyclerView.Adapter<ModerationCardAdapter.ModerationCardViewHolder>{
@@ -35,16 +33,24 @@ public class ModerationCardAdapter extends RecyclerView.Adapter<ModerationCardAd
     @NonNull
     @Override
     public ModerationCardAdapter.ModerationCardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ConstraintLayout constraintLayout = new ConstraintLayout(context);
-        constraintLayout.setLayoutParams(new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        ModerationCardAdapter.ModerationCardViewHolder
-                moderationCardViewHolder = new ModerationCardAdapter.ModerationCardViewHolder(constraintLayout, context);
-        return moderationCardViewHolder;
+        View cardView = LayoutInflater.from(context).inflate(R.layout.moderationcardlistitem, null);
+        return new ModerationCardViewHolder(cardView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ModerationCardAdapter.ModerationCardViewHolder holder, int position) {
-        holder.setModerationCardText(moderationCards.get(position).getContent());
+        TextView cardTextView = holder.itemView.findViewById(R.id.cardTextView);
+        cardTextView.setTextColor(getProperTextColor(moderationCards.get(position).getColor()));
+        cardTextView.setText(moderationCards.get(position).getContent());
+        cardTextView.setBackgroundColor(moderationCards.get(position).getColor());
+    }
+
+    private int getProperTextColor(int backgroundColor) {
+        if (backgroundColor >= Color.BLACK && backgroundColor < Color.GRAY) {
+            return Color.WHITE;
+        } else {
+            return Color.BLACK;
+        }
     }
 
     @Override
@@ -53,32 +59,9 @@ public class ModerationCardAdapter extends RecyclerView.Adapter<ModerationCardAd
     }
 
     protected static class ModerationCardViewHolder extends RecyclerView.ViewHolder{
-
-        private TextView ModerationCardTextView;
-        private Context context;
-
-        public ModerationCardViewHolder(ConstraintLayout layout, Context context) {
-            super(layout);
-            this.context = context;
-            ModerationCardTextView = new TextView(this.context);
-            ModerationCardTextView.setId(View.generateViewId());
-            ModerationCardTextView.setLayoutParams(new ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            ModerationCardTextView.setGravity(Gravity.CENTER);
-            ModerationCardTextView.setTextSize(18);
-            layout.addView(ModerationCardTextView);
-
-            ConstraintSet messageConstraintSet = new ConstraintSet();
-            messageConstraintSet.clone(layout);
-            messageConstraintSet.connect(ModerationCardTextView.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP);
-            messageConstraintSet.connect(ModerationCardTextView.getId(), ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT);
-            messageConstraintSet.connect(ModerationCardTextView.getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT);
-            messageConstraintSet.applyTo(layout);
-
-        }
-
-        public void setModerationCardText(String moderationCardText){
-            ModerationCardTextView.setText(moderationCardText);
+        public ModerationCardViewHolder(@NonNull View itemView) {
+            super(itemView);
         }
     }
+
 }
