@@ -1,19 +1,14 @@
 package dhbw.smartmoderation.moderationCard;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Color;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
-import org.spongycastle.math.raw.Mod;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,7 +24,8 @@ public class ModerationCardAdapter extends RecyclerView.Adapter<ModerationCardAd
     private View.OnClickListener onClickListener = view -> {
         int position = this.recyclerView.getChildLayoutPosition(view);
         ModerationCard moderationCard = this.moderationCards.get(position);
-        //todo: open popup or detail view here with the moderation card
+        EditModerationCard editModerationCardView = new EditModerationCard(moderationCard,view.getContext());
+        editModerationCardView.show();
     };
 
     public ModerationCardAdapter(Context context, Collection<ModerationCard> moderationCards) {
