@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.SurfaceView;
 import android.view.View;
@@ -17,7 +18,7 @@ import dhbw.smartmoderation.data.model.ModerationCard;
 import dhbw.smartmoderation.exceptions.CantCreateModerationCardException;
 import dhbw.smartmoderation.exceptions.ModerationCardNotFoundException;
 
-public class EditModerationCard {
+public class ModerationCardPopUp {
     AlertDialog alertDialog;
     View popUp;
     LayoutInflater inflater;
@@ -50,15 +51,20 @@ public class EditModerationCard {
         alertDialog.cancel();
     };
     //todo: delete clicklistener
-    public EditModerationCard(ModerationCard moderationCard, Context context) {
+
+    public ModerationCardPopUp(ModerationCard moderationCard, Context context) {
         initializePopup(context);
+        controller = new ModerationCardsController(moderationCard.getMeetingId());
         fillInModerationCardData(moderationCard);
         cardColor = moderationCard.getColor();
         moderationCardContent = moderationCard.getContent();
     }
 
 
-    public EditModerationCard(Context context) {
+    public ModerationCardPopUp(Context context) {
+//        Intent intent = getActivity().getIntent();
+//        Bundle extra = intent.getExtras();
+//        this.meetingId = extra.getLong("meetingId");
         initializePopup(context);
     }
 
