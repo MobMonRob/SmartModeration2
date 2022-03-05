@@ -24,8 +24,8 @@ public class ModerationCardAdapter extends RecyclerView.Adapter<ModerationCardAd
     private View.OnClickListener onClickListener = view -> {
         int position = this.recyclerView.getChildLayoutPosition(view);
         ModerationCard moderationCard = this.moderationCards.get(position);
-        ModerationCardPopUp moderationCardPopUpView = new ModerationCardPopUp(moderationCard,view.getContext());
-        moderationCardPopUpView.show();
+        EditModerationCard editModerationCardView = new EditModerationCard(moderationCard,view.getContext());
+        editModerationCardView.show();
     };
 
     public ModerationCardAdapter(Context context, Collection<ModerationCard> moderationCards) {

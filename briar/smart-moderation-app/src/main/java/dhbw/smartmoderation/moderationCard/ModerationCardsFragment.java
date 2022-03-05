@@ -1,12 +1,10 @@
 package dhbw.smartmoderation.moderationCard;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,8 +25,8 @@ public class ModerationCardsFragment extends Fragment {
     private RecyclerView moderationCardsRecyclerView;
 
     public final View.OnClickListener addButtonClickListener = v -> {
-        ModerationCardPopUp moderationCardPopUp = new ModerationCardPopUp(getActivity());
-        moderationCardPopUp.show();
+        CreateModerationCard createModerationCard = new CreateModerationCard(getActivity());
+        createModerationCard.show();
     };
 
     @Nullable

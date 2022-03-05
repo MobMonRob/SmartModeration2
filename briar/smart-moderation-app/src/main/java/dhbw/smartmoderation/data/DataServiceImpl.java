@@ -1,21 +1,15 @@
 package dhbw.smartmoderation.data;
 
 
-import androidx.constraintlayout.widget.ConstraintSet;
-
 import org.briarproject.bramble.api.identity.Author;
-import org.briarproject.bramble.api.identity.LocalAuthor;
 import org.briarproject.briar.api.privategroup.GroupMember;
 import org.greenrobot.greendao.database.Database;
-import org.jdom2.CDATA;
-import org.spongycastle.math.raw.Mod;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
+
 import dhbw.smartmoderation.SmartModerationApplication;
 import dhbw.smartmoderation.data.model.ConsensusLevel;
 import dhbw.smartmoderation.data.model.ConsensusLevelDao;
@@ -45,7 +39,6 @@ import dhbw.smartmoderation.data.model.Topic;
 import dhbw.smartmoderation.data.model.TopicDao;
 import dhbw.smartmoderation.data.model.Voice;
 import dhbw.smartmoderation.data.model.VoiceDao;
-import dhbw.smartmoderation.exceptions.ConsensusLevelsNotFoundException;
 import dhbw.smartmoderation.exceptions.GroupNotFoundException;
 import dhbw.smartmoderation.exceptions.GroupSettingsNotFoundException;
 import dhbw.smartmoderation.exceptions.MeetingNotFoundException;
@@ -57,1063 +50,1063 @@ import dhbw.smartmoderation.util.Util;
 
 public class DataServiceImpl implements DataService {
 
-	private DaoSession daoSession;
-	private MemberDao memberDao;
-	private MeetingDao meetingDao;
-	private GroupDao groupDao;
-	private GroupSettingsDao groupSettingsDao;
-	private PollDao pollDao;
-	private TopicDao topicDao;
-	private VoiceDao voiceDao;
-	private ParticipationDao participationDao;
-	private ConsensusLevelDao consensusLevelDao;
-	private MemberGroupRelationDao memberGroupRelationDao;
-	private MemberMeetingRelationDao memberMeetingRelationDao;
+    private DaoSession daoSession;
+    private MemberDao memberDao;
+    private MeetingDao meetingDao;
+    private GroupDao groupDao;
+    private GroupSettingsDao groupSettingsDao;
+    private PollDao pollDao;
+    private TopicDao topicDao;
+    private VoiceDao voiceDao;
+    private ParticipationDao participationDao;
+    private ConsensusLevelDao consensusLevelDao;
+    private MemberGroupRelationDao memberGroupRelationDao;
+    private MemberMeetingRelationDao memberMeetingRelationDao;
     private ModerationCardDao moderationCardDao;
 
-	public DataServiceImpl() {
+    public DataServiceImpl() {
 
-		DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(((SmartModerationApplication)SmartModerationApplication.getApp()).getApplicationContext(), "notes-db");
-		Database db = helper.getWritableDb();
-		daoSession = new DaoMaster(db).newSession();
-		memberDao = daoSession.getMemberDao();
-		meetingDao = daoSession.getMeetingDao();
-		groupDao = daoSession.getGroupDao();
-		groupSettingsDao = daoSession.getGroupSettingsDao();
-		pollDao = daoSession.getPollDao();
-		topicDao = daoSession.getTopicDao();
-		voiceDao = daoSession.getVoiceDao();
-		participationDao = daoSession.getParticipationDao();
-		consensusLevelDao = daoSession.getConsensusLevelDao();
-		memberGroupRelationDao = daoSession.getMemberGroupRelationDao();
-		memberMeetingRelationDao = daoSession.getMemberMeetingRelationDao();
+        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(((SmartModerationApplication) SmartModerationApplication.getApp()).getApplicationContext(), "notes-db");
+        Database db = helper.getWritableDb();
+        daoSession = new DaoMaster(db).newSession();
+        memberDao = daoSession.getMemberDao();
+        meetingDao = daoSession.getMeetingDao();
+        groupDao = daoSession.getGroupDao();
+        groupSettingsDao = daoSession.getGroupSettingsDao();
+        pollDao = daoSession.getPollDao();
+        topicDao = daoSession.getTopicDao();
+        voiceDao = daoSession.getVoiceDao();
+        participationDao = daoSession.getParticipationDao();
+        consensusLevelDao = daoSession.getConsensusLevelDao();
+        memberGroupRelationDao = daoSession.getMemberGroupRelationDao();
+        memberMeetingRelationDao = daoSession.getMemberMeetingRelationDao();
         moderationCardDao = daoSession.getModerationCardDao();
-	}
+    }
 
-	@Override
-	public synchronized void saveMember(Member member) {
+    @Override
+    public synchronized void saveMember(Member member) {
 
-		Collection<Member> allMembers = getMembers();
+        Collection<Member> allMembers = getMembers();
 
-		for(Member currentMember : allMembers) {
+        for (Member currentMember : allMembers) {
 
-			if(currentMember.getMemberId().equals(member.getMemberId())) {
+            if (currentMember.getMemberId().equals(member.getMemberId())) {
 
-				member.setMemberId(currentMember.getMemberId());
-				break;
-			}
-		}
+                member.setMemberId(currentMember.getMemberId());
+                break;
+            }
+        }
 
-		memberDao.insertOrReplaceInTx(member);
+        memberDao.insertOrReplaceInTx(member);
 
-	}
+    }
 
-	@Override
-	public synchronized void mergeMember(Member member) {
+    @Override
+    public synchronized void mergeMember(Member member) {
 
-		Collection<Member> allMembers = getMembers();
-		Member previousMember = null;
+        Collection<Member> allMembers = getMembers();
+        Member previousMember = null;
 
-		for(Member currentMember : allMembers) {
+        for (Member currentMember : allMembers) {
 
-			if(currentMember.getMemberId().equals(member.getMemberId())) {
-				previousMember = currentMember;
-				member.setMemberId(currentMember.getMemberId());
-				saveMember(previousMember);
-			}
-		}
+            if (currentMember.getMemberId().equals(member.getMemberId())) {
+                previousMember = currentMember;
+                member.setMemberId(currentMember.getMemberId());
+                saveMember(previousMember);
+            }
+        }
 
-		if(previousMember != null) {
+        if (previousMember != null) {
 
-			if(member.getName() == null || member.getName().isEmpty()) {
+            if (member.getName() == null || member.getName().isEmpty()) {
 
-				member.setName(previousMember.getName());
-			}
-		}
+                member.setName(previousMember.getName());
+            }
+        }
 
-		memberDao.insertOrReplaceInTx(member);
+        memberDao.insertOrReplaceInTx(member);
 
-	}
+    }
 
-	@Override
-	public synchronized void deleteMember(Member member) {
+    @Override
+    public synchronized void deleteMember(Member member) {
 
-		memberDao.deleteInTx(member);
+        memberDao.deleteInTx(member);
 
-	}
+    }
 
-	@Override
-	public synchronized Collection<Member> getMembers() {
+    @Override
+    public synchronized Collection<Member> getMembers() {
 
-		return memberDao.loadAll();
-	}
+        return memberDao.loadAll();
+    }
 
-	@Override
-	public synchronized Member getMember(Long memberId) throws MemberNotFoundException {
+    @Override
+    public synchronized Member getMember(Long memberId) throws MemberNotFoundException {
 
-		Member member = memberDao.load(memberId);
+        Member member = memberDao.load(memberId);
 
-		if(member != null) {
+        if (member != null) {
 
-			return member;
-		}
+            return member;
+        }
 
-		throw new MemberNotFoundException();
-	}
+        throw new MemberNotFoundException();
+    }
 
-	@Override
-	public Member getMember(Contact contact) throws MemberNotFoundException {
+    @Override
+    public Member getMember(Contact contact) throws MemberNotFoundException {
 
-		Member member = memberDao.load(contact.getId());
+        Member member = memberDao.load(contact.getId());
 
-		if(member != null) {
+        if (member != null) {
 
-			return member;
-		}
+            return member;
+        }
 
-		throw new MemberNotFoundException();
-	}
+        throw new MemberNotFoundException();
+    }
 
-	@Override
-	public Member getMember(Author author) throws MemberNotFoundException {
+    @Override
+    public Member getMember(Author author) throws MemberNotFoundException {
 
-		Member member = memberDao.load(Util.bytesToLong(author.getId().getBytes()));
+        Member member = memberDao.load(Util.bytesToLong(author.getId().getBytes()));
 
-		if(member != null) {
+        if (member != null) {
 
-			return member;
-		}
+            return member;
+        }
 
-		throw new MemberNotFoundException();
-	}
+        throw new MemberNotFoundException();
+    }
 
-	@Override
-	public Member getMember(GroupMember connectionMember) throws MemberNotFoundException {
-		return null;
-	}
+    @Override
+    public Member getMember(GroupMember connectionMember) throws MemberNotFoundException {
+        return null;
+    }
 
-	@Override
-	public void saveMeeting(Meeting meeting) {
+    @Override
+    public void saveMeeting(Meeting meeting) {
 
-		Collection<Meeting> allMeetings = getMeetings();
+        Collection<Meeting> allMeetings = getMeetings();
 
-		for(Meeting currentMeeting : allMeetings) {
+        for (Meeting currentMeeting : allMeetings) {
 
-			if(currentMeeting.getMeetingId().equals(meeting.getMeetingId())) {
-				meeting.setMeetingId(currentMeeting.getMeetingId());
-				break;
-			}
+            if (currentMeeting.getMeetingId().equals(meeting.getMeetingId())) {
+                meeting.setMeetingId(currentMeeting.getMeetingId());
+                break;
+            }
 
-		}
+        }
 
-		meetingDao.insertOrReplaceInTx(meeting);
+        meetingDao.insertOrReplaceInTx(meeting);
 
-	}
+    }
 
-	@Override
-	public synchronized void mergeMeeting(Meeting meeting) {
+    @Override
+    public synchronized void mergeMeeting(Meeting meeting) {
 
-		if(meeting.isDeleted()) {
+        if (meeting.isDeleted()) {
 
-			try {
+            try {
 
-				Meeting meetingToDelete = getMeeting(meeting.getMeetingId());
-				deleteMeeting(meetingToDelete);
+                Meeting meetingToDelete = getMeeting(meeting.getMeetingId());
+                deleteMeeting(meetingToDelete);
 
-			} catch (MeetingNotFoundException e) {
+            } catch (MeetingNotFoundException e) {
 
-				e.printStackTrace();
-			}
+                e.printStackTrace();
+            }
 
-			return;
-		}
+            return;
+        }
 
-		Group group = null;
+        Group group = null;
 
-		try {
+        try {
 
-			group = getGroup(meeting.getGroupId());
+            group = getGroup(meeting.getGroupId());
 
-		} catch (GroupNotFoundException e) {
+        } catch (GroupNotFoundException e) {
 
-			e.printStackTrace();
-		}
+            e.printStackTrace();
+        }
 
-		if(group == null) {
+        if (group == null) {
 
-			return;
-		}
+            return;
+        }
 
-		Collection<Meeting> allMeetings = getMeetings();
+        Collection<Meeting> allMeetings = getMeetings();
 
-		Meeting previousMeeting = null;
+        Meeting previousMeeting = null;
 
 
-		for (Meeting currentMeeting : allMeetings) {
-			if (currentMeeting.getMeetingId().equals(meeting.getMeetingId())) {
-				previousMeeting = currentMeeting;
-				meeting.setMeetingId(currentMeeting.getMeetingId());
-				saveMeeting(previousMeeting);
-			}
-		}
+        for (Meeting currentMeeting : allMeetings) {
+            if (currentMeeting.getMeetingId().equals(meeting.getMeetingId())) {
+                previousMeeting = currentMeeting;
+                meeting.setMeetingId(currentMeeting.getMeetingId());
+                saveMeeting(previousMeeting);
+            }
+        }
 
-		if (previousMeeting != null) {
+        if (previousMeeting != null) {
 
-			if (meeting.getStartTime() == 0) {
-				meeting.setStartTime(previousMeeting.getStartTime());
-			}
-			if (meeting.getEndTime() == 0) {
-				meeting.setEndTime(previousMeeting.getEndTime());
-			}
+            if (meeting.getStartTime() == 0) {
+                meeting.setStartTime(previousMeeting.getStartTime());
+            }
+            if (meeting.getEndTime() == 0) {
+                meeting.setEndTime(previousMeeting.getEndTime());
+            }
 
-			if (meeting.getCause() == null || meeting.getCause().isEmpty()) {
-				meeting.setCause(previousMeeting.getCause());
-			}
+            if (meeting.getCause() == null || meeting.getCause().isEmpty()) {
+                meeting.setCause(previousMeeting.getCause());
+            }
 
-			if (meeting.getLocation() == null || meeting.getLocation().isEmpty()) {
-				meeting.setLocation(previousMeeting.getLocation());
-			}
+            if (meeting.getLocation() == null || meeting.getLocation().isEmpty()) {
+                meeting.setLocation(previousMeeting.getLocation());
+            }
 
-			if (!meeting.getOnline()) {
-				meeting.setOnline(previousMeeting.getOnline());
-			}
+            if (!meeting.getOnline()) {
+                meeting.setOnline(previousMeeting.getOnline());
+            }
 
-			if (!meeting.getOpen()) {
-				meeting.setOpen(previousMeeting.getOpen());
-			}
+            if (!meeting.getOpen()) {
+                meeting.setOpen(previousMeeting.getOpen());
+            }
 
-			if (meeting.getDate() == 0) {
-				meeting.setDate(previousMeeting.getDate());
-			}
+            if (meeting.getDate() == 0) {
+                meeting.setDate(previousMeeting.getDate());
+            }
 
-		}
+        }
 
-		meetingDao.insertOrReplaceInTx(meeting);
-	}
+        meetingDao.insertOrReplaceInTx(meeting);
+    }
 
-	@Override
-	public synchronized void deleteMeeting(Meeting meeting) {
+    @Override
+    public synchronized void deleteMeeting(Meeting meeting) {
 
-		meeting = meetingDao.load(meeting.getMeetingId());
+        meeting = meetingDao.load(meeting.getMeetingId());
 
-		for(Member member : meeting.getMembers()) {
-			meeting.removeMember(member);
-		}
+        for (Member member : meeting.getMembers()) {
+            meeting.removeMember(member);
+        }
 
-		for(Topic topic : meeting.getTopics()) {
-			deleteTopic(topic);
-		}
+        for (Topic topic : meeting.getTopics()) {
+            deleteTopic(topic);
+        }
 
-		for(Poll poll : meeting.getPolls()) {
-			deletePoll(poll);
-		}
+        for (Poll poll : meeting.getPolls()) {
+            deletePoll(poll);
+        }
 
-		for(Participation participation : meeting.getParticipations()) {
-			deleteParticipation(participation);
-		}
+        for (Participation participation : meeting.getParticipations()) {
+            deleteParticipation(participation);
+        }
 
-		meetingDao.deleteInTx(meeting);
-	}
+        meetingDao.deleteInTx(meeting);
+    }
 
-	@Override
-	public synchronized Collection<Meeting> getMeetings() {
+    @Override
+    public synchronized Collection<Meeting> getMeetings() {
 
-		return meetingDao.loadAll();
-	}
+        return meetingDao.loadAll();
+    }
 
-	@Override
-	public synchronized Meeting getMeeting(Long meetingId) throws MeetingNotFoundException {
+    @Override
+    public synchronized Meeting getMeeting(Long meetingId) throws MeetingNotFoundException {
 
-		if(meetingDao.load(meetingId) != null) {
+        if (meetingDao.load(meetingId) != null) {
 
-			meetingDao.detach(meetingDao.load(meetingId));
-		}
+            meetingDao.detach(meetingDao.load(meetingId));
+        }
 
-		Meeting meeting = meetingDao.load(meetingId);
+        Meeting meeting = meetingDao.load(meetingId);
 
-		if(meeting != null) {
+        if (meeting != null) {
 
-			return meeting;
-		}
+            return meeting;
+        }
 
-		throw new MeetingNotFoundException();
+        throw new MeetingNotFoundException();
 
-	}
+    }
 
-	@Override
-	public synchronized void saveGroup(Group group) {
+    @Override
+    public synchronized void saveGroup(Group group) {
 
-		Collection<Group> allGroups = getGroups();
+        Collection<Group> allGroups = getGroups();
 
-		for (Group currentGroup : allGroups) {
+        for (Group currentGroup : allGroups) {
 
-			if (currentGroup.getGroupId().equals(group.getGroupId())) {
-				group.setGroupId(currentGroup.getGroupId());
-				break;
-			}
-		}
+            if (currentGroup.getGroupId().equals(group.getGroupId())) {
+                group.setGroupId(currentGroup.getGroupId());
+                break;
+            }
+        }
 
-		groupDao.insertOrReplaceInTx(group);
+        groupDao.insertOrReplaceInTx(group);
 
-	}
+    }
 
-	@Override
-	public synchronized void mergeGroup(Group group) {
+    @Override
+    public synchronized void mergeGroup(Group group) {
 
-		if(group.isDeleted()) {
-			try {
-				Group groupToDelete = getGroup(group.getGroupId());
-				deleteGroup(groupToDelete);
-			} catch (GroupNotFoundException e) {
-				e.printStackTrace();
-			}
-			return;
-		}
+        if (group.isDeleted()) {
+            try {
+                Group groupToDelete = getGroup(group.getGroupId());
+                deleteGroup(groupToDelete);
+            } catch (GroupNotFoundException e) {
+                e.printStackTrace();
+            }
+            return;
+        }
 
-		Collection<Group> allGroups = getGroups();
-		Group previousGroup = null;
+        Collection<Group> allGroups = getGroups();
+        Group previousGroup = null;
 
-		for (Group currentGroup : allGroups) {
+        for (Group currentGroup : allGroups) {
 
-			if (currentGroup.getGroupId().equals(group.getGroupId())) {
+            if (currentGroup.getGroupId().equals(group.getGroupId())) {
 
-				previousGroup = currentGroup;
-				group.setGroupId(currentGroup.getGroupId());
-				saveGroup(previousGroup);
-			}
-		}
+                previousGroup = currentGroup;
+                group.setGroupId(currentGroup.getGroupId());
+                saveGroup(previousGroup);
+            }
+        }
 
-		if(previousGroup != null) {
+        if (previousGroup != null) {
 
-			if (group.getName() == null || group.getName().isEmpty()) {
-				group.setName(previousGroup.getName());
-			}
-		}
+            if (group.getName() == null || group.getName().isEmpty()) {
+                group.setName(previousGroup.getName());
+            }
+        }
 
-		groupDao.insertOrReplaceInTx(group);
+        groupDao.insertOrReplaceInTx(group);
 
-	}
+    }
 
-	@Override
-	public synchronized void deleteGroup(Group group) {
+    @Override
+    public synchronized void deleteGroup(Group group) {
 
-		Collection<Member> members = group.getUniqueMembers();
+        Collection<Member> members = group.getUniqueMembers();
 
-		for(Member member : group.getMembers()) {
-			group.removeMember(member);
-		}
+        for (Member member : group.getMembers()) {
+            group.removeMember(member);
+        }
 
-		for(Meeting meeting : group.getMeetings()) {
-			deleteMeeting(meeting);
-		}
+        for (Meeting meeting : group.getMeetings()) {
+            deleteMeeting(meeting);
+        }
 
-		deleteGroupSettings(group.getGroupSettings());
+        deleteGroupSettings(group.getGroupSettings());
 
-		groupDao.deleteInTx(group);
+        groupDao.deleteInTx(group);
 
-		for(Member member : members) {
+        for (Member member : members) {
 
-			if(member.getGroups().size() == 0) {
-				deleteMember(member);
-			}
-		}
+            if (member.getGroups().size() == 0) {
+                deleteMember(member);
+            }
+        }
 
-	}
+    }
 
-	@Override
-	public synchronized Collection<Group> getGroups() {
+    @Override
+    public synchronized Collection<Group> getGroups() {
 
-		return groupDao.loadAll();
-	}
+        return groupDao.loadAll();
+    }
 
-	@Override
-	public synchronized Group getGroup (Long groupId) throws GroupNotFoundException {
+    @Override
+    public synchronized Group getGroup(Long groupId) throws GroupNotFoundException {
 
-		if(groupDao.load(groupId) != null) {
+        if (groupDao.load(groupId) != null) {
 
-			groupDao.detach(groupDao.load(groupId));
-		}
+            groupDao.detach(groupDao.load(groupId));
+        }
 
-		Group group = groupDao.load(groupId);
+        Group group = groupDao.load(groupId);
 
-		if(group != null) {
+        if (group != null) {
 
-			return group;
-		}
+            return group;
+        }
 
-		throw new GroupNotFoundException();
-	}
+        throw new GroupNotFoundException();
+    }
 
-	@Override
-	public Group getGroup(PrivateGroup privateGroup) throws GroupNotFoundException {
+    @Override
+    public Group getGroup(PrivateGroup privateGroup) throws GroupNotFoundException {
 
-		Group group = groupDao.load(privateGroup.getId());
+        Group group = groupDao.load(privateGroup.getId());
 
-		if(group != null) {
+        if (group != null) {
 
-			return group;
-		}
+            return group;
+        }
 
-		throw new GroupNotFoundException();
-	}
+        throw new GroupNotFoundException();
+    }
 
-	@Override
-	public Group getGroup(org.briarproject.briar.api.privategroup.PrivateGroup connectionGroup) throws GroupNotFoundException {
+    @Override
+    public Group getGroup(org.briarproject.briar.api.privategroup.PrivateGroup connectionGroup) throws GroupNotFoundException {
 
-		Group group = groupDao.load(Util.bytesToLong(connectionGroup.getId().getBytes()));
+        Group group = groupDao.load(Util.bytesToLong(connectionGroup.getId().getBytes()));
 
-		if(group != null) {
+        if (group != null) {
 
-			return group;
-		}
+            return group;
+        }
 
-		throw new GroupNotFoundException();
-	}
+        throw new GroupNotFoundException();
+    }
 
-	@Override
-	public synchronized void savePoll(Poll poll) {
+    @Override
+    public synchronized void savePoll(Poll poll) {
 
-		Collection<Poll> allPolls = getPolls();
+        Collection<Poll> allPolls = getPolls();
 
-		for (Poll currentPoll : allPolls) {
+        for (Poll currentPoll : allPolls) {
 
-			if (currentPoll.getPollId().equals(poll.getPollId())) {
-				poll.setPollId(currentPoll.getPollId());
-				break;
-			}
-		}
+            if (currentPoll.getPollId().equals(poll.getPollId())) {
+                poll.setPollId(currentPoll.getPollId());
+                break;
+            }
+        }
 
-		pollDao.insertOrReplaceInTx(poll);
+        pollDao.insertOrReplaceInTx(poll);
 
-	}
+    }
 
-	@Override
-	public synchronized void mergePoll(Poll poll) {
+    @Override
+    public synchronized void mergePoll(Poll poll) {
 
-		if(poll.isDeleted()) {
+        if (poll.isDeleted()) {
 
-			deletePoll(poll);
-			return;
-		}
+            deletePoll(poll);
+            return;
+        }
 
-		Meeting meeting = null;
+        Meeting meeting = null;
 
-		try {
+        try {
 
-			meeting = getMeeting(poll.getMeetingId());
+            meeting = getMeeting(poll.getMeetingId());
 
-		} catch (MeetingNotFoundException e) {
+        } catch (MeetingNotFoundException e) {
 
-			e.printStackTrace();
-		}
+            e.printStackTrace();
+        }
 
-		if(meeting == null) {
+        if (meeting == null) {
 
-			return;
-		}
+            return;
+        }
 
-		Collection<Poll> allPolls = getPolls();
+        Collection<Poll> allPolls = getPolls();
 
-		Poll previousPoll = null;
+        Poll previousPoll = null;
 
-		for (Poll currentPoll : allPolls) {
+        for (Poll currentPoll : allPolls) {
 
-			if (currentPoll.getPollId().equals(poll.getPollId())) {
+            if (currentPoll.getPollId().equals(poll.getPollId())) {
 
-				previousPoll = currentPoll;
-				poll.setPollId(currentPoll.getPollId());
-				savePoll(previousPoll);
-			}
-		}
+                previousPoll = currentPoll;
+                poll.setPollId(currentPoll.getPollId());
+                savePoll(previousPoll);
+            }
+        }
 
-		if(previousPoll != null) {
+        if (previousPoll != null) {
 
-			if(poll.getTitle() == null || poll.getTitle().isEmpty()) {
-				poll.setTitle(previousPoll.getTitle());
-			}
+            if (poll.getTitle() == null || poll.getTitle().isEmpty()) {
+                poll.setTitle(previousPoll.getTitle());
+            }
 
-			if(poll.getNote() == null || poll.getNote().isEmpty()) {
-				poll.setNote(previousPoll.getNote());
-			}
+            if (poll.getNote() == null || poll.getNote().isEmpty()) {
+                poll.setNote(previousPoll.getNote());
+            }
 
-			if(!poll.getIsOpen()) {
-				poll.setIsOpen(previousPoll.getIsOpen());
-			}
+            if (!poll.getIsOpen()) {
+                poll.setIsOpen(previousPoll.getIsOpen());
+            }
 
-			if(!poll.getClosedByModerator()) {
-				poll.setClosedByModerator(previousPoll.getClosedByModerator());
-			}
+            if (!poll.getClosedByModerator()) {
+                poll.setClosedByModerator(previousPoll.getClosedByModerator());
+            }
 
-			if(poll.getConsensusProposal() == null || poll.getConsensusProposal().isEmpty()) {
-				poll.setConsensusProposal(previousPoll.getConsensusProposal());
-			}
+            if (poll.getConsensusProposal() == null || poll.getConsensusProposal().isEmpty()) {
+                poll.setConsensusProposal(previousPoll.getConsensusProposal());
+            }
 
-			if(poll.getVoteMembersCountOnClosed() == 0) {
-				poll.setVoteMembersCountOnClosed(previousPoll.getVoteMembersCountOnClosed());
-			}
+            if (poll.getVoteMembersCountOnClosed() == 0) {
+                poll.setVoteMembersCountOnClosed(previousPoll.getVoteMembersCountOnClosed());
+            }
 
-		}
+        }
 
-		pollDao.insertOrReplaceInTx(poll);
+        pollDao.insertOrReplaceInTx(poll);
 
-	}
+    }
 
-	@Override
-	public synchronized void deletePoll(Poll poll) {
+    @Override
+    public synchronized void deletePoll(Poll poll) {
 
-		poll = pollDao.load(poll.getPollId());
+        poll = pollDao.load(poll.getPollId());
 
-		for(Voice voice : poll.getVoices()) {
-			deleteVoice(voice);
-		}
+        for (Voice voice : poll.getVoices()) {
+            deleteVoice(voice);
+        }
 
-		pollDao.deleteInTx(poll);
+        pollDao.deleteInTx(poll);
 
-	}
+    }
 
-	@Override
-	public synchronized Collection<Poll> getPolls() {
+    @Override
+    public synchronized Collection<Poll> getPolls() {
 
-		return pollDao.loadAll();
-	}
+        return pollDao.loadAll();
+    }
 
-	@Override
-	public synchronized Poll getPoll(Long pollId) throws PollNotFoundException {
+    @Override
+    public synchronized Poll getPoll(Long pollId) throws PollNotFoundException {
 
-		if(pollDao.load(pollId) != null) {
+        if (pollDao.load(pollId) != null) {
 
-			pollDao.detach(pollDao.load(pollId));
-		}
+            pollDao.detach(pollDao.load(pollId));
+        }
 
-		Poll poll = pollDao.load(pollId);
+        Poll poll = pollDao.load(pollId);
 
-		if(poll != null) {
+        if (poll != null) {
 
-			return poll;
-		}
+            return poll;
+        }
 
-		throw new PollNotFoundException();
+        throw new PollNotFoundException();
 
-	}
+    }
 
-	@Override
-	public synchronized void saveVoice(Voice voice) {
+    @Override
+    public synchronized void saveVoice(Voice voice) {
 
-		Collection<Voice> allVoices = getVoices();
+        Collection<Voice> allVoices = getVoices();
 
-		for (Voice currentVoice : allVoices) {
+        for (Voice currentVoice : allVoices) {
 
-			if (currentVoice.getVoiceId().equals(voice.getVoiceId())) {
-				voice.setVoiceId(currentVoice.getVoiceId());
-				break;
-			}
-		}
+            if (currentVoice.getVoiceId().equals(voice.getVoiceId())) {
+                voice.setVoiceId(currentVoice.getVoiceId());
+                break;
+            }
+        }
 
-		voiceDao.insertOrReplaceInTx(voice);
-	}
+        voiceDao.insertOrReplaceInTx(voice);
+    }
 
-	@Override
-	public synchronized void mergeVoice(Voice voice) {
+    @Override
+    public synchronized void mergeVoice(Voice voice) {
 
-		if(voice.isDeleted()) {
+        if (voice.isDeleted()) {
 
-			deleteVoice(voice);
-			return;
-		}
+            deleteVoice(voice);
+            return;
+        }
 
 
-		Poll poll = null;
+        Poll poll = null;
 
-		try {
+        try {
 
-			poll = getPoll(voice.getPollId());
+            poll = getPoll(voice.getPollId());
 
-		} catch (PollNotFoundException e) {
+        } catch (PollNotFoundException e) {
 
-			e.printStackTrace();
-		}
+            e.printStackTrace();
+        }
 
-		if(poll == null) {
+        if (poll == null) {
 
-			return;
-		}
+            return;
+        }
 
-		Collection<Voice> allVoices = getVoices();
+        Collection<Voice> allVoices = getVoices();
 
-		Voice previousVoice = null;
+        Voice previousVoice = null;
 
-		for (Voice currentVoice : allVoices) {
+        for (Voice currentVoice : allVoices) {
 
-			if (currentVoice.getVoiceId().equals(voice.getVoiceId())) {
+            if (currentVoice.getVoiceId().equals(voice.getVoiceId())) {
 
-				previousVoice = currentVoice;
-				voice.setVoiceId(currentVoice.getVoiceId());
-				saveVoice(previousVoice);
-			}
-		}
+                previousVoice = currentVoice;
+                voice.setVoiceId(currentVoice.getVoiceId());
+                saveVoice(previousVoice);
+            }
+        }
 
-		if (previousVoice != null) {
+        if (previousVoice != null) {
 
-			if (voice.getExplanation() == null || voice.getExplanation().isEmpty()) {
-				voice.setExplanation(previousVoice.getExplanation());
-			}
+            if (voice.getExplanation() == null || voice.getExplanation().isEmpty()) {
+                voice.setExplanation(previousVoice.getExplanation());
+            }
 
-		}
+        }
 
-		voiceDao.insertOrReplaceInTx(voice);
+        voiceDao.insertOrReplaceInTx(voice);
 
-		Voice savedVoice = null;
+        Voice savedVoice = null;
 
-		try {
+        try {
 
-			savedVoice = getVoice(voice.getVoiceId());
+            savedVoice = getVoice(voice.getVoiceId());
 
-		} catch (VoiceNotFoundException e) {
+        } catch (VoiceNotFoundException e) {
 
-			e.printStackTrace();
-		}
+            e.printStackTrace();
+        }
 
-		if(savedVoice != null) {
+        if (savedVoice != null) {
 
-			Collection<Long> presentVoteMemberIds = new ArrayList<>();
-			for(Member presentVoteMember : savedVoice.getPoll().getMeeting().getPresentVoteMembers()) {
-				presentVoteMemberIds.add(presentVoteMember.getMemberId());
-			}
+            Collection<Long> presentVoteMemberIds = new ArrayList<>();
+            for (Member presentVoteMember : savedVoice.getPoll().getMeeting().getPresentVoteMembers()) {
+                presentVoteMemberIds.add(presentVoteMember.getMemberId());
+            }
 
-			Collection<Long> voiceMemberIds = new ArrayList<>();
-			for(Voice v : savedVoice.getPoll().getVoices()) {
-				voiceMemberIds.add(v.getMember().getMemberId());
-			}
+            Collection<Long> voiceMemberIds = new ArrayList<>();
+            for (Voice v : savedVoice.getPoll().getVoices()) {
+                voiceMemberIds.add(v.getMember().getMemberId());
+            }
 
-			if(voiceMemberIds.containsAll(presentVoteMemberIds)) {
+            if (voiceMemberIds.containsAll(presentVoteMemberIds)) {
 
-				Poll p = savedVoice.getPoll();
-				p.setVoteMembersCountOnClosed(presentVoteMemberIds.size());
-				p.setIsOpen(false);
-				mergePoll(p);
-			}
-		}
-	}
+                Poll p = savedVoice.getPoll();
+                p.setVoteMembersCountOnClosed(presentVoteMemberIds.size());
+                p.setIsOpen(false);
+                mergePoll(p);
+            }
+        }
+    }
 
-	@Override
-	public synchronized void deleteVoice(Voice voice) {
+    @Override
+    public synchronized void deleteVoice(Voice voice) {
 
-		voiceDao.deleteInTx(voice);
+        voiceDao.deleteInTx(voice);
 
-	}
+    }
 
-	@Override
-	public synchronized Collection<Voice> getVoices() {
+    @Override
+    public synchronized Collection<Voice> getVoices() {
 
-		return voiceDao.loadAll();
-	}
+        return voiceDao.loadAll();
+    }
 
-	@Override
-	public synchronized Voice getVoice(Long voiceId) throws VoiceNotFoundException {
+    @Override
+    public synchronized Voice getVoice(Long voiceId) throws VoiceNotFoundException {
 
-		if(voiceDao.load(voiceId) != null) {
+        if (voiceDao.load(voiceId) != null) {
 
-			voiceDao.detach(voiceDao.load(voiceId));
-		}
+            voiceDao.detach(voiceDao.load(voiceId));
+        }
 
-		Voice voice = voiceDao.load(voiceId);
+        Voice voice = voiceDao.load(voiceId);
 
-		if(voice != null) {
+        if (voice != null) {
 
-			return voice;
-		}
+            return voice;
+        }
 
-		throw new VoiceNotFoundException();
+        throw new VoiceNotFoundException();
 
-	}
+    }
 
-	@Override
-	public synchronized void saveConsensusLevel(ConsensusLevel level) {
+    @Override
+    public synchronized void saveConsensusLevel(ConsensusLevel level) {
 
-		Collection<ConsensusLevel> allLevels = getConsensusLevels();
+        Collection<ConsensusLevel> allLevels = getConsensusLevels();
 
-		for (ConsensusLevel currentLevel : allLevels) {
+        for (ConsensusLevel currentLevel : allLevels) {
 
-			if(currentLevel.getConsensusLevelId().equals(level.getConsensusLevelId())) {
-				level.setConsensusLevelId(currentLevel.getConsensusLevelId());
-				break;
-			}
-		}
+            if (currentLevel.getConsensusLevelId().equals(level.getConsensusLevelId())) {
+                level.setConsensusLevelId(currentLevel.getConsensusLevelId());
+                break;
+            }
+        }
 
-		consensusLevelDao.insertOrReplaceInTx(level);
+        consensusLevelDao.insertOrReplaceInTx(level);
 
-	}
+    }
 
-	@Override
-	public synchronized void mergeConsensusLevel(ConsensusLevel level) {
+    @Override
+    public synchronized void mergeConsensusLevel(ConsensusLevel level) {
 
-		if(level.isDeleted()) {
-			ConsensusLevel consensusLevelToDelete = getConsensusLevel(level.getConsensusLevelId());
-			deleteConsensusLevel(consensusLevelToDelete);
-			return;
-		}
+        if (level.isDeleted()) {
+            ConsensusLevel consensusLevelToDelete = getConsensusLevel(level.getConsensusLevelId());
+            deleteConsensusLevel(consensusLevelToDelete);
+            return;
+        }
 
-		Collection<ConsensusLevel> allLevels = getConsensusLevels();
-		ConsensusLevel previousLevel = null;
+        Collection<ConsensusLevel> allLevels = getConsensusLevels();
+        ConsensusLevel previousLevel = null;
 
-		for (ConsensusLevel currentLevel : allLevels) {
+        for (ConsensusLevel currentLevel : allLevels) {
 
-			if (currentLevel.getConsensusLevelId().equals(level.getConsensusLevelId())) {
+            if (currentLevel.getConsensusLevelId().equals(level.getConsensusLevelId())) {
 
-				previousLevel = currentLevel;
-				level.setConsensusLevelId(currentLevel.getConsensusLevelId());
-				saveConsensusLevel(previousLevel);
-			}
-		}
+                previousLevel = currentLevel;
+                level.setConsensusLevelId(currentLevel.getConsensusLevelId());
+                saveConsensusLevel(previousLevel);
+            }
+        }
 
-		if (previousLevel != null) {
+        if (previousLevel != null) {
 
-			if (level.getName() == null || level.getName().isEmpty()) {
-				level.setName(previousLevel.getName());
-			}
-			if (level.getDescription() == null || level.getDescription().isEmpty()) {
-				level.setDescription(previousLevel.getDescription());
-			}
-			if(level.getColor() == 0) {
-				level.setColor(previousLevel.getColor());
-			}
+            if (level.getName() == null || level.getName().isEmpty()) {
+                level.setName(previousLevel.getName());
+            }
+            if (level.getDescription() == null || level.getDescription().isEmpty()) {
+                level.setDescription(previousLevel.getDescription());
+            }
+            if (level.getColor() == 0) {
+                level.setColor(previousLevel.getColor());
+            }
 
-			if(level.getNumber() == 0) {
-				level.setNumber(previousLevel.getNumber());
-			}
-		}
+            if (level.getNumber() == 0) {
+                level.setNumber(previousLevel.getNumber());
+            }
+        }
 
-		consensusLevelDao.insertOrReplaceInTx(level);
-	}
+        consensusLevelDao.insertOrReplaceInTx(level);
+    }
 
-	@Override
-	public synchronized void deleteConsensusLevel(ConsensusLevel level) {
+    @Override
+    public synchronized void deleteConsensusLevel(ConsensusLevel level) {
 
-		consensusLevelDao.deleteInTx(level);
+        consensusLevelDao.deleteInTx(level);
 
-	}
+    }
 
-	@Override
-	public synchronized Collection<ConsensusLevel> getConsensusLevels() {
+    @Override
+    public synchronized Collection<ConsensusLevel> getConsensusLevels() {
 
-		return consensusLevelDao.loadAll();
-	}
+        return consensusLevelDao.loadAll();
+    }
 
-	@Override
-	public synchronized ConsensusLevel getConsensusLevel(Long consensusLevelId) {
+    @Override
+    public synchronized ConsensusLevel getConsensusLevel(Long consensusLevelId) {
 
-		return consensusLevelDao.load(consensusLevelId);
-	}
+        return consensusLevelDao.load(consensusLevelId);
+    }
 
-	@Override
-	public synchronized void saveTopic(Topic topic) {
+    @Override
+    public synchronized void saveTopic(Topic topic) {
 
-		Collection<Topic> allTopics = getTopics();
+        Collection<Topic> allTopics = getTopics();
 
-		for (Topic currentTopic: allTopics) {
+        for (Topic currentTopic : allTopics) {
 
-			if (currentTopic.getTopicId().equals(topic.getTopicId())) {
-				topic.setTopicId(currentTopic.getTopicId());
-				break;
-			}
-		}
+            if (currentTopic.getTopicId().equals(topic.getTopicId())) {
+                topic.setTopicId(currentTopic.getTopicId());
+                break;
+            }
+        }
 
-		topicDao.insertOrReplaceInTx(topic);
-	}
+        topicDao.insertOrReplaceInTx(topic);
+    }
 
-	@Override
-	public synchronized void mergeTopic(Topic topic) {
+    @Override
+    public synchronized void mergeTopic(Topic topic) {
 
-		if(topic.isDeleted()) {
+        if (topic.isDeleted()) {
 
-			deleteTopic(topic);
-			return;
-		}
+            deleteTopic(topic);
+            return;
+        }
 
 
-		Meeting meeting = null;
+        Meeting meeting = null;
 
-		try {
+        try {
 
-			meeting = getMeeting(topic.getMeetingId());
+            meeting = getMeeting(topic.getMeetingId());
 
-		} catch (MeetingNotFoundException e) {
+        } catch (MeetingNotFoundException e) {
 
-			e.printStackTrace();
-		}
+            e.printStackTrace();
+        }
 
-		if(meeting == null) {
+        if (meeting == null) {
 
-			return;
-		}
+            return;
+        }
 
-		Collection<Topic> allTopics = getTopics();
-		Topic previousTopic = null;
+        Collection<Topic> allTopics = getTopics();
+        Topic previousTopic = null;
 
-		for (Topic currentTopic : allTopics) {
+        for (Topic currentTopic : allTopics) {
 
-			if (currentTopic.getTopicId().equals(topic.getTopicId())) {
+            if (currentTopic.getTopicId().equals(topic.getTopicId())) {
 
-				previousTopic = currentTopic;
-				topic.setTopicId(currentTopic.getTopicId());
-				saveTopic(previousTopic);
-			}
-		}
-		if (previousTopic != null) {
+                previousTopic = currentTopic;
+                topic.setTopicId(currentTopic.getTopicId());
+                saveTopic(previousTopic);
+            }
+        }
+        if (previousTopic != null) {
 
-			if(topic.getTitle() == null || topic.getTitle().isEmpty()) {
-				topic.setTitle(previousTopic.getTitle());
-			}
+            if (topic.getTitle() == null || topic.getTitle().isEmpty()) {
+                topic.setTitle(previousTopic.getTitle());
+            }
 
-			if(topic.getStatus() == null) {
-				topic.setStatus(previousTopic.getStatus());
-			}
+            if (topic.getStatus() == null) {
+                topic.setStatus(previousTopic.getStatus());
+            }
 
-			if(topic.getDuration() == 0) {
-				topic.setDuration(previousTopic.getDuration());
-			}
+            if (topic.getDuration() == 0) {
+                topic.setDuration(previousTopic.getDuration());
+            }
 
-		}
+        }
 
-		topicDao.insertOrReplaceInTx(topic);
+        topicDao.insertOrReplaceInTx(topic);
 
-	}
+    }
 
-	@Override
-	public synchronized void deleteTopic(Topic topic) {
+    @Override
+    public synchronized void deleteTopic(Topic topic) {
 
-		topicDao.deleteInTx(topic);
+        topicDao.deleteInTx(topic);
 
-	}
+    }
 
-	@Override
-	public synchronized Collection<Topic> getTopics() {
-		return topicDao.loadAll();
-	}
+    @Override
+    public synchronized Collection<Topic> getTopics() {
+        return topicDao.loadAll();
+    }
 
-	@Override
-	public synchronized void  saveGroupSettings(GroupSettings settings) {
+    @Override
+    public synchronized void saveGroupSettings(GroupSettings settings) {
 
-		Collection<GroupSettings> allSettings = getGroupSettings();
+        Collection<GroupSettings> allSettings = getGroupSettings();
 
-		for (GroupSettings currentSettings : allSettings) {
+        for (GroupSettings currentSettings : allSettings) {
 
-			if (currentSettings.getSettingsId().equals(settings.getSettingsId())) {
-				settings.setSettingsId(currentSettings.getSettingsId());
-				break;
-			}
-		}
+            if (currentSettings.getSettingsId().equals(settings.getSettingsId())) {
+                settings.setSettingsId(currentSettings.getSettingsId());
+                break;
+            }
+        }
 
-		groupSettingsDao.insertOrReplaceInTx(settings);
+        groupSettingsDao.insertOrReplaceInTx(settings);
 
-	}
+    }
 
-	@Override
-	public void mergeGroupSettings(GroupSettings settings) {
+    @Override
+    public void mergeGroupSettings(GroupSettings settings) {
 
-		if(settings.isDeleted()) {
+        if (settings.isDeleted()) {
 
-			deleteGroupSettings(settings);
-			return;
-		}
+            deleteGroupSettings(settings);
+            return;
+        }
 
-		Collection<GroupSettings> allSettings = getGroupSettings();
-		GroupSettings previousSettings = null;
+        Collection<GroupSettings> allSettings = getGroupSettings();
+        GroupSettings previousSettings = null;
 
-		for (GroupSettings currentSettings: allSettings) {
+        for (GroupSettings currentSettings : allSettings) {
 
-			if (currentSettings.getSettingsId().equals(settings.getSettingsId())) {
+            if (currentSettings.getSettingsId().equals(settings.getSettingsId())) {
 
-				previousSettings = currentSettings;
-				settings.setSettingsId(currentSettings.getSettingsId());
-				saveGroupSettings(previousSettings);
-			}
-		}
+                previousSettings = currentSettings;
+                settings.setSettingsId(currentSettings.getSettingsId());
+                saveGroupSettings(previousSettings);
+            }
+        }
 
-		if (previousSettings != null) {
+        if (previousSettings != null) {
 
-			Set<Long> deletedConsensusLevels = new HashSet<>();
+            Set<Long> deletedConsensusLevels = new HashSet<>();
 
-			saveGroupSettings(settings);
-			settings = groupSettingsDao.load(settings.getSettingsId());
+            saveGroupSettings(settings);
+            settings = groupSettingsDao.load(settings.getSettingsId());
 
-			for(ConsensusLevel consensusLevel : settings.getConsensusLevels()) {
+            for (ConsensusLevel consensusLevel : settings.getConsensusLevels()) {
 
-				if(consensusLevel.isDeleted()) {
+                if (consensusLevel.isDeleted()) {
 
-					deletedConsensusLevels.add(consensusLevel.getConsensusLevelId());
-				}
+                    deletedConsensusLevels.add(consensusLevel.getConsensusLevelId());
+                }
 
-			}
+            }
 
-			for (ConsensusLevel consensusLevel : previousSettings.getConsensusLevels()) {
+            for (ConsensusLevel consensusLevel : previousSettings.getConsensusLevels()) {
 
-				if(deletedConsensusLevels.contains(consensusLevel.getConsensusLevelId())) {
-					deleteConsensusLevel(consensusLevel);
-				}
-			}
-		}
+                if (deletedConsensusLevels.contains(consensusLevel.getConsensusLevelId())) {
+                    deleteConsensusLevel(consensusLevel);
+                }
+            }
+        }
 
-		groupSettingsDao.insertOrReplaceInTx(settings);
+        groupSettingsDao.insertOrReplaceInTx(settings);
 
-	}
+    }
 
-	@Override
-	public void deleteGroupSettings(GroupSettings settings) {
+    @Override
+    public void deleteGroupSettings(GroupSettings settings) {
 
-		for(ConsensusLevel consensusLevel : settings.getConsensusLevels()) {
-			deleteConsensusLevel(consensusLevel);
-		}
+        for (ConsensusLevel consensusLevel : settings.getConsensusLevels()) {
+            deleteConsensusLevel(consensusLevel);
+        }
 
-		groupSettingsDao.deleteInTx(settings);
+        groupSettingsDao.deleteInTx(settings);
 
-	}
+    }
 
-	@Override
-	public Collection<GroupSettings> getGroupSettings() {
-		return groupSettingsDao.loadAll();
-	}
+    @Override
+    public Collection<GroupSettings> getGroupSettings() {
+        return groupSettingsDao.loadAll();
+    }
 
-	@Override
-	public synchronized GroupSettings getGroupSetting (Long settingsId) throws GroupSettingsNotFoundException {
+    @Override
+    public synchronized GroupSettings getGroupSetting(Long settingsId) throws GroupSettingsNotFoundException {
 
-		if(groupSettingsDao.load(settingsId) != null) {
+        if (groupSettingsDao.load(settingsId) != null) {
 
-			groupSettingsDao.detach(groupSettingsDao.load(settingsId));
-		}
+            groupSettingsDao.detach(groupSettingsDao.load(settingsId));
+        }
 
-		GroupSettings groupSettings = groupSettingsDao.load(settingsId);
+        GroupSettings groupSettings = groupSettingsDao.load(settingsId);
 
-		if(groupSettings != null) {
+        if (groupSettings != null) {
 
-			return groupSettings;
-		}
+            return groupSettings;
+        }
 
-		throw new GroupSettingsNotFoundException();
-	}
+        throw new GroupSettingsNotFoundException();
+    }
 
-	@Override
-	public void saveParticipation(Participation participation) {
+    @Override
+    public void saveParticipation(Participation participation) {
 
-		Collection<Participation> allParticipations = getParticipations();
+        Collection<Participation> allParticipations = getParticipations();
 
-		for (Participation currentParticipation : allParticipations) {
+        for (Participation currentParticipation : allParticipations) {
 
-			if (currentParticipation.getParticipationId().equals(participation.getParticipationId())) {
+            if (currentParticipation.getParticipationId().equals(participation.getParticipationId())) {
 
-				participation.setParticipationId(currentParticipation.getParticipationId());
-				break;
-			}
-		}
+                participation.setParticipationId(currentParticipation.getParticipationId());
+                break;
+            }
+        }
 
-		participationDao.insertOrReplaceInTx(participation);
+        participationDao.insertOrReplaceInTx(participation);
 
-	}
+    }
 
-	@Override
-	public void mergeParticipation(Participation participation) {
+    @Override
+    public void mergeParticipation(Participation participation) {
 
-		if(participation.isDeleted()) {
+        if (participation.isDeleted()) {
 
-			deleteParticipation(participation);
-			return;
-		}
+            deleteParticipation(participation);
+            return;
+        }
 
-		Meeting meeting = null;
+        Meeting meeting = null;
 
-		try {
+        try {
 
-			meeting = getMeeting(participation.getMeetingId());
+            meeting = getMeeting(participation.getMeetingId());
 
-		} catch (MeetingNotFoundException e) {
+        } catch (MeetingNotFoundException e) {
 
-			e.printStackTrace();
-		}
+            e.printStackTrace();
+        }
 
-		if(meeting == null) {
+        if (meeting == null) {
 
-			return;
-		}
+            return;
+        }
 
-		Collection<Participation> allParticipation = getParticipations();
-		Participation previousParticipation = null;
+        Collection<Participation> allParticipation = getParticipations();
+        Participation previousParticipation = null;
 
-		for (Participation currentParticipation : allParticipation) {
+        for (Participation currentParticipation : allParticipation) {
 
-			if (currentParticipation.getParticipationId().equals(participation.getParticipationId())) {
+            if (currentParticipation.getParticipationId().equals(participation.getParticipationId())) {
 
-				previousParticipation = currentParticipation;
-				participation.setParticipationId(currentParticipation.getParticipationId());
-				saveParticipation(previousParticipation);
-			}
-		}
+                previousParticipation = currentParticipation;
+                participation.setParticipationId(currentParticipation.getParticipationId());
+                saveParticipation(previousParticipation);
+            }
+        }
 
-		if (previousParticipation != null) {
+        if (previousParticipation != null) {
 
-			if (participation.getContributions() == 0) {
-				participation.setContributions(previousParticipation.getContributions());
-			}
-			if(participation.getTime() == 0) {
-				participation.setTime(previousParticipation.getTime());
-			}
+            if (participation.getContributions() == 0) {
+                participation.setContributions(previousParticipation.getContributions());
+            }
+            if (participation.getTime() == 0) {
+                participation.setTime(previousParticipation.getTime());
+            }
 
-		}
+        }
 
-		participationDao.insertOrReplaceInTx(participation);
+        participationDao.insertOrReplaceInTx(participation);
 
-	}
+    }
 
-	@Override
-	public void deleteParticipation(Participation participation) {
+    @Override
+    public void deleteParticipation(Participation participation) {
 
-		participationDao.deleteInTx(participation);
+        participationDao.deleteInTx(participation);
 
-	}
+    }
 
-	@Override
-	public Collection<Participation> getParticipations() {
+    @Override
+    public Collection<Participation> getParticipations() {
 
-		return participationDao.loadAll();
-	}
+        return participationDao.loadAll();
+    }
 
-	public void saveMemberGroupRelation(MemberGroupRelation memberGroupRelation) {
+    public void saveMemberGroupRelation(MemberGroupRelation memberGroupRelation) {
 
-		memberGroupRelationDao.insertOrReplaceInTx(memberGroupRelation);
-	}
+        memberGroupRelationDao.insertOrReplaceInTx(memberGroupRelation);
+    }
 
-	public void saveMemberMeetingRelation(MemberMeetingRelation memberMeetingRelation) {
+    public void saveMemberMeetingRelation(MemberMeetingRelation memberMeetingRelation) {
 
-		memberMeetingRelationDao.insertOrReplaceInTx(memberMeetingRelation);
-	}
+        memberMeetingRelationDao.insertOrReplaceInTx(memberMeetingRelation);
+    }
 
-	@Override
-	public Collection<MemberGroupRelation> getMemberGroupRelations() {
+    @Override
+    public Collection<MemberGroupRelation> getMemberGroupRelations() {
 
-		return memberGroupRelationDao.loadAll();
-	}
+        return memberGroupRelationDao.loadAll();
+    }
 
-	@Override
-	public Collection<MemberMeetingRelation> getMemberMeetingRelations() {
+    @Override
+    public Collection<MemberMeetingRelation> getMemberMeetingRelations() {
 
-		return memberMeetingRelationDao.loadAll();
-	}
+        return memberMeetingRelationDao.loadAll();
+    }
 
-	@Override
-	public void deleteMemberGroupRelation(MemberGroupRelation memberGroupRelation) {
+    @Override
+    public void deleteMemberGroupRelation(MemberGroupRelation memberGroupRelation) {
 
-		memberGroupRelationDao.delete(memberGroupRelation);
-	}
+        memberGroupRelationDao.delete(memberGroupRelation);
+    }
 
-	@Override
-	public void deleteMemberMeetingRelation(MemberMeetingRelation memberMeetingRelation) {
+    @Override
+    public void deleteMemberMeetingRelation(MemberMeetingRelation memberMeetingRelation) {
 
-		memberMeetingRelationDao.delete(memberMeetingRelation);
+        memberMeetingRelationDao.delete(memberMeetingRelation);
 
-	}
+    }
 
     @Override
     public void mergeModerationCard(ModerationCard moderationCard) {
-        if(moderationCard.isDeleted()) {
+        if (moderationCard.isDeleted()) {
 
             deleteModerationCard(moderationCard);
             return;
@@ -1130,7 +1123,7 @@ public class DataServiceImpl implements DataService {
             e.printStackTrace();
         }
 
-        if(meeting == null) {
+        if (meeting == null) {
 
             return;
         }
@@ -1144,27 +1137,28 @@ public class DataServiceImpl implements DataService {
         moderationCardDao.deleteInTx(moderationCard);
     }
 
-	@Override
-	public ModerationCard getModerationCard(Long cardId) throws ModerationCardNotFoundException {
-		if(moderationCardDao.load(cardId) != null) {
+    @Override
+    public ModerationCard getModerationCard(Long cardId) throws ModerationCardNotFoundException {
+        if (moderationCardDao.load(cardId) != null) {
 
-			moderationCardDao.detach(moderationCardDao.load(cardId));
-		}
+            moderationCardDao.detach(moderationCardDao.load(cardId));
+        }
 
-		ModerationCard moderationCard = moderationCardDao.load(cardId);
+        ModerationCard moderationCard = moderationCardDao.load(cardId);
 
-		if(moderationCard != null) {
+        if (moderationCard != null) {
 
-			return moderationCard;
-		}
+            return moderationCard;
+        }
 
-		throw new ModerationCardNotFoundException();
+        throw new ModerationCardNotFoundException();
 
-	}
+    }
 
-	@Override
-	public Collection<ModerationCard> getModerationCards() {
-		return moderationCardDao.loadAll();
-	}
+
+    @Override
+    public Collection<ModerationCard> getModerationCards() {
+        return moderationCardDao.loadAll();
+    }
 
 }
