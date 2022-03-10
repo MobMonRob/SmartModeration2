@@ -9,7 +9,7 @@ public class CantEditModerationCardException extends SmartModerationException {
     @Override
     public String getMessage(Context context) {
         //todo
-        return "Moderation Card couldn't be edited";
+        return "Moderation card couldn't be edited";
     }
 
     @Override
