@@ -59,16 +59,6 @@ public class CreateConsensusLevelActivity extends ExceptionHandlingActivity {
 
             ColorDrawable buttonColor = new ColorDrawable(color);
 
-//            colorPicker = new ColorPicker(this, Color.red(buttonColor.getColor()), Color.green(buttonColor.getColor()), Color.blue(buttonColor.getColor()));
-//            colorPicker.show();
-//            colorPicker.enableAutoClose();
-//
-//            colorPicker.setCallback(color -> {
-//
-//                colorInput.setBackgroundColor(color);
-//                this.color = color;
-//            });
-
         });
 
         saveButton.setOnClickListener(v -> {
