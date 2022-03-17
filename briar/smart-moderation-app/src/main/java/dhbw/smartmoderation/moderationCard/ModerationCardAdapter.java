@@ -60,11 +60,8 @@ public class ModerationCardAdapter extends RecyclerView.Adapter<ModerationCardAd
     }
 
     private int getProperTextColor(int backgroundColor) {
-        if (backgroundColor >= Color.BLACK && backgroundColor < Color.GRAY) {
-            return Color.WHITE;
-        } else {
-            return Color.BLACK;
-        }
+        ModerationCardColorImporter cardColorImporter = ModerationCardColorImporter.getInstance();
+        return cardColorImporter.getFontColor(backgroundColor);
     }
 
     @Override

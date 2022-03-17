@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.SurfaceView;
@@ -14,22 +13,25 @@ import android.widget.EditText;
 
 import androidx.fragment.app.FragmentActivity;
 
+
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.exceptions.CantCreateModerationCardException;
 import dhbw.smartmoderation.exceptions.ModerationCardNotFoundException;
 import petrov.kristiyan.colorpicker.ColorPicker;
 
 public class CreateModerationCard {
-    private int cardColor = Color.BLACK;
+    private int cardColor;
     private String moderationCardContent = "";
     private AlertDialog alertDialog;
     private EditText moderationCardContentHolder;
     private SurfaceView cardColorViewer;
     private ModerationCardsController controller;
+    ModerationCardColorImporter cardColorImporter = ModerationCardColorImporter.getInstance();
+
 
     private final View.OnClickListener pickColorButtonClickListener = v -> {
         ColorPicker colorPicker = new ColorPicker((Activity) v.getContext());
-        colorPicker.setColors()
+        colorPicker.setColors(cardColorImporter.getBackgroundColors());
         colorPicker.setOnFastChooseColorListener(new ColorPicker.OnFastChooseColorListener() {
             @Override
             public void setOnFastChooseColorListener(int position, int color) {
@@ -43,8 +45,7 @@ public class CreateModerationCard {
                 colorPicker.dismissDialog();
             }
         });
-        colorPicker.setDefaultColorButton(Color.parseColor("#f84c44"))
-                .setColumns(5)
+        colorPicker.setColumns(5)
                 .show();
     };
 
@@ -73,7 +74,10 @@ public class CreateModerationCard {
         moderationCardContentHolder = popUp.findViewById(R.id.moderationCardContent);
         Button pickColorButton = popUp.findViewById(R.id.pickColorButton);
         pickColorButton.setOnClickListener(pickColorButtonClickListener);
+        //set default color
+        cardColor = cardColorImporter.getBackgroundColors()[0];
         cardColorViewer = popUp.findViewById(R.id.colorViewer);
+        cardColorViewer.setBackgroundColor(cardColor);
         Button addButton = popUp.findViewById(R.id.addButton);
         addButton.setOnClickListener(addModerationCardClickListener);
         Button cancelButton = popUp.findViewById(R.id.cancelButton);

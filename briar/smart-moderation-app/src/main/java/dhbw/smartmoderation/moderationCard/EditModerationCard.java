@@ -3,12 +3,12 @@ package dhbw.smartmoderation.moderationCard;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
 
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.data.model.ModerationCard;
@@ -28,6 +28,9 @@ public class EditModerationCard {
 
     private final View.OnClickListener pickColorButtonClickListener = v -> {
         ColorPicker colorPicker = new ColorPicker((Activity) v.getContext());
+        ModerationCardColorImporter cardColorImporter = ModerationCardColorImporter.getInstance();
+        colorPicker.setColors(cardColorImporter.getBackgroundColors());
+        colorPicker.setDefaultColorButton(cardColorImporter.getBackgroundColors()[0]);
         colorPicker.setOnFastChooseColorListener(new ColorPicker.OnFastChooseColorListener() {
             @Override
             public void setOnFastChooseColorListener(int position, int color) {
@@ -41,8 +44,7 @@ public class EditModerationCard {
                 colorPicker.dismissDialog();
             }
         });
-        colorPicker.setDefaultColorButton(Color.parseColor("#f84c44"))
-                .setColumns(5)
+        colorPicker.setColumns(5)
                 .show();
 
     };
