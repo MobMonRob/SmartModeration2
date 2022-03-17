@@ -14,11 +14,10 @@ import android.widget.EditText;
 
 import androidx.fragment.app.FragmentActivity;
 
-import com.pes.androidmaterialcolorpickerdialog.ColorPicker;
-
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.exceptions.CantCreateModerationCardException;
 import dhbw.smartmoderation.exceptions.ModerationCardNotFoundException;
+import petrov.kristiyan.colorpicker.ColorPicker;
 
 public class CreateModerationCard {
     private int cardColor = Color.BLACK;
@@ -30,12 +29,23 @@ public class CreateModerationCard {
 
     private final View.OnClickListener pickColorButtonClickListener = v -> {
         ColorPicker colorPicker = new ColorPicker((Activity) v.getContext());
-        colorPicker.show();
-        colorPicker.enableAutoClose();
-        colorPicker.setCallback(color -> {
-            cardColor = color;
-            cardColorViewer.setBackgroundColor(cardColor);
+        colorPicker.setColors()
+        colorPicker.setOnFastChooseColorListener(new ColorPicker.OnFastChooseColorListener() {
+            @Override
+            public void setOnFastChooseColorListener(int position, int color) {
+                cardColor = color;
+                cardColorViewer.setBackgroundColor(color);
+                colorPicker.dismissDialog();
+            }
+
+            @Override
+            public void onCancel() {
+                colorPicker.dismissDialog();
+            }
         });
+        colorPicker.setDefaultColorButton(Color.parseColor("#f84c44"))
+                .setColumns(5)
+                .show();
     };
 
     private final View.OnClickListener addModerationCardClickListener = v -> {

@@ -85,7 +85,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui:2.1.0'
     implementation 'androidx.wear:wear:1.0.0'
 	implementation 'androidx.cardview:cardview:1.0.0'
-	implementation 'com.pes.materialcolorpicker:library:1.2.5'
+	implementation 'petrov.kristiyan:colorpicker-library:1.1.10'
 	implementation 'com.beardedhen:androidbootstrap:2.3.2'
 	implementation 'com.params.stepview:stepview:1.0.2'
 	implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'

@@ -10,14 +10,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.pes.androidmaterialcolorpickerdialog.ColorPicker;
-
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.data.model.ModerationCard;
-import dhbw.smartmoderation.exceptions.CantCreateModerationCardException;
 import dhbw.smartmoderation.exceptions.CantEditModerationCardException;
 import dhbw.smartmoderation.exceptions.CouldNotDeleteModerationCard;
 import dhbw.smartmoderation.exceptions.ModerationCardNotFoundException;
+import petrov.kristiyan.colorpicker.ColorPicker;
 
 public class EditModerationCard {
     private long cardId;
@@ -30,15 +28,26 @@ public class EditModerationCard {
 
     private final View.OnClickListener pickColorButtonClickListener = v -> {
         ColorPicker colorPicker = new ColorPicker((Activity) v.getContext());
-        colorPicker.show();
-        colorPicker.enableAutoClose();
-        colorPicker.setCallback(color -> {
-            cardColor = color;
-            cardColorViewer.setBackgroundColor(cardColor);
+        colorPicker.setOnFastChooseColorListener(new ColorPicker.OnFastChooseColorListener() {
+            @Override
+            public void setOnFastChooseColorListener(int position, int color) {
+                cardColor = color;
+                cardColorViewer.setBackgroundColor(color);
+                colorPicker.dismissDialog();
+            }
+
+            @Override
+            public void onCancel() {
+                colorPicker.dismissDialog();
+            }
         });
+        colorPicker.setDefaultColorButton(Color.parseColor("#f84c44"))
+                .setColumns(5)
+                .show();
+
     };
 
-    private final View.OnClickListener editModerationCardClickListener = v -> {
+    private final View.OnClickListener saveModerationCardClickListener = v -> {
         try {
             moderationCardContent = moderationCardContentHolder.getText().toString();
             controller.editModerationCard(moderationCardContent, cardColor, cardId);
@@ -83,7 +92,7 @@ public class EditModerationCard {
         pickColorButton.setOnClickListener(pickColorButtonClickListener);
         cardColorViewer = popUp.findViewById(R.id.colorViewer);
         Button saveButton = popUp.findViewById(R.id.saveButton);
-        saveButton.setOnClickListener(editModerationCardClickListener);
+        saveButton.setOnClickListener(saveModerationCardClickListener);
         Button cancelButton = popUp.findViewById(R.id.cancelButton);
         cancelButton.setOnClickListener(view -> alertDialog.cancel());
         Button deleteButton = popUp.findViewById(R.id.deleteButton);

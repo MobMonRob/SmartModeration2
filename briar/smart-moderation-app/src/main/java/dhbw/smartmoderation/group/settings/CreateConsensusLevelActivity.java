@@ -13,7 +13,6 @@ import android.widget.EditText;
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.util.ExceptionHandlingActivity;
 
-import com.pes.androidmaterialcolorpickerdialog.ColorPicker;
 
 public class CreateConsensusLevelActivity extends ExceptionHandlingActivity {
 
@@ -21,7 +20,7 @@ public class CreateConsensusLevelActivity extends ExceptionHandlingActivity {
     private Button colorInput;
     private EditText descriptionInput;
     private Button saveButton;
-    private ColorPicker colorPicker;
+//    private ColorPicker colorPicker;
     private Bundle extra;
     private int position;
     private int color;
@@ -60,15 +59,15 @@ public class CreateConsensusLevelActivity extends ExceptionHandlingActivity {
 
             ColorDrawable buttonColor = new ColorDrawable(color);
 
-            colorPicker = new ColorPicker(this, Color.red(buttonColor.getColor()), Color.green(buttonColor.getColor()), Color.blue(buttonColor.getColor()));
-            colorPicker.show();
-            colorPicker.enableAutoClose();
-
-            colorPicker.setCallback(color -> {
-
-                colorInput.setBackgroundColor(color);
-                this.color = color;
-            });
+//            colorPicker = new ColorPicker(this, Color.red(buttonColor.getColor()), Color.green(buttonColor.getColor()), Color.blue(buttonColor.getColor()));
+//            colorPicker.show();
+//            colorPicker.enableAutoClose();
+//
+//            colorPicker.setCallback(color -> {
+//
+//                colorInput.setBackgroundColor(color);
+//                this.color = color;
+//            });
 
         });
 
