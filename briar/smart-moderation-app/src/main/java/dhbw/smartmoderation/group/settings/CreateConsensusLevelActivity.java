@@ -20,7 +20,6 @@ public class CreateConsensusLevelActivity extends ExceptionHandlingActivity {
     private Button colorInput;
     private EditText descriptionInput;
     private Button saveButton;
-//    private ColorPicker colorPicker;
     private Bundle extra;
     private int position;
     private int color;
