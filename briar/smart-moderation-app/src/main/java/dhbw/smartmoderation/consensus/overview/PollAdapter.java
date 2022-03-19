@@ -124,7 +124,6 @@ public class PollAdapter extends RecyclerView.Adapter<PollAdapter.PollViewHolder
         holder.getTitle().setText(poll.getTitle());
 
         Status status = poll.getStatus(this.controller.getMember());
-
         if(status == Status.OFFEN) {
             holder.getStatus().setBackgroundColor(ResourcesCompat.getColor(context.getResources(), R.color.colorPrimaryDark, null));
             holder.getStatus().setText(context.getString(R.string.offen));
