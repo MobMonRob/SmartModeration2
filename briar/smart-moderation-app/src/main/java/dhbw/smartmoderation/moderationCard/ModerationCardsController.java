@@ -1,6 +1,9 @@
 package dhbw.smartmoderation.moderationCard;
 
 import org.briarproject.briar.api.privategroup.PrivateGroup;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,6 +12,7 @@ import dhbw.smartmoderation.controller.SmartModerationController;
 import dhbw.smartmoderation.data.model.Meeting;
 import dhbw.smartmoderation.data.model.ModelClass;
 import dhbw.smartmoderation.data.model.ModerationCard;
+import dhbw.smartmoderation.data.model.Voice;
 import dhbw.smartmoderation.exceptions.CantCreateModerationCardException;
 import dhbw.smartmoderation.exceptions.CantEditModerationCardException;
 import dhbw.smartmoderation.exceptions.CouldNotDeleteModerationCard;
@@ -119,7 +123,21 @@ public class ModerationCardsController extends SmartModerationController {
 
     }
 
-    public Collection<ModerationCard> getAllModerationCards() {
+    public Collection<ModerationCard> getAllModerationCards() throws JSONException {
+        Collection<ModerationCard> cards = dataService.getModerationCards();
+        JSONArray cardsArray = new JSONArray();
+        for (ModerationCard card: cards) {
+            JSONObject cardJSON = new JSONObject();
+            cardJSON.put("cardId", card.getCardId());
+            cardJSON.put("content", card.getContent());
+            String  hexColor = String.format("#%06X", (0xFFFFFF & card.getColor()));
+            cardJSON.put("color", hexColor);
+            cardJSON.put("meetingId", card.getMeetingId());
+            cardsArray.put(cardJSON);
+            cardsArray.put(cardJSON);
+        }
+        String s = cardsArray.toString();
+        System.out.println(s);
         return dataService.getModerationCards();
     }
 }

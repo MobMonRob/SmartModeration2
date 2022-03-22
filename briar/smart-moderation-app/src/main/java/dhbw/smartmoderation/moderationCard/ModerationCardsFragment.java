@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import org.json.JSONException;
+
 import dhbw.smartmoderation.R;
 
 public class ModerationCardsFragment extends Fragment {
@@ -42,7 +44,11 @@ public class ModerationCardsFragment extends Fragment {
         addButton = this.view.findViewById(R.id.floatingActionButton);
         this.addButton.setOnClickListener(addButtonClickListener);
         this.moderationCardsRecyclerView = this.view.findViewById(R.id.moderationCardList);
-        this.moderationCardAdapter = new ModerationCardAdapter(getActivity(), controller.getAllModerationCards());
+        try {
+            this.moderationCardAdapter = new ModerationCardAdapter(getActivity(), controller.getAllModerationCards());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         this.moderationCardsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         this.moderationCardsRecyclerView.setAdapter(moderationCardAdapter);
 
