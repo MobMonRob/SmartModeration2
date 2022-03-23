@@ -1,9 +1,6 @@
 package dhbw.smartmoderation.moderationCard;
 
 import org.briarproject.briar.api.privategroup.PrivateGroup;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,7 +9,6 @@ import dhbw.smartmoderation.controller.SmartModerationController;
 import dhbw.smartmoderation.data.model.Meeting;
 import dhbw.smartmoderation.data.model.ModelClass;
 import dhbw.smartmoderation.data.model.ModerationCard;
-import dhbw.smartmoderation.data.model.Voice;
 import dhbw.smartmoderation.exceptions.CantCreateModerationCardException;
 import dhbw.smartmoderation.exceptions.CantEditModerationCardException;
 import dhbw.smartmoderation.exceptions.CouldNotDeleteModerationCard;
@@ -123,7 +119,7 @@ public class ModerationCardsController extends SmartModerationController {
 
     }
 
-    public Collection<ModerationCard> getAllModerationCards() throws JSONException {
+    public Collection<ModerationCard> getAllModerationCards() {
         return dataService.getModerationCards();
     }
 }
