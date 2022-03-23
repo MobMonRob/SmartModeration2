@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import dhbw.smartmoderation.SmartModerationApplication;
 import dhbw.smartmoderation.data.model.ConsensusLevel;
 import dhbw.smartmoderation.data.model.Meeting;
+import dhbw.smartmoderation.data.model.ModerationCard;
 import dhbw.smartmoderation.data.model.Poll;
 import dhbw.smartmoderation.data.model.Voice;
 import fi.iki.elonen.NanoHTTPD;
@@ -66,6 +67,34 @@ public class WebServer extends NanoHTTPD {
                e.printStackTrace();
            }
         }
+
+       else if (uri.equals("/moderationcards")){
+
+           mimetype ="application/json";
+
+           try {
+
+               JSONArray cardsArray  = new JSONArray();
+
+               for(ModerationCard card : getMeeting().getModerationCards()) {
+
+                   JSONObject cardJSON = new JSONObject();
+                   String  hexColor = String.format("#%06X", (0xFFFFFF & card.getColor()));
+                   cardJSON.put("cardId", card.getCardId())
+                           .put("content", card.getContent())
+                           .put("color", hexColor)
+                           .put("meetingId", card.getMeetingId());
+
+                   cardsArray.put(cardJSON);
+               }
+
+               return newFixedLengthResponse(Response.Status.OK, mimetype, cardsArray.toString());
+
+           } catch (JSONException e) {
+
+               e.printStackTrace();
+           }
+       }
 
        else if (uri.contains("/result/voices") &&  Method.GET.equals(method)) {
 

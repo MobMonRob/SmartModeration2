@@ -124,20 +124,6 @@ public class ModerationCardsController extends SmartModerationController {
     }
 
     public Collection<ModerationCard> getAllModerationCards() throws JSONException {
-        Collection<ModerationCard> cards = dataService.getModerationCards();
-        JSONArray cardsArray = new JSONArray();
-        for (ModerationCard card: cards) {
-            JSONObject cardJSON = new JSONObject();
-            cardJSON.put("cardId", card.getCardId());
-            cardJSON.put("content", card.getContent());
-            String  hexColor = String.format("#%06X", (0xFFFFFF & card.getColor()));
-            cardJSON.put("color", hexColor);
-            cardJSON.put("meetingId", card.getMeetingId());
-            cardsArray.put(cardJSON);
-            cardsArray.put(cardJSON);
-        }
-        String s = cardsArray.toString();
-        System.out.println(s);
         return dataService.getModerationCards();
     }
 }
