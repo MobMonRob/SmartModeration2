@@ -43,7 +43,7 @@ public class Meeting extends ModelClass {
 	@ToMany(referencedJoinProperty = "meetingId")
 	private List<Participation> participations;
 
-	@ToMany(referencedJoinProperty = "cardId")
+	@ToMany(referencedJoinProperty = "meetingId")
 	private List<ModerationCard> moderationCards;
 
 	@ToMany
