@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="moderationCardBackgroundColorset">
+        <item name="backgroundColor1">#673AB7</item>
+        <item name="backgroundColor2">#E91E63</item>
+        <item name="backgroundColor3">#F44336</item>
+        <item name="backgroundColor4">#000000</item>
+        <item name="backgroundColor5">#3F51B5</item>
+        <item name="backgroundColor6">#009688</item>
+        <item name="backgroundColor7">#8BC34A</item>
+        <item name="backgroundColor8">#FFC107</item>
+    </string-array>
+    <string-array name="moderationCardFontColorset">
+        <item name="fontColor1">#FFFFFF</item>
+        <item name="fontColor2">#FFFFFF</item>
+        <item name="fontColor3">#FFFFFF</item>
+        <item name="fontColor4">#FFFFFF</item>
+        <item name="fontColor5">#FFFFFF</item>
+        <item name="fontColor6">#000000</item>
+        <item name="fontColor7">#000000</item>
+        <item name="fontColor8">#000000</item>
+    </string-array>
+
+</resources>
