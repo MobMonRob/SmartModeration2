@@ -145,6 +145,4 @@ public interface DataService {
 	void deleteModerationCard(ModerationCard moderationCard);
 
 	ModerationCard getModerationCard(Long cardId) throws ModerationCardNotFoundException;
-
-	Collection<ModerationCard> getModerationCards() ;
 }

@@ -1156,9 +1156,5 @@ public class DataServiceImpl implements DataService {
     }
 
 
-    @Override
-    public Collection<ModerationCard> getModerationCards() {
-        return moderationCardDao.loadAll();
-    }
 
 }

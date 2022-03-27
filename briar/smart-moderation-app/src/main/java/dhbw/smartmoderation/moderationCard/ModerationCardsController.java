@@ -4,6 +4,7 @@ import org.briarproject.briar.api.privategroup.PrivateGroup;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 import dhbw.smartmoderation.controller.SmartModerationController;
 import dhbw.smartmoderation.data.model.Meeting;
@@ -13,6 +14,7 @@ import dhbw.smartmoderation.exceptions.CantCreateModerationCardException;
 import dhbw.smartmoderation.exceptions.CantEditModerationCardException;
 import dhbw.smartmoderation.exceptions.CouldNotDeleteModerationCard;
 import dhbw.smartmoderation.exceptions.GroupNotFoundException;
+import dhbw.smartmoderation.exceptions.MeetingNotFoundException;
 import dhbw.smartmoderation.exceptions.ModerationCardNotFoundException;
 import dhbw.smartmoderation.util.Util;
 
@@ -23,16 +25,8 @@ public class ModerationCardsController extends SmartModerationController {
         this.meetingId = meetingId;
     }
 
-    private Meeting getMeeting() {
-
-        for (Meeting meeting : dataService.getMeetings()) {
-
-            if (meeting.getMeetingId().equals(this.meetingId)) {
-                return meeting;
-            }
-        }
-
-        return null;
+    private Meeting getMeeting() throws MeetingNotFoundException {
+        return dataService.getMeeting(meetingId);
     }
 
     public PrivateGroup getPrivateGroup() throws GroupNotFoundException {
@@ -41,8 +35,12 @@ public class ModerationCardsController extends SmartModerationController {
 
         for (PrivateGroup group : privateGroups) {
 
-            if (getMeeting().getGroup().getGroupId().equals(Util.bytesToLong(group.getId().getBytes()))) {
-                return group;
+            try {
+                if (getMeeting().getGroup().getGroupId().equals(Util.bytesToLong(group.getId().getBytes()))) {
+                    return group;
+                }
+            } catch (MeetingNotFoundException e) {
+                e.printStackTrace();
             }
         }
 
@@ -51,7 +49,12 @@ public class ModerationCardsController extends SmartModerationController {
 
 
     public void createModerationCard(String content, int color) throws CantCreateModerationCardException, ModerationCardNotFoundException {
-        Meeting meeting = this.getMeeting();
+        Meeting meeting = null;
+        try {
+            meeting = this.getMeeting();
+        } catch (MeetingNotFoundException e) {
+            e.printStackTrace();
+        }
 
         ModerationCard moderationCard = new ModerationCard();
 
@@ -75,7 +78,12 @@ public class ModerationCardsController extends SmartModerationController {
     }
 
     public void editModerationCard(String content, int color, long cardId) throws ModerationCardNotFoundException, CantEditModerationCardException {
-        Meeting meeting = this.getMeeting();
+        Meeting meeting = null;
+        try {
+            meeting = this.getMeeting();
+        } catch (MeetingNotFoundException e) {
+            e.printStackTrace();
+        }
 
         ModerationCard moderationCard = new ModerationCard();
 
@@ -120,6 +128,11 @@ public class ModerationCardsController extends SmartModerationController {
     }
 
     public Collection<ModerationCard> getAllModerationCards() {
-        return dataService.getModerationCards();
+        try {
+            return getMeeting().getModerationCards();
+        } catch (MeetingNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
