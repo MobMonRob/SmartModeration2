@@ -16,6 +16,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.exceptions.CantCreateModerationCardException;
+import dhbw.smartmoderation.exceptions.MeetingNotFoundException;
 import dhbw.smartmoderation.exceptions.ModerationCardNotFoundException;
 import petrov.kristiyan.colorpicker.ColorPicker;
 
@@ -52,7 +53,7 @@ public class CreateModerationCard {
     private final View.OnClickListener addModerationCardClickListener = v -> {
         try {
             moderationCardContent = moderationCardContentHolder.getText().toString();
-            controller.createModerationCard(moderationCardContent, cardColor);
+            controller.createModerationCard(moderationCardContent, cardColor, cardColorImporter.getFontColor(cardColor));
         } catch (CantCreateModerationCardException | ModerationCardNotFoundException e) {
             e.printStackTrace();
         }
