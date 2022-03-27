@@ -1,7 +1,5 @@
 package dhbw.smartmoderation.data.model;
 
-import android.graphics.Color;
-
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Generated;
@@ -18,7 +16,8 @@ public class ModerationCard extends ModelClass{
     @Id
     private Long cardId;
     private String content;
-    private int color;
+    private int backgroundColor;
+    private int fontColor;
 
     private long meetingId;
     @ToOne(joinProperty = "meetingId")
@@ -33,11 +32,13 @@ public class ModerationCard extends ModelClass{
     @Generated(hash = 1311574920)
     private transient Long meeting__resolvedKey;
 
-    @Generated(hash = 116460095)
-    public ModerationCard(Long cardId, String content, int color, long meetingId) {
+    @Generated(hash = 1755335378)
+    public ModerationCard(Long cardId, String content, int backgroundColor, int fontColor,
+            long meetingId) {
         this.cardId = cardId;
         this.content = content;
-        this.color = color;
+        this.backgroundColor = backgroundColor;
+        this.fontColor = fontColor;
         this.meetingId = meetingId;
     }
     @Keep
@@ -56,11 +57,17 @@ public class ModerationCard extends ModelClass{
     public void setContent(String content) {
         this.content = content;
     }
-    public int getColor() {
-        return this.color;
+    public int getBackgroundColor() {
+        return this.backgroundColor;
     }
-    public void setColor(int color) {
-        this.color = color;
+    public int getFontColor() {
+        return this.fontColor;
+    }
+    public void setBackgroundColor(int backgroundColor) {
+        this.backgroundColor = backgroundColor;
+    }
+    public void setFontColor(int fontColor) {
+        this.fontColor = fontColor;
     }
     public long getMeetingId() {
         return this.meetingId;

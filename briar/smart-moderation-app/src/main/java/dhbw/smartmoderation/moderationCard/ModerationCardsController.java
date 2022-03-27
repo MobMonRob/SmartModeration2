@@ -4,7 +4,6 @@ import org.briarproject.briar.api.privategroup.PrivateGroup;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Objects;
 
 import dhbw.smartmoderation.controller.SmartModerationController;
 import dhbw.smartmoderation.data.model.Meeting;
@@ -48,7 +47,7 @@ public class ModerationCardsController extends SmartModerationController {
     }
 
 
-    public void createModerationCard(String content, int color) throws CantCreateModerationCardException, ModerationCardNotFoundException {
+    public void createModerationCard(String content, int backgroundColor, int fontColor) throws CantCreateModerationCardException, ModerationCardNotFoundException {
         Meeting meeting = null;
         try {
             meeting = this.getMeeting();
@@ -61,7 +60,8 @@ public class ModerationCardsController extends SmartModerationController {
         try {
 
             moderationCard.setContent(content);
-            moderationCard.setColor(color);
+            moderationCard.setBackgroundColor(backgroundColor);
+            moderationCard.setFontColor(fontColor);
             moderationCard.setMeeting(meeting);
             dataService.mergeModerationCard(moderationCard);
 
@@ -77,7 +77,7 @@ public class ModerationCardsController extends SmartModerationController {
         }
     }
 
-    public void editModerationCard(String content, int color, long cardId) throws ModerationCardNotFoundException, CantEditModerationCardException {
+    public void editModerationCard(String content, int backgroundColor, int fontColor, long cardId) throws ModerationCardNotFoundException, CantEditModerationCardException {
         Meeting meeting = null;
         try {
             meeting = this.getMeeting();
@@ -90,7 +90,8 @@ public class ModerationCardsController extends SmartModerationController {
         try {
 
             moderationCard.setContent(content);
-            moderationCard.setColor(color);
+            moderationCard.setBackgroundColor(backgroundColor);
+            moderationCard.setFontColor(fontColor);
             moderationCard.setCardId(cardId);
             moderationCard.setMeeting(meeting);
             dataService.mergeModerationCard(moderationCard);

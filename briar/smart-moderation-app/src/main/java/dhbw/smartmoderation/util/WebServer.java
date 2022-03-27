@@ -79,10 +79,12 @@ public class WebServer extends NanoHTTPD {
                for(ModerationCard card : getMeeting().getModerationCards()) {
 
                    JSONObject cardJSON = new JSONObject();
-                   String  hexColor = String.format("#%06X", (0xFFFFFF & card.getColor()));
+                   String  backgroundColor = String.format("#%06X", (0xFFFFFF & card.getBackgroundColor()));
+                   String  fontColor = String.format("#%06X", (0xFFFFFF & card.getFontColor()));
                    cardJSON.put("cardId", card.getCardId())
                            .put("content", card.getContent())
-                           .put("color", hexColor)
+                           .put("backgroundColor", backgroundColor)
+                           .put("fontColor",fontColor)
                            .put("meetingId", card.getMeetingId());
 
                    cardsArray.put(cardJSON);

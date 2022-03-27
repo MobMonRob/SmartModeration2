@@ -20,6 +20,7 @@ import petrov.kristiyan.colorpicker.ColorPicker;
 public class EditModerationCard {
     private long cardId;
     private int cardColor;
+    private int fontColor;
     private String moderationCardContent;
     private AlertDialog alertDialog;
     private EditText moderationCardContentHolder;
@@ -52,7 +53,7 @@ public class EditModerationCard {
     private final View.OnClickListener saveModerationCardClickListener = v -> {
         try {
             moderationCardContent = moderationCardContentHolder.getText().toString();
-            controller.editModerationCard(moderationCardContent, cardColor, cardId);
+            controller.editModerationCard(moderationCardContent, cardColor, fontColor, cardId);
         } catch (ModerationCardNotFoundException | CantEditModerationCardException e) {
             e.printStackTrace();
         }
@@ -70,7 +71,8 @@ public class EditModerationCard {
     };
 
     public EditModerationCard(ModerationCard moderationCard, Context context) {
-        cardColor = moderationCard.getColor();
+        cardColor = moderationCard.getBackgroundColor();
+        fontColor = moderationCard.getFontColor();
         moderationCardContent = moderationCard.getContent();
         cardId = moderationCard.getCardId();
         long meetingId = moderationCard.getMeetingId();
@@ -82,7 +84,7 @@ public class EditModerationCard {
 
     private void fillInModerationCardData(ModerationCard moderationCard) {
         moderationCardContentHolder.setText(moderationCard.getContent());
-        cardColorViewer.setBackgroundColor(moderationCard.getColor());
+        cardColorViewer.setBackgroundColor(moderationCard.getBackgroundColor());
     }
 
 

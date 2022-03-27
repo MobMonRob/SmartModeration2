@@ -53,8 +53,8 @@ public class CreateModerationCard {
     private final View.OnClickListener addModerationCardClickListener = v -> {
         try {
             moderationCardContent = moderationCardContentHolder.getText().toString();
-            controller.createModerationCard(moderationCardContent, cardColor);
-        } catch (CantCreateModerationCardException | ModerationCardNotFoundException | MeetingNotFoundException e) {
+            controller.createModerationCard(moderationCardContent, cardColor, cardColorImporter.getFontColor(cardColor));
+        } catch (CantCreateModerationCardException | ModerationCardNotFoundException e) {
             e.printStackTrace();
         }
         alertDialog.cancel();
