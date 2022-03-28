@@ -20,6 +20,7 @@ public class ModerationCardsFragment extends Fragment {
     private View view;
     private ModerationCardsController controller;
     private FloatingActionButton addButton;
+    private FloatingActionButton loginButton;
     private long meetingId;
     private ModerationCardAdapter moderationCardAdapter;
     private RecyclerView moderationCardsRecyclerView;
@@ -27,6 +28,11 @@ public class ModerationCardsFragment extends Fragment {
     public final View.OnClickListener addButtonClickListener = v -> {
         CreateModerationCard createModerationCard = new CreateModerationCard(getActivity());
         createModerationCard.show();
+    };
+
+    public final View.OnClickListener loginButtonClickListener = v -> {
+        DesktopLoginView createDesktopLoginView = new DesktopLoginView(getActivity());
+        createDesktopLoginView.show();
     };
 
     @Nullable
@@ -40,7 +46,9 @@ public class ModerationCardsFragment extends Fragment {
         controller = new ModerationCardsController(meetingId);
         getActivity().setTitle(getString(R.string.moderationCardTitle));
         addButton = this.view.findViewById(R.id.floatingActionButton);
+        loginButton = this.view.findViewById(R.id.floatingActionButtonQRCode);
         this.addButton.setOnClickListener(addButtonClickListener);
+        this.loginButton.setOnClickListener(loginButtonClickListener);
         this.moderationCardsRecyclerView = this.view.findViewById(R.id.moderationCardList);
         this.moderationCardAdapter = new ModerationCardAdapter(getActivity(), controller.getAllModerationCards());
         this.moderationCardsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));

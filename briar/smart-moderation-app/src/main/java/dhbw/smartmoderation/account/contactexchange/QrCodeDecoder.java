@@ -1,5 +1,7 @@
 package dhbw.smartmoderation.account.contactexchange;
 
+import static java.util.logging.Level.WARNING;
+
 import android.hardware.Camera;
 import android.os.AsyncTask;
 
@@ -14,14 +16,11 @@ import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
-import com.journeyapps.barcodescanner.SourceData;
 
 import org.briarproject.bramble.api.nullsafety.NotNullByDefault;
 
 import java.util.Collections;
 import java.util.logging.Logger;
-
-import static java.util.logging.Level.WARNING;
 
 @SuppressWarnings("deprecation")
 public class QrCodeDecoder implements PreviewConsumer, Camera.PreviewCallback {
@@ -151,6 +150,7 @@ public class QrCodeDecoder implements PreviewConsumer, Camera.PreviewCallback {
     }
 
     @NotNullByDefault
+    public
     interface ResultCallback {
 
         void handleResult(Result result);
