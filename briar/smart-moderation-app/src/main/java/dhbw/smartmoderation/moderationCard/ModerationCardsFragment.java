@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import dhbw.smartmoderation.R;
+import dhbw.smartmoderation.account.contactexchange.CameraException;
 
 public class ModerationCardsFragment extends Fragment {
     private View view;
@@ -31,7 +32,12 @@ public class ModerationCardsFragment extends Fragment {
     };
 
     public final View.OnClickListener loginButtonClickListener = v -> {
-        DesktopLoginView createDesktopLoginView = new DesktopLoginView(getActivity());
+        DesktopLoginView createDesktopLoginView = null;
+        try {
+            createDesktopLoginView = new DesktopLoginView(getActivity());
+        } catch (CameraException e) {
+            e.printStackTrace();
+        }
         createDesktopLoginView.show();
     };
 
