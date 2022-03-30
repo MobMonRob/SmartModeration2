@@ -26,7 +26,7 @@ public class ModerationCardsFragment extends Fragment {
     private RecyclerView moderationCardsRecyclerView;
 
     public final View.OnClickListener addButtonClickListener = v -> {
-        CreateModerationCard createModerationCard = new CreateModerationCard(getActivity());
+        CreateModerationCard createModerationCard = new CreateModerationCard(this);
         createModerationCard.show();
     };
 
@@ -56,6 +56,10 @@ public class ModerationCardsFragment extends Fragment {
 
         return this.view;
     }
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        moderationCardAdapter.updateModerationCards(controller.getAllModerationCards());
+    }
 
 }

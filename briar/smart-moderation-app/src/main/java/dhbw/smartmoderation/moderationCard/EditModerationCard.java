@@ -10,6 +10,8 @@ import android.widget.Button;
 import android.widget.EditText;
 
 
+import androidx.fragment.app.FragmentManager;
+
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.data.model.ModerationCard;
 import dhbw.smartmoderation.exceptions.CantEditModerationCardException;
@@ -17,7 +19,7 @@ import dhbw.smartmoderation.exceptions.CouldNotDeleteModerationCard;
 import dhbw.smartmoderation.exceptions.ModerationCardNotFoundException;
 import petrov.kristiyan.colorpicker.ColorPicker;
 
-public class EditModerationCard {
+public class EditModerationCard{
     private long cardId;
     private int cardColor;
     private String moderationCardContent;
@@ -25,6 +27,7 @@ public class EditModerationCard {
     private EditText moderationCardContentHolder;
     private SurfaceView cardColorViewer;
     private ModerationCardsController controller;
+    private ModerationCardsFragment moderationCardsFragment;
 
     private final View.OnClickListener pickColorButtonClickListener = v -> {
         ColorPicker colorPicker = new ColorPicker((Activity) v.getContext());
@@ -53,6 +56,7 @@ public class EditModerationCard {
         try {
             moderationCardContent = moderationCardContentHolder.getText().toString();
             controller.editModerationCard(moderationCardContent, cardColor, cardId);
+            moderationCardsFragment.onResume();
         } catch (ModerationCardNotFoundException | CantEditModerationCardException e) {
             e.printStackTrace();
         }
@@ -69,13 +73,14 @@ public class EditModerationCard {
         alertDialog.cancel();
     };
 
-    public EditModerationCard(ModerationCard moderationCard, Context context) {
+    public EditModerationCard(ModerationCard moderationCard, ModerationCardsFragment moderationCardsFragment) {
         cardColor = moderationCard.getColor();
         moderationCardContent = moderationCard.getContent();
         cardId = moderationCard.getCardId();
         long meetingId = moderationCard.getMeetingId();
         controller = new ModerationCardsController(meetingId);
-        initializePopup(context);
+        this.moderationCardsFragment = moderationCardsFragment;
+        initializePopup(moderationCardsFragment.getContext());
         fillInModerationCardData(moderationCard);
     }
 

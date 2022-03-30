@@ -10,6 +10,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.PopupWindow;
 
 import androidx.fragment.app.FragmentActivity;
 
@@ -19,13 +20,14 @@ import dhbw.smartmoderation.exceptions.CantCreateModerationCardException;
 import dhbw.smartmoderation.exceptions.ModerationCardNotFoundException;
 import petrov.kristiyan.colorpicker.ColorPicker;
 
-public class CreateModerationCard {
+public class CreateModerationCard extends PopupWindow {
     private int cardColor;
     private String moderationCardContent = "";
     private AlertDialog alertDialog;
     private EditText moderationCardContentHolder;
     private SurfaceView cardColorViewer;
     private ModerationCardsController controller;
+    private ModerationCardsFragment moderationCardsFragment;
     ModerationCardColorImporter cardColorImporter = ModerationCardColorImporter.getInstance();
 
 
@@ -53,6 +55,7 @@ public class CreateModerationCard {
         try {
             moderationCardContent = moderationCardContentHolder.getText().toString();
             controller.createModerationCard(moderationCardContent, cardColor);
+            moderationCardsFragment.onResume();
         } catch (CantCreateModerationCardException | ModerationCardNotFoundException e) {
             e.printStackTrace();
         }
@@ -60,12 +63,13 @@ public class CreateModerationCard {
     };
 
 
-    public CreateModerationCard(FragmentActivity activity) {
-        Intent intent = activity.getIntent();
+    public CreateModerationCard(ModerationCardsFragment fragment) {
+        Intent intent = fragment.getActivity().getIntent();
         Bundle extra = intent.getExtras();
         long meetingId = extra.getLong("meetingId");
         controller = new ModerationCardsController(meetingId);
-        initializePopup(activity);
+        initializePopup(fragment.getActivity());
+        moderationCardsFragment = fragment;
     }
 
     private void initializePopup(Context context) {

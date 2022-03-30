@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -24,8 +25,9 @@ public class ModerationCardAdapter extends RecyclerView.Adapter<ModerationCardAd
     private View.OnClickListener onClickListener = view -> {
         int position = this.recyclerView.getChildLayoutPosition(view);
         ModerationCard moderationCard = this.moderationCards.get(position);
-        EditModerationCard editModerationCardView = new EditModerationCard(moderationCard,view.getContext());
+        EditModerationCard editModerationCardView = new EditModerationCard(moderationCard, FragmentManager.findFragment(view));
         editModerationCardView.show();
+
     };
 
     public ModerationCardAdapter(Context context, Collection<ModerationCard> moderationCards) {
@@ -35,6 +37,7 @@ public class ModerationCardAdapter extends RecyclerView.Adapter<ModerationCardAd
     public void updateModerationCards(Collection<ModerationCard> moderationCards){
         this.moderationCards.clear();
         this.moderationCards.addAll(moderationCards);
+        this.notifyDataSetChanged();
     }
 
     @Override
