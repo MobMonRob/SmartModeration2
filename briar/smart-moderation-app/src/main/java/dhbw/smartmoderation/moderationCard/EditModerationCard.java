@@ -68,6 +68,7 @@ public class EditModerationCard{
         moderationCardContent = moderationCardContentHolder.getText().toString();
         try {
             controller.deleteModerationCard(cardId);
+            moderationCardsFragment.onResume();
         } catch (CouldNotDeleteModerationCard | ModerationCardNotFoundException couldNotDeleteModerationCard) {
             couldNotDeleteModerationCard.printStackTrace();
         }
