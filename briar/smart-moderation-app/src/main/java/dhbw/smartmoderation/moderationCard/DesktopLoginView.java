@@ -67,13 +67,7 @@ public class DesktopLoginView implements QrCodeDecoder.ResultCallback {
         builder.setView(popUp);
         cameraView = popUp.findViewById(R.id.cameraView);
         cameraView.setPreviewConsumer(new QrCodeDecoder(this));
-        /*
-        cameraOverlay = popUp.findViewById(R.id.camera_overlay);
-        statusView = popUp.findViewById(R.id.status_container);
-        status = popUp.findViewById(R.id.connect_status);
-        qrCodeView = popUp.findViewById(R.id.qr_code_view);
-        qrCodeView.setFullScreenListener(this);
-         */
+
         try {
             cameraView.start();
 
@@ -89,8 +83,8 @@ public class DesktopLoginView implements QrCodeDecoder.ResultCallback {
 
     @Override
     public void handleResult(Result result) {
-        int x = 5;
-
+        String qrCodeString = result.getText();
+        System.out.println("QR-Code: " + qrCodeString);
     }
 }
 
