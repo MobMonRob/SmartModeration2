@@ -5,6 +5,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButtonQRCode"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginBottom="44dp"
+        android:backgroundTint="@color/colorPrimary"
+        android:clickable="true"
+        android:gravity="center_horizontal|top"
+        android:minWidth="150dp"
+        android:minHeight="32dp"
+        app:fabSize="auto"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/ic_baseline_qr_code_scanner_24" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/moderationCardList"
         android:layout_width="391dp"

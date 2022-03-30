@@ -10,6 +10,8 @@ import android.widget.Button;
 import android.widget.EditText;
 
 
+import androidx.fragment.app.FragmentManager;
+
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.data.model.ModerationCard;
 import dhbw.smartmoderation.exceptions.CantEditModerationCardException;
@@ -18,7 +20,7 @@ import dhbw.smartmoderation.exceptions.ModerationCardNotFoundException;
 import dhbw.smartmoderation.util.Client;
 import petrov.kristiyan.colorpicker.ColorPicker;
 
-public class EditModerationCard {
+public class EditModerationCard{
     private long cardId;
     private int cardColor;
     private int fontColor;
@@ -28,6 +30,7 @@ public class EditModerationCard {
     private SurfaceView cardColorViewer;
     private ModerationCardsController controller;
     private Client client;
+    private ModerationCardsFragment moderationCardsFragment;
 
     private final View.OnClickListener pickColorButtonClickListener = v -> {
         ColorPicker colorPicker = new ColorPicker((Activity) v.getContext());
@@ -56,6 +59,7 @@ public class EditModerationCard {
         try {
             moderationCardContent = moderationCardContentHolder.getText().toString();
             ModerationCard moderationCard = controller.editModerationCard(moderationCardContent, cardColor, fontColor, cardId);
+            moderationCardsFragment.onResume();
             client.updateModerationCard(moderationCard);
         } catch (ModerationCardNotFoundException | CantEditModerationCardException e) {
             e.printStackTrace();
@@ -67,6 +71,7 @@ public class EditModerationCard {
         moderationCardContent = moderationCardContentHolder.getText().toString();
         try {
             controller.deleteModerationCard(cardId);
+            moderationCardsFragment.onResume();
             client.deleteModerationCard(cardId);
         } catch (CouldNotDeleteModerationCard | ModerationCardNotFoundException couldNotDeleteModerationCard) {
             couldNotDeleteModerationCard.printStackTrace();
@@ -74,7 +79,7 @@ public class EditModerationCard {
         alertDialog.cancel();
     };
 
-    public EditModerationCard(ModerationCard moderationCard, Context context) {
+    public EditModerationCard(ModerationCard moderationCard, ModerationCardsFragment moderationCardsFragment) {
         cardColor = moderationCard.getBackgroundColor();
         fontColor = moderationCard.getFontColor();
         moderationCardContent = moderationCard.getContent();
@@ -83,7 +88,8 @@ public class EditModerationCard {
         controller = new ModerationCardsController(meetingId);
         //todo: hand over ipadress and apikey to client
         client = new Client();
-        initializePopup(context);
+        this.moderationCardsFragment = moderationCardsFragment;
+        initializePopup(moderationCardsFragment.getContext());
         fillInModerationCardData(moderationCard);
     }
 

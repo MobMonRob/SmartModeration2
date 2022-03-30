@@ -10,6 +10,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.PopupWindow;
 
 import androidx.fragment.app.FragmentActivity;
 
@@ -29,6 +30,7 @@ public class CreateModerationCard {
     private EditText moderationCardContentHolder;
     private SurfaceView cardColorViewer;
     private ModerationCardsController controller;
+    private ModerationCardsFragment moderationCardsFragment;
     ModerationCardColorImporter cardColorImporter = ModerationCardColorImporter.getInstance();
     private Client client;
 
@@ -56,6 +58,7 @@ public class CreateModerationCard {
         try {
             moderationCardContent = moderationCardContentHolder.getText().toString();
             ModerationCard moderationCard = controller.createModerationCard(moderationCardContent, backgroundColor, fontColor);
+            moderationCardsFragment.onResume();
             client.addModerationCard(moderationCard);
         } catch (CantCreateModerationCardException | ModerationCardNotFoundException e) {
             e.printStackTrace();
@@ -64,14 +67,15 @@ public class CreateModerationCard {
     };
 
 
-    public CreateModerationCard(FragmentActivity activity) {
-        Intent intent = activity.getIntent();
+    public CreateModerationCard(ModerationCardsFragment fragment) {
+        Intent intent = fragment.getActivity().getIntent();
         Bundle extra = intent.getExtras();
         long meetingId = extra.getLong("meetingId");
         controller = new ModerationCardsController(meetingId);
         //todo: hand over ipadress and apikey to client
         client = new Client();
-        initializePopup(activity);
+        initializePopup(fragment.getActivity());
+        moderationCardsFragment = fragment;
     }
 
     private void initializePopup(Context context) {
