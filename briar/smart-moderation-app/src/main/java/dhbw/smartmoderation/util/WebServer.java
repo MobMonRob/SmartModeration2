@@ -84,13 +84,15 @@ public class WebServer extends NanoHTTPD {
                    cardJSON.put("cardId", card.getCardId())
                            .put("content", card.getContent())
                            .put("backgroundColor", backgroundColor)
-                           .put("fontColor",fontColor)
-                           .put("meetingId", card.getMeetingId());
+                           .put("fontColor",fontColor);
 
                    cardsArray.put(cardJSON);
                }
-
-               return newFixedLengthResponse(Response.Status.OK, mimetype, cardsArray.toString());
+               JSONObject cardsOutputJSON = new JSONObject();
+               cardsOutputJSON.put("meetingId", getMeeting().getMeetingId());
+               cardsOutputJSON.put("moderationCards", cardsArray);
+               String s = cardsOutputJSON.toString();
+               return newFixedLengthResponse(Response.Status.OK, mimetype, cardsOutputJSON.toString());
 
            } catch (JSONException e) {
 
