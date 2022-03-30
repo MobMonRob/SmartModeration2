@@ -47,7 +47,7 @@ public class ModerationCardsController extends SmartModerationController {
     }
 
 
-    public void createModerationCard(String content, int backgroundColor, int fontColor) throws CantCreateModerationCardException, ModerationCardNotFoundException {
+    public ModerationCard createModerationCard(String content, int backgroundColor, int fontColor) throws CantCreateModerationCardException, ModerationCardNotFoundException {
         Meeting meeting = null;
         try {
             meeting = this.getMeeting();
@@ -75,9 +75,10 @@ public class ModerationCardsController extends SmartModerationController {
             throw new CantCreateModerationCardException();
 
         }
+        return moderationCard;
     }
 
-    public void editModerationCard(String content, int backgroundColor, int fontColor, long cardId) throws ModerationCardNotFoundException, CantEditModerationCardException {
+    public ModerationCard editModerationCard(String content, int backgroundColor, int fontColor, long cardId) throws ModerationCardNotFoundException, CantEditModerationCardException {
         Meeting meeting = null;
         try {
             meeting = this.getMeeting();
@@ -103,6 +104,7 @@ public class ModerationCardsController extends SmartModerationController {
         } catch (GroupNotFoundException exception) {
             throw new CantEditModerationCardException();
         }
+        return moderationCard;
     }
 
     public void deleteModerationCard(long cardId) throws CouldNotDeleteModerationCard, ModerationCardNotFoundException {

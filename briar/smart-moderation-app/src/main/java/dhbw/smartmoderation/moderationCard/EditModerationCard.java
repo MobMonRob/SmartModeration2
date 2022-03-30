@@ -15,6 +15,7 @@ import dhbw.smartmoderation.data.model.ModerationCard;
 import dhbw.smartmoderation.exceptions.CantEditModerationCardException;
 import dhbw.smartmoderation.exceptions.CouldNotDeleteModerationCard;
 import dhbw.smartmoderation.exceptions.ModerationCardNotFoundException;
+import dhbw.smartmoderation.util.Client;
 import petrov.kristiyan.colorpicker.ColorPicker;
 
 public class EditModerationCard {
@@ -26,6 +27,7 @@ public class EditModerationCard {
     private EditText moderationCardContentHolder;
     private SurfaceView cardColorViewer;
     private ModerationCardsController controller;
+    private Client client;
 
     private final View.OnClickListener pickColorButtonClickListener = v -> {
         ColorPicker colorPicker = new ColorPicker((Activity) v.getContext());
@@ -53,7 +55,8 @@ public class EditModerationCard {
     private final View.OnClickListener saveModerationCardClickListener = v -> {
         try {
             moderationCardContent = moderationCardContentHolder.getText().toString();
-            controller.editModerationCard(moderationCardContent, cardColor, fontColor, cardId);
+            ModerationCard moderationCard = controller.editModerationCard(moderationCardContent, cardColor, fontColor, cardId);
+            client.updateModerationCard(moderationCard);
         } catch (ModerationCardNotFoundException | CantEditModerationCardException e) {
             e.printStackTrace();
         }
@@ -64,6 +67,7 @@ public class EditModerationCard {
         moderationCardContent = moderationCardContentHolder.getText().toString();
         try {
             controller.deleteModerationCard(cardId);
+            client.deleteModerationCard(cardId);
         } catch (CouldNotDeleteModerationCard | ModerationCardNotFoundException couldNotDeleteModerationCard) {
             couldNotDeleteModerationCard.printStackTrace();
         }
@@ -77,6 +81,8 @@ public class EditModerationCard {
         cardId = moderationCard.getCardId();
         long meetingId = moderationCard.getMeetingId();
         controller = new ModerationCardsController(meetingId);
+        //todo: hand over ipadress and apikey to client
+        client = new Client();
         initializePopup(context);
         fillInModerationCardData(moderationCard);
     }
