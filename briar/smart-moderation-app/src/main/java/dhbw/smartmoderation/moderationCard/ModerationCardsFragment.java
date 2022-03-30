@@ -11,10 +11,12 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import dhbw.smartmoderation.R;
+import dhbw.smartmoderation.meeting.detail.BaseActivity;
 
 public class ModerationCardsFragment extends Fragment {
     private View view;
@@ -53,6 +55,7 @@ public class ModerationCardsFragment extends Fragment {
         this.moderationCardAdapter = new ModerationCardAdapter(getActivity(), controller.getAllModerationCards());
         this.moderationCardsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         this.moderationCardsRecyclerView.setAdapter(moderationCardAdapter);
+        ((BaseActivity)getActivity()).getPullToRefresh().setOnRefreshListener(this::onResume);
 
         return this.view;
     }
@@ -60,6 +63,7 @@ public class ModerationCardsFragment extends Fragment {
     public void onResume() {
         super.onResume();
         moderationCardAdapter.updateModerationCards(controller.getAllModerationCards());
+        ((BaseActivity)getActivity()).getPullToRefresh().setRefreshing(false);
     }
 
 }
