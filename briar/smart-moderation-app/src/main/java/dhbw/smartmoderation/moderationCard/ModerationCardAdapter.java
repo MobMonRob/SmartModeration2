@@ -1,7 +1,6 @@
 package dhbw.smartmoderation.moderationCard;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,14 +56,9 @@ public class ModerationCardAdapter extends RecyclerView.Adapter<ModerationCardAd
     @Override
     public void onBindViewHolder(@NonNull ModerationCardAdapter.ModerationCardViewHolder holder, int position) {
         TextView cardTextView = holder.itemView.findViewById(R.id.cardTextView);
-        cardTextView.setTextColor(getProperTextColor(moderationCards.get(position).getColor()));
         cardTextView.setText(moderationCards.get(position).getContent());
-        cardTextView.setBackgroundColor(moderationCards.get(position).getColor());
-    }
-
-    private int getProperTextColor(int backgroundColor) {
-        ModerationCardColorImporter cardColorImporter = ModerationCardColorImporter.getInstance();
-        return cardColorImporter.getFontColor(backgroundColor);
+        cardTextView.setTextColor(moderationCards.get(position).getFontColor());
+        cardTextView.setBackgroundColor(moderationCards.get(position).getBackgroundColor());
     }
 
     @Override
