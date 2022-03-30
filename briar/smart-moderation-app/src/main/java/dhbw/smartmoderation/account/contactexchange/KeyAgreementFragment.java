@@ -445,6 +445,7 @@ public class KeyAgreementFragment extends Fragment implements EventListener, QrC
     }
 
     @NotNullByDefault
+    public
     interface KeyAgreementEventListener {
 
         @UiThread
