@@ -36,7 +36,7 @@ import dhbw.smartmoderation.account.contactexchange.KeyAgreementFragment;
 import dhbw.smartmoderation.account.contactexchange.QrCodeDecoder;
 import dhbw.smartmoderation.account.contactexchange.QrCodeView;
 
-public class DesktopLoginView{
+public class DesktopLoginView implements QrCodeDecoder.ResultCallback {
     static final String TAG = KeyAgreementFragment.class.getName();
     private static final Logger LOG = Logger.getLogger(KeyAgreementFragment.class.getName());
     private static final Charset ISO_8859_1 = StandardCharsets.ISO_8859_1;
@@ -66,6 +66,7 @@ public class DesktopLoginView{
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setView(popUp);
         cameraView = popUp.findViewById(R.id.cameraView);
+        cameraView.setPreviewConsumer(new QrCodeDecoder(this));
         /*
         cameraOverlay = popUp.findViewById(R.id.camera_overlay);
         statusView = popUp.findViewById(R.id.status_container);
@@ -75,6 +76,7 @@ public class DesktopLoginView{
          */
         try {
             cameraView.start();
+
         } catch (CameraException e) {
             e.printStackTrace();
         }
@@ -83,6 +85,12 @@ public class DesktopLoginView{
 
     public void show() {
         alertDialog.show();
+    }
+
+    @Override
+    public void handleResult(Result result) {
+        int x = 5;
+
     }
 }
 
