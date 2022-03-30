@@ -128,6 +128,19 @@ public class QrCodeDecoder implements PreviewConsumer, Camera.PreviewCallback {
                 reader.reset();
             }
 
+            try {
+                result = reader.decode(bitmap, Collections.singletonMap(DecodeHintType.CHARACTER_SET, "UTF-8"));
+
+            } catch (ReaderException e) {
+
+                LOG.warning("Invalid preview frame");
+                return null;
+
+            } finally {
+
+                reader.reset();
+            }
+
             callback.handleResult(result);
             return null;
         }

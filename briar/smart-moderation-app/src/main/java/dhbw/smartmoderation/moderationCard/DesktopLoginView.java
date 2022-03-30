@@ -85,6 +85,12 @@ public class DesktopLoginView implements QrCodeDecoder.ResultCallback {
     public void handleResult(Result result) {
         String qrCodeString = result.getText();
         System.out.println("QR-Code: " + qrCodeString);
+        try {
+            cameraView.stop();
+        } catch (CameraException e) {
+            e.printStackTrace();
+        }
+        alertDialog.dismiss();
     }
 }
 
