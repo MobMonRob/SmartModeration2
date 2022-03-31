@@ -1,6 +1,7 @@
 package dhbw.smartmoderation.moderationCard;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -42,21 +43,22 @@ public class DesktopLoginQRScanner extends AppCompatActivity {
         if (mCodeScanner == null)
             mCodeScanner = new CodeScanner(this, scannerView);
         mCodeScanner.setDecodeCallback(result -> runOnUiThread(() -> {
-            String loginJSONstring = result.getText();
-            JSONObject loginJSON = null;
+            System.out.println("Callback");
+            String loginJSONString = result.getText();
+            System.out.println(loginJSONString);
             try {
-                loginJSON = new JSONObject(loginJSONstring);
-
+                JSONObject loginJSON = new JSONObject(loginJSONString);
                 String ipAddress = (String) loginJSON.get("ipAddress");
-                String port = (String) loginJSON.get("port");
+                int port = (int) loginJSON.get("port");
                 String apiKey = (String) loginJSON.get("apiKey");
 
                 SmartModerationApplication app = (SmartModerationApplication) SmartModerationApplication.getApp();
-                app.getClient().startClient(ipAddress, port, apiKey, app.getWebServer(), app.getMeetingId());
+                Intent intent = getIntent();
+                long meetingId = intent.getLongExtra("meetingId", 0);
+                app.getClient().startClient(ipAddress, port, apiKey, app.getWebServer(), meetingId);
             } catch (JSONException | IOException e) {
                 e.printStackTrace();
             }
-
             this.finish();
         }));
         scannerView.setOnClickListener(view -> mCodeScanner.startPreview());

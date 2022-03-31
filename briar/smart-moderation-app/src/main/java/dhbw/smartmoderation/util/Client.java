@@ -1,5 +1,7 @@
 package dhbw.smartmoderation.util;
 
+import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -13,12 +15,11 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class Client {
+    private static final String TAG = "Client";
     private boolean isRunning;
     private String ipAddress;
-    private String port;
+    private int port;
     private String apiKey;
-    private WebServer webServer;
-    private long meetingId;
 
     public Client() {
     }
@@ -36,33 +37,39 @@ public class Client {
 
     }
 
-    public void sendLoginInformation(WebServer webServer, long meetingId) throws IOException, JSONException {
+    public void sendLoginInformation(WebServer webServer, long meetingId) throws JSONException {
+        System.out.println("Send login information");
         JSONObject loginJSON = new JSONObject();
         loginJSON.put("meetingId", meetingId);
         loginJSON.put("ipAddress", webServer.getIpAddress());
         loginJSON.put("port", WebServer.getPort());
-
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
         MediaType mediaType = MediaType.parse("application/json");
         RequestBody body = RequestBody.create(mediaType, loginJSON.toString());
         Request request = new Request.Builder()
-                .url(ipAddress + ":" + port + "/login")
+                .url("http://" + ipAddress + ":" + port + "/login")
                 .method("POST", body)
                 .addHeader("Authorization", "Bearer " + apiKey)
                 .addHeader("Content-Type", "application/json")
                 .build();
-        Response response = client.newCall(request).execute();
-        if (response.body() != null && response.body().toString().equals("OK") && response.code() == 200) {
-            isRunning = true;
-        }
-        System.out.println("loginjson");
-        System.out.println(loginJSON.toString());
 
+        Thread thread = new Thread(() -> {
+            try {
+                Response response = client.newCall(request).execute();
+                if (response.body() != null && response.body().string().equals("OK") && response.code() == 200) {
+                    System.out.println("Login OK!");
+                    isRunning = true;
+                }
+            } catch (Exception e) {
+                Log.e(TAG, e.getMessage());
+            }
+        });
+        thread.start();
     }
 
-    public void startClient(String ipAddress, String port, String apiKey, WebServer webServer, long meetingId) throws IOException, JSONException {
-        // create http client
+    public void startClient(String ipAddress, int port, String apiKey, WebServer webServer, long meetingId) throws IOException, JSONException {
+        System.out.println("Start client.");
         this.ipAddress = ipAddress;
         this.port = port;
         this.apiKey = apiKey;
