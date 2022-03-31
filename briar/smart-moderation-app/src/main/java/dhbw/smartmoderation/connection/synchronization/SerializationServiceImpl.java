@@ -225,6 +225,7 @@ public class SerializationServiceImpl implements SerializationService {
 						break;
 					case "groupSettings":
 						groupSettingsJSONs.add(current);
+						break;
 					case "moderationCard":
 						moderationCardsJSONs.add(current);
 						break;
