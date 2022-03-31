@@ -60,7 +60,7 @@ public class EditModerationCard{
             moderationCardContent = moderationCardContentHolder.getText().toString();
             ModerationCard moderationCard = controller.editModerationCard(moderationCardContent, cardColor, fontColor, cardId);
             moderationCardsFragment.onResume();
-            client.updateModerationCard(moderationCard);
+            if(client != null && client.isRunning()) client.updateModerationCard(moderationCard);
         } catch (ModerationCardNotFoundException | CantEditModerationCardException e) {
             e.printStackTrace();
         }
@@ -72,7 +72,7 @@ public class EditModerationCard{
         try {
             controller.deleteModerationCard(cardId);
             moderationCardsFragment.onResume();
-            client.deleteModerationCard(cardId);
+            if(client != null && client.isRunning()) client.deleteModerationCard(cardId);
         } catch (CouldNotDeleteModerationCard | ModerationCardNotFoundException couldNotDeleteModerationCard) {
             couldNotDeleteModerationCard.printStackTrace();
         }

@@ -59,7 +59,8 @@ public class CreateModerationCard {
             moderationCardContent = moderationCardContentHolder.getText().toString();
             ModerationCard moderationCard = controller.createModerationCard(moderationCardContent, backgroundColor, fontColor);
             moderationCardsFragment.onResume();
-            client.addModerationCard(moderationCard);
+            if(client != null && client.isRunning()) client.addModerationCard(moderationCard);
+
         } catch (CantCreateModerationCardException | ModerationCardNotFoundException e) {
             e.printStackTrace();
         }

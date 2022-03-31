@@ -13,7 +13,13 @@ import androidx.core.content.ContextCompat;
 import com.budiyev.android.codescanner.CodeScanner;
 import com.budiyev.android.codescanner.CodeScannerView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
 import dhbw.smartmoderation.R;
+import dhbw.smartmoderation.SmartModerationApplication;
 
 public class DesktopLoginQRScanner extends AppCompatActivity {
 
@@ -29,7 +35,6 @@ public class DesktopLoginQRScanner extends AppCompatActivity {
         } else {
             startScanning();
         }
-        startScanning();
     }
 
     private void startScanning() {
@@ -37,8 +42,21 @@ public class DesktopLoginQRScanner extends AppCompatActivity {
         if (mCodeScanner == null)
             mCodeScanner = new CodeScanner(this, scannerView);
         mCodeScanner.setDecodeCallback(result -> runOnUiThread(() -> {
-            System.out.println(result.getText());
-            Toast.makeText(DesktopLoginQRScanner.this, result.getText(), Toast.LENGTH_SHORT).show();
+            String loginJSONstring = result.getText();
+            JSONObject loginJSON = null;
+            try {
+                loginJSON = new JSONObject(loginJSONstring);
+
+                String ipAddress = (String) loginJSON.get("ipAddress");
+                String port = (String) loginJSON.get("port");
+                String apiKey = (String) loginJSON.get("apiKey");
+
+                SmartModerationApplication app = (SmartModerationApplication) SmartModerationApplication.getApp();
+                app.getClient().startClient(ipAddress, port, apiKey, app.getWebServer(), app.getMeetingId());
+            } catch (JSONException | IOException e) {
+                e.printStackTrace();
+            }
+
             this.finish();
         }));
         scannerView.setOnClickListener(view -> mCodeScanner.startPreview());

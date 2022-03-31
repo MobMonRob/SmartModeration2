@@ -109,6 +109,7 @@ dependencies {
 	implementation project(path: ':bramble-java', configuration: 'default')
 	implementation project(':bramble-android')
 	implementation 'com.budiyev.android:code-scanner:2.1.0'
+	implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.10.0-RC1'
 
 	testImplementation project(path: ':briar-core', configuration: 'testOutput')
 	testImplementation project(path: ':bramble-api', configuration: 'testOutput')
