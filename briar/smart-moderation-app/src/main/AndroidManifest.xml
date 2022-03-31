@@ -100,10 +100,18 @@
             android:name=".group.create.CreateGroup"
             android:screenOrientation="portrait">
         </activity>
+
         <activity
-            android:name=".moderationcards.create.CreateModerationCard"
-            android:screenOrientation="portrait">
-           </activity >
+            android:name=".moderationCard.CreateModerationCard"
+            android:screenOrientation="fullSensor"
+            tools:ignore="Instantiatable">
+        </activity >
+
+        <activity
+            android:name=".moderationCard.DesktopLoginQRScanner"
+            android:screenOrientation="fullSensor"
+            tools:ignore="Instantiatable">
+        </activity >
 
         <activity
             android:name=".group.invitations.ListInvitationsActivity"
