@@ -1128,7 +1128,6 @@ public class DataServiceImpl implements DataService {
             return;
         }
 
-
         moderationCardDao.insertOrReplaceInTx(moderationCard);
     }
 
