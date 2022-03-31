@@ -130,7 +130,7 @@ public class ModerationCardsController extends SmartModerationController {
 
     public Collection<ModerationCard> getAllModerationCards() {
         try {
-            System.out.println(this.synchronizationService.pull(getPrivateGroup()));
+            this.synchronizationService.pull(getPrivateGroup());
 
         } catch (GroupNotFoundException e) {
             e.printStackTrace();
