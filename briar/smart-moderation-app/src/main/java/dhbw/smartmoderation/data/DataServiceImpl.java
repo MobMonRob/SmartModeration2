@@ -1127,60 +1127,6 @@ public class DataServiceImpl implements DataService {
 
             return;
         }
-//        try {
-//
-//            meeting = getMeeting(poll.getMeetingId());
-//
-//        } catch (MeetingNotFoundException e) {
-//
-//            e.printStackTrace();
-//        }
-//
-//        if (meeting == null) {
-//
-//            return;
-//        }
-//
-//        Collection<Poll> allPolls = getPolls();
-//
-//        Poll previousPoll = null;
-//
-//        for (Poll currentPoll : allPolls) {
-//
-//            if (currentPoll.getPollId().equals(poll.getPollId())) {
-//
-//                previousPoll = currentPoll;
-//                poll.setPollId(currentPoll.getPollId());
-//                savePoll(previousPoll);
-//            }
-//        }
-//
-//        if (previousPoll != null) {
-//
-//            if (poll.getTitle() == null || poll.getTitle().isEmpty()) {
-//                poll.setTitle(previousPoll.getTitle());
-//            }
-//
-//            if (poll.getNote() == null || poll.getNote().isEmpty()) {
-//                poll.setNote(previousPoll.getNote());
-//            }
-//
-//            if (!poll.getIsOpen()) {
-//                poll.setIsOpen(previousPoll.getIsOpen());
-//            }
-//
-//            if (!poll.getClosedByModerator()) {
-//                poll.setClosedByModerator(previousPoll.getClosedByModerator());
-//            }
-//
-//            if (poll.getConsensusProposal() == null || poll.getConsensusProposal().isEmpty()) {
-//                poll.setConsensusProposal(previousPoll.getConsensusProposal());
-//            }
-//
-//            if (poll.getVoteMembersCountOnClosed() == 0) {
-//                poll.setVoteMembersCountOnClosed(previousPoll.getVoteMembersCountOnClosed());
-//            }
-
 
         moderationCardDao.insertOrReplaceInTx(moderationCard);
     }
