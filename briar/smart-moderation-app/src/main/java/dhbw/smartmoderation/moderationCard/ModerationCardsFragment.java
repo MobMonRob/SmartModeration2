@@ -31,8 +31,8 @@ public class ModerationCardsFragment extends Fragment {
     };
 
     public final View.OnClickListener loginButtonClickListener = v -> {
-        DesktopLoginView createDesktopLoginView = new DesktopLoginView(getActivity());
-        createDesktopLoginView.show();
+        Intent createQrScanner = new Intent(this.getContext(), DesktopLoginQRScanner.class);
+        startActivity(createQrScanner);
     };
 
     @Nullable

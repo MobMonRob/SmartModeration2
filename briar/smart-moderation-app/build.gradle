@@ -108,6 +108,7 @@ dependencies {
 	implementation project(path: ':briar-core', configuration: 'default')
 	implementation project(path: ':bramble-java', configuration: 'default')
 	implementation project(':bramble-android')
+	implementation 'com.budiyev.android:code-scanner:2.1.0'
 
 	testImplementation project(path: ':briar-core', configuration: 'testOutput')
 	testImplementation project(path: ':bramble-api', configuration: 'testOutput')
