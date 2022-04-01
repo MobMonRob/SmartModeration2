@@ -302,4 +302,12 @@ public class WebServer extends NanoHTTPD {
 
         return null;
     }
+
+    public static int getPort() {
+        return PORT;
+    }
+
+    public String getIpAddress() {
+        return this.getHostname();
+    }
 }

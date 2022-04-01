@@ -16,13 +16,16 @@ import androidx.fragment.app.FragmentActivity;
 
 
 import dhbw.smartmoderation.R;
+import dhbw.smartmoderation.SmartModerationApplication;
+import dhbw.smartmoderation.data.model.ModerationCard;
 import dhbw.smartmoderation.exceptions.CantCreateModerationCardException;
-import dhbw.smartmoderation.exceptions.MeetingNotFoundException;
 import dhbw.smartmoderation.exceptions.ModerationCardNotFoundException;
+import dhbw.smartmoderation.util.Client;
 import petrov.kristiyan.colorpicker.ColorPicker;
 
-public class CreateModerationCard extends PopupWindow {
-    private int cardColor;
+public class CreateModerationCard {
+    private int backgroundColor;
+    private int fontColor;
     private String moderationCardContent = "";
     private AlertDialog alertDialog;
     private EditText moderationCardContentHolder;
@@ -30,7 +33,8 @@ public class CreateModerationCard extends PopupWindow {
     private ModerationCardsController controller;
     private ModerationCardsFragment moderationCardsFragment;
     ModerationCardColorImporter cardColorImporter = ModerationCardColorImporter.getInstance();
-
+    private Client client;
+    SmartModerationApplication app = (SmartModerationApplication) SmartModerationApplication.getApp();
 
     private final View.OnClickListener pickColorButtonClickListener = v -> {
         ColorPicker colorPicker = new ColorPicker((Activity) v.getContext());
@@ -38,7 +42,7 @@ public class CreateModerationCard extends PopupWindow {
         colorPicker.setOnFastChooseColorListener(new ColorPicker.OnFastChooseColorListener() {
             @Override
             public void setOnFastChooseColorListener(int position, int color) {
-                cardColor = color;
+                backgroundColor = color;
                 cardColorViewer.setBackgroundColor(color);
                 colorPicker.dismissDialog();
             }
@@ -55,8 +59,10 @@ public class CreateModerationCard extends PopupWindow {
     private final View.OnClickListener addModerationCardClickListener = v -> {
         try {
             moderationCardContent = moderationCardContentHolder.getText().toString();
-            controller.createModerationCard(moderationCardContent, cardColor, cardColorImporter.getFontColor(cardColor));
+            ModerationCard moderationCard = controller.createModerationCard(moderationCardContent, backgroundColor, fontColor);
             moderationCardsFragment.onResume();
+            if(client != null && client.isRunning()) client.addModerationCard(moderationCard);
+
         } catch (CantCreateModerationCardException | ModerationCardNotFoundException e) {
             e.printStackTrace();
         }
@@ -69,6 +75,7 @@ public class CreateModerationCard extends PopupWindow {
         Bundle extra = intent.getExtras();
         long meetingId = extra.getLong("meetingId");
         controller = new ModerationCardsController(meetingId);
+        client = app.getClient();
         initializePopup(fragment.getActivity());
         moderationCardsFragment = fragment;
     }
@@ -79,10 +86,11 @@ public class CreateModerationCard extends PopupWindow {
         moderationCardContentHolder = popUp.findViewById(R.id.moderationCardContent);
         Button pickColorButton = popUp.findViewById(R.id.pickColorButton);
         pickColorButton.setOnClickListener(pickColorButtonClickListener);
-        //set default color
-        cardColor = cardColorImporter.getBackgroundColors()[0];
+        //set default colors
+        backgroundColor = cardColorImporter.getBackgroundColors()[0];
+        fontColor = cardColorImporter.getFontColor(backgroundColor);
         cardColorViewer = popUp.findViewById(R.id.colorViewer);
-        cardColorViewer.setBackgroundColor(cardColor);
+        cardColorViewer.setBackgroundColor(backgroundColor);
         Button addButton = popUp.findViewById(R.id.addButton);
         addButton.setOnClickListener(addModerationCardClickListener);
         Button cancelButton = popUp.findViewById(R.id.cancelButton);

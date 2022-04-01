@@ -1,6 +1,7 @@
 package dhbw.smartmoderation.moderationCard;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -13,7 +14,13 @@ import androidx.core.content.ContextCompat;
 import com.budiyev.android.codescanner.CodeScanner;
 import com.budiyev.android.codescanner.CodeScannerView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
 import dhbw.smartmoderation.R;
+import dhbw.smartmoderation.SmartModerationApplication;
 
 public class DesktopLoginQRScanner extends AppCompatActivity {
 
@@ -29,7 +36,6 @@ public class DesktopLoginQRScanner extends AppCompatActivity {
         } else {
             startScanning();
         }
-        startScanning();
     }
 
     private void startScanning() {
@@ -37,8 +43,22 @@ public class DesktopLoginQRScanner extends AppCompatActivity {
         if (mCodeScanner == null)
             mCodeScanner = new CodeScanner(this, scannerView);
         mCodeScanner.setDecodeCallback(result -> runOnUiThread(() -> {
-            System.out.println(result.getText());
-            Toast.makeText(DesktopLoginQRScanner.this, result.getText(), Toast.LENGTH_SHORT).show();
+            System.out.println("Callback");
+            String loginJSONString = result.getText();
+            System.out.println(loginJSONString);
+            try {
+                JSONObject loginJSON = new JSONObject(loginJSONString);
+                String ipAddress = (String) loginJSON.get("ipAddress");
+                int port = (int) loginJSON.get("port");
+                String apiKey = (String) loginJSON.get("apiKey");
+
+                SmartModerationApplication app = (SmartModerationApplication) SmartModerationApplication.getApp();
+                Intent intent = getIntent();
+                long meetingId = intent.getLongExtra("meetingId", 0);
+                app.getClient().startClient(ipAddress, port, apiKey, meetingId);
+            } catch (JSONException | IOException e) {
+                e.printStackTrace();
+            }
             this.finish();
         }));
         scannerView.setOnClickListener(view -> mCodeScanner.startPreview());

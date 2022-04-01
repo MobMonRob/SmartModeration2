@@ -23,6 +23,7 @@ import dhbw.smartmoderation.data.model.DaoMaster;
 import dhbw.smartmoderation.data.model.DaoSession;
 import dhbw.smartmoderation.data.model.GroupUpdateObserver;
 import dhbw.smartmoderation.connection.synchronization.UpdateChecker;
+import dhbw.smartmoderation.util.Client;
 import dhbw.smartmoderation.util.ExceptionHandlingActivity;
 import dhbw.smartmoderation.util.WebServer;
 
@@ -40,6 +41,7 @@ public class SmartModerationApplication extends SugarApp {
 	private Thread updateThread;
 	private ExceptionHandlingActivity exceptionHandlingActivity;
 	private WebServer webServer;
+	private Client client;
 	public SmartModerationComponent comp;
 
 	@Override
@@ -66,6 +68,7 @@ public class SmartModerationApplication extends SugarApp {
 		//updateThread.start();
 
 		webServer = new WebServer(this);
+		client = new Client();
 	}
 
 	/**
@@ -178,5 +181,9 @@ public class SmartModerationApplication extends SugarApp {
 	public WebServer getWebServer() {
 
 		return this.webServer;
+	}
+
+	public Client getClient() {
+		return client;
 	}
 }

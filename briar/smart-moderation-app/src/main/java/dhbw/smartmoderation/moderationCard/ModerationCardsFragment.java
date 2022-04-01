@@ -34,6 +34,7 @@ public class ModerationCardsFragment extends Fragment {
 
     public final View.OnClickListener loginButtonClickListener = v -> {
         Intent createQrScanner = new Intent(this.getContext(), DesktopLoginQRScanner.class);
+        createQrScanner.putExtra("meetingId", meetingId);
         startActivity(createQrScanner);
     };
 
