@@ -1,5 +1,9 @@
 package dhbw.smartmoderation.util;
 
+import static android.content.Context.WIFI_SERVICE;
+
+import android.net.wifi.WifiManager;
+import android.text.format.Formatter;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -7,6 +11,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
+import dhbw.smartmoderation.SmartModerationApplication;
 import dhbw.smartmoderation.data.model.ModerationCard;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -20,6 +25,7 @@ public class Client {
     private String ipAddress;
     private int port;
     private String apiKey;
+    SmartModerationApplication app = (SmartModerationApplication) SmartModerationApplication.getApp();
 
     public Client() {
     }
@@ -37,11 +43,11 @@ public class Client {
 
     }
 
-    public void sendLoginInformation(WebServer webServer, long meetingId) throws JSONException {
+    public void sendLoginInformation(String androidIpAddress, long meetingId) throws JSONException {
         System.out.println("Send login information");
         JSONObject loginJSON = new JSONObject();
         loginJSON.put("meetingId", meetingId);
-        loginJSON.put("ipAddress", webServer.getIpAddress());
+        loginJSON.put("ipAddress", androidIpAddress);
         loginJSON.put("port", WebServer.getPort());
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
@@ -68,12 +74,16 @@ public class Client {
         thread.start();
     }
 
-    public void startClient(String ipAddress, int port, String apiKey, WebServer webServer, long meetingId) throws IOException, JSONException {
+    public void startClient(String ipAddress, int port, String apiKey, long meetingId) throws IOException, JSONException {
         System.out.println("Start client.");
         this.ipAddress = ipAddress;
         this.port = port;
         this.apiKey = apiKey;
-        sendLoginInformation(webServer, meetingId);
+        app.startWebServer();
+        WifiManager wifiManager = (WifiManager) app.getApplicationContext().getSystemService(WIFI_SERVICE);
+        String androidIpAddress = Formatter.formatIpAddress(wifiManager.getConnectionInfo().getIpAddress());
+        System.out.println("IP-Address: " + androidIpAddress);
+        sendLoginInformation(androidIpAddress, meetingId);
     }
 
     public boolean isRunning() {

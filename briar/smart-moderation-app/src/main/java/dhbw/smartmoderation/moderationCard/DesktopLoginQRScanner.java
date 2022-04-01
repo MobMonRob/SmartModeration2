@@ -55,7 +55,7 @@ public class DesktopLoginQRScanner extends AppCompatActivity {
                 SmartModerationApplication app = (SmartModerationApplication) SmartModerationApplication.getApp();
                 Intent intent = getIntent();
                 long meetingId = intent.getLongExtra("meetingId", 0);
-                app.getClient().startClient(ipAddress, port, apiKey, app.getWebServer(), meetingId);
+                app.getClient().startClient(ipAddress, port, apiKey, meetingId);
             } catch (JSONException | IOException e) {
                 e.printStackTrace();
             }
