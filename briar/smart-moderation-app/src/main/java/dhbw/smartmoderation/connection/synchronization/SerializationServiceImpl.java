@@ -48,6 +48,11 @@ public class SerializationServiceImpl implements SerializationService {
 	}
 
 	@Override
+	public String serialize(ModerationCard moderationCard) {
+		return jsonify(moderationCard).toString();
+	}
+
+	@Override
 	public String serialize(Voice voice) { return jsonify(voice).toString(); }
 
 	@Override
@@ -92,6 +97,11 @@ public class SerializationServiceImpl implements SerializationService {
 			else if (model.getClass().getName().equals(Poll.class.getName())) {
 
 				payload.put(jsonify((Poll) model));
+			}
+
+			else if (model.getClass().getName().equals(ModerationCard.class.getName())) {
+
+				payload.put(jsonify((ModerationCard) model));
 			}
 
 			else if (model.getClass().getName().equals(Voice.class.getName())) {
@@ -155,6 +165,8 @@ public class SerializationServiceImpl implements SerializationService {
 					return deserializeParticipation(root);
 				case "groupSettings":
 					return deserializeGroupSettings(root);
+				case "moderationCard":
+					return deserializeModerationCard(root);
 				default:
 					throw new IllegalArgumentException("Unsupported type for deserialization: " + root.get("type"));
 			}
@@ -182,6 +194,7 @@ public class SerializationServiceImpl implements SerializationService {
 			List<JSONObject> topicJSONs = new ArrayList<>();
 			List<JSONObject> participationJSONs = new ArrayList<>();
 			List<JSONObject> groupSettingsJSONs = new ArrayList<>();
+			List<JSONObject> moderationCardsJSONs = new ArrayList<>();
 
 			for (int i = 0; i < payload.length(); i++) {
 				JSONObject current = ((JSONObject) payload.get(i));
@@ -212,6 +225,9 @@ public class SerializationServiceImpl implements SerializationService {
 						break;
 					case "groupSettings":
 						groupSettingsJSONs.add(current);
+						break;
+					case "moderationCard":
+						moderationCardsJSONs.add(current);
 						break;
 					default:
 						throw new IllegalArgumentException("Unsupported type for deserialization: " + root.get("type"));
@@ -256,6 +272,11 @@ public class SerializationServiceImpl implements SerializationService {
 				Poll poll = (Poll) deserialize(pollJSON.toString());
 				dataService.mergePoll(poll);
 				deserialized.add(poll);
+			}
+			for (JSONObject moderationCardsJSON : moderationCardsJSONs) {
+				ModerationCard moderationCard = (ModerationCard) deserialize(moderationCardsJSON.toString());
+				dataService.mergeModerationCard(moderationCard);
+				deserialized.add(moderationCard);
 			}
 
 			for (JSONObject consensusLevelJSON : consensusLevelJSONs) {
@@ -328,6 +349,24 @@ public class SerializationServiceImpl implements SerializationService {
 					.put("meeting", poll.getMeeting().getMeetingId())
 					.put("voteMembersCountOnClosed", poll.getVoteMembersCountOnClosed())
 					.put("isDeleted", poll.isDeleted());
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	private JSONObject jsonify(ModerationCard moderationCard) {
+		try {
+
+			return new JSONObject()
+					.put("type", "moderationCard")
+					.put("cardId", moderationCard.getCardId())
+					.put("content", moderationCard.getContent())
+					.put("backgroundColor", moderationCard.getBackgroundColor())
+					.put("fontColor", moderationCard.getFontColor())
+					.put("meetingId", moderationCard.getMeetingId())
+					.put("isDeleted",moderationCard.isDeleted());
 
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -560,6 +599,32 @@ public class SerializationServiceImpl implements SerializationService {
 			}
 
 			return poll;
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	private ModerationCard deserializeModerationCard(JSONObject json) {
+		try {
+			ModerationCard moderationCard = new ModerationCard();
+			moderationCard.setCardId(json.getLong("cardId"));
+			moderationCard.setContent(json.getString("content"));
+			moderationCard.setBackgroundColor(json.getInt("backgroundColor"));
+			moderationCard.setFontColor(json.getInt("fontColor"));
+			moderationCard.setIsDeleted(json.getBoolean("isDeleted"));
+
+			try {
+
+				moderationCard.setMeeting(dataService.getMeeting(json.getLong("meetingId")));
+
+			} catch (MeetingNotFoundException e) {
+
+				e.printStackTrace();
+			}
+
+			return moderationCard;
 
 		} catch (JSONException e) {
 			e.printStackTrace();

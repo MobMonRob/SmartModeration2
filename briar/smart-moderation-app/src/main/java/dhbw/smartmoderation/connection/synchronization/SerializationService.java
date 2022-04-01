@@ -19,6 +19,8 @@ public interface SerializationService {
 
 	String serialize (Poll poll);
 
+	String serialize (ModerationCard moderationCard);
+
 	String serialize(Topic topic);
 
 	String serialize(Participation participation);

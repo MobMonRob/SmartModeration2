@@ -6,6 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="bd7041c9-f967-4376-976a-a54fcd84e146" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/SmartModeration.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/SmartModeration.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/briar/smart-moderation-app/src/main/java/dhbw/smartmoderation/connection/synchronization/SerializationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/briar/smart-moderation-app/src/main/java/dhbw/smartmoderation/connection/synchronization/SerializationService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/briar/smart-moderation-app/src/main/java/dhbw/smartmoderation/connection/synchronization/SerializationServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/briar/smart-moderation-app/src/main/java/dhbw/smartmoderation/connection/synchronization/SerializationServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/briar/smart-moderation-app/src/main/java/dhbw/smartmoderation/data/DataServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/briar/smart-moderation-app/src/main/java/dhbw/smartmoderation/data/DataServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/briar/smart-moderation-app/src/main/java/dhbw/smartmoderation/moderationCard/ModerationCardsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/briar/smart-moderation-app/src/main/java/dhbw/smartmoderation/moderationCard/ModerationCardsController.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,10 +29,12 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="RunOnceActivity.cidr.known.project.marker" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="android.sdk.path" value="$USER_HOME$/AppData/Local/Android/Sdk" />
+    <property name="aspect.path.notification.shown" value="true" />
     <property name="cidr.known.project.marker" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/briar" />
-    <property name="settings.editor.selected.configurable" value="AndroidSdkUpdater" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="emulator" />
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
@@ -40,7 +47,15 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1616680205714</updated>
+      <workItem from="1648732006728" duration="677000" />
     </task>
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>
