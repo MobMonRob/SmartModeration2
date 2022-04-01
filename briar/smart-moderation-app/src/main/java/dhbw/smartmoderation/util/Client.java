@@ -13,6 +13,7 @@ import java.io.IOException;
 
 import dhbw.smartmoderation.SmartModerationApplication;
 import dhbw.smartmoderation.data.model.ModerationCard;
+import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -32,15 +33,124 @@ public class Client {
 
 
     public void updateModerationCard(ModerationCard moderationCard) {
+        OkHttpClient client = new OkHttpClient().newBuilder()
+                .build();
+        MediaType mediaType = MediaType.parse("application/json");
 
+        JSONObject putJSON = new JSONObject();
+        try {
+            putJSON.put("cardId", moderationCard.getCardId());
+            putJSON.put("content", moderationCard.getContent());
+            putJSON.put("backgroundColor",  String.format("#%06X", (0xFFFFFF & moderationCard.getBackgroundColor())));
+            putJSON.put("fontColor",  String.format("#%06X", (0xFFFFFF & moderationCard.getFontColor())));
+            putJSON.put("meetingId", moderationCard.getMeetingId());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        RequestBody body = RequestBody.create(mediaType, putJSON.toString());
+
+        HttpUrl url = new HttpUrl.Builder()
+                .scheme("http")
+                .host(ipAddress)
+                .port(port)
+                .addPathSegment("moderationcards")
+                .build();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .method("POST", body)
+                .addHeader("Authorization", "Bearer " + apiKey)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        Thread thread = new Thread(() -> {
+            try {
+                client.newCall(request).execute();
+            } catch (Exception e) {
+                Log.e(TAG, e.getMessage());
+            }
+        });
+        thread.start();
     }
 
     public void addModerationCard(ModerationCard moderationCard) {
+        OkHttpClient client = new OkHttpClient().newBuilder()
+                .build();
+        MediaType mediaType = MediaType.parse("application/json");
 
+        JSONObject putJSON = new JSONObject();
+        try {
+            putJSON.put("cardId", moderationCard.getCardId());
+            putJSON.put("content", moderationCard.getContent());
+            putJSON.put("backgroundColor",  String.format("#%06X", (0xFFFFFF & moderationCard.getBackgroundColor())));
+            putJSON.put("fontColor",  String.format("#%06X", (0xFFFFFF & moderationCard.getFontColor())));
+            putJSON.put("meetingId", moderationCard.getMeetingId());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        RequestBody body = RequestBody.create(mediaType, putJSON.toString());
+
+        HttpUrl url = new HttpUrl.Builder()
+                .scheme("http")
+                .host(ipAddress)
+                .port(port)
+                .addPathSegment("moderationcards")
+                .build();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .method("PUT", body)
+                .addHeader("Authorization", "Bearer " + apiKey)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        Thread thread = new Thread(() -> {
+            try {
+                client.newCall(request).execute();
+            } catch (Exception e) {
+                Log.e(TAG, e.getMessage());
+            }
+        });
+        thread.start();
     }
 
     public void deleteModerationCard(long cardId) {
+        System.out.println("Delete card with ID: " + cardId);
 
+        OkHttpClient client = new OkHttpClient().newBuilder()
+                .build();
+        MediaType mediaType = MediaType.parse("text/plain");
+        RequestBody body = RequestBody.create(mediaType, "");
+
+        HttpUrl url = new HttpUrl.Builder()
+                .scheme("http")
+                .host(ipAddress)
+                .port(port)
+                .addPathSegment("moderationcards")
+                .addQueryParameter("cardId", String.valueOf(cardId))
+                .build();
+
+        System.out.println("URL: " + url);
+
+        Request request = new Request.Builder()
+                .url(url)
+                .method("DELETE", body)
+                .addHeader("Authorization", "Bearer " + apiKey)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        System.out.println("Delete request: " + request);
+
+        Thread thread = new Thread(() -> {
+            try {
+                client.newCall(request).execute();
+            } catch (Exception e) {
+                Log.e(TAG, e.getMessage());
+            }
+        });
+        thread.start();
     }
 
     public void sendLoginInformation(String androidIpAddress, long meetingId) throws JSONException {
