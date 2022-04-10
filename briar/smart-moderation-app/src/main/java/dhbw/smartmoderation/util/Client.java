@@ -2,9 +2,7 @@ package dhbw.smartmoderation.util;
 
 import static android.content.Context.WIFI_SERVICE;
 
-import android.net.InetAddresses;
 import android.net.wifi.WifiManager;
-import android.text.format.Formatter;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -36,7 +34,6 @@ public class Client {
     public Client() {
     }
 
-
     public void updateModerationCard(ModerationCard moderationCard) {
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
@@ -46,8 +43,8 @@ public class Client {
         try {
             putJSON.put("cardId", moderationCard.getCardId());
             putJSON.put("content", moderationCard.getContent());
-            putJSON.put("backgroundColor",  String.format("#%06X", (0xFFFFFF & moderationCard.getBackgroundColor())));
-            putJSON.put("fontColor",  String.format("#%06X", (0xFFFFFF & moderationCard.getFontColor())));
+            putJSON.put("backgroundColor", String.format("#%06X", (0xFFFFFF & moderationCard.getBackgroundColor())));
+            putJSON.put("fontColor", String.format("#%06X", (0xFFFFFF & moderationCard.getFontColor())));
             putJSON.put("meetingId", moderationCard.getMeetingId());
         } catch (JSONException e) {
             e.printStackTrace();
@@ -88,8 +85,8 @@ public class Client {
         try {
             putJSON.put("cardId", moderationCard.getCardId());
             putJSON.put("content", moderationCard.getContent());
-            putJSON.put("backgroundColor",  String.format("#%06X", (0xFFFFFF & moderationCard.getBackgroundColor())));
-            putJSON.put("fontColor",  String.format("#%06X", (0xFFFFFF & moderationCard.getFontColor())));
+            putJSON.put("backgroundColor", String.format("#%06X", (0xFFFFFF & moderationCard.getBackgroundColor())));
+            putJSON.put("fontColor", String.format("#%06X", (0xFFFFFF & moderationCard.getFontColor())));
             putJSON.put("meetingId", moderationCard.getMeetingId());
         } catch (JSONException e) {
             e.printStackTrace();
@@ -201,7 +198,7 @@ public class Client {
         sendLoginInformation(androidIpAddress, meetingId);
     }
 
-    private String getIpAddressAsString(int ipAddress){
+    private String getIpAddressAsString(int ipAddress) {
         if (ByteOrder.nativeOrder().equals(ByteOrder.LITTLE_ENDIAN)) {
             ipAddress = Integer.reverseBytes(ipAddress);
         }
