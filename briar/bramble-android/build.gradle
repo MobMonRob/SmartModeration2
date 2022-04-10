@@ -6,18 +6,16 @@ apply from: 'witness.gradle'
 
 android {
 	compileSdkVersion 30
-	buildToolsVersion '30.0.2'
-
 	packagingOptions {
-		doNotStrip '**/*.so'
+		jniLibs {
+			keepDebugSymbols += ['**/*.so']
+		}
 	}
 
-	defaultConfig {
-		minSdkVersion 23
-		targetSdkVersion 29
-		versionCode 10218
-		versionName "1.2.18"
-		consumerProguardFiles 'proguard-rules.txt'
+    defaultConfig {
+		minSdkVersion 26
+		targetSdkVersion 30
+        consumerProguardFiles 'proguard-rules.txt'
 
 		testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 	}
@@ -26,14 +24,10 @@ android {
 		sourceCompatibility JavaVersion.VERSION_1_8
 		targetCompatibility JavaVersion.VERSION_1_8
 	}
+    lint {
+        warning 'LintError', 'InvalidPackage', 'MissingPermission', 'InlinedApi', 'ObsoleteSdkInt', 'Override', 'NewApi', 'UnusedAttribute'
+    }
 
-	lintOptions {
-		// FIXME
-		warning "LintError"
-		warning "InvalidPackage"
-		warning "MissingPermission"
-		warning "InlinedApi", "ObsoleteSdkInt", "Override", "NewApi", "UnusedAttribute"
-	}
 }
 
 configurations {
@@ -42,18 +36,18 @@ configurations {
 
 dependencies {
 	implementation project(path: ':bramble-core', configuration: 'default')
-	tor 'org.briarproject:tor-android:0.3.5.13@zip'
-	tor 'org.briarproject:obfs4proxy-android:0.0.12-dev-40245c4a@zip'
+	tor "org.briarproject:tor-android:$tor_version"
+	tor "org.briarproject:obfs4proxy-android:$obfs4proxy_version@zip"
 
-	annotationProcessor 'com.google.dagger:dagger-compiler:2.24'
+	annotationProcessor "com.google.dagger:dagger-compiler:$dagger_version"
 
 	compileOnly 'javax.annotation:jsr250-api:1.0'
 
 	testImplementation project(path: ':bramble-api', configuration: 'testOutput')
-	testImplementation 'junit:junit:4.12'
-	testImplementation "org.jmock:jmock:2.8.2"
-	testImplementation "org.jmock:jmock-junit4:2.8.2"
-	testImplementation "org.jmock:jmock-legacy:2.8.2"
+	testImplementation "junit:junit:$junit_version"
+	testImplementation "org.jmock:jmock:$jmock_version"
+	testImplementation "org.jmock:jmock-junit4:$jmock_version"
+	testImplementation "org.jmock:jmock-imposters:$jmock_version"
 }
 
 def torBinariesDir = 'src/main/res/raw'

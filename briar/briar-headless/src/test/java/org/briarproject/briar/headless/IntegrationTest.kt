@@ -34,6 +34,7 @@ abstract class IntegrationTest {
             .build()
         BrambleCoreEagerSingletons.Helper.injectEagerSingletons(app)
         BriarCoreEagerSingletons.Helper.injectEagerSingletons(app)
+        HeadlessEagerSingletons.Helper.injectEagerSingletons(app)
         router = app.getRouter()
         crypto = app.getCryptoComponent()
         testDataCreator = app.getTestDataCreator()
@@ -47,31 +48,31 @@ abstract class IntegrationTest {
         dataDir.deleteRecursively()
     }
 
-    protected fun get(url: String) : Response {
+    protected fun get(url: String): Response {
         return khttp.get(url, getAuthTokenHeader(token))
     }
 
-    protected fun getWithWrongToken(url: String) : Response {
+    protected fun getWithWrongToken(url: String): Response {
         return khttp.get(url, getAuthTokenHeader("wrongToken"))
     }
 
-    protected fun post(url: String, data: String) : Response {
+    protected fun post(url: String, data: String): Response {
         return khttp.post(url, getAuthTokenHeader(token), data = data)
     }
 
-    protected fun postWithWrongToken(url: String) : Response {
+    protected fun postWithWrongToken(url: String): Response {
         return khttp.post(url, getAuthTokenHeader("wrongToken"), data = "")
     }
 
-    protected fun delete(url: String) : Response {
+    protected fun delete(url: String): Response {
         return khttp.delete(url, getAuthTokenHeader(token))
     }
 
-    protected fun delete(url: String, data: String) : Response {
+    protected fun delete(url: String, data: String): Response {
         return khttp.delete(url, getAuthTokenHeader(token), data = data)
     }
 
-    protected fun deleteWithWrongToken(url: String) : Response {
+    protected fun deleteWithWrongToken(url: String): Response {
         return khttp.delete(url, getAuthTokenHeader("wrongToken"))
     }
 

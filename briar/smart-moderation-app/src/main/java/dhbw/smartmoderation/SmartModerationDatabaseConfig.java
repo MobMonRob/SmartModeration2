@@ -1,4 +1,4 @@
-package dhbw.smartmoderation.connection;
+package dhbw.smartmoderation;
 
 import org.briarproject.bramble.api.crypto.KeyStrengthener;
 import org.briarproject.bramble.api.db.DatabaseConfig;

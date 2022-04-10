@@ -11,22 +11,30 @@ apply from: '../dagger.gradle'
 dependencies {
 	implementation project(path: ':bramble-api', configuration: 'default')
 	implementation 'com.madgag.spongycastle:core:1.58.0.0'
+	implementation 'org.bouncycastle:bcprov-jdk15to18:1.70'
+	//noinspection GradleDependency
 	implementation 'com.h2database:h2:1.4.192' // The last version that supports Java 1.6
 	implementation 'org.bitlet:weupnp:0.1.4'
 	implementation 'net.i2p.crypto:eddsa:0.2.0'
 	implementation 'org.whispersystems:curve25519-java:0.5.0'
 	implementation 'org.briarproject:jtorctl:0.3'
 
-	annotationProcessor 'com.google.dagger:dagger-compiler:2.24'
+	//noinspection GradleDependency
+	implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
+	implementation "com.fasterxml.jackson.core:jackson-databind:$jackson_version"
+
+	annotationProcessor "com.google.dagger:dagger-compiler:$dagger_version"
 
 	testImplementation project(path: ':bramble-api', configuration: 'testOutput')
 	testImplementation 'org.hsqldb:hsqldb:2.3.5' // The last version that supports Java 1.6
-	testImplementation 'junit:junit:4.12'
-	testImplementation "org.jmock:jmock:2.8.2"
-	testImplementation "org.jmock:jmock-junit4:2.8.2"
-	testImplementation "org.jmock:jmock-legacy:2.8.2"
+	testImplementation 'net.jodah:concurrentunit:0.4.2'
+	testImplementation "junit:junit:$junit_version"
+	testImplementation "org.jmock:jmock:$jmock_version"
+	testImplementation "org.jmock:jmock-junit4:$jmock_version"
+	testImplementation "org.jmock:jmock-imposters:$jmock_version"
+	testImplementation "com.squareup.okhttp3:mockwebserver:4.9.3"
 
-	testAnnotationProcessor 'com.google.dagger:dagger-compiler:2.24'
+	testAnnotationProcessor "com.google.dagger:dagger-compiler:$dagger_version"
 
 	signature 'org.codehaus.mojo.signature:java16:1.1@signature'
 }

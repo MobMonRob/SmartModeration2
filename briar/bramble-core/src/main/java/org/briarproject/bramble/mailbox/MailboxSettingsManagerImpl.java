@@ -1,0 +1,116 @@
+package org.briarproject.bramble.mailbox;
+
+import org.briarproject.bramble.api.contact.ContactId;
+import org.briarproject.bramble.api.db.DbException;
+import org.briarproject.bramble.api.db.Transaction;
+import org.briarproject.bramble.api.mailbox.InvalidMailboxIdException;
+import org.briarproject.bramble.api.mailbox.MailboxAuthToken;
+import org.briarproject.bramble.api.mailbox.MailboxProperties;
+import org.briarproject.bramble.api.mailbox.MailboxSettingsManager;
+import org.briarproject.bramble.api.mailbox.MailboxStatus;
+import org.briarproject.bramble.api.nullsafety.NotNullByDefault;
+import org.briarproject.bramble.api.settings.Settings;
+import org.briarproject.bramble.api.settings.SettingsManager;
+
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
+import javax.inject.Inject;
+
+import static org.briarproject.bramble.util.StringUtils.isNullOrEmpty;
+
+@Immutable
+@NotNullByDefault
+class MailboxSettingsManagerImpl implements MailboxSettingsManager {
+
+	// Package access for testing
+	static final String SETTINGS_NAMESPACE = "mailbox";
+	static final String SETTINGS_KEY_ONION = "onion";
+	static final String SETTINGS_KEY_TOKEN = "token";
+	static final String SETTINGS_KEY_LAST_ATTEMPT = "lastAttempt";
+	static final String SETTINGS_KEY_LAST_SUCCESS = "lastSuccess";
+	static final String SETTINGS_KEY_ATTEMPTS = "attempts";
+	static final String SETTINGS_UPLOADS_NAMESPACE = "mailbox-uploads";
+
+	private final SettingsManager settingsManager;
+
+	@Inject
+	MailboxSettingsManagerImpl(SettingsManager settingsManager) {
+		this.settingsManager = settingsManager;
+	}
+
+	@Override
+	public MailboxProperties getOwnMailboxProperties(Transaction txn)
+			throws DbException {
+		Settings s = settingsManager.getSettings(txn, SETTINGS_NAMESPACE);
+		String onion = s.get(SETTINGS_KEY_ONION);
+		String token = s.get(SETTINGS_KEY_TOKEN);
+		if (isNullOrEmpty(onion) || isNullOrEmpty(token)) return null;
+		try {
+			MailboxAuthToken tokenId = MailboxAuthToken.fromString(token);
+			return new MailboxProperties(onion, tokenId, true);
+		} catch (InvalidMailboxIdException e) {
+			throw new DbException(e);
+		}
+	}
+
+	@Override
+	public void setOwnMailboxProperties(Transaction txn, MailboxProperties p)
+			throws DbException {
+		Settings s = new Settings();
+		s.put(SETTINGS_KEY_ONION, p.getBaseUrl());
+		s.put(SETTINGS_KEY_TOKEN, p.getAuthToken().toString());
+		settingsManager.mergeSettings(txn, s, SETTINGS_NAMESPACE);
+	}
+
+	@Override
+	public MailboxStatus getOwnMailboxStatus(Transaction txn)
+			throws DbException {
+		Settings s = settingsManager.getSettings(txn, SETTINGS_NAMESPACE);
+		long lastAttempt = s.getLong(SETTINGS_KEY_LAST_ATTEMPT, -1);
+		long lastSuccess = s.getLong(SETTINGS_KEY_LAST_SUCCESS, -1);
+		int attempts = s.getInt(SETTINGS_KEY_ATTEMPTS, 0);
+		return new MailboxStatus(lastAttempt, lastSuccess, attempts);
+	}
+
+	@Override
+	public void recordSuccessfulConnection(Transaction txn, long now)
+			throws DbException {
+		Settings s = new Settings();
+		s.putLong(SETTINGS_KEY_LAST_ATTEMPT, now);
+		s.putLong(SETTINGS_KEY_LAST_SUCCESS, now);
+		s.putInt(SETTINGS_KEY_ATTEMPTS, 0);
+		settingsManager.mergeSettings(txn, s, SETTINGS_NAMESPACE);
+	}
+
+	@Override
+	public void recordFailedConnectionAttempt(Transaction txn, long now)
+			throws DbException {
+		Settings oldSettings =
+				settingsManager.getSettings(txn, SETTINGS_NAMESPACE);
+		int attempts = oldSettings.getInt(SETTINGS_KEY_ATTEMPTS, 0);
+		Settings newSettings = new Settings();
+		newSettings.putLong(SETTINGS_KEY_LAST_ATTEMPT, now);
+		newSettings.putInt(SETTINGS_KEY_ATTEMPTS, attempts + 1);
+		settingsManager.mergeSettings(txn, newSettings, SETTINGS_NAMESPACE);
+	}
+
+	@Override
+	public void setPendingUpload(Transaction txn, ContactId id,
+			@Nullable String filename) throws DbException {
+		Settings s = new Settings();
+		String value = filename == null ? "" : filename;
+		s.put(String.valueOf(id.getInt()), value);
+		settingsManager.mergeSettings(txn, s, SETTINGS_UPLOADS_NAMESPACE);
+	}
+
+	@Nullable
+	@Override
+	public String getPendingUpload(Transaction txn, ContactId id)
+			throws DbException {
+		Settings s =
+				settingsManager.getSettings(txn, SETTINGS_UPLOADS_NAMESPACE);
+		String filename = s.get(String.valueOf(id.getInt()));
+		if (isNullOrEmpty(filename)) return null;
+		return filename;
+	}
+}

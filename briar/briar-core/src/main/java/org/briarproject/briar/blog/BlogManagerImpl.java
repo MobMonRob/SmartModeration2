@@ -50,6 +50,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 
+import static org.briarproject.bramble.api.sync.validation.IncomingMessageHook.DeliveryAction.ACCEPT_DO_NOT_SHARE;
+import static org.briarproject.bramble.api.sync.validation.IncomingMessageHook.DeliveryAction.ACCEPT_SHARE;
 import static org.briarproject.briar.api.blog.BlogConstants.KEY_AUTHOR;
 import static org.briarproject.briar.api.blog.BlogConstants.KEY_COMMENT;
 import static org.briarproject.briar.api.blog.BlogConstants.KEY_ORIGINAL_MSG_ID;
@@ -109,8 +111,9 @@ class BlogManagerImpl extends BdfIncomingMessageHook implements BlogManager,
 	}
 
 	@Override
-	protected boolean incomingMessage(Transaction txn, Message m, BdfList list,
-			BdfDictionary meta) throws DbException, FormatException {
+	protected DeliveryAction incomingMessage(Transaction txn, Message m,
+			BdfList list, BdfDictionary meta)
+			throws DbException, FormatException {
 
 		GroupId groupId = m.getGroupId();
 		MessageType type = getMessageType(meta);
@@ -138,7 +141,7 @@ class BlogManagerImpl extends BdfIncomingMessageHook implements BlogManager,
 			txn.attach(event);
 
 			// shares message and its dependencies
-			return true;
+			return ACCEPT_SHARE;
 		} else if (type == WRAPPED_COMMENT) {
 			// Check that the original message ID in the dependency's metadata
 			// matches the original parent ID of the wrapped comment
@@ -153,7 +156,7 @@ class BlogManagerImpl extends BdfIncomingMessageHook implements BlogManager,
 			}
 		}
 		// don't share message until parent arrives
-		return false;
+		return ACCEPT_DO_NOT_SHARE;
 	}
 
 	@Override
@@ -446,19 +449,22 @@ class BlogManagerImpl extends BdfIncomingMessageHook implements BlogManager,
 	}
 
 	@Override
-	public BlogPostHeader getPostHeader(GroupId g, MessageId m)
+	public Collection<GroupId> getBlogIds(Transaction txn) throws DbException {
+		List<GroupId> groupIds = new ArrayList<>();
+		Collection<Group> groups = db.getGroups(txn, CLIENT_ID, MAJOR_VERSION);
+		for (Group g : groups) groupIds.add(g.getId());
+		return groupIds;
+	}
+
+	@Override
+	public BlogPostHeader getPostHeader(Transaction txn, GroupId g, MessageId m)
 			throws DbException {
-		Transaction txn = db.startTransaction(true);
 		try {
 			BdfDictionary meta =
 					clientHelper.getMessageMetadataAsDictionary(txn, m);
-			BlogPostHeader h = getPostHeaderFromMetadata(txn, g, m, meta);
-			db.commitTransaction(txn);
-			return h;
+			return getPostHeaderFromMetadata(txn, g, m, meta);
 		} catch (FormatException e) {
 			throw new DbException(e);
-		} finally {
-			db.endTransaction(txn);
 		}
 	}
 
@@ -466,6 +472,15 @@ class BlogManagerImpl extends BdfIncomingMessageHook implements BlogManager,
 	public String getPostText(MessageId m) throws DbException {
 		try {
 			return getPostText(clientHelper.getMessageAsList(m));
+		} catch (FormatException e) {
+			throw new DbException(e);
+		}
+	}
+
+	@Override
+	public String getPostText(Transaction txn, MessageId m) throws DbException {
+		try {
+			return getPostText(clientHelper.getMessageAsList(txn, m));
 		} catch (FormatException e) {
 			throw new DbException(e);
 		}
@@ -488,7 +503,12 @@ class BlogManagerImpl extends BdfIncomingMessageHook implements BlogManager,
 	@Override
 	public Collection<BlogPostHeader> getPostHeaders(GroupId g)
 			throws DbException {
+		return db.transactionWithResult(true, txn -> getPostHeaders(txn, g));
+	}
 
+	@Override
+	public List<BlogPostHeader> getPostHeaders(Transaction txn, GroupId g)
+			throws DbException {
 		// Query for posts and comments only
 		BdfDictionary query1 = BdfDictionary.of(
 				new BdfEntry(KEY_TYPE, POST.getInt())
@@ -497,8 +517,7 @@ class BlogManagerImpl extends BdfIncomingMessageHook implements BlogManager,
 				new BdfEntry(KEY_TYPE, COMMENT.getInt())
 		);
 
-		Collection<BlogPostHeader> headers = new ArrayList<>();
-		Transaction txn = db.startTransaction(true);
+		List<BlogPostHeader> headers = new ArrayList<>();
 		try {
 			Map<MessageId, BdfDictionary> metadata1 =
 					clientHelper.getMessageMetadataAsDictionary(txn, g, query1);
@@ -528,13 +547,10 @@ class BlogManagerImpl extends BdfIncomingMessageHook implements BlogManager,
 						entry.getKey(), meta, authorInfos);
 				headers.add(h);
 			}
-			db.commitTransaction(txn);
-			return headers;
 		} catch (FormatException e) {
 			throw new DbException(e);
-		} finally {
-			db.endTransaction(txn);
 		}
+		return headers;
 	}
 
 	@Override

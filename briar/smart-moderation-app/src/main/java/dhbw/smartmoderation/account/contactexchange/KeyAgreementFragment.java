@@ -49,6 +49,7 @@ import javax.inject.Provider;
 
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.SmartModerationApplication;
+import dhbw.smartmoderation.SmartModerationApplicationImpl;
 
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
@@ -106,7 +107,7 @@ public class KeyAgreementFragment extends Fragment implements EventListener, QrC
 
     @Override
     public void onAttach(Context context) {
-        ((SmartModerationApplication)getActivity().getApplicationContext()).comp.inject(this);
+        ((SmartModerationApplicationImpl)getActivity().getApplicationContext()).smartModerationComponent.inject(this);
         super.onAttach(context);
         listener = (KeyAgreementEventListener)context;
         baseFragmentListener = (BaseFragmentListener) context;

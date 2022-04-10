@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import dhbw.smartmoderation.SmartModerationApplication;
+import dhbw.smartmoderation.SmartModerationApplicationImpl;
 import dhbw.smartmoderation.data.model.ConsensusLevel;
 import dhbw.smartmoderation.data.model.Meeting;
 import dhbw.smartmoderation.data.model.ModerationCard;
@@ -18,10 +19,10 @@ import fi.iki.elonen.NanoHTTPD;
 public class WebServer extends NanoHTTPD {
 
     public static final int PORT = 8765;
-    public SmartModerationApplication app;
+    public SmartModerationApplicationImpl app;
     public Long meetingId;
 
-    public WebServer(SmartModerationApplication app) {
+    public WebServer(SmartModerationApplicationImpl app) {
         super(PORT);
         this.app = app;
     }

@@ -9,6 +9,7 @@ import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.annotation.NotNull;
 
 import dhbw.smartmoderation.SmartModerationApplication;
+import dhbw.smartmoderation.SmartModerationApplicationImpl;
 
 @Entity
 public class Voice extends ModelClass {
@@ -46,7 +47,7 @@ public class Voice extends ModelClass {
     @Keep
     public Voice() {
 
-        this.voiceId = ((SmartModerationApplication)SmartModerationApplication.getApp()).getUniqueId();
+        this.voiceId = ((SmartModerationApplicationImpl)SmartModerationApplicationImpl.getApp()).getUniqueId();
     }
 
     public Long getVoiceId() {

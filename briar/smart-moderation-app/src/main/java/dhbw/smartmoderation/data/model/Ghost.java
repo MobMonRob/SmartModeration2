@@ -3,6 +3,7 @@ package dhbw.smartmoderation.data.model;
 import java.util.UUID;
 
 import dhbw.smartmoderation.SmartModerationApplication;
+import dhbw.smartmoderation.SmartModerationApplicationImpl;
 
 public class Ghost implements IContact {
 
@@ -12,7 +13,7 @@ public class Ghost implements IContact {
 
     public Ghost() {
 
-        this.id = ((SmartModerationApplication)SmartModerationApplication.getApp()).getUniqueId();
+        this.id = ((SmartModerationApplicationImpl)SmartModerationApplicationImpl.getApp()).getUniqueId();
     }
 
 

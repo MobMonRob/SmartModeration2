@@ -35,7 +35,7 @@
 
 
     <application
-        android:name=".SmartModerationApplication"
+        android:name=".SmartModerationApplicationImpl"
         android:allowBackup="false"
         android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher_smart_moderation"
@@ -137,7 +137,6 @@
             android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

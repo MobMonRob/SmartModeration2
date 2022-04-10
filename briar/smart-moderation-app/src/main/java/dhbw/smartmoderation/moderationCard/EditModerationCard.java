@@ -14,6 +14,7 @@ import androidx.fragment.app.FragmentManager;
 
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.SmartModerationApplication;
+import dhbw.smartmoderation.SmartModerationApplicationImpl;
 import dhbw.smartmoderation.data.model.ModerationCard;
 import dhbw.smartmoderation.exceptions.CantEditModerationCardException;
 import dhbw.smartmoderation.exceptions.CouldNotDeleteModerationCard;
@@ -32,7 +33,7 @@ public class EditModerationCard{
     private ModerationCardsController controller;
     private Client client;
     private ModerationCardsFragment moderationCardsFragment;
-    SmartModerationApplication app = (SmartModerationApplication) SmartModerationApplication.getApp();
+    SmartModerationApplicationImpl app = (SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp();
 
     private final View.OnClickListener pickColorButtonClickListener = v -> {
         ColorPicker colorPicker = new ColorPicker((Activity) v.getContext());

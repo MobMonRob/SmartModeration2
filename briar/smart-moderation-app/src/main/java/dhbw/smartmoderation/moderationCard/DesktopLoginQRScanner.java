@@ -21,6 +21,7 @@ import java.io.IOException;
 
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.SmartModerationApplication;
+import dhbw.smartmoderation.SmartModerationApplicationImpl;
 
 public class DesktopLoginQRScanner extends AppCompatActivity {
 
@@ -52,7 +53,7 @@ public class DesktopLoginQRScanner extends AppCompatActivity {
                 int port = (int) loginJSON.get("port");
                 String apiKey = (String) loginJSON.get("apiKey");
 
-                SmartModerationApplication app = (SmartModerationApplication) SmartModerationApplication.getApp();
+                SmartModerationApplicationImpl app = (SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp();
                 Intent intent = getIntent();
                 long meetingId = intent.getLongExtra("meetingId", 0);
                 app.getClient().startClient(ipAddress, port, apiKey, meetingId);

@@ -18,6 +18,7 @@ import javax.inject.Inject;
 
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.SmartModerationApplication;
+import dhbw.smartmoderation.SmartModerationApplicationImpl;
 
 import static android.widget.Toast.LENGTH_LONG;
 import static androidx.lifecycle.Lifecycle.State.STARTED;
@@ -34,7 +35,7 @@ public class ContactExchangeActivity extends KeyAgreementActivity{
 
     @Override
     public void onCreate(@Nullable Bundle state) {
-        ((SmartModerationApplication)getApplicationContext()).comp.inject(this);
+        ((SmartModerationApplicationImpl)getApplicationContext()).smartModerationComponent.inject(this);
         super.onCreate(state);
         requireNonNull(getSupportActionBar()).setTitle(this.getString(R.string.ContactExchangeActivity_Title));
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(ContactExchangeViewModel.class);

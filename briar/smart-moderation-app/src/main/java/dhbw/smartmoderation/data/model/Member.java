@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import dhbw.smartmoderation.SmartModerationApplication;
+import dhbw.smartmoderation.SmartModerationApplicationImpl;
 import dhbw.smartmoderation.util.Util;
 
 import org.greenrobot.greendao.annotation.Generated;
@@ -49,7 +50,7 @@ public class Member extends ModelClass {
 	@Keep
 	public Member() {
 
-		this.memberId = ((SmartModerationApplication)SmartModerationApplication.getApp()).getUniqueId();
+		this.memberId = ((SmartModerationApplicationImpl)SmartModerationApplicationImpl.getApp()).getUniqueId();
 	}
 
 	public Member(IContact contact){
@@ -113,7 +114,7 @@ public class Member extends ModelClass {
 
 	public Attendance getAttendance(Meeting meeting) {
 
-		DaoSession daoSession = ((SmartModerationApplication)SmartModerationApplication.getApp()).getDaoSession();
+		DaoSession daoSession = ((SmartModerationApplicationImpl)SmartModerationApplicationImpl.getApp()).getDaoSession();
 		MemberMeetingRelationDao memberMeetingRelationDao = daoSession.getMemberMeetingRelationDao();
 
 		for(MemberMeetingRelation memberMeetingRelation : memberMeetingRelationDao.loadAll()) {
@@ -129,7 +130,7 @@ public class Member extends ModelClass {
 
 	public MemberMeetingRelation setAttendance(Meeting meeting, Attendance attendance) {
 
-		DaoSession daoSession = ((SmartModerationApplication)SmartModerationApplication.getApp()).getDaoSession();
+		DaoSession daoSession = ((SmartModerationApplicationImpl)SmartModerationApplicationImpl.getApp()).getDaoSession();
 		MemberMeetingRelationDao memberMeetingRelationDao = daoSession.getMemberMeetingRelationDao();
 
 		for(MemberMeetingRelation memberMeetingRelation : memberMeetingRelationDao.loadAll()) {
@@ -150,7 +151,7 @@ public class Member extends ModelClass {
 		Collection<Role> roles = new ArrayList<>();
 
 
-		DaoSession daoSession = ((SmartModerationApplication)SmartModerationApplication.getApp()).getDaoSession();
+		DaoSession daoSession = ((SmartModerationApplicationImpl)SmartModerationApplicationImpl.getApp()).getDaoSession();
 		MemberGroupRelationDao memberGroupRelationDao = daoSession.getMemberGroupRelationDao();
 
 		for (MemberGroupRelation memberGroupRelation : memberGroupRelationDao.loadAll()) {

@@ -5,6 +5,8 @@ import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Keep;
 
 import dhbw.smartmoderation.SmartModerationApplication;
+import dhbw.smartmoderation.SmartModerationApplicationImpl;
+
 import org.greenrobot.greendao.annotation.Generated;
 
 @Entity
@@ -19,7 +21,7 @@ public class MemberGroupRelation {
     @Keep
     public MemberGroupRelation() {
 
-        this.relationId = ((SmartModerationApplication)SmartModerationApplication.getApp()).getUniqueId();
+        this.relationId = ((SmartModerationApplicationImpl)SmartModerationApplicationImpl.getApp()).getUniqueId();
     }
 
     @Generated(hash = 785262835)

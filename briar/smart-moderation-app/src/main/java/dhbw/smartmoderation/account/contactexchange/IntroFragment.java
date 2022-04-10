@@ -12,6 +12,7 @@ import javax.annotation.Nullable;
 
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.SmartModerationApplication;
+import dhbw.smartmoderation.SmartModerationApplicationImpl;
 
 public class IntroFragment extends Fragment {
 
@@ -40,7 +41,7 @@ public class IntroFragment extends Fragment {
 
     @Override
     public void onAttach(Context context) {
-        ((SmartModerationApplication)getActivity().getApplicationContext()).comp.inject(this);
+        ((SmartModerationApplicationImpl)getActivity().getApplicationContext()).smartModerationComponent.inject(this);
         super.onAttach(context);
         screenSeenListener = (IntroScreenSeenListener) context;
     }

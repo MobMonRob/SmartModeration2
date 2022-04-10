@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import dhbw.smartmoderation.SmartModerationApplication;
+import dhbw.smartmoderation.SmartModerationApplicationImpl;
+
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.annotation.NotNull;
@@ -44,7 +46,7 @@ public class Poll extends ModelClass {
     @Keep
     public Poll() {
 
-        this.pollId = ((SmartModerationApplication)SmartModerationApplication.getApp()).getUniqueId();
+        this.pollId = ((SmartModerationApplicationImpl)SmartModerationApplicationImpl.getApp()).getUniqueId();
     }
 
     @Generated(hash = 1231661361)

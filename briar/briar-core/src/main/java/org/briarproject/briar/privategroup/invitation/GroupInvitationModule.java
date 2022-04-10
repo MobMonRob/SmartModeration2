@@ -1,5 +1,7 @@
 package org.briarproject.briar.privategroup.invitation;
 
+import org.briarproject.bramble.api.FeatureFlags;
+import org.briarproject.bramble.api.cleanup.CleanupManager;
 import org.briarproject.bramble.api.client.ClientHelper;
 import org.briarproject.bramble.api.contact.ContactManager;
 import org.briarproject.bramble.api.data.MetadataEncoder;
@@ -41,7 +43,11 @@ public class GroupInvitationModule {
 			ValidationManager validationManager, ContactManager contactManager,
 			PrivateGroupManager privateGroupManager,
 			ConversationManager conversationManager,
-			ClientVersioningManager clientVersioningManager) {
+			ClientVersioningManager clientVersioningManager,
+			CleanupManager cleanupManager, FeatureFlags featureFlags) {
+		if (!featureFlags.shouldEnablePrivateGroupsInCore()) {
+			return groupInvitationManager;
+		}
 		lifecycleManager.registerOpenDatabaseHook(groupInvitationManager);
 		validationManager.registerIncomingMessageHook(CLIENT_ID, MAJOR_VERSION,
 				groupInvitationManager);
@@ -56,6 +62,8 @@ public class GroupInvitationModule {
 				PrivateGroupManager.MAJOR_VERSION,
 				PrivateGroupManager.MINOR_VERSION,
 				groupInvitationManager.getPrivateGroupClientVersioningHook());
+		cleanupManager.registerCleanupHook(CLIENT_ID, MAJOR_VERSION,
+				groupInvitationManager);
 		return groupInvitationManager;
 	}
 
@@ -65,12 +73,15 @@ public class GroupInvitationModule {
 			ClientHelper clientHelper, MetadataEncoder metadataEncoder,
 			Clock clock, PrivateGroupFactory privateGroupFactory,
 			MessageEncoder messageEncoder,
-			ValidationManager validationManager) {
+			ValidationManager validationManager,
+			FeatureFlags featureFlags) {
 		GroupInvitationValidator validator = new GroupInvitationValidator(
 				clientHelper, metadataEncoder, clock, privateGroupFactory,
 				messageEncoder);
-		validationManager.registerMessageValidator(CLIENT_ID, MAJOR_VERSION,
-				validator);
+		if (featureFlags.shouldEnablePrivateGroupsInCore()) {
+			validationManager.registerMessageValidator(CLIENT_ID, MAJOR_VERSION,
+					validator);
+		}
 		return validator;
 	}
 

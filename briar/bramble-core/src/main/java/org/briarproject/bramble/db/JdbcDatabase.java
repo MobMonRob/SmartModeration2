@@ -51,6 +51,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -72,6 +73,8 @@ import static java.util.Arrays.asList;
 import static java.util.logging.Level.INFO;
 import static java.util.logging.Level.WARNING;
 import static java.util.logging.Logger.getLogger;
+import static org.briarproject.bramble.api.db.DatabaseComponent.NO_CLEANUP_DEADLINE;
+import static org.briarproject.bramble.api.db.DatabaseComponent.TIMER_NOT_STARTED;
 import static org.briarproject.bramble.api.db.Metadata.REMOVE;
 import static org.briarproject.bramble.api.sync.Group.Visibility.INVISIBLE;
 import static org.briarproject.bramble.api.sync.Group.Visibility.SHARED;
@@ -81,6 +84,7 @@ import static org.briarproject.bramble.api.sync.validation.MessageState.DELIVERE
 import static org.briarproject.bramble.api.sync.validation.MessageState.PENDING;
 import static org.briarproject.bramble.api.sync.validation.MessageState.UNKNOWN;
 import static org.briarproject.bramble.db.DatabaseConstants.DB_SETTINGS_NAMESPACE;
+import static org.briarproject.bramble.db.DatabaseConstants.DIRTY_KEY;
 import static org.briarproject.bramble.db.DatabaseConstants.LAST_COMPACTED_KEY;
 import static org.briarproject.bramble.db.DatabaseConstants.MAX_COMPACTION_INTERVAL_MS;
 import static org.briarproject.bramble.db.DatabaseConstants.SCHEMA_VERSION_KEY;
@@ -98,7 +102,7 @@ import static org.briarproject.bramble.util.LogUtils.now;
 abstract class JdbcDatabase implements Database<Connection> {
 
 	// Package access for testing
-	static final int CODE_SCHEMA_VERSION = 47;
+	static final int CODE_SCHEMA_VERSION = 50;
 
 	// Time period offsets for incoming transport keys
 	private static final int OFFSET_PREV = -1;
@@ -180,6 +184,11 @@ abstract class JdbcDatabase implements Database<Connection> {
 					+ " state INT NOT NULL,"
 					+ " shared BOOLEAN NOT NULL,"
 					+ " temporary BOOLEAN NOT NULL,"
+					// Null if no timer duration has been set
+					+ " cleanupTimerDuration BIGINT,"
+					// Null if no timer duration has been set or the timer
+					// hasn't started
+					+ " cleanupDeadline BIGINT,"
 					+ " length INT NOT NULL,"
 					+ " raw BLOB," // Null if message has been deleted
 					+ " PRIMARY KEY (messageId),"
@@ -243,7 +252,7 @@ abstract class JdbcDatabase implements Database<Connection> {
 					+ " requested BOOLEAN NOT NULL,"
 					+ " expiry BIGINT NOT NULL,"
 					+ " txCount INT NOT NULL,"
-					+ " eta BIGINT NOT NULL,"
+					+ " maxLatency BIGINT," // Null if latency was reset
 					+ " PRIMARY KEY (messageId, contactId),"
 					+ " FOREIGN KEY (messageId)"
 					+ " REFERENCES messages (messageId)"
@@ -258,7 +267,7 @@ abstract class JdbcDatabase implements Database<Connection> {
 	private static final String CREATE_TRANSPORTS =
 			"CREATE TABLE transports"
 					+ " (transportId _STRING NOT NULL,"
-					+ " maxLatency INT NOT NULL,"
+					+ " maxLatency BIGINT NOT NULL,"
 					+ " PRIMARY KEY (transportId))";
 
 	private static final String CREATE_PENDING_CONTACTS =
@@ -336,6 +345,15 @@ abstract class JdbcDatabase implements Database<Connection> {
 			"CREATE INDEX IF NOT EXISTS statusesByContactIdTimestamp"
 					+ " ON statuses (contactId, timestamp)";
 
+	private static final String
+			INDEX_STATUSES_BY_CONTACT_ID_TX_COUNT_TIMESTAMP =
+			"CREATE INDEX IF NOT EXISTS statusesByContactIdTxCountTimestamp"
+					+ " ON statuses (contactId, txCount, timestamp)";
+
+	private static final String INDEX_MESSAGES_BY_CLEANUP_DEADLINE =
+			"CREATE INDEX IF NOT EXISTS messagesByCleanupDeadline"
+					+ " ON messages (cleanupDeadline)";
+
 	private static final Logger LOG =
 			getLogger(JdbcDatabase.class.getName());
 
@@ -354,9 +372,14 @@ abstract class JdbcDatabase implements Database<Connection> {
 	@GuardedBy("connectionsLock")
 	private boolean closed = false;
 
+	private volatile boolean wasDirtyOnInitialisation = false;
+
 	protected abstract Connection createConnection()
 			throws DbException, SQLException;
 
+	// Used exclusively during open to compact the database after schema
+	// migrations or after DatabaseConstants#MAX_COMPACTION_INTERVAL_MS has
+	// elapsed
 	protected abstract void compactAndClose() throws DbException;
 
 	JdbcDatabase(DatabaseTypes databaseTypes, MessageFactory messageFactory,
@@ -381,13 +404,19 @@ abstract class JdbcDatabase implements Database<Connection> {
 		try {
 			if (reopen) {
 				Settings s = getSettings(txn, DB_SETTINGS_NAMESPACE);
+				wasDirtyOnInitialisation = isDirty(s);
 				compact = migrateSchema(txn, s, listener) || isCompactionDue(s);
 			} else {
+				wasDirtyOnInitialisation = false;
 				createTables(txn);
 				initialiseSettings(txn);
 				compact = false;
 			}
+			if (LOG.isLoggable(INFO)) {
+				LOG.info("db dirty? " + wasDirtyOnInitialisation);
+			}
 			createIndexes(txn);
+			setDirty(txn, true);
 			commitTransaction(txn);
 		} catch (DbException e) {
 			abortTransaction(txn);
@@ -400,8 +429,11 @@ abstract class JdbcDatabase implements Database<Connection> {
 			compactAndClose();
 			logDuration(LOG, "Compacting database", start);
 			// Allow the next transaction to reopen the DB
-			synchronized (connectionsLock) {
+			connectionsLock.lock();
+			try {
 				closed = false;
+			} finally {
+				connectionsLock.unlock();
 			}
 			txn = startTransaction();
 			try {
@@ -412,6 +444,11 @@ abstract class JdbcDatabase implements Database<Connection> {
 				throw e;
 			}
 		}
+	}
+
+	@Override
+	public boolean wasDirtyOnInitialisation() {
+		return wasDirtyOnInitialisation;
 	}
 
 	/**
@@ -463,7 +500,10 @@ abstract class JdbcDatabase implements Database<Connection> {
 				new Migration43_44(dbTypes),
 				new Migration44_45(),
 				new Migration45_46(),
-				new Migration46_47(dbTypes)
+				new Migration46_47(dbTypes),
+				new Migration47_48(),
+				new Migration48_49(),
+				new Migration49_50()
 		);
 	}
 
@@ -485,6 +525,16 @@ abstract class JdbcDatabase implements Database<Connection> {
 	private void storeLastCompacted(Connection txn) throws DbException {
 		Settings s = new Settings();
 		s.putLong(LAST_COMPACTED_KEY, clock.currentTimeMillis());
+		mergeSettings(txn, s, DB_SETTINGS_NAMESPACE);
+	}
+
+	private boolean isDirty(Settings s) {
+		return s.getBoolean(DIRTY_KEY, false);
+	}
+
+	protected void setDirty(Connection txn, boolean dirty) throws DbException {
+		Settings s = new Settings();
+		s.putBoolean(DIRTY_KEY, dirty);
 		mergeSettings(txn, s, DB_SETTINGS_NAMESPACE);
 	}
 
@@ -531,6 +581,8 @@ abstract class JdbcDatabase implements Database<Connection> {
 			s.executeUpdate(INDEX_MESSAGE_DEPENDENCIES_BY_DEPENDENCY_ID);
 			s.executeUpdate(INDEX_STATUSES_BY_CONTACT_ID_GROUP_ID);
 			s.executeUpdate(INDEX_STATUSES_BY_CONTACT_ID_TIMESTAMP);
+			s.executeUpdate(INDEX_STATUSES_BY_CONTACT_ID_TX_COUNT_TIMESTAMP);
+			s.executeUpdate(INDEX_MESSAGES_BY_CLEANUP_DEADLINE);
 			s.close();
 		} catch (SQLException e) {
 			tryToClose(s, LOG, WARNING);
@@ -869,9 +921,10 @@ abstract class JdbcDatabase implements Database<Connection> {
 		try {
 			String sql = "INSERT INTO statuses (messageId, contactId, groupId,"
 					+ " timestamp, length, state, groupShared, messageShared,"
-					+ " deleted, ack, seen, requested, expiry, txCount, eta)"
+					+ " deleted, ack, seen, requested, expiry, txCount,"
+					+ " maxLatency)"
 					+ " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, FALSE, 0, 0,"
-					+ " 0)";
+					+ " NULL)";
 			ps = txn.prepareStatement(sql);
 			ps.setBytes(1, m.getBytes());
 			ps.setInt(2, c.getInt());
@@ -959,7 +1012,7 @@ abstract class JdbcDatabase implements Database<Connection> {
 	}
 
 	@Override
-	public void addTransport(Connection txn, TransportId t, int maxLatency)
+	public void addTransport(Connection txn, TransportId t, long maxLatency)
 			throws DbException {
 		PreparedStatement ps = null;
 		try {
@@ -1073,6 +1126,55 @@ abstract class JdbcDatabase implements Database<Connection> {
 				if (rows != 1) throw new DbStateException();
 			ps.close();
 			return keySetId;
+		} catch (SQLException e) {
+			tryToClose(rs, LOG, WARNING);
+			tryToClose(ps, LOG, WARNING);
+			throw new DbException(e);
+		}
+	}
+
+	@Override
+	public boolean containsAnythingToSend(Connection txn, ContactId c,
+			long maxLatency, boolean eager) throws DbException {
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			String sql = "SELECT NULL FROM statuses"
+					+ " WHERE contactId = ? AND ack = TRUE";
+			ps = txn.prepareStatement(sql);
+			ps.setInt(1, c.getInt());
+			rs = ps.executeQuery();
+			boolean acksToSend = rs.next();
+			rs.close();
+			ps.close();
+			if (acksToSend) return true;
+			if (eager) {
+				sql = "SELECT NULL from statuses"
+						+ " WHERE contactId = ? AND state = ?"
+						+ " AND groupShared = TRUE AND messageShared = TRUE"
+						+ " AND deleted = FALSE AND seen = FALSE";
+				ps = txn.prepareStatement(sql);
+				ps.setInt(1, c.getInt());
+				ps.setInt(2, DELIVERED.getValue());
+			} else {
+				long now = clock.currentTimeMillis();
+				sql = "SELECT NULL FROM statuses"
+						+ " WHERE contactId = ? AND state = ?"
+						+ " AND groupShared = TRUE AND messageShared = TRUE"
+						+ " AND deleted = FALSE AND seen = FALSE"
+						+ " AND (expiry <= ? OR maxLatency IS NULL"
+						+ " OR ? < maxLatency)";
+				ps = txn.prepareStatement(sql);
+				ps.setInt(1, c.getInt());
+				ps.setInt(2, DELIVERED.getValue());
+				ps.setLong(3, now);
+				ps.setLong(4, maxLatency);
+			}
+			rs = ps.executeQuery();
+			boolean messagesToSend = rs.next();
+			rs.close();
+			ps.close();
+			return messagesToSend;
 		} catch (SQLException e) {
 			tryToClose(rs, LOG, WARNING);
 			tryToClose(ps, LOG, WARNING);
@@ -1238,6 +1340,29 @@ abstract class JdbcDatabase implements Database<Connection> {
 	}
 
 	@Override
+	public boolean containsTransportKeys(Connection txn, ContactId c,
+			TransportId t) throws DbException {
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			String sql = "SELECT NULL FROM outgoingKeys"
+					+ " WHERE contactId = ? AND transportId = ?";
+			ps = txn.prepareStatement(sql);
+			ps.setInt(1, c.getInt());
+			ps.setString(2, t.getString());
+			rs = ps.executeQuery();
+			boolean found = rs.next();
+			rs.close();
+			ps.close();
+			return found;
+		} catch (SQLException e) {
+			tryToClose(rs, LOG, WARNING);
+			tryToClose(ps, LOG, WARNING);
+			throw new DbException(e);
+		}
+	}
+
+	@Override
 	public boolean containsVisibleMessage(Connection txn, ContactId c,
 			MessageId m) throws DbException {
 		PreparedStatement ps = null;
@@ -1290,7 +1415,9 @@ abstract class JdbcDatabase implements Database<Connection> {
 	public void deleteMessage(Connection txn, MessageId m) throws DbException {
 		PreparedStatement ps = null;
 		try {
-			String sql = "UPDATE messages SET raw = NULL WHERE messageId = ?";
+			String sql = "UPDATE messages"
+					+ " SET raw = NULL, cleanupDeadline = NULL"
+					+ " WHERE messageId = ?";
 			ps = txn.prepareStatement(sql);
 			ps.setBytes(1, m.getBytes());
 			int affected = ps.executeUpdate();
@@ -1769,7 +1896,6 @@ abstract class JdbcDatabase implements Database<Connection> {
 				// Return early if there are no matches
 				if (intersection.isEmpty()) return Collections.emptySet();
 			}
-			if (intersection == null) throw new AssertionError();
 			return intersection;
 		} catch (SQLException e) {
 			tryToClose(rs, LOG, WARNING);
@@ -2068,9 +2194,8 @@ abstract class JdbcDatabase implements Database<Connection> {
 
 	@Override
 	public Collection<MessageId> getMessagesToOffer(Connection txn,
-			ContactId c, int maxMessages, int maxLatency) throws DbException {
+			ContactId c, int maxMessages, long maxLatency) throws DbException {
 		long now = clock.currentTimeMillis();
-		long eta = now + maxLatency;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
@@ -2079,13 +2204,14 @@ abstract class JdbcDatabase implements Database<Connection> {
 					+ " AND groupShared = TRUE AND messageShared = TRUE"
 					+ " AND deleted = FALSE"
 					+ " AND seen = FALSE AND requested = FALSE"
-					+ " AND (expiry <= ? OR eta > ?)"
+					+ " AND (expiry <= ? OR maxLatency IS NULL"
+					+ " OR ? < maxLatency)"
 					+ " ORDER BY timestamp LIMIT ?";
 			ps = txn.prepareStatement(sql);
 			ps.setInt(1, c.getInt());
 			ps.setInt(2, DELIVERED.getValue());
 			ps.setLong(3, now);
-			ps.setLong(4, eta);
+			ps.setLong(4, maxLatency);
 			ps.setInt(5, maxMessages);
 			rs = ps.executeQuery();
 			List<MessageId> ids = new ArrayList<>();
@@ -2127,9 +2253,8 @@ abstract class JdbcDatabase implements Database<Connection> {
 
 	@Override
 	public Collection<MessageId> getMessagesToSend(Connection txn, ContactId c,
-			int maxLength, int maxLatency) throws DbException {
+			int maxLength, long maxLatency) throws DbException {
 		long now = clock.currentTimeMillis();
-		long eta = now + maxLatency;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
@@ -2138,13 +2263,14 @@ abstract class JdbcDatabase implements Database<Connection> {
 					+ " AND groupShared = TRUE AND messageShared = TRUE"
 					+ " AND deleted = FALSE"
 					+ " AND seen = FALSE"
-					+ " AND (expiry <= ? OR eta > ?)"
+					+ " AND (expiry <= ? OR maxLatency IS NULL"
+					+ " OR ? < maxLatency)"
 					+ " ORDER BY timestamp";
 			ps = txn.prepareStatement(sql);
 			ps.setInt(1, c.getInt());
 			ps.setInt(2, DELIVERED.getValue());
 			ps.setLong(3, now);
-			ps.setLong(4, eta);
+			ps.setLong(4, maxLatency);
 			rs = ps.executeQuery();
 			List<MessageId> ids = new ArrayList<>();
 			int total = 0;
@@ -2157,6 +2283,63 @@ abstract class JdbcDatabase implements Database<Connection> {
 			rs.close();
 			ps.close();
 			return ids;
+		} catch (SQLException e) {
+			tryToClose(rs, LOG, WARNING);
+			tryToClose(ps, LOG, WARNING);
+			throw new DbException(e);
+		}
+	}
+
+	@Override
+	public Map<MessageId, Integer> getUnackedMessagesToSend(Connection txn,
+			ContactId c) throws DbException {
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			String sql = "SELECT length, messageId FROM statuses"
+					+ " WHERE contactId = ? AND state = ?"
+					+ " AND groupShared = TRUE AND messageShared = TRUE"
+					+ " AND deleted = FALSE AND seen = FALSE"
+					+ " ORDER BY txCount, timestamp";
+			ps = txn.prepareStatement(sql);
+			ps.setInt(1, c.getInt());
+			ps.setInt(2, DELIVERED.getValue());
+			rs = ps.executeQuery();
+			Map<MessageId, Integer> results = new LinkedHashMap<>();
+			while (rs.next()) {
+				int length = rs.getInt(1);
+				MessageId id = new MessageId(rs.getBytes(2));
+				results.put(id, length);
+			}
+			rs.close();
+			ps.close();
+			return results;
+		} catch (SQLException e) {
+			tryToClose(rs, LOG, WARNING);
+			tryToClose(ps, LOG, WARNING);
+			throw new DbException(e);
+		}
+	}
+
+	@Override
+	public long getUnackedMessageBytesToSend(Connection txn, ContactId c)
+			throws DbException {
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			String sql = "SELECT SUM(length) FROM statuses"
+					+ " WHERE contactId = ? AND state = ?"
+					+ " AND groupShared = TRUE AND messageShared = TRUE"
+					+ " AND deleted = FALSE AND seen = FALSE";
+			ps = txn.prepareStatement(sql);
+			ps.setInt(1, c.getInt());
+			ps.setInt(2, DELIVERED.getValue());
+			rs = ps.executeQuery();
+			rs.next();
+			long total = rs.getLong(1);
+			rs.close();
+			ps.close();
+			return total;
 		} catch (SQLException e) {
 			tryToClose(rs, LOG, WARNING);
 			tryToClose(ps, LOG, WARNING);
@@ -2227,6 +2410,39 @@ abstract class JdbcDatabase implements Database<Connection> {
 	}
 
 	@Override
+	public Map<GroupId, Collection<MessageId>> getMessagesToDelete(
+			Connection txn) throws DbException {
+		long now = clock.currentTimeMillis();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			String sql = "SELECT messageId, groupId FROM messages"
+					+ " WHERE cleanupDeadline <= ?";
+			ps = txn.prepareStatement(sql);
+			ps.setLong(1, now);
+			rs = ps.executeQuery();
+			Map<GroupId, Collection<MessageId>> ids = new HashMap<>();
+			while (rs.next()) {
+				MessageId m = new MessageId(rs.getBytes(1));
+				GroupId g = new GroupId(rs.getBytes(2));
+				Collection<MessageId> messageIds = ids.get(g);
+				if (messageIds == null) {
+					messageIds = new ArrayList<>();
+					ids.put(g, messageIds);
+				}
+				messageIds.add(m);
+			}
+			rs.close();
+			ps.close();
+			return ids;
+		} catch (SQLException e) {
+			tryToClose(rs, LOG, WARNING);
+			tryToClose(ps, LOG, WARNING);
+			throw new DbException(e);
+		}
+	}
+
+	@Override
 	public long getNextSendTime(Connection txn, ContactId c)
 			throws DbException {
 		PreparedStatement ps = null;
@@ -2252,6 +2468,31 @@ abstract class JdbcDatabase implements Database<Connection> {
 		} catch (SQLException e) {
 			tryToClose(rs, LOG, WARNING);
 			tryToClose(ps, LOG, WARNING);
+			throw new DbException(e);
+		}
+	}
+
+	@Override
+	public long getNextCleanupDeadline(Connection txn) throws DbException {
+		Statement s = null;
+		ResultSet rs = null;
+		try {
+			String sql = "SELECT cleanupDeadline FROM messages"
+					+ " WHERE cleanupDeadline IS NOT NULL"
+					+ " ORDER BY cleanupDeadline LIMIT 1";
+			s = txn.createStatement();
+			rs = s.executeQuery(sql);
+			long nextDeadline = NO_CLEANUP_DEADLINE;
+			if (rs.next()) {
+				nextDeadline = rs.getLong(1);
+				if (rs.next()) throw new AssertionError();
+			}
+			rs.close();
+			s.close();
+			return nextDeadline;
+		} catch (SQLException e) {
+			tryToClose(rs, LOG, WARNING);
+			tryToClose(s, LOG, WARNING);
 			throw new DbException(e);
 		}
 	}
@@ -2311,9 +2552,8 @@ abstract class JdbcDatabase implements Database<Connection> {
 
 	@Override
 	public Collection<MessageId> getRequestedMessagesToSend(Connection txn,
-			ContactId c, int maxLength, int maxLatency) throws DbException {
+			ContactId c, int maxLength, long maxLatency) throws DbException {
 		long now = clock.currentTimeMillis();
-		long eta = now + maxLatency;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
@@ -2322,13 +2562,14 @@ abstract class JdbcDatabase implements Database<Connection> {
 					+ " AND groupShared = TRUE AND messageShared = TRUE"
 					+ " AND deleted = FALSE"
 					+ " AND seen = FALSE AND requested = TRUE"
-					+ " AND (expiry <= ? OR eta > ?)"
+					+ " AND (expiry <= ? OR maxLatency IS NULL"
+					+ " OR ? < maxLatency)"
 					+ " ORDER BY timestamp";
 			ps = txn.prepareStatement(sql);
 			ps.setInt(1, c.getInt());
 			ps.setInt(2, DELIVERED.getValue());
 			ps.setLong(3, now);
-			ps.setLong(4, eta);
+			ps.setLong(4, maxLatency);
 			rs = ps.executeQuery();
 			List<MessageId> ids = new ArrayList<>();
 			int total = 0;
@@ -2471,6 +2712,38 @@ abstract class JdbcDatabase implements Database<Connection> {
 		} catch (SQLException e) {
 			tryToClose(rs, LOG, WARNING);
 			tryToClose(ps, LOG, WARNING);
+			throw new DbException(e);
+		}
+	}
+
+	@Override
+	public Map<ContactId, Collection<TransportId>> getTransportsWithKeys(
+			Connection txn) throws DbException {
+		Statement s = null;
+		ResultSet rs = null;
+		try {
+			String sql = "SELECT DISTINCT contactId, transportId"
+					+ " FROM outgoingKeys";
+			s = txn.createStatement();
+			rs = s.executeQuery(sql);
+			Map<ContactId, Collection<TransportId>> ids = new HashMap<>();
+			while (rs.next()) {
+				ContactId c = new ContactId(rs.getInt(1));
+				TransportId t = new TransportId(rs.getString(2));
+				Collection<TransportId> transportIds = ids.get(c);
+				if (transportIds == null) {
+					transportIds = new ArrayList<>();
+					ids.put(c, transportIds);
+				}
+				transportIds.add(t);
+			}
+			rs.close();
+			s.close();
+			return ids;
+		} catch (SQLException e) {
+			tryToClose(rs, LOG, WARNING);
+			tryToClose(s, LOG, WARNING);
+			tryToClose(s, LOG, WARNING);
 			throw new DbException(e);
 		}
 	}
@@ -2776,7 +3049,7 @@ abstract class JdbcDatabase implements Database<Connection> {
 	}
 
 	@Override
-	public void raiseSeenFlag(Connection txn, ContactId c, MessageId m)
+	public boolean raiseSeenFlag(Connection txn, ContactId c, MessageId m)
 			throws DbException {
 		PreparedStatement ps = null;
 		try {
@@ -2788,6 +3061,7 @@ abstract class JdbcDatabase implements Database<Connection> {
 			int affected = ps.executeUpdate();
 			if (affected < 0 || affected > 1) throw new DbStateException();
 			ps.close();
+			return affected == 1;
 		} catch (SQLException e) {
 			tryToClose(ps, LOG, WARNING);
 			throw new DbException(e);
@@ -3022,6 +3296,49 @@ abstract class JdbcDatabase implements Database<Connection> {
 	}
 
 	@Override
+	public void resetUnackedMessagesToSend(Connection txn, ContactId c)
+			throws DbException {
+		PreparedStatement ps = null;
+		try {
+			String sql = "UPDATE statuses SET expiry = 0, txCount = 0,"
+					+ " maxLatency = NULL"
+					+ " WHERE contactId = ? AND state = ?"
+					+ " AND groupShared = TRUE AND messageShared = TRUE"
+					+ " AND deleted = FALSE AND seen = FALSE";
+			ps = txn.prepareStatement(sql);
+			ps.setInt(1, c.getInt());
+			ps.setInt(2, DELIVERED.getValue());
+			int affected = ps.executeUpdate();
+			if (affected < 0) {
+				throw new DbStateException();
+			}
+			ps.close();
+		} catch (SQLException e) {
+			tryToClose(ps, LOG, WARNING);
+			throw new DbException(e);
+		}
+	}
+
+	@Override
+	public void setCleanupTimerDuration(Connection txn, MessageId m,
+			long duration) throws DbException {
+		PreparedStatement ps = null;
+		try {
+			String sql = "UPDATE messages SET cleanupTimerDuration = ?"
+					+ " WHERE messageId = ? AND cleanupTimerDuration IS NULL";
+			ps = txn.prepareStatement(sql);
+			ps.setLong(1, duration);
+			ps.setBytes(2, m.getBytes());
+			int affected = ps.executeUpdate();
+			if (affected < 0 || affected > 1) throw new DbStateException();
+			ps.close();
+		} catch (SQLException e) {
+			tryToClose(ps, LOG, WARNING);
+			throw new DbException(e);
+		}
+	}
+
+	@Override
 	public void setContactVerified(Connection txn, ContactId c)
 			throws DbException {
 		PreparedStatement ps = null;
@@ -3128,22 +3445,24 @@ abstract class JdbcDatabase implements Database<Connection> {
 	}
 
 	@Override
-	public void setMessageShared(Connection txn, MessageId m)
+	public void setMessageShared(Connection txn, MessageId m, boolean shared)
 			throws DbException {
 		PreparedStatement ps = null;
 		try {
-			String sql = "UPDATE messages SET shared = TRUE"
+			String sql = "UPDATE messages SET shared = ?"
 					+ " WHERE messageId = ?";
 			ps = txn.prepareStatement(sql);
-			ps.setBytes(1, m.getBytes());
+			ps.setBoolean(1, shared);
+			ps.setBytes(2, m.getBytes());
 			int affected = ps.executeUpdate();
 			if (affected < 0 || affected > 1) throw new DbStateException();
 			ps.close();
 			// Update denormalised column in statuses
-			sql = "UPDATE statuses SET messageShared = TRUE"
+			sql = "UPDATE statuses SET messageShared = ?"
 					+ " WHERE messageId = ?";
 			ps = txn.prepareStatement(sql);
-			ps.setBytes(1, m.getBytes());
+			ps.setBoolean(1, shared);
+			ps.setBytes(2, m.getBytes());
 			affected = ps.executeUpdate();
 			if (affected < 0) throw new DbStateException();
 			ps.close();
@@ -3273,8 +3592,62 @@ abstract class JdbcDatabase implements Database<Connection> {
 	}
 
 	@Override
-	public void updateExpiryTimeAndEta(Connection txn, ContactId c, MessageId m,
-			int maxLatency) throws DbException {
+	public long startCleanupTimer(Connection txn, MessageId m)
+			throws DbException {
+		long now = clock.currentTimeMillis();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			String sql = "UPDATE messages"
+					+ " SET cleanupDeadline = ? + cleanupTimerDuration"
+					+ " WHERE messageId = ?"
+					+ " AND cleanupTimerDuration IS NOT NULL"
+					+ " AND cleanupDeadline IS NULL";
+			ps = txn.prepareStatement(sql);
+			ps.setLong(1, now);
+			ps.setBytes(2, m.getBytes());
+			int affected = ps.executeUpdate();
+			if (affected < 0 || affected > 1) throw new DbStateException();
+			ps.close();
+			if (affected == 0) return TIMER_NOT_STARTED;
+			sql = "SELECT cleanupDeadline FROM messages WHERE messageId = ?";
+			ps = txn.prepareStatement(sql);
+			ps.setBytes(1, m.getBytes());
+			rs = ps.executeQuery();
+			if (!rs.next()) throw new DbStateException();
+			long deadline = rs.getLong(1);
+			if (rs.next()) throw new DbStateException();
+			rs.close();
+			ps.close();
+			return deadline;
+		} catch (SQLException e) {
+			tryToClose(rs, LOG, WARNING);
+			tryToClose(ps, LOG, WARNING);
+			throw new DbException(e);
+		}
+	}
+
+	@Override
+	public void stopCleanupTimer(Connection txn, MessageId m)
+			throws DbException {
+		PreparedStatement ps = null;
+		try {
+			String sql = "UPDATE messages SET cleanupDeadline = NULL"
+					+ " WHERE messageId = ?";
+			ps = txn.prepareStatement(sql);
+			ps.setBytes(1, m.getBytes());
+			int affected = ps.executeUpdate();
+			if (affected < 0 || affected > 1) throw new DbStateException();
+			ps.close();
+		} catch (SQLException e) {
+			tryToClose(ps, LOG, WARNING);
+			throw new DbException(e);
+		}
+	}
+
+	@Override
+	public void updateRetransmissionData(Connection txn, ContactId c,
+			MessageId m, long maxLatency) throws DbException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
@@ -3290,13 +3663,12 @@ abstract class JdbcDatabase implements Database<Connection> {
 			rs.close();
 			ps.close();
 			sql = "UPDATE statuses"
-					+ " SET expiry = ?, txCount = txCount + 1, eta = ?"
+					+ " SET expiry = ?, txCount = txCount + 1, maxLatency = ?"
 					+ " WHERE messageId = ? AND contactId = ?";
 			ps = txn.prepareStatement(sql);
 			long now = clock.currentTimeMillis();
-			long eta = now + maxLatency;
 			ps.setLong(1, calculateExpiry(now, maxLatency, txCount));
-			ps.setLong(2, eta);
+			ps.setLong(2, maxLatency);
 			ps.setBytes(3, m.getBytes());
 			ps.setInt(4, c.getInt());
 			int affected = ps.executeUpdate();

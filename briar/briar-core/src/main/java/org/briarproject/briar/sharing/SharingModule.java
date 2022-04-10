@@ -1,5 +1,7 @@
 package org.briarproject.briar.sharing;
 
+import org.briarproject.bramble.api.FeatureFlags;
+import org.briarproject.bramble.api.cleanup.CleanupManager;
 import org.briarproject.bramble.api.client.ClientHelper;
 import org.briarproject.bramble.api.contact.ContactManager;
 import org.briarproject.bramble.api.data.MetadataEncoder;
@@ -59,12 +61,15 @@ public class SharingModule {
 	BlogSharingValidator provideBlogSharingValidator(
 			ValidationManager validationManager, MessageEncoder messageEncoder,
 			ClientHelper clientHelper, MetadataEncoder metadataEncoder,
-			Clock clock, BlogFactory blogFactory) {
+			Clock clock, BlogFactory blogFactory, FeatureFlags featureFlags) {
 		BlogSharingValidator validator = new BlogSharingValidator(
 				messageEncoder, clientHelper, metadataEncoder, clock,
 				blogFactory);
-		validationManager.registerMessageValidator(BlogSharingManager.CLIENT_ID,
-				BlogSharingManager.MAJOR_VERSION, validator);
+		if (featureFlags.shouldEnableBlogsInCore()) {
+			validationManager.registerMessageValidator(
+					BlogSharingManager.CLIENT_ID,
+					BlogSharingManager.MAJOR_VERSION, validator);
+		}
 		return validator;
 	}
 
@@ -75,7 +80,11 @@ public class SharingModule {
 			ValidationManager validationManager,
 			ConversationManager conversationManager, BlogManager blogManager,
 			ClientVersioningManager clientVersioningManager,
-			BlogSharingManagerImpl blogSharingManager) {
+			BlogSharingManagerImpl blogSharingManager,
+			CleanupManager cleanupManager, FeatureFlags featureFlags) {
+		if (!featureFlags.shouldEnableBlogsInCore()) {
+			return blogSharingManager;
+		}
 		lifecycleManager.registerOpenDatabaseHook(blogSharingManager);
 		contactManager.registerContactHook(blogSharingManager);
 		validationManager.registerIncomingMessageHook(
@@ -91,6 +100,9 @@ public class SharingModule {
 		clientVersioningManager.registerClient(BlogManager.CLIENT_ID,
 				BlogManager.MAJOR_VERSION, BlogManager.MINOR_VERSION,
 				blogSharingManager.getShareableClientVersioningHook());
+		cleanupManager.registerCleanupHook(BlogSharingManager.CLIENT_ID,
+				BlogSharingManager.MAJOR_VERSION,
+				blogSharingManager);
 		return blogSharingManager;
 	}
 
@@ -117,13 +129,15 @@ public class SharingModule {
 	ForumSharingValidator provideForumSharingValidator(
 			ValidationManager validationManager, MessageEncoder messageEncoder,
 			ClientHelper clientHelper, MetadataEncoder metadataEncoder,
-			Clock clock, ForumFactory forumFactory) {
+			Clock clock, ForumFactory forumFactory, FeatureFlags featureFlags) {
 		ForumSharingValidator validator = new ForumSharingValidator(
 				messageEncoder, clientHelper, metadataEncoder, clock,
 				forumFactory);
-		validationManager.registerMessageValidator(
-				ForumSharingManager.CLIENT_ID,
-				ForumSharingManager.MAJOR_VERSION, validator);
+		if (featureFlags.shouldEnableForumsInCore()) {
+			validationManager.registerMessageValidator(
+					ForumSharingManager.CLIENT_ID,
+					ForumSharingManager.MAJOR_VERSION, validator);
+		}
 		return validator;
 	}
 
@@ -134,7 +148,11 @@ public class SharingModule {
 			ValidationManager validationManager,
 			ConversationManager conversationManager, ForumManager forumManager,
 			ClientVersioningManager clientVersioningManager,
-			ForumSharingManagerImpl forumSharingManager) {
+			ForumSharingManagerImpl forumSharingManager,
+			CleanupManager cleanupManager, FeatureFlags featureFlags) {
+		if (!featureFlags.shouldEnableForumsInCore()) {
+			return forumSharingManager;
+		}
 		lifecycleManager.registerOpenDatabaseHook(forumSharingManager);
 		contactManager.registerContactHook(forumSharingManager);
 		validationManager.registerIncomingMessageHook(
@@ -150,6 +168,9 @@ public class SharingModule {
 		clientVersioningManager.registerClient(ForumManager.CLIENT_ID,
 				ForumManager.MAJOR_VERSION, ForumManager.MINOR_VERSION,
 				forumSharingManager.getShareableClientVersioningHook());
+		cleanupManager.registerCleanupHook(ForumSharingManager.CLIENT_ID,
+				ForumSharingManager.MAJOR_VERSION,
+				forumSharingManager);
 		return forumSharingManager;
 	}
 

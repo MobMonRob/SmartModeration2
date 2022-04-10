@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 import dhbw.smartmoderation.SmartModerationApplication;
+import dhbw.smartmoderation.SmartModerationApplicationImpl;
 import dhbw.smartmoderation.data.model.ModerationCard;
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
@@ -26,7 +27,7 @@ public class Client {
     private String ipAddress;
     private int port;
     private String apiKey;
-    SmartModerationApplication app = (SmartModerationApplication) SmartModerationApplication.getApp();
+    SmartModerationApplicationImpl app = (SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp();
 
     public Client() {
     }

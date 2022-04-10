@@ -17,6 +17,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.SmartModerationApplication;
+import dhbw.smartmoderation.SmartModerationApplicationImpl;
 import dhbw.smartmoderation.data.model.ModerationCard;
 import dhbw.smartmoderation.exceptions.CantCreateModerationCardException;
 import dhbw.smartmoderation.exceptions.ModerationCardNotFoundException;
@@ -34,7 +35,7 @@ public class CreateModerationCard {
     private ModerationCardsFragment moderationCardsFragment;
     ModerationCardColorImporter cardColorImporter = ModerationCardColorImporter.getInstance();
     private Client client;
-    SmartModerationApplication app = (SmartModerationApplication) SmartModerationApplication.getApp();
+    SmartModerationApplicationImpl app = (SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp();
 
     private final View.OnClickListener pickColorButtonClickListener = v -> {
         ColorPicker colorPicker = new ColorPicker((Activity) v.getContext());

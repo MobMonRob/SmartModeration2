@@ -11,6 +11,7 @@ import com.google.android.material.button.MaterialButton;
 
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.SmartModerationApplication;
+import dhbw.smartmoderation.SmartModerationApplicationImpl;
 import dhbw.smartmoderation.exceptions.SmartModerationException;
 
 public abstract class ExceptionHandlingActivity extends AppCompatActivity {
@@ -19,12 +20,12 @@ public abstract class ExceptionHandlingActivity extends AppCompatActivity {
     private MaterialButton okButton;
     private MaterialButton exceptionActionButton;
 
-    private SmartModerationApplication app;
+    private SmartModerationApplicationImpl app;
 
     @Override
     protected void onResume() {
         super.onResume();
-        app = (SmartModerationApplication) SmartModerationApplication.getApp();
+        app = (SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp();
         app.setCurrentActivity(this);
     }
 

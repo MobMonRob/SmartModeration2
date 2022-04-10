@@ -6,6 +6,7 @@ import android.graphics.RectF;
 import androidx.core.content.res.ResourcesCompat;
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.SmartModerationApplication;
+import dhbw.smartmoderation.SmartModerationApplicationImpl;
 
 public class UnderLayButton {
 
@@ -35,7 +36,7 @@ public class UnderLayButton {
         Paint paint = new Paint();
         paint.setColor(color);
         canvas.drawRect(rect, paint);
-        paint.setColor(ResourcesCompat.getColor(SmartModerationApplication.getApp().getApplicationContext().getResources(), R.color.default_color, null));
+        paint.setColor(ResourcesCompat.getColor(SmartModerationApplicationImpl.getApp().getApplicationContext().getResources(), R.color.default_color, null));
         paint.setTextSize(30);
 
         Rect rectangle = new Rect();

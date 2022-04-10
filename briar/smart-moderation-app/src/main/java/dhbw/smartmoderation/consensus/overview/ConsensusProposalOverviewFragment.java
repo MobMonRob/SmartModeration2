@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.SmartModerationApplication;
+import dhbw.smartmoderation.SmartModerationApplicationImpl;
 import dhbw.smartmoderation.consensus.create.CreateConsensusProposal;
 import dhbw.smartmoderation.consensus.detail.ConsensusProposalDetail;
 import dhbw.smartmoderation.data.model.Poll;
@@ -65,7 +66,7 @@ public class ConsensusProposalOverviewFragment extends Fragment {
     private ConsensusProposalOverviewController controller;
     private Long meetingId;
 
-    SmartModerationApplication app =  (SmartModerationApplication) SmartModerationApplication.getApp();
+    SmartModerationApplicationImpl app =  (SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp();
 
     public String getTitle(){
         return getString(R.string.consensusProposalOverviewFragment_title);

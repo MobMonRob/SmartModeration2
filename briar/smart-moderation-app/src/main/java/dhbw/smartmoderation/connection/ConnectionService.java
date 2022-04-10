@@ -52,11 +52,14 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 import dhbw.smartmoderation.SmartModerationApplication;
+import dhbw.smartmoderation.SmartModerationApplicationImpl;
 import dhbw.smartmoderation.data.model.LocalAuthorDao;
 import dhbw.smartmoderation.exceptions.CantCreateGroupException;
 import dhbw.smartmoderation.exceptions.CantReceiveInvitationsException;
@@ -77,7 +80,7 @@ public class ConnectionService {
 
 	private static final String TAG = ConnectionService.class.getSimpleName();
 
-	LocalAuthorDao localAuthorDao = ((SmartModerationApplication)SmartModerationApplication.getApp()).getDaoSession().getLocalAuthorDao();
+	LocalAuthorDao localAuthorDao = ((SmartModerationApplicationImpl)SmartModerationApplicationImpl.getApp()).getDaoSession().getLocalAuthorDao();
 
 	private final AccountManager accountManager;
 	private final ContactManager contactManager;
@@ -102,7 +105,7 @@ public class ConnectionService {
 	private final Clock clock;
 	private LocalAuthor localAuthor;
 
-	private GroupInvitationVisitor groupInvitationVisitor;
+	private final GroupInvitationVisitor groupInvitationVisitor;
 	private ContactExchangeCallback contactExchangeCallback;
 	private KeyAgreementTask keyAgreementTask;
 
@@ -298,7 +301,7 @@ public class ConnectionService {
 					contacts) {
 				//connectToContact(contact); // TODO Maybe has to be removed in the future
 				byte[] signature = groupInvitationFactory.signInvitation(contact, group.getId(), timestamp, author.getPrivateKey());
-				groupInvitationManager.sendInvitation(group.getId(), contact.getId(), null, timestamp, signature);
+				groupInvitationManager.sendInvitation(group.getId(), contact.getId(), null, timestamp, signature, 10000l);
 			}
 			return group;
 		} catch (DbException e) {
@@ -314,7 +317,7 @@ public class ConnectionService {
 			long timestamp = System.currentTimeMillis();
 			//connectToContact(contact);
 			byte[] signature = groupInvitationFactory.signInvitation(contact, group.getId(), timestamp, author.getPrivateKey());
-			groupInvitationManager.sendInvitation(group.getId(), contact.getId(), null, timestamp, signature);
+			//groupInvitationManager.sendInvitation(group.getId(), contact.getId(), null, timestamp, signature);
 			return true;
 
 		} catch (DbException e) {

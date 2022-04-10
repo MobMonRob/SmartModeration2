@@ -3,6 +3,7 @@ package org.briarproject.briar.api.introduction;
 import org.briarproject.bramble.api.contact.Contact;
 import org.briarproject.bramble.api.contact.ContactId;
 import org.briarproject.bramble.api.db.DbException;
+import org.briarproject.bramble.api.db.Transaction;
 import org.briarproject.bramble.api.nullsafety.NotNullByDefault;
 import org.briarproject.bramble.api.sync.ClientId;
 import org.briarproject.briar.api.client.SessionId;
@@ -31,18 +32,24 @@ public interface IntroductionManager extends ConversationClient {
 	/**
 	 * The current minor version of the introduction client.
 	 */
-	int MINOR_VERSION = 0;
+	int MINOR_VERSION = 1;
 
 	/**
 	 * Sends two initial introduction messages.
 	 */
-	void makeIntroduction(Contact c1, Contact c2, @Nullable String text,
-			long timestamp) throws DbException;
+	void makeIntroduction(Contact c1, Contact c2, @Nullable String text)
+			throws DbException;
 
 	/**
 	 * Responds to an introduction.
 	 */
 	void respondToIntroduction(ContactId contactId, SessionId sessionId,
-			long timestamp, boolean accept) throws DbException;
+			boolean accept) throws DbException;
+
+	/**
+	 * Responds to an introduction.
+	 */
+	void respondToIntroduction(Transaction txn, ContactId contactId,
+			SessionId sessionId, boolean accept) throws DbException;
 
 }

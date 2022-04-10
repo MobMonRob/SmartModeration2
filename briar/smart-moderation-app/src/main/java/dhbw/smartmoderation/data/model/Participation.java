@@ -5,6 +5,8 @@ import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Keep;
 import org.greenrobot.greendao.annotation.ToOne;
 import dhbw.smartmoderation.SmartModerationApplication;
+import dhbw.smartmoderation.SmartModerationApplicationImpl;
+
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.annotation.NotNull;
@@ -42,7 +44,7 @@ public class Participation extends ModelClass {
     @Keep
     public Participation() {
 
-        this.participationId = ((SmartModerationApplication)SmartModerationApplication.getApp()).getUniqueId();
+        this.participationId = ((SmartModerationApplicationImpl)SmartModerationApplicationImpl.getApp()).getUniqueId();
     }
 
     @Generated(hash = 1143709538)

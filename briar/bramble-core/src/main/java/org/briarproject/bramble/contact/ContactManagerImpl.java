@@ -121,28 +121,40 @@ class ContactManagerImpl implements ContactManager, EventListener {
 
 	@Override
 	public String getHandshakeLink() throws DbException {
-		KeyPair keyPair = db.transactionWithResult(true,
-				identityManager::getHandshakeKeys);
+		return db.transactionWithResult(true, this::getHandshakeLink);
+	}
+
+	@Override
+	public String getHandshakeLink(Transaction txn) throws DbException {
+		KeyPair keyPair = identityManager.getHandshakeKeys(txn);
 		return pendingContactFactory.createHandshakeLink(keyPair.getPublic());
+	}
+
+	@Override
+	public PendingContact addPendingContact(Transaction txn, String link,
+			String alias)
+			throws DbException, FormatException, GeneralSecurityException {
+		PendingContact p =
+				pendingContactFactory.createPendingContact(link, alias);
+		AuthorId local = identityManager.getLocalAuthor(txn).getId();
+		db.addPendingContact(txn, p, local);
+		KeyPair ourKeyPair = identityManager.getHandshakeKeys(txn);
+		keyManager.addPendingContact(txn, p.getId(), p.getPublicKey(),
+				ourKeyPair);
+		return p;
 	}
 
 	@Override
 	public PendingContact addPendingContact(String link, String alias)
 			throws DbException, FormatException, GeneralSecurityException {
-		PendingContact p =
-				pendingContactFactory.createPendingContact(link, alias);
 		Transaction txn = db.startTransaction(false);
 		try {
-			AuthorId local = identityManager.getLocalAuthor(txn).getId();
-			db.addPendingContact(txn, p, local);
-			KeyPair ourKeyPair = identityManager.getHandshakeKeys(txn);
-			keyManager.addPendingContact(txn, p.getId(), p.getPublicKey(),
-					ourKeyPair);
+			PendingContact p = addPendingContact(txn, link, alias);
 			db.commitTransaction(txn);
+			return p;
 		} finally {
 			db.endTransaction(txn);
 		}
-		return p;
 	}
 
 	@Override
@@ -154,8 +166,14 @@ class ContactManagerImpl implements ContactManager, EventListener {
 	@Override
 	public Collection<Pair<PendingContact, PendingContactState>> getPendingContacts()
 			throws DbException {
-		Collection<PendingContact> pendingContacts =
-				db.transactionWithResult(true, db::getPendingContacts);
+		return db.transactionWithResult(true, this::getPendingContacts);
+	}
+
+	@Override
+	public Collection<Pair<PendingContact, PendingContactState>> getPendingContacts(
+			Transaction txn)
+			throws DbException {
+		Collection<PendingContact> pendingContacts = db.getPendingContacts(txn);
 		List<Pair<PendingContact, PendingContactState>> pairs =
 				new ArrayList<>(pendingContacts.size());
 		for (PendingContact p : pendingContacts) {
@@ -168,7 +186,13 @@ class ContactManagerImpl implements ContactManager, EventListener {
 
 	@Override
 	public void removePendingContact(PendingContactId p) throws DbException {
-		db.transaction(false, txn -> db.removePendingContact(txn, p));
+		db.transaction(false, txn -> removePendingContact(txn, p));
+	}
+
+	@Override
+	public void removePendingContact(Transaction txn, PendingContactId p)
+			throws DbException {
+		db.removePendingContact(txn, p);
 		states.remove(p);
 	}
 

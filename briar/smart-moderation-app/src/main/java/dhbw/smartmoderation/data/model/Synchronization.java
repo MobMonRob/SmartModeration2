@@ -5,6 +5,8 @@ import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Keep;
 
 import dhbw.smartmoderation.SmartModerationApplication;
+import dhbw.smartmoderation.SmartModerationApplicationImpl;
+
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.ToOne;
 import org.greenrobot.greendao.DaoException;
@@ -20,7 +22,7 @@ public class Synchronization {
 
     @Keep
     public Synchronization() {
-        this.id = ((SmartModerationApplication)SmartModerationApplication.getApp()).getUniqueId();
+        this.id = ((SmartModerationApplicationImpl)SmartModerationApplicationImpl.getApp()).getUniqueId();
     }
 
     @Generated(hash = 295776310)
