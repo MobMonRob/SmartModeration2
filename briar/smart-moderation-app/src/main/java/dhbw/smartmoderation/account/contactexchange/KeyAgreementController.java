@@ -1,15 +1,13 @@
 package dhbw.smartmoderation.account.contactexchange;
+
 import org.briarproject.bramble.api.event.EventBus;
 import org.briarproject.bramble.api.keyagreement.KeyAgreementTask;
 import org.briarproject.bramble.api.keyagreement.PayloadEncoder;
 import org.briarproject.bramble.api.keyagreement.PayloadParser;
-import org.briarproject.bramble.api.lifecycle.IoExecutor;
 import org.briarproject.bramble.api.plugin.BluetoothConstants;
 import org.briarproject.bramble.api.plugin.LanTcpConstants;
 import org.briarproject.bramble.api.plugin.Plugin;
 import org.briarproject.bramble.api.plugin.PluginManager;
-
-import java.util.concurrent.Executor;
 
 import javax.inject.Provider;
 

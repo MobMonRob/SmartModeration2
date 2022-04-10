@@ -2,6 +2,7 @@ package dhbw.smartmoderation.util;
 
 import static android.content.Context.WIFI_SERVICE;
 
+import android.net.InetAddresses;
 import android.net.wifi.WifiManager;
 import android.text.format.Formatter;
 import android.util.Log;
@@ -10,8 +11,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.math.BigInteger;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.nio.ByteOrder;
 
-import dhbw.smartmoderation.SmartModerationApplication;
 import dhbw.smartmoderation.SmartModerationApplicationImpl;
 import dhbw.smartmoderation.data.model.ModerationCard;
 import okhttp3.HttpUrl;
@@ -192,9 +196,27 @@ public class Client {
         this.apiKey = apiKey;
         app.startWebServer();
         WifiManager wifiManager = (WifiManager) app.getApplicationContext().getSystemService(WIFI_SERVICE);
-        String androidIpAddress = Formatter.formatIpAddress(wifiManager.getConnectionInfo().getIpAddress());
+        String androidIpAddress = getIpAddressAsString(wifiManager.getConnectionInfo().getIpAddress());
         System.out.println("IP-Address: " + androidIpAddress);
         sendLoginInformation(androidIpAddress, meetingId);
+    }
+
+    private String getIpAddressAsString(int ipAddress){
+        if (ByteOrder.nativeOrder().equals(ByteOrder.LITTLE_ENDIAN)) {
+            ipAddress = Integer.reverseBytes(ipAddress);
+        }
+
+        byte[] ipByteArray = BigInteger.valueOf(ipAddress).toByteArray();
+
+        String ipAddressString;
+        try {
+            ipAddressString = InetAddress.getByAddress(ipByteArray).getHostAddress();
+        } catch (UnknownHostException ex) {
+            Log.e("WIFIIP", "Unable to get host address.");
+            ipAddressString = null;
+        }
+
+        return ipAddressString;
     }
 
     public boolean isRunning() {

@@ -3,11 +3,13 @@ package dhbw.smartmoderation.util;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import dhbw.smartmoderation.SmartModerationApplication;
+import java.util.Objects;
+
 import dhbw.smartmoderation.SmartModerationApplicationImpl;
 import dhbw.smartmoderation.data.model.ConsensusLevel;
 import dhbw.smartmoderation.data.model.Meeting;
@@ -105,7 +107,7 @@ public class WebServer extends NanoHTTPD {
 
            mimetype = "application/json";
 
-           Long pollId = Long.parseLong(session.getParameters().get("pollId").get(0));
+           Long pollId = Long.parseLong(Objects.requireNonNull(session.getParameters().get("pollId")).get(0));
 
            try {
 
@@ -242,7 +244,7 @@ public class WebServer extends NanoHTTPD {
         if(is_ascii) {
 
             StringBuilder response = new StringBuilder();
-            String line = "";
+            String line;
 
             try {
 
