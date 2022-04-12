@@ -1,8 +1,5 @@
 package dhbw.smartmoderation.data.model;
 
-import org.briarproject.bramble.api.identity.Author;
-import org.briarproject.bramble.api.identity.AuthorId;
-
 import dhbw.smartmoderation.util.Util;
 
 public class PrivateGroup {

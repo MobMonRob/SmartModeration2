@@ -1,5 +1,7 @@
 package dhbw.smartmoderation.account.contactexchange;
 
+import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,10 +16,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import dhbw.smartmoderation.R;
-import dhbw.smartmoderation.SmartModerationApplication;
 import dhbw.smartmoderation.SmartModerationApplicationImpl;
-
-import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
 
 public class ContactExchangeErrorFragment extends Fragment {
 

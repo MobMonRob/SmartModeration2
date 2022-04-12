@@ -14,7 +14,6 @@ import org.greenrobot.greendao.annotation.Transient;
 import java.util.ArrayList;
 import java.util.List;
 
-import dhbw.smartmoderation.SmartModerationApplication;
 import dhbw.smartmoderation.SmartModerationApplicationImpl;
 import dhbw.smartmoderation.data.events.GroupUpdateEvent;
 import dhbw.smartmoderation.util.Util;

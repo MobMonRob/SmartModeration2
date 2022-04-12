@@ -7,16 +7,10 @@ import org.briarproject.bramble.api.event.Event;
 import org.briarproject.bramble.api.event.EventListener;
 import org.briarproject.bramble.api.keyagreement.KeyAgreementResult;
 import org.briarproject.bramble.api.keyagreement.Payload;
-import org.briarproject.bramble.api.keyagreement.event.KeyAgreementAbortedEvent;
-import org.briarproject.bramble.api.keyagreement.event.KeyAgreementFailedEvent;
 import org.briarproject.bramble.api.keyagreement.event.KeyAgreementFinishedEvent;
 import org.briarproject.bramble.api.keyagreement.event.KeyAgreementListeningEvent;
-import org.briarproject.bramble.api.keyagreement.event.KeyAgreementStartedEvent;
-import org.briarproject.bramble.api.keyagreement.event.KeyAgreementWaitingEvent;
 
 import java.io.IOException;
-
-import dhbw.smartmoderation.account.contactexchange.KeyAgreementActivity;
 
 class ContactExchangeEventListener implements EventListener {
 

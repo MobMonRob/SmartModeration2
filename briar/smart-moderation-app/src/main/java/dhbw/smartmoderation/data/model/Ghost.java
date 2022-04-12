@@ -1,8 +1,5 @@
 package dhbw.smartmoderation.data.model;
 
-import java.util.UUID;
-
-import dhbw.smartmoderation.SmartModerationApplication;
 import dhbw.smartmoderation.SmartModerationApplicationImpl;
 
 public class Ghost implements IContact {

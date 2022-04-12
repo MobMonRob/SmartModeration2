@@ -9,11 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-
-import androidx.fragment.app.FragmentManager;
-
 import dhbw.smartmoderation.R;
-import dhbw.smartmoderation.SmartModerationApplication;
 import dhbw.smartmoderation.SmartModerationApplicationImpl;
 import dhbw.smartmoderation.data.model.ModerationCard;
 import dhbw.smartmoderation.exceptions.CantEditModerationCardException;

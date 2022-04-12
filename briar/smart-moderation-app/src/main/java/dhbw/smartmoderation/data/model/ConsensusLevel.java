@@ -11,7 +11,6 @@ import org.greenrobot.greendao.annotation.ToOne;
 
 import java.util.List;
 
-import dhbw.smartmoderation.SmartModerationApplication;
 import dhbw.smartmoderation.SmartModerationApplicationImpl;
 
 @Entity

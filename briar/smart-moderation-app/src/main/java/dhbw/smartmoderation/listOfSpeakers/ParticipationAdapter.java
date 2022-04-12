@@ -1,7 +1,6 @@
 package dhbw.smartmoderation.listOfSpeakers;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Handler;
@@ -24,11 +23,8 @@ import java.util.Collections;
 
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.data.model.Participation;
-import dhbw.smartmoderation.exceptions.ParticipationCantBeDeletedException;
-import dhbw.smartmoderation.exceptions.SmartModerationException;
 import dhbw.smartmoderation.uiUtils.ItemTouchHelperAdapter;
 import dhbw.smartmoderation.uiUtils.ItemTouchHelperViewHolder;
-import dhbw.smartmoderation.uiUtils.ItemTouchListener;
 import dhbw.smartmoderation.uiUtils.OnStartDragListener;
 
 public class ParticipationAdapter extends RecyclerView.Adapter<ParticipationAdapter.ParticipationViewHolder> implements ItemTouchHelperAdapter {

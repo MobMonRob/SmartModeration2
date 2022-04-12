@@ -1,5 +1,9 @@
 package dhbw.smartmoderation.account.contactexchange;
 
+import static android.widget.Toast.LENGTH_LONG;
+import static androidx.lifecycle.Lifecycle.State.STARTED;
+import static java.util.Objects.requireNonNull;
+
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -17,12 +21,7 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import dhbw.smartmoderation.R;
-import dhbw.smartmoderation.SmartModerationApplication;
 import dhbw.smartmoderation.SmartModerationApplicationImpl;
-
-import static android.widget.Toast.LENGTH_LONG;
-import static androidx.lifecycle.Lifecycle.State.STARTED;
-import static java.util.Objects.requireNonNull;
 
 @MethodsNotNullByDefault
 @ParametersNotNullByDefault

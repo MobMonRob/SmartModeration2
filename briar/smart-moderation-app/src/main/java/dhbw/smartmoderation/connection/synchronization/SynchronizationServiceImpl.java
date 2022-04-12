@@ -5,25 +5,22 @@ import android.util.Log;
 import org.briarproject.bramble.api.identity.LocalAuthor;
 import org.briarproject.briar.api.privategroup.GroupMessageHeader;
 import org.briarproject.briar.api.privategroup.PrivateGroup;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import dhbw.smartmoderation.SmartModerationApplication;
+
 import dhbw.smartmoderation.SmartModerationApplicationImpl;
 import dhbw.smartmoderation.connection.ConnectionService;
 import dhbw.smartmoderation.data.DataService;
 import dhbw.smartmoderation.data.events.GroupUpdateEvent;
-import dhbw.smartmoderation.data.model.Group;
 import dhbw.smartmoderation.data.model.GroupUpdateObserver;
 import dhbw.smartmoderation.data.model.ModelClass;
 import dhbw.smartmoderation.data.model.Synchronization;
 import dhbw.smartmoderation.data.model.SynchronizationDao;
-import dhbw.smartmoderation.exceptions.GroupNotFoundException;
 import dhbw.smartmoderation.exceptions.NoGroupHeadersFoundException;
 import dhbw.smartmoderation.exceptions.NoGroupMessageTextFoundException;
-import dhbw.smartmoderation.util.ExceptionHandlingActivity;
-import dhbw.smartmoderation.util.UpdateableExceptionHandlingActivity;
 import dhbw.smartmoderation.util.Util;
 
 public class SynchronizationServiceImpl implements SynchronizationService {

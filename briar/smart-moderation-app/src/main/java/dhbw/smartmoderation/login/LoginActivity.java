@@ -12,8 +12,8 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
 import dhbw.smartmoderation.R;
-import dhbw.smartmoderation.account.create.CreateAccountActivity;
 import dhbw.smartmoderation.home.HomeActivity;
 import dhbw.smartmoderation.util.Util;
 

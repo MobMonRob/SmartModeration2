@@ -20,7 +20,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 import dhbw.smartmoderation.R;
-import dhbw.smartmoderation.SmartModerationApplication;
 import dhbw.smartmoderation.SmartModerationApplicationImpl;
 
 public class DesktopLoginQRScanner extends AppCompatActivity {

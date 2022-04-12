@@ -1,11 +1,5 @@
 package dhbw.smartmoderation.group.create;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,17 +10,19 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 import dhbw.smartmoderation.R;
-import dhbw.smartmoderation.connection.synchronization.SynchronizableDataType;
 import dhbw.smartmoderation.exceptions.CantCreateGroupException;
 import dhbw.smartmoderation.exceptions.NoContactsFoundException;
 import dhbw.smartmoderation.util.ExceptionHandlingActivity;
-import dhbw.smartmoderation.util.UpdateableExceptionHandlingActivity;
 import dhbw.smartmoderation.util.Util;
 
 public class CreateGroup extends ExceptionHandlingActivity {

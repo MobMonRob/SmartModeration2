@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.HashMap;
 
 import dhbw.smartmoderation.R;
-import dhbw.smartmoderation.SmartModerationApplication;
 import dhbw.smartmoderation.SmartModerationApplicationImpl;
 
 public class ModerationCardColorImporter {

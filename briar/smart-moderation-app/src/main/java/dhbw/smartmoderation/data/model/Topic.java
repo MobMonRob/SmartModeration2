@@ -1,15 +1,14 @@
 package dhbw.smartmoderation.data.model;
 
+import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Keep;
-import org.greenrobot.greendao.annotation.ToOne;
-import dhbw.smartmoderation.SmartModerationApplication;
-import dhbw.smartmoderation.SmartModerationApplicationImpl;
-
-import org.greenrobot.greendao.annotation.Generated;
-import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.annotation.NotNull;
+import org.greenrobot.greendao.annotation.ToOne;
+
+import dhbw.smartmoderation.SmartModerationApplicationImpl;
 
 @Entity
 public class Topic extends ModelClass{

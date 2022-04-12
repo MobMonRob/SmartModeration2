@@ -66,8 +66,6 @@ import api.android.NetworkUsageMetrics;
 import api.android.ScreenFilterMonitor;
 import dagger.Module;
 import dagger.Provides;
-import dhbw.smartmoderation.SmartModerationApplication;
-import dhbw.smartmoderation.SmartModerationDatabaseConfig;
 import dhbw.smartmoderation.account.contactexchange.ContactExchangeModule;
 import dhbw.smartmoderation.account.contactexchange.ViewModelModule;
 

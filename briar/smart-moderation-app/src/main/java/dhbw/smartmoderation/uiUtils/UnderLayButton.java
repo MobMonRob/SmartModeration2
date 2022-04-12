@@ -1,11 +1,13 @@
 package dhbw.smartmoderation.uiUtils;
+
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+
 import androidx.core.content.res.ResourcesCompat;
+
 import dhbw.smartmoderation.R;
-import dhbw.smartmoderation.SmartModerationApplication;
 import dhbw.smartmoderation.SmartModerationApplicationImpl;
 
 public class UnderLayButton {

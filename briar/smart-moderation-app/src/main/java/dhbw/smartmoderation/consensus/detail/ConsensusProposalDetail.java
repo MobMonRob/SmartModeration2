@@ -1,22 +1,19 @@
 package dhbw.smartmoderation.consensus.detail;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import android.content.Intent;
 import android.graphics.text.LineBreaker;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.widget.TextView;
+
+import androidx.annotation.RequiresApi;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 import dhbw.smartmoderation.R;
-import dhbw.smartmoderation.connection.synchronization.PullEvent;
 import dhbw.smartmoderation.connection.synchronization.SynchronizableDataType;
 import dhbw.smartmoderation.data.model.Poll;
 import dhbw.smartmoderation.util.UpdateableExceptionHandlingActivity;

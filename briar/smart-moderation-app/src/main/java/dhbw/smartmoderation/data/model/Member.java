@@ -2,7 +2,9 @@ package dhbw.smartmoderation.data.model;
 
 import org.briarproject.bramble.api.identity.Author;
 import org.briarproject.bramble.api.identity.AuthorId;
+import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.JoinEntity;
 import org.greenrobot.greendao.annotation.Keep;
@@ -11,12 +13,9 @@ import org.greenrobot.greendao.annotation.ToMany;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import dhbw.smartmoderation.SmartModerationApplication;
+
 import dhbw.smartmoderation.SmartModerationApplicationImpl;
 import dhbw.smartmoderation.util.Util;
-
-import org.greenrobot.greendao.annotation.Generated;
-import org.greenrobot.greendao.DaoException;
 
 @Entity
 public class Member extends ModelClass {

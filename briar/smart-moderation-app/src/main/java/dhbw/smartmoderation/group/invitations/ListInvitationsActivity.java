@@ -2,20 +2,15 @@ package dhbw.smartmoderation.group.invitations;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.connection.GroupInvitationHandler;
 import dhbw.smartmoderation.connection.Invitation;
-import dhbw.smartmoderation.exceptions.GroupNotFoundException;
-import dhbw.smartmoderation.exceptions.MemberNotFoundException;
 import dhbw.smartmoderation.exceptions.NoContactsFoundException;
 import dhbw.smartmoderation.exceptions.SmartModerationException;
 import dhbw.smartmoderation.util.ExceptionHandlingActivity;

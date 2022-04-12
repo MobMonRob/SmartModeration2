@@ -1,18 +1,21 @@
 package dhbw.smartmoderation.connection;
 
+import static com.google.common.base.Charsets.ISO_8859_1;
+
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.util.DisplayMetrics;
 import android.util.Log;
 
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
-import com.google.zxing.qrcode.QRCodeWriter;
 
 import org.briarproject.bramble.api.keyagreement.Payload;
 import org.briarproject.bramble.api.keyagreement.PayloadEncoder;
 
 import java.util.Arrays;
+
+import dhbw.smartmoderation.SmartModerationApplicationImpl;
+import dhbw.smartmoderation.account.contactexchange.QrCodeUtils;
 
 final class ContactExchangeUtil {
 
@@ -31,17 +34,12 @@ final class ContactExchangeUtil {
 
 	static Bitmap generateQrCode(Payload payload) {
 		PayloadEncoder payloadEncoder = service.getPayloadEncoder();
-		byte[] bytes = payloadEncoder.encode(payload);
+		DisplayMetrics dm = SmartModerationApplicationImpl.getApp().getResources().getDisplayMetrics();
+		byte[] payloadBytes = payloadEncoder.encode(payload);
 
-		Log.d(TAG, "Bytes sent: " + Arrays.toString(bytes));
-
-		String string = byteArrayToString(bytes);
-		try {
-			BitMatrix bitMatrix = new QRCodeWriter().encode(string, BarcodeFormat.QR_CODE, QR_CODE_DIM, QR_CODE_DIM);
-			return renderQrCode(bitMatrix);
-		} catch (WriterException e) {
-			return null;
-		}
+		Log.d(TAG, "Bytes sent: " + Arrays.toString(payloadBytes));
+		String content = new String(payloadBytes, ISO_8859_1);
+		return QrCodeUtils.createQrCode(dm, content);
 	}
 
 	private static Bitmap renderQrCode(BitMatrix matrix) {

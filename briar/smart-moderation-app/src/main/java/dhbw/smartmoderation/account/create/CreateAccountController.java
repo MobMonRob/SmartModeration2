@@ -2,7 +2,6 @@ package dhbw.smartmoderation.account.create;
 
 import org.briarproject.bramble.api.identity.LocalAuthor;
 
-import dhbw.smartmoderation.SmartModerationApplication;
 import dhbw.smartmoderation.SmartModerationApplicationImpl;
 import dhbw.smartmoderation.controller.SmartModerationController;
 import dhbw.smartmoderation.data.model.LocalAuthorDao;

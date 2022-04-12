@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment;
 import javax.annotation.Nullable;
 
 import dhbw.smartmoderation.R;
-import dhbw.smartmoderation.SmartModerationApplication;
 import dhbw.smartmoderation.SmartModerationApplicationImpl;
 
 public class IntroFragment extends Fragment {
