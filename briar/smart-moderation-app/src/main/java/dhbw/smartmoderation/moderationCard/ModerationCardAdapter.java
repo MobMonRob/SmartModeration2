@@ -63,7 +63,7 @@ public class ModerationCardAdapter extends RecyclerView.Adapter<ModerationCardAd
         TextView authorTextView = holder.itemView.findViewById(R.id.authorTextView);
         String authorName = moderationCards.get(position).getAuthor();
         String authorInitials = authorName.length() < 2 ? authorName : authorName.substring(0, 2);
-        authorTextView.setText(authorInitials);
+        authorTextView.setText(authorInitials.toUpperCase());
     }
 
     @Override

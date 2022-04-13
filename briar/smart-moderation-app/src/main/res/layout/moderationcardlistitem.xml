@@ -7,7 +7,7 @@
 
     <TextView
         android:id="@+id/cardTextView"
-        android:layout_width="330dp"
+        android:layout_width="302dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:background="@drawable/border"
@@ -19,7 +19,7 @@
 
     <TextView
         android:id="@+id/authorTextView"
-        android:layout_width="25dp"
+        android:layout_width="38dp"
         android:layout_height="28dp"
         android:layout_marginTop="16dp"
         android:background="@color/bootstrap_gray_light"
