@@ -35,14 +35,7 @@ buildscript {
 		classpath 'org.greenrobot:greendao-gradle-plugin:3.3.0'
 	}
 
-	//TODO nochmal anschauen
-	project.ext {
-		buildToolsVersion = '30.0.2'
-		compileSdkVersion = 30
-		minSdkVersion = 26
-		targetSdkVersion = 29
-		versionCode = 10211
-		versionName = '1.2.11'
+	ext {
 		dagger_version = "2.33"
 		// okhttp 3.12.x is supported until end of 2021, newer versions need minSdk 21
 		okhttp_version = "3.12.13"

@@ -133,7 +133,7 @@ class AndroidTorPlugin extends TorPlugin {
 				if (extracted.delete()) LOG.info("Deleted Tor binary");
 				else LOG.info("Failed to delete Tor binary");
 			}
-		} else if (SDK_INT < 29) {
+		} else if (SDK_INT <= 32) {
 			// The binary wasn't extracted at install time. Try to extract it
 			extractLibraryFromApk(TOR_LIB_NAME, extracted);
 		} else {

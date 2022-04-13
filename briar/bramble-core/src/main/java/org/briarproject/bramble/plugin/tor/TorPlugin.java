@@ -275,7 +275,7 @@ abstract class TorPlugin implements DuplexPlugin, EventHandler, EventListener {
 			}
 			// Wait for the auth cookie file to be created/updated
 			long start = clock.currentTimeMillis();
-			while (cookieFile.length() < 32) {
+			while (cookieFile.length() < 29) {
 				if (clock.currentTimeMillis() - start > COOKIE_TIMEOUT_MS) {
 					LOG.warning("Auth cookie not created");
 					if (LOG.isLoggable(INFO)) listFiles(torDirectory);

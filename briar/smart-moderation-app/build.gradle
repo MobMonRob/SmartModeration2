@@ -1,21 +1,34 @@
 apply plugin: 'com.android.application'
+apply plugin: 'witness'
+apply from: 'witness.gradle'
+
+def getStdout = { command, defaultValue ->
+	def stdout = new ByteArrayOutputStream()
+	try {
+		exec {
+			commandLine = command
+			standardOutput = stdout
+		}
+		return stdout.toString().trim()
+	} catch (Exception ignored) {
+		return defaultValue
+	}
+}
 
 android {
 	compileSdkVersion 30
-    packagingOptions {
-        jniLibs {
-            keepDebugSymbols += ['**/*.so']
-        }
-    }
+	buildToolsVersion '30.0.3'
 
+	packagingOptions {
+		doNotStrip '**/*.so'
+	}
 
     defaultConfig {
-		applicationId "dhbw.smart_moderation_app"
-		minSdkVersion 26
+		minSdkVersion 19
 		targetSdkVersion 30
-		versionCode 1
-		versionName "1.0"
-
+		versionCode 10405
+		versionName "1.4.5"
+		applicationId "dhbw.smart_moderation_app"
 		testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 	}
 
@@ -32,8 +45,9 @@ android {
 	productFlavors {
 		screenshot {
 			dimension "version"
-			minSdkVersion 26
+			minSdkVersion 21
 			applicationIdSuffix ".screenshot" // = org.briarproject.briar.android.screenshot.debug
+			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt', 'proguard-test.txt'
 		}
 		official {
 			dimension "version"
@@ -53,12 +67,14 @@ android {
 	testOptions {
 		unitTests.returnDefaultValues = true
 	}
-    lint {
-        disable 'RestrictedApi'
-        warning 'MissingTranslation', 'ImpliedQuantity', 'ExtraTranslation', 'InvalidPackage'
-    }
 
-
+	lintOptions {
+		warning 'MissingTranslation'
+		warning 'ImpliedQuantity'
+		warning 'ExtraTranslation'
+		// FIXME
+		warning 'InvalidPackage'
+	}
 }
 
 apply plugin: 'com.android.application'

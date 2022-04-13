@@ -22,7 +22,6 @@ class LoginController extends SmartModerationController {
 		synchronizationService.setLocalAuthor(localAuthor);
 
 		if(localAuthorDao.loadAll().size() == 0) {
-
 			dhbw.smartmoderation.data.model.LocalAuthor author = new dhbw.smartmoderation.data.model.LocalAuthor(Util.bytesToLong(localAuthor.getId().getBytes()));
 			localAuthorDao.saveInTx(author);
 		}

@@ -6,16 +6,18 @@ apply from: 'witness.gradle'
 
 android {
 	compileSdkVersion 30
+	buildToolsVersion '30.0.3'
+
 	packagingOptions {
-		jniLibs {
-			keepDebugSymbols += ['**/*.so']
-		}
+		doNotStrip '**/*.so'
 	}
 
-    defaultConfig {
-		minSdkVersion 26
+	defaultConfig {
+		minSdkVersion 16
 		targetSdkVersion 30
-        consumerProguardFiles 'proguard-rules.txt'
+		versionCode 10405
+		versionName "1.4.5"
+		consumerProguardFiles 'proguard-rules.txt'
 
 		testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 	}
@@ -24,10 +26,14 @@ android {
 		sourceCompatibility JavaVersion.VERSION_1_8
 		targetCompatibility JavaVersion.VERSION_1_8
 	}
-    lint {
-        warning 'LintError', 'InvalidPackage', 'MissingPermission', 'InlinedApi', 'ObsoleteSdkInt', 'Override', 'NewApi', 'UnusedAttribute'
-    }
 
+	lintOptions {
+		// FIXME
+		warning "LintError"
+		warning "InvalidPackage"
+		warning "MissingPermission"
+		warning "InlinedApi", "ObsoleteSdkInt", "Override", "NewApi", "UnusedAttribute"
+	}
 }
 
 configurations {

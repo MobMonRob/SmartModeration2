@@ -144,6 +144,7 @@ public class ConnectionService {
         ContactExchangeUtil.init(this);
 
         groupInvitationVisitor = new GroupInvitationVisitor();
+
     }
 
     public boolean isConnected(ContactId contactId) {
@@ -177,7 +178,6 @@ public class ConnectionService {
      */
     public void createAccount(String name, String password) {
         accountManager.deleteAccount();
-
         accountManager.createAccount(name, password);
         startLifecycleManager();
     }
@@ -188,7 +188,6 @@ public class ConnectionService {
      * @param password The password for the Briar-account
      */
     public boolean login(String password) {
-
         try {
             accountManager.signIn(password);
             startLifecycleManager();
@@ -251,7 +250,7 @@ public class ConnectionService {
                 byte[] bytes = ContactExchangeUtil.stringToByteArray(payload);
                 Payload remotePayload = payloadParser.parse(bytes);
                 keyAgreementTask.connectAndRunProtocol(remotePayload);
-            } catch (IOException e) {
+            } catch (IOException ignored) {
             }
         }
     }
@@ -415,17 +414,13 @@ public class ConnectionService {
 
             // For all messages by this contact
             for (ConversationMessageHeader message : messagesForContact.getValue()) {
-
                 PrivateGroup group = message.accept(groupInvitationVisitor);
                 // If the current message is a group invitation
                 if (group != null) {
                     groupInvitations.add(new Invitation(contactId, group));
                 }
-
             }
-
         }
-
         return groupInvitations;
     }
 
@@ -470,14 +465,12 @@ public class ConnectionService {
         }
     }
 
-
     /**
      * Get the current author.
      *
      * @return The current author
      */
     public LocalAuthor getLocalAuthor() {
-
         try {
             return identityManager.getLocalAuthor();
         } catch (DbException e) {
@@ -487,7 +480,6 @@ public class ConnectionService {
     }
 
     public Long getLocalAuthorId() {
-
         LocalAuthor briarLocalAuthor = getLocalAuthor();
 
         if (briarLocalAuthor != null) {
@@ -538,6 +530,7 @@ public class ConnectionService {
         SecretKey dbKey = accountManager.getDatabaseKey();
         if (dbKey == null) throw new AssertionError();
         lifecycleManager.startServices(dbKey);
+
         try {
             lifecycleManager.waitForStartup();
         } catch (InterruptedException e) {
