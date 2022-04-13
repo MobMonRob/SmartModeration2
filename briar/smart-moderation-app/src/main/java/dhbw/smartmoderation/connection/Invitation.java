@@ -8,8 +8,8 @@ import org.briarproject.briar.api.privategroup.PrivateGroup;
  */
 public class Invitation {
 
-	private ContactId contactId;
-	private PrivateGroup privateGroup;
+	private final ContactId contactId;
+	private final PrivateGroup privateGroup;
 
 	public Invitation(ContactId contactId, PrivateGroup privateGroup) {
 		this.contactId = contactId;

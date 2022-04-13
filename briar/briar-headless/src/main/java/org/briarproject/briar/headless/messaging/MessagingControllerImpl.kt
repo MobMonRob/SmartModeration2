@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.javalin.http.BadRequestResponse
 import io.javalin.http.Context
 import io.javalin.http.NotFoundResponse
+import org.bouncycastle.util.encoders.Base64
+import org.bouncycastle.util.encoders.DecoderException
 import org.briarproject.bramble.api.contact.Contact
 import org.briarproject.bramble.api.contact.ContactId
 import org.briarproject.bramble.api.contact.ContactManager
@@ -11,9 +13,9 @@ import org.briarproject.bramble.api.db.DatabaseExecutor
 import org.briarproject.bramble.api.db.NoSuchContactException
 import org.briarproject.bramble.api.event.Event
 import org.briarproject.bramble.api.event.EventListener
+import org.briarproject.bramble.api.sync.MessageId
 import org.briarproject.bramble.api.sync.event.MessagesAckedEvent
 import org.briarproject.bramble.api.sync.event.MessagesSentEvent
-import org.briarproject.bramble.api.sync.MessageId
 import org.briarproject.bramble.api.system.Clock
 import org.briarproject.bramble.util.StringUtils.utf8IsTooLong
 import org.briarproject.briar.api.blog.BlogInvitationRequest
@@ -36,8 +38,6 @@ import org.briarproject.briar.headless.event.output
 import org.briarproject.briar.headless.getContactIdFromPathParam
 import org.briarproject.briar.headless.getFromJson
 import org.briarproject.briar.headless.json.JsonDict
-import org.spongycastle.util.encoders.Base64
-import org.spongycastle.util.encoders.DecoderException
 import java.util.concurrent.Executor
 import javax.annotation.concurrent.Immutable
 import javax.inject.Inject
@@ -92,7 +92,7 @@ constructor(
 
         val messageIdString = ctx.getFromJson(objectMapper, "messageId")
         val messageId = deserializeMessageId(messageIdString)
-        messagingManager.setReadFlag(groupId, messageId, true)
+        conversationManager.setReadFlag(groupId, messageId, true)
         return ctx.json(messageIdString)
     }
 

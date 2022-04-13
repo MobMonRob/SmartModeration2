@@ -1,13 +1,14 @@
 package dhbw.smartmoderation.data.model;
 
+import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Keep;
-import org.greenrobot.greendao.annotation.ToOne;
-import dhbw.smartmoderation.SmartModerationApplication;
-import org.greenrobot.greendao.annotation.Generated;
-import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.annotation.NotNull;
+import org.greenrobot.greendao.annotation.ToOne;
+
+import dhbw.smartmoderation.SmartModerationApplicationImpl;
 
 @Entity
 public class Topic extends ModelClass{
@@ -33,7 +34,7 @@ public class Topic extends ModelClass{
     @Keep
     public Topic() {
 
-        this.topicId = ((SmartModerationApplication)SmartModerationApplication.getApp()).getUniqueId();
+        this.topicId = ((SmartModerationApplicationImpl)SmartModerationApplicationImpl.getApp()).getUniqueId();
     }
 
     @Generated(hash = 1480016878)

@@ -1,6 +1,5 @@
 package dhbw.smartmoderation.group.chat;
 
-import org.briarproject.briar.api.privategroup.GroupMessageHeader;
 import org.briarproject.briar.api.privategroup.PrivateGroup;
 
 import java.util.ArrayList;
@@ -10,8 +9,6 @@ import dhbw.smartmoderation.controller.SmartModerationController;
 import dhbw.smartmoderation.exceptions.GroupNotFoundException;
 import dhbw.smartmoderation.exceptions.NoGroupMessageTextFoundException;
 import dhbw.smartmoderation.util.Util;
-
-import static org.briarproject.bramble.util.LogUtils.now;
 
 public class GroupChatController extends SmartModerationController {
 

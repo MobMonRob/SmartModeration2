@@ -1,11 +1,5 @@
 package dhbw.smartmoderation.group.create;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,17 +10,22 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import org.briarproject.bramble.api.plugin.duplex.DuplexPlugin;
+
 import java.util.ArrayList;
-import java.util.Collection;
 
 import dhbw.smartmoderation.R;
-import dhbw.smartmoderation.connection.synchronization.SynchronizableDataType;
+import dhbw.smartmoderation.SmartModerationApplicationImpl;
 import dhbw.smartmoderation.exceptions.CantCreateGroupException;
 import dhbw.smartmoderation.exceptions.NoContactsFoundException;
 import dhbw.smartmoderation.util.ExceptionHandlingActivity;
-import dhbw.smartmoderation.util.UpdateableExceptionHandlingActivity;
 import dhbw.smartmoderation.util.Util;
 
 public class CreateGroup extends ExceptionHandlingActivity {
@@ -51,7 +50,9 @@ public class CreateGroup extends ExceptionHandlingActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
+        for (DuplexPlugin duplexPlugin :  ((SmartModerationApplicationImpl)SmartModerationApplicationImpl.getApp()).getConnectionService().getPluginManager().getDuplexPlugins()) {
+            System.out.println("Duplex " + duplexPlugin.getId() + " | " + duplexPlugin.getState());
+        }
         super.onCreate(savedInstanceState);
         setTitle(getString(R.string.CreateGroup_title));
         setContentView(R.layout.activity_create_group);

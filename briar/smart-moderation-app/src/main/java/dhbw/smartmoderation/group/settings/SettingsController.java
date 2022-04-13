@@ -1,11 +1,10 @@
 package dhbw.smartmoderation.group.settings;
 
 import org.briarproject.briar.api.privategroup.PrivateGroup;
+
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.UUID;
 
-import dhbw.smartmoderation.SmartModerationApplication;
 import dhbw.smartmoderation.controller.SmartModerationController;
 import dhbw.smartmoderation.data.model.ConsensusLevel;
 import dhbw.smartmoderation.data.model.Group;
@@ -17,7 +16,6 @@ import dhbw.smartmoderation.exceptions.CouldNotChangeConsensusLevel;
 import dhbw.smartmoderation.exceptions.CouldNotDeleteConsensusLevel;
 import dhbw.smartmoderation.exceptions.GroupNotFoundException;
 import dhbw.smartmoderation.exceptions.GroupSettingsNotFoundException;
-import dhbw.smartmoderation.util.Mocks.ISettings;
 import dhbw.smartmoderation.util.Util;
 
 public class SettingsController extends SmartModerationController  {

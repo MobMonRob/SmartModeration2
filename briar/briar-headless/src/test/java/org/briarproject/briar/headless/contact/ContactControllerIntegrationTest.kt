@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
-class ContactControllerIntegrationTest: IntegrationTest() {
+class ContactControllerIntegrationTest : IntegrationTest() {
 
     @Test
     fun `returning list of contacts needs authentication token`() {
@@ -24,8 +24,8 @@ class ContactControllerIntegrationTest: IntegrationTest() {
         assertEquals(0, response.jsonArray.length())
 
         // add one test contact
-        val testContactName= "testContactName"
-        testDataCreator.addContact(testContactName, false)
+        val testContactName = "testContactName"
+        testDataCreator.addContact(testContactName, true, false)
 
         // retrieve list with one test contact
         response = get("$url/contacts")

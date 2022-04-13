@@ -4,6 +4,7 @@ import org.briarproject.bramble.api.FormatException;
 import org.briarproject.bramble.api.contact.Contact;
 import org.briarproject.bramble.api.contact.ContactId;
 import org.briarproject.bramble.api.contact.ContactManager;
+import org.briarproject.bramble.api.crypto.CryptoComponent;
 import org.briarproject.bramble.api.crypto.SecretKey;
 import org.briarproject.bramble.api.db.DatabaseComponent;
 import org.briarproject.bramble.api.db.DbException;
@@ -62,6 +63,8 @@ import static org.briarproject.bramble.api.plugin.BluetoothConstants.UUID_BYTES;
 import static org.briarproject.bramble.api.sync.Group.Visibility.SHARED;
 import static org.briarproject.bramble.util.LogUtils.logException;
 import static org.briarproject.bramble.util.StringUtils.getRandomString;
+import static org.briarproject.briar.api.autodelete.AutoDeleteConstants.MIN_AUTO_DELETE_TIMER_MS;
+import static org.briarproject.briar.api.autodelete.AutoDeleteConstants.NO_AUTO_DELETE_TIMER;
 import static org.briarproject.briar.test.TestData.AUTHOR_NAMES;
 import static org.briarproject.briar.test.TestData.GROUP_NAMES;
 
@@ -79,6 +82,7 @@ public class TestDataCreatorImpl implements TestDataCreator {
 
 	private final DatabaseComponent db;
 	private final IdentityManager identityManager;
+	private final CryptoComponent crypto;
 	private final ContactManager contactManager;
 	private final TransportPropertyManager transportPropertyManager;
 	private final MessagingManager messagingManager;
@@ -98,7 +102,9 @@ public class TestDataCreatorImpl implements TestDataCreator {
 			GroupFactory groupFactory,
 			PrivateMessageFactory privateMessageFactory,
 			BlogPostFactory blogPostFactory, DatabaseComponent db,
-			IdentityManager identityManager, ContactManager contactManager,
+			IdentityManager identityManager,
+			CryptoComponent crypto,
+			ContactManager contactManager,
 			TransportPropertyManager transportPropertyManager,
 			MessagingManager messagingManager, BlogManager blogManager,
 			ForumManager forumManager,
@@ -112,6 +118,7 @@ public class TestDataCreatorImpl implements TestDataCreator {
 		this.blogPostFactory = blogPostFactory;
 		this.db = db;
 		this.identityManager = identityManager;
+		this.crypto = crypto;
 		this.contactManager = contactManager;
 		this.transportPropertyManager = transportPropertyManager;
 		this.messagingManager = messagingManager;
@@ -158,15 +165,15 @@ public class TestDataCreatorImpl implements TestDataCreator {
 		LocalAuthor localAuthor = identityManager.getLocalAuthor();
 		for (int i = 0; i < numContacts; i++) {
 			LocalAuthor remote = getRandomAuthor();
-			Contact contact =
-					addContact(localAuthor.getId(), remote, avatarPercent);
+			Contact contact = addContact(localAuthor.getId(), remote,
+					random.nextBoolean(), avatarPercent);
 			contacts.add(contact);
 		}
 		return contacts;
 	}
 
 	private Contact addContact(AuthorId localAuthorId, LocalAuthor remote,
-			int avatarPercent) throws DbException {
+			boolean alias, int avatarPercent) throws DbException {
 		// prepare to add contact
 		SecretKey secretKey = getSecretKey();
 		long timestamp = clock.currentTimeMillis();
@@ -179,7 +186,7 @@ public class TestDataCreatorImpl implements TestDataCreator {
 		Contact contact = db.transactionWithResult(false, txn -> {
 			ContactId contactId = contactManager.addContact(txn, remote,
 					localAuthorId, secretKey, timestamp, true, verified, true);
-			if (random.nextBoolean()) {
+			if (alias) {
 				contactManager.setContactAlias(txn, contactId,
 						getRandomAuthorName());
 			}
@@ -197,11 +204,12 @@ public class TestDataCreatorImpl implements TestDataCreator {
 	}
 
 	@Override
-	public Contact addContact(String name, boolean avatar) throws DbException {
+	public Contact addContact(String name, boolean alias, boolean avatar)
+			throws DbException {
 		LocalAuthor localAuthor = identityManager.getLocalAuthor();
 		LocalAuthor remote = authorFactory.createLocalAuthor(name);
 		int avatarPercent = avatar ? 100 : 0;
-		return addContact(localAuthor.getId(), remote, avatarPercent);
+		return addContact(localAuthor.getId(), remote, alias, avatarPercent);
 	}
 
 	private String getRandomAuthorName() {
@@ -244,7 +252,7 @@ public class TestDataCreatorImpl implements TestDataCreator {
 		// Tor
 		TransportProperties tor = new TransportProperties();
 		String torAddress = getRandomTorAddress();
-		tor.put(TorConstants.PROP_ONION_V2, torAddress);
+		tor.put(TorConstants.PROP_ONION_V3, torAddress);
 		props.put(TorConstants.ID, tor);
 
 		return props;
@@ -289,13 +297,9 @@ public class TestDataCreatorImpl implements TestDataCreator {
 	}
 
 	private String getRandomTorAddress() {
-		StringBuilder sb = new StringBuilder();
-		// address
-		for (int i = 0; i < 16; i++) {
-			if (random.nextBoolean()) sb.append(2 + random.nextInt(6));
-			else sb.append((char) (random.nextInt(26) + 'a'));
-		}
-		return sb.toString();
+		byte[] pubkeyBytes =
+				crypto.generateSignatureKeyPair().getPublic().getEncoded();
+		return crypto.encodeOnionAddress(pubkeyBytes);
 	}
 
 	private void addAvatar(Contact c) throws DbException {
@@ -348,17 +352,22 @@ public class TestDataCreatorImpl implements TestDataCreator {
 
 	private void createRandomPrivateMessage(ContactId contactId,
 			GroupId groupId, int num) throws DbException {
-		long timestamp = clock.currentTimeMillis() - num * 60 * 1000;
+		long timestamp = clock.currentTimeMillis() - (long) num * 60 * 1000;
 		String text = getRandomText();
 		boolean local = random.nextBoolean();
-		createPrivateMessage(contactId, groupId, text, timestamp, local);
+		boolean autoDelete = random.nextBoolean();
+		createPrivateMessage(contactId, groupId, text, timestamp, local,
+				autoDelete);
 	}
 
 	private void createPrivateMessage(ContactId contactId, GroupId groupId,
-			String text, long timestamp, boolean local) throws DbException {
+			String text, long timestamp, boolean local, boolean autoDelete)
+			throws DbException {
+		long timer = autoDelete ?
+				MIN_AUTO_DELETE_TIMER_MS : NO_AUTO_DELETE_TIMER;
 		try {
 			PrivateMessage m = privateMessageFactory.createPrivateMessage(
-					groupId, timestamp, text, emptyList());
+					groupId, timestamp, text, emptyList(), timer);
 			if (local) {
 				messagingManager.addLocalMessage(m);
 			} else {
@@ -392,7 +401,7 @@ public class TestDataCreatorImpl implements TestDataCreator {
 	private void addBlogPost(ContactId contactId, LocalAuthor author, int num)
 			throws DbException {
 		Blog blog = blogManager.getPersonalBlog(author);
-		long timestamp = clock.currentTimeMillis() - num * 60 * 1000;
+		long timestamp = clock.currentTimeMillis() - (long) num * 60 * 1000;
 		String text = getRandomText();
 		try {
 			BlogPost blogPost = blogPostFactory.createBlogPost(blog.getId(),
@@ -430,7 +439,7 @@ public class TestDataCreatorImpl implements TestDataCreator {
 		for (int i = 0; i < numForumPosts; i++) {
 			Contact contact = contacts.get(random.nextInt(contacts.size()));
 			LocalAuthor author = localAuthors.get(contact);
-			long timestamp = clock.currentTimeMillis() - i * 60 * 1000;
+			long timestamp = clock.currentTimeMillis() - (long) i * 60 * 1000;
 			String text = getRandomText();
 			MessageId parent = null;
 			if (random.nextBoolean() && posts.size() > 0) {

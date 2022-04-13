@@ -1,5 +1,7 @@
 package dhbw.smartmoderation.account.contactexchange;
 
+import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
@@ -15,10 +16,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import dhbw.smartmoderation.R;
-import dhbw.smartmoderation.SmartModerationApplication;
-
-import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
-import static android.view.View.GONE;
+import dhbw.smartmoderation.SmartModerationApplicationImpl;
 
 public class ContactExchangeErrorFragment extends Fragment {
 
@@ -41,7 +39,7 @@ public class ContactExchangeErrorFragment extends Fragment {
 
     @Override
     public void onAttach(Context context) {
-        ((SmartModerationApplication)getActivity().getApplicationContext()).comp.inject(this);
+        ((SmartModerationApplicationImpl)getActivity().getApplicationContext()).smartModerationComponent.inject(this);
         super.onAttach(context);
     }
 

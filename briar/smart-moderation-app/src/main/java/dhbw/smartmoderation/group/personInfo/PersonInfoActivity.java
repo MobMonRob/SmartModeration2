@@ -1,13 +1,11 @@
 package dhbw.smartmoderation.group.personInfo;
 
 import android.app.AlertDialog;
-import android.app.Person;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
@@ -16,7 +14,6 @@ import androidx.annotation.Nullable;
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.data.model.Group;
 import dhbw.smartmoderation.data.model.Member;
-import dhbw.smartmoderation.data.model.MemberGroupRelation;
 import dhbw.smartmoderation.data.model.Role;
 import dhbw.smartmoderation.exceptions.GroupNotFoundException;
 import dhbw.smartmoderation.util.ExceptionHandlingActivity;

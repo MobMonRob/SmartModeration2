@@ -15,15 +15,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import dhbw.smartmoderation.R;
-import dhbw.smartmoderation.connection.synchronization.PullEvent;
-import dhbw.smartmoderation.connection.synchronization.SynchronizableDataType;
 import dhbw.smartmoderation.exceptions.CantSendConsensusProposal;
-import dhbw.smartmoderation.exceptions.CantSubMitMeetingException;
-import dhbw.smartmoderation.meeting.create.CreateMeetingActivity;
 import dhbw.smartmoderation.util.ExceptionHandlingActivity;
 
 public class CreateConsensusProposal extends ExceptionHandlingActivity {

@@ -5,6 +5,8 @@ import org.briarproject.bramble.api.db.DatabaseComponent;
 import org.briarproject.bramble.api.db.DbException;
 import org.briarproject.bramble.api.db.Transaction;
 import org.briarproject.bramble.api.nullsafety.NotNullByDefault;
+import org.briarproject.bramble.api.sync.GroupId;
+import org.briarproject.bramble.api.sync.Message;
 import org.briarproject.bramble.api.sync.MessageId;
 import org.briarproject.briar.api.client.MessageTracker.GroupCount;
 import org.briarproject.briar.api.conversation.ConversationManager;
@@ -22,6 +24,7 @@ import javax.inject.Inject;
 
 @ThreadSafe
 @NotNullByDefault
+
 class ConversationManagerImpl implements ConversationManager {
 
 	private final DatabaseComponent db;
@@ -56,6 +59,11 @@ class ConversationManagerImpl implements ConversationManager {
 	}
 
 	@Override
+	public Collection<ConversationMessageHeader> getMessageHeaders(Transaction txn, ContactId c) throws DbException {
+		return null;
+	}
+
+	@Override
 	public GroupCount getGroupCount(ContactId contactId) throws DbException {
 		return db.transactionWithResult(true,
 				txn -> getGroupCount(txn, contactId));
@@ -74,6 +82,36 @@ class ConversationManagerImpl implements ConversationManager {
 				latestTime = count.getLatestMsgTime();
 		}
 		return new GroupCount(msgCount, unreadCount, latestTime);
+	}
+
+	@Override
+	public void trackIncomingMessage(Transaction txn, Message m) throws DbException {
+
+	}
+
+	@Override
+	public void trackOutgoingMessage(Transaction txn, Message m) throws DbException {
+
+	}
+
+	@Override
+	public void trackMessage(Transaction txn, GroupId g, long timestamp, boolean read) throws DbException {
+
+	}
+
+	@Override
+	public void setReadFlag(GroupId g, MessageId m, boolean read) throws DbException {
+
+	}
+
+	@Override
+	public void setReadFlag(Transaction txn, GroupId g, MessageId m, boolean read) throws DbException {
+
+	}
+
+	@Override
+	public long getTimestampForOutgoingMessage(Transaction txn, ContactId c) throws DbException {
+		return 0;
 	}
 
 	@Override

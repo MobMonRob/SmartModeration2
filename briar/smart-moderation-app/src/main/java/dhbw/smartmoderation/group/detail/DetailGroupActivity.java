@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
@@ -25,15 +24,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import org.briarproject.bramble.api.contact.Contact;
-import org.h2.command.dml.Delete;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 
 import dhbw.smartmoderation.R;
@@ -44,7 +38,6 @@ import dhbw.smartmoderation.data.model.Member;
 import dhbw.smartmoderation.exceptions.GroupNotFoundException;
 import dhbw.smartmoderation.exceptions.NoContactsFoundException;
 import dhbw.smartmoderation.exceptions.SmartModerationException;
-import dhbw.smartmoderation.group.chat.GroupChatActivity;
 import dhbw.smartmoderation.group.create.ContactAdapter;
 import dhbw.smartmoderation.group.personInfo.PersonInfoActivity;
 import dhbw.smartmoderation.group.settings.SettingsActivity;
@@ -52,9 +45,7 @@ import dhbw.smartmoderation.meeting.create.CreateMeetingActivity;
 import dhbw.smartmoderation.meeting.detail.BaseActivity;
 import dhbw.smartmoderation.uiUtils.OnStartDragListener;
 import dhbw.smartmoderation.uiUtils.SimpleItemTouchHelperCallback;
-import dhbw.smartmoderation.util.Mocks.DetailGroupControllerMock;
 import dhbw.smartmoderation.util.UpdateableExceptionHandlingActivity;
-import dhbw.smartmoderation.util.Util;
 
 public class DetailGroupActivity extends UpdateableExceptionHandlingActivity implements MemberAdapter.OnMemberListener, MeetingAdapter.OnMeetingListener, OnStartDragListener {
 

@@ -7,13 +7,19 @@ import io.mockk.mockk
 import org.briarproject.bramble.api.connection.ConnectionRegistry
 import org.briarproject.bramble.api.contact.Contact
 import org.briarproject.bramble.api.contact.ContactManager
+import org.briarproject.bramble.api.db.TransactionManager
 import org.briarproject.bramble.api.identity.Author
 import org.briarproject.bramble.api.identity.IdentityManager
 import org.briarproject.bramble.api.identity.LocalAuthor
 import org.briarproject.bramble.api.sync.Group
 import org.briarproject.bramble.api.sync.Message
 import org.briarproject.bramble.api.system.Clock
-import org.briarproject.bramble.test.TestUtils.*
+import org.briarproject.bramble.test.TestUtils.getAuthor
+import org.briarproject.bramble.test.TestUtils.getClientId
+import org.briarproject.bramble.test.TestUtils.getContact
+import org.briarproject.bramble.test.TestUtils.getGroup
+import org.briarproject.bramble.test.TestUtils.getLocalAuthor
+import org.briarproject.bramble.test.TestUtils.getMessage
 import org.briarproject.bramble.util.StringUtils.getRandomString
 import org.briarproject.briar.api.conversation.ConversationManager
 import org.briarproject.briar.headless.event.WebSocketController
@@ -24,6 +30,7 @@ import javax.servlet.http.HttpServletResponse
 
 abstract class ControllerTest {
 
+    protected val db = mockk<TransactionManager>()
     protected val contactManager = mockk<ContactManager>()
     protected val conversationManager = mockk<ConversationManager>()
     protected val identityManager = mockk<IdentityManager>()

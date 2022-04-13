@@ -1,9 +1,5 @@
 package dhbw.smartmoderation.consensus.evaluate;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-
 import android.content.Intent;
 import android.graphics.text.LineBreaker;
 import android.os.Build;
@@ -11,6 +7,10 @@ import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
+
+import androidx.annotation.RequiresApi;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.util.ExceptionHandlingActivity;
 

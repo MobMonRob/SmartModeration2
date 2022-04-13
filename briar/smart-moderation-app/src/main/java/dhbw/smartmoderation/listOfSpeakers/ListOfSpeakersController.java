@@ -1,9 +1,10 @@
 package dhbw.smartmoderation.listOfSpeakers;
 
-import org.briarproject.bramble.api.identity.LocalAuthor;
 import org.briarproject.briar.api.privategroup.PrivateGroup;
+
 import java.util.ArrayList;
 import java.util.Collection;
+
 import dhbw.smartmoderation.controller.SmartModerationController;
 import dhbw.smartmoderation.data.model.Attendance;
 import dhbw.smartmoderation.data.model.Group;
@@ -16,8 +17,8 @@ import dhbw.smartmoderation.exceptions.CantDeleteCurrentSpeakerException;
 import dhbw.smartmoderation.exceptions.GroupNotFoundException;
 import dhbw.smartmoderation.exceptions.MeetingNotFoundException;
 import dhbw.smartmoderation.exceptions.MemberNotFoundException;
-import dhbw.smartmoderation.exceptions.ParticipationCantBeAddedException;
 import dhbw.smartmoderation.exceptions.ParitcipationCantBeChangedException;
+import dhbw.smartmoderation.exceptions.ParticipationCantBeAddedException;
 import dhbw.smartmoderation.exceptions.ParticipationCantBeCreatedException;
 import dhbw.smartmoderation.exceptions.ParticipationCantBeDeletedException;
 import dhbw.smartmoderation.exceptions.ParticipationListCouldNotBeCleared;

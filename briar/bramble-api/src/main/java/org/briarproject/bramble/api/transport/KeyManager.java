@@ -22,8 +22,24 @@ public interface KeyManager {
 
 	/**
 	 * Derives and stores a set of rotation mode transport keys for
-	 * communicating with the given contact over each transport and returns the
-	 * key set IDs.
+	 * communicating with the given contact over the given transport and
+	 * returns the key set ID, or null if the transport is not supported.
+	 * <p/>
+	 * {@link StreamContext StreamContexts} for the contact can be created
+	 * after this method has returned.
+	 *
+	 * @param alice True if the local party is Alice
+	 * @param active Whether the derived keys can be used for outgoing streams
+	 */
+	@Nullable
+	KeySetId addRotationKeys(Transaction txn, ContactId c, TransportId t,
+			SecretKey rootKey, long timestamp, boolean alice,
+			boolean active) throws DbException;
+
+	/**
+	 * Derives and stores a set of rotation mode transport keys for
+	 * communicating with the given contact over each supported transport and
+	 * returns the key set IDs.
 	 * <p/>
 	 * {@link StreamContext StreamContexts} for the contact can be created
 	 * after this method has returned.
@@ -97,9 +113,25 @@ public interface KeyManager {
 	/**
 	 * Looks up the given tag and returns a {@link StreamContext} for reading
 	 * from the corresponding stream, or null if an error occurs or the tag was
-	 * unexpected.
+	 * unexpected. Marks the tag as recognised and updates the reordering
+	 * window.
 	 */
 	@Nullable
 	StreamContext getStreamContext(TransportId t, byte[] tag)
 			throws DbException;
+
+	/**
+	 * Looks up the given tag and returns a {@link StreamContext} for reading
+	 * from the corresponding stream, or null if an error occurs or the tag was
+	 * unexpected. Only returns the StreamContext; does not mark the tag as
+	 * recognised.
+	 */
+	@Nullable
+	StreamContext getStreamContextOnly(TransportId t, byte[] tag)
+			throws DbException;
+
+	/**
+	 * Marks the tag as recognised and updates the reordering window.
+	 */
+	void markTagAsRecognised(TransportId t, byte[] tag) throws DbException;
 }

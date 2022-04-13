@@ -1,6 +1,5 @@
 package dhbw.smartmoderation.connection.synchronization;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 import dhbw.smartmoderation.data.model.ModelClass;

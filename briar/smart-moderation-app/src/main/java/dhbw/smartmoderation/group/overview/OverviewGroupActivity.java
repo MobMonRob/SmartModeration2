@@ -2,15 +2,10 @@ package dhbw.smartmoderation.group.overview;
 
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageButton;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,9 +19,8 @@ import java.util.Collection;
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.connection.synchronization.SynchronizableDataType;
 import dhbw.smartmoderation.data.model.Group;
-import dhbw.smartmoderation.group.detail.DetailGroupActivity;
 import dhbw.smartmoderation.group.create.CreateGroup;
-import dhbw.smartmoderation.util.Mocks.OverViewGroupControllerMock;
+import dhbw.smartmoderation.group.detail.DetailGroupActivity;
 import dhbw.smartmoderation.util.UpdateableExceptionHandlingActivity;
 
 

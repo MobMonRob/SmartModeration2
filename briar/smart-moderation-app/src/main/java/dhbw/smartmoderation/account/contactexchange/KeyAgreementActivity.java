@@ -32,6 +32,7 @@ import javax.inject.Inject;
 
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.SmartModerationApplication;
+import dhbw.smartmoderation.SmartModerationApplicationImpl;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.CAMERA;
@@ -85,7 +86,7 @@ public abstract class KeyAgreementActivity extends AppCompatActivity implements 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        ((SmartModerationApplication)getApplicationContext()).comp.inject(this);
+        ((SmartModerationApplicationImpl)getApplicationContext()).smartModerationComponent.inject(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fragment_container);
         if(savedInstanceState == null) {

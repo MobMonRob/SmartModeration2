@@ -1,13 +1,15 @@
 package dhbw.smartmoderation.data.model;
 
+import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Keep;
 import org.greenrobot.greendao.annotation.ToMany;
+
 import java.util.List;
-import dhbw.smartmoderation.SmartModerationApplication;
-import org.greenrobot.greendao.DaoException;
+
+import dhbw.smartmoderation.SmartModerationApplicationImpl;
 
 
 @Entity
@@ -30,7 +32,7 @@ public class GroupSettings extends ModelClass {
     @Keep
     public GroupSettings() {
 
-        this.settingsId = ((SmartModerationApplication)SmartModerationApplication.getApp()).getUniqueId();
+        this.settingsId = ((SmartModerationApplicationImpl)SmartModerationApplicationImpl.getApp()).getUniqueId();
     }
 
     @Generated(hash = 2142486419)

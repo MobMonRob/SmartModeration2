@@ -1,7 +1,10 @@
 package dhbw.smartmoderation.consensus.overview;
 
-import org.briarproject.bramble.api.identity.LocalAuthor;
 import org.briarproject.briar.api.privategroup.PrivateGroup;
+
+import java.util.ArrayList;
+import java.util.Collection;
+
 import dhbw.smartmoderation.controller.SmartModerationController;
 import dhbw.smartmoderation.data.model.Group;
 import dhbw.smartmoderation.data.model.Meeting;
@@ -9,16 +12,11 @@ import dhbw.smartmoderation.data.model.Member;
 import dhbw.smartmoderation.data.model.ModelClass;
 import dhbw.smartmoderation.data.model.Poll;
 import dhbw.smartmoderation.data.model.Role;
-import dhbw.smartmoderation.data.model.Voice;
 import dhbw.smartmoderation.exceptions.GroupNotFoundException;
 import dhbw.smartmoderation.exceptions.MeetingNotFoundException;
-import dhbw.smartmoderation.exceptions.PollCantBeCreatedException;
 import dhbw.smartmoderation.exceptions.PollCantBeDeletedException;
 import dhbw.smartmoderation.exceptions.PollCantBeOpenedException;
 import dhbw.smartmoderation.util.Util;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 public class ConsensusProposalOverviewController extends SmartModerationController {
 

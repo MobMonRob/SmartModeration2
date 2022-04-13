@@ -11,7 +11,7 @@ import org.greenrobot.greendao.annotation.ToOne;
 
 import java.util.List;
 
-import dhbw.smartmoderation.SmartModerationApplication;
+import dhbw.smartmoderation.SmartModerationApplicationImpl;
 
 @Entity
 public class ConsensusLevel extends ModelClass {
@@ -50,7 +50,7 @@ public class ConsensusLevel extends ModelClass {
     @Keep
     public ConsensusLevel() {
 
-        this.consensusLevelId = ((SmartModerationApplication)SmartModerationApplication.getApp()).getUniqueId();
+        this.consensusLevelId = ((SmartModerationApplicationImpl)SmartModerationApplicationImpl.getApp()).getUniqueId();
     }
 
     public Long getConsensusLevelId() {

@@ -1,13 +1,6 @@
 package dhbw.smartmoderation.util;
 
-import android.app.Activity;
-import android.app.Notification;
-import android.content.Context;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.Point;
-import android.util.DisplayMetrics;
-import android.view.View;
 import android.widget.EditText;
 
 import com.google.common.primitives.Longs;
@@ -167,10 +160,6 @@ public final class Util {
 		}
 
 		return milliseconds;
-	}
-
-	public static byte[] longToBytes(long x) {
-		return Longs.toByteArray(x);
 	}
 
 	public static long bytesToLong(byte[] bytes) {

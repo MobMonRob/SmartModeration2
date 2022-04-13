@@ -1,27 +1,23 @@
 package dhbw.smartmoderation.consensus.result;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
-import android.app.ActionBar;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TableRow;
-import android.widget.Toast;
+
+import androidx.annotation.RequiresApi;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.Entry;
@@ -34,14 +30,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
-
-import javax.xml.transform.Result;
 
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.connection.synchronization.SynchronizableDataType;
 import dhbw.smartmoderation.consensus.evaluate.EvaluateConsensusProposal;
-import dhbw.smartmoderation.data.model.Group;
 import dhbw.smartmoderation.data.model.Member;
 import dhbw.smartmoderation.data.model.Status;
 import dhbw.smartmoderation.exceptions.PollCantBeClosedException;
