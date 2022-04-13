@@ -363,6 +363,7 @@ public class SerializationServiceImpl implements SerializationService {
 					.put("type", "moderationCard")
 					.put("cardId", moderationCard.getCardId())
 					.put("content", moderationCard.getContent())
+					.put("author",moderationCard.getAuthor())
 					.put("backgroundColor", moderationCard.getBackgroundColor())
 					.put("fontColor", moderationCard.getFontColor())
 					.put("meetingId", moderationCard.getMeetingId())
@@ -611,6 +612,7 @@ public class SerializationServiceImpl implements SerializationService {
 			ModerationCard moderationCard = new ModerationCard();
 			moderationCard.setCardId(json.getLong("cardId"));
 			moderationCard.setContent(json.getString("content"));
+			moderationCard.setAuthor(json.getString("author"));
 			moderationCard.setBackgroundColor(json.getInt("backgroundColor"));
 			moderationCard.setFontColor(json.getInt("fontColor"));
 			moderationCard.setIsDeleted(json.getBoolean("isDeleted"));

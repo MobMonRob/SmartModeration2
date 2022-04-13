@@ -59,6 +59,11 @@ public class ModerationCardAdapter extends RecyclerView.Adapter<ModerationCardAd
         cardTextView.setText(moderationCards.get(position).getContent());
         cardTextView.setTextColor(moderationCards.get(position).getFontColor());
         cardTextView.setBackgroundColor(moderationCards.get(position).getBackgroundColor());
+
+        TextView authorTextView = holder.itemView.findViewById(R.id.authorTextView);
+        String authorName = moderationCards.get(position).getAuthor();
+        String authorInitials = authorName.length() < 2 ? authorName : authorName.substring(0, 2);
+        authorTextView.setText(authorInitials);
     }
 
     @Override

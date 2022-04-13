@@ -7,12 +7,25 @@
 
     <TextView
         android:id="@+id/cardTextView"
-        android:layout_width="340dp"
+        android:layout_width="330dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:background="@drawable/border"
         android:padding="12dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.225"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/authorTextView"
+        android:layout_width="25dp"
+        android:layout_height="28dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/bootstrap_gray_light"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@+id/cardTextView"
         app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

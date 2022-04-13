@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.PopupWindow;
+import android.widget.TextView;
 
 import androidx.fragment.app.FragmentActivity;
 
@@ -26,7 +27,6 @@ import petrov.kristiyan.colorpicker.ColorPicker;
 public class CreateModerationCard {
     private int backgroundColor;
     private int fontColor;
-    private String moderationCardContent = "";
     private AlertDialog alertDialog;
     private EditText moderationCardContentHolder;
     private SurfaceView cardColorViewer;
@@ -58,8 +58,9 @@ public class CreateModerationCard {
 
     private final View.OnClickListener addModerationCardClickListener = v -> {
         try {
-            moderationCardContent = moderationCardContentHolder.getText().toString();
-            ModerationCard moderationCard = controller.createModerationCard(moderationCardContent, backgroundColor, fontColor);
+            String moderationCardContent = moderationCardContentHolder.getText().toString();
+            String cardAuthor = controller.getAuthorName();
+            ModerationCard moderationCard = controller.createModerationCard(moderationCardContent, cardAuthor, backgroundColor, fontColor);
             moderationCardsFragment.onResume();
             if(client != null && client.isRunning()) client.addModerationCard(moderationCard);
 

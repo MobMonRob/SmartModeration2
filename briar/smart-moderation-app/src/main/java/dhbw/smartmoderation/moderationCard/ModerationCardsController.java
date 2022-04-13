@@ -47,7 +47,7 @@ public class ModerationCardsController extends SmartModerationController {
     }
 
 
-    public ModerationCard createModerationCard(String content, int backgroundColor, int fontColor) throws CantCreateModerationCardException, ModerationCardNotFoundException {
+    public ModerationCard createModerationCard(String content, String author, int backgroundColor, int fontColor) throws CantCreateModerationCardException, ModerationCardNotFoundException {
         Meeting meeting = null;
         try {
             meeting = this.getMeeting();
@@ -63,6 +63,7 @@ public class ModerationCardsController extends SmartModerationController {
             moderationCard.setBackgroundColor(backgroundColor);
             moderationCard.setFontColor(fontColor);
             moderationCard.setMeeting(meeting);
+            moderationCard.setAuthor(author);
             dataService.mergeModerationCard(moderationCard);
 
             Collection<ModelClass> data = new ArrayList<>();
@@ -78,7 +79,7 @@ public class ModerationCardsController extends SmartModerationController {
         return moderationCard;
     }
 
-    public ModerationCard editModerationCard(String content, int backgroundColor, int fontColor, long cardId) throws ModerationCardNotFoundException, CantEditModerationCardException {
+    public ModerationCard editModerationCard(String content, String author, int backgroundColor, int fontColor, long cardId) throws ModerationCardNotFoundException, CantEditModerationCardException {
         Meeting meeting = null;
         try {
             meeting = this.getMeeting();
@@ -143,5 +144,9 @@ public class ModerationCardsController extends SmartModerationController {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public String getAuthorName() {
+        return connectionService.getLocalAuthor().getName();
     }
 }
