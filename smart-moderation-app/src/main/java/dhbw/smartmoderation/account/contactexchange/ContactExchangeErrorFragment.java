@@ -24,7 +24,6 @@ public class ContactExchangeErrorFragment extends Fragment {
     private static final String ERROR_MSG = "errorMessage";
 
     public static ContactExchangeErrorFragment newInstance(String errorMsg) {
-
         ContactExchangeErrorFragment fragment = new ContactExchangeErrorFragment();
         Bundle args = new Bundle();
         args.putString(ERROR_MSG, errorMsg);
@@ -33,7 +32,6 @@ public class ContactExchangeErrorFragment extends Fragment {
     }
 
     public String getUniqueTag() {
-
         return TAG;
     }
 
@@ -52,7 +50,6 @@ public class ContactExchangeErrorFragment extends Fragment {
 
         Button tryAgain = v.findViewById(R.id.tryAgainButton);
         tryAgain.setOnClickListener(view -> {
-
             FragmentActivity activity = requireActivity();
             Intent i = new Intent(activity, ContactExchangeActivity.class);
             i.setFlags(FLAG_ACTIVITY_CLEAR_TOP);
@@ -69,7 +66,6 @@ public class ContactExchangeErrorFragment extends Fragment {
         FragmentActivity activity = getActivity();
 
         if (activity != null) {
-
             activity.supportFinishAfterTransition();
         }
     }

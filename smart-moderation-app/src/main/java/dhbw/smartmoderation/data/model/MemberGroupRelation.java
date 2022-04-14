@@ -18,7 +18,6 @@ public class MemberGroupRelation {
 
     @Keep
     public MemberGroupRelation() {
-
         this.relationId = ((SmartModerationApplicationImpl)SmartModerationApplicationImpl.getApp()).getUniqueId();
     }
 

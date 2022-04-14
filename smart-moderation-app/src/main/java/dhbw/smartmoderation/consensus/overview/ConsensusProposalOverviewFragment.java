@@ -62,9 +62,9 @@ public class ConsensusProposalOverviewFragment extends Fragment {
     private ConsensusProposalOverviewController controller;
     private Long meetingId;
 
-    SmartModerationApplicationImpl app =  (SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp();
+    SmartModerationApplicationImpl app = (SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp();
 
-    public String getTitle(){
+    public String getTitle() {
         return getString(R.string.consensusProposalOverviewFragment_title);
     }
 
@@ -90,7 +90,7 @@ public class ConsensusProposalOverviewFragment extends Fragment {
 
         this.generalFab = this.view.findViewById(R.id.generalFab);
 
-        if(!this.controller.isLocalAuthorModerator()) {
+        if (!this.controller.isLocalAuthorModerator()) {
             this.generalFab.setVisibility(View.GONE);
         }
 
@@ -105,8 +105,7 @@ public class ConsensusProposalOverviewFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if(controller.isLocalAuthorModerator()) {
-
+        if (controller.isLocalAuthorModerator()) {
             setHasOptionsMenu(true);
         }
     }
@@ -114,25 +113,19 @@ public class ConsensusProposalOverviewFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
 
-        if(controller.isLocalAuthorModerator()) {
-
+        if (controller.isLocalAuthorModerator()) {
             inflater.inflate(R.menu.switch_menu, menu);
-
             MenuItem item = menu.findItem(R.id.serverSwitch);
             item.setActionView(R.layout.server_switch_layout);
 
             this.serverSwitch = item.getActionView().findViewById(R.id.radioGroup);
             this.serverLabel = item.getActionView().findViewById(R.id.serverStartedLabel);
 
-            if(app.getWebServer().wasStarted() && app.getMeetingId().equals(this.meetingId)) {
-
+            if (app.getWebServer().wasStarted() && app.getMeetingId().equals(this.meetingId)) {
                 this.serverSwitch.check(R.id.serverOn);
                 this.serverLabel.setText(getString(R.string.stop_server));
                 initIPAddress();
-            }
-
-            else {
-
+            } else {
                 this.serverSwitch.check(R.id.serverOff);
                 this.serverLabel.setText(getString(R.string.start_server));
                 this.serverInfo.setText("");
@@ -142,26 +135,18 @@ public class ConsensusProposalOverviewFragment extends Fragment {
 
                 int id = serverSwitch.getCheckedRadioButtonId();
 
-                if(id == R.id.serverOn) {
-
+                if (id == R.id.serverOn) {
                     this.serverLabel.setText(getString(R.string.stop_server));
                     app.startWebServer();
                     app.setMeetingId(this.meetingId);
                     initIPAddress();
-
-                }
-
-                else {
-
+                } else {
                     this.serverLabel.setText(getString(R.string.start_server));
                     app.setMeetingId(0L);
                     app.stopWebServer();
                     this.serverInfo.setText("");
-
                 }
-
             }));
-
             super.onCreateOptionsMenu(menu, inflater);
         }
     }
@@ -176,26 +161,19 @@ public class ConsensusProposalOverviewFragment extends Fragment {
         }
 
         byte[] ipByteArray = BigInteger.valueOf(ipAddress).toByteArray();
-
         String ipAddressString = "";
 
         try {
-
             ipAddressString = InetAddress.getByAddress(ipByteArray).getHostAddress();
-
         } catch (UnknownHostException ex) {
-
             Log.e("WIFIIP", "Unable to get host address.");
-
         }
 
-        String  port = String.valueOf(app.getServerPort());
+        String port = String.valueOf(app.getServerPort());
         String ipAddressWithPort = getString(R.string.running_server, ipAddressString, port);
 
         this.serverInfo.setText(ipAddressWithPort);
-
     }
-
 
 
     private void onAddConsensusProposal(View v) {
@@ -211,20 +189,17 @@ public class ConsensusProposalOverviewFragment extends Fragment {
     }
 
     public void update() {
-
         ConsensusProposalOverviewAsyncTask consensusProposalOverviewAsyncTask = new ConsensusProposalOverviewAsyncTask("update");
         consensusProposalOverviewAsyncTask.execute();
-
     }
 
     @Override
     public void onActivityResult(final int requestCode, final int resultCode, @Nullable final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             this.pollAdapter.updatePollList(this.controller.getPolls());
         }
-
     }
 
     public void deletePoll(Long pollId) {
@@ -232,20 +207,17 @@ public class ConsensusProposalOverviewFragment extends Fragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(getString(R.string.consensusproposal_reaffirmation));
         builder.setCancelable(false);
+
         builder.setNegativeButton(getString(R.string.yes), ((dialog, which) -> {
             try {
-
                 this.controller.deletePoll(pollId);
                 this.pollAdapter.updatePollList(this.controller.getPolls());
-
-            } catch(PollCantBeDeletedException exception){
-
-                ((ExceptionHandlingActivity)getActivity()).handleException(exception);
+            } catch (PollCantBeDeletedException exception) {
+                ((ExceptionHandlingActivity) getActivity()).handleException(exception);
             }
         }));
-        builder.setPositiveButton(getString(R.string.no), ((dialog, which) -> {
-            dialog.cancel();
-        }));
+
+        builder.setPositiveButton(getString(R.string.no), ((dialog, which) -> dialog.cancel()));
 
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
@@ -253,18 +225,17 @@ public class ConsensusProposalOverviewFragment extends Fragment {
 
     public void instantiatePollSwipeHelper() {
 
-        new SwipeHelper(getActivity(), this.pollList ) {
+        new SwipeHelper(getActivity(), this.pollList) {
 
             @Override
             public void instantiateUnderLayButton(RecyclerView.ViewHolder viewHolder, List<UnderLayButton> underLayButtons) {
 
-                PollAdapter.PollViewHolder pollViewHolder = (PollAdapter.PollViewHolder)viewHolder;
+                PollAdapter.PollViewHolder pollViewHolder = (PollAdapter.PollViewHolder) viewHolder;
                 Poll currentPoll = pollViewHolder.getPoll();
 
                 underLayButtons.add(new UnderLayButton(getString(R.string.delete), 0,
                         ResourcesCompat.getColor(getActivity().getResources(), R.color.default_red, null),
                         (UnderLayButtonClickListener) position -> {
-
                             pollAdapter.getPollList().remove(position);
                             pollAdapter.notifyItemRemoved(position);
 
@@ -280,17 +251,14 @@ public class ConsensusProposalOverviewFragment extends Fragment {
                             startActivity(intent);
                         }));
 
-                if(!currentPoll.getIsOpen() && controller.isLocalAuthorModerator()) {
+                if (!currentPoll.getIsOpen() && controller.isLocalAuthorModerator()) {
 
                     underLayButtons.add(new UnderLayButton(getString(R.string.open), 0,
                             ResourcesCompat.getColor(getActivity().getResources(), R.color.colorPrimary, null),
                             (UnderLayButtonClickListener) position -> {
-
                                 ConsensusProposalOverviewAsyncTask consensusProposalOverviewAsyncTask = new ConsensusProposalOverviewAsyncTask("openPoll");
                                 consensusProposalOverviewAsyncTask.execute(currentPoll);
-
                             }));
-
                 }
             }
         };
@@ -301,14 +269,13 @@ public class ConsensusProposalOverviewFragment extends Fragment {
         String flag;
 
         public ConsensusProposalOverviewAsyncTask(String flag) {
-
             this.flag = flag;
         }
 
         @Override
         protected void onProgressUpdate(Exception... values) {
             super.onProgressUpdate(values);
-            ((ExceptionHandlingActivity)getActivity()).handleException(values[0]);
+            ((ExceptionHandlingActivity) getActivity()).handleException(values[0]);
         }
 
         @Override
@@ -316,51 +283,37 @@ public class ConsensusProposalOverviewFragment extends Fragment {
 
             String returnString = "";
 
-            switch(flag) {
-
+            switch (flag) {
                 case "update":
                     controller.update();
                     returnString = "update";
                     break;
-
                 case "deletePoll":
-                    Poll currentPoll = (Poll)objects[0];
+                    Poll currentPoll = (Poll) objects[0];
                     deletePoll(currentPoll.getPollId());
                     returnString = "updatePoll";
                     break;
-
                 case "openPoll":
-
-                    Poll pollToOpen = (Poll)objects[0];
-
+                    Poll pollToOpen = (Poll) objects[0];
                     try {
-
                         controller.openPoll(pollToOpen.getPollId());
-
-                    } catch(PollCantBeOpenedException exception){
-
+                    } catch (PollCantBeOpenedException exception) {
                         publishProgress(exception);
                     }
                     returnString = "updatePoll";
                     break;
-
-
             }
-
             return returnString;
         }
 
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-
-            switch(s) {
-
+            switch (s) {
                 case "update":
                     pollAdapter.updatePollList(controller.getPolls());
-                    ((BaseActivity)getActivity()).getPullToRefresh().setRefreshing(false);
+                    ((BaseActivity) getActivity()).getPullToRefresh().setRefreshing(false);
                     break;
-
                 case "updatePoll":
                     pollAdapter.updatePollList(controller.getPolls());
                     break;

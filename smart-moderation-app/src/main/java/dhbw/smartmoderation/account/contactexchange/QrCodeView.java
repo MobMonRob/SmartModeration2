@@ -23,28 +23,22 @@ public class QrCodeView extends FrameLayout {
 
     public QrCodeView(@Nonnull Context context, @Nullable AttributeSet attributeSet) {
         super(context, attributeSet);
-        LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.qr_code_view, this, true);
         qrCodeImageView = findViewById(R.id.qr_code);
         ImageView fullScreenButton = findViewById(R.id.fullscreen_button);
         fullScreenButton.setOnClickListener(v -> {
             fullScreen = !fullScreen;
 
-            if(!fullScreen) {
-
+            if (!fullScreen) {
                 fullScreenButton.setImageResource(R.drawable.ic_baseline_fullscreen_24);
-            }
-
-            else {
-
+            } else {
                 fullScreenButton.setImageResource(R.drawable.ic_baseline_fullscreen_exit_24);
             }
 
-            if(listener != null) {
-
+            if (listener != null) {
                 listener.setFullScreen(fullScreen);
             }
-
         });
     }
 
@@ -61,9 +55,7 @@ public class QrCodeView extends FrameLayout {
         this.listener = listener;
     }
 
-
     public interface FullScreenListener {
-
         void setFullScreen(boolean fullScreen);
     }
 }

@@ -9,14 +9,17 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.consensus.evaluate.EvaluateConsensusProposal;
 import dhbw.smartmoderation.consensus.result.ConsensusProposalResult;
@@ -40,7 +43,6 @@ public class PollAdapter extends RecyclerView.Adapter<PollAdapter.PollViewHolder
     }
 
     public ArrayList<Poll> getPollList() {
-
         return this.pollList;
     }
 
@@ -49,46 +51,31 @@ public class PollAdapter extends RecyclerView.Adapter<PollAdapter.PollViewHolder
         this.pollList.addAll(polls);
 
         Collections.sort(this.pollList, (o1, o2) -> {
-
             if (o1.getStatus(this.controller.getMember()).getNumber() < o2.getStatus(this.controller.getMember()).getNumber()) {
                 return -1;
-            }
-
-            else if (o1.getStatus(this.controller.getMember()).getNumber() > o2.getStatus(this.controller.getMember()).getNumber()) {
+            } else if (o1.getStatus(this.controller.getMember()).getNumber() > o2.getStatus(this.controller.getMember()).getNumber()) {
                 return 1;
             }
-
             return 0;
         });
-
         this.notifyDataSetChanged();
     }
 
     private final View.OnClickListener onClickListener = v -> {
-
         int position = this.recyclerView.getChildLayoutPosition(v);
         Poll poll = this.pollList.get(position);
 
         Class activity = null;
 
-        if(poll.getStatus(this.controller.getMember()) == Status.BEWERTET || poll.getStatus(this.controller.getMember()) == Status.ABGESCHLOSSEN || poll.getStatus(this.controller.getMember()) == Status.DEAKTIVIERT) {
-
+        if (poll.getStatus(this.controller.getMember()) == Status.BEWERTET || poll.getStatus(this.controller.getMember()) == Status.ABGESCHLOSSEN || poll.getStatus(this.controller.getMember()) == Status.DEAKTIVIERT) {
             activity = ConsensusProposalResult.class;
-        }
-
-        else if(poll.getStatus(this.controller.getMember()) == Status.OFFEN ) {
-
+        } else if (poll.getStatus(this.controller.getMember()) == Status.OFFEN) {
             activity = EvaluateConsensusProposal.class;
-
-        }
-
-        else if (poll.getStatus(this.controller.getMember()) == Status.ANGELEGT ) {
-
+        } else if (poll.getStatus(this.controller.getMember()) == Status.ANGELEGT) {
             this.createAlertDialog(context.getString(R.string.ConsensusProposalIsNotUnlocked));
         }
 
-        if(activity != null) {
-
+        if (activity != null) {
             Intent intent = new Intent(context, activity);
             intent.putExtra("pollId", poll.getPollId());
             intent.putExtra("activity", "ConsensusProposalOverview");
@@ -98,7 +85,6 @@ public class PollAdapter extends RecyclerView.Adapter<PollAdapter.PollViewHolder
 
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-
         this.recyclerView = recyclerView;
     }
 
@@ -124,30 +110,22 @@ public class PollAdapter extends RecyclerView.Adapter<PollAdapter.PollViewHolder
         holder.getTitle().setText(poll.getTitle());
 
         Status status = poll.getStatus(this.controller.getMember());
-        if(status == Status.OFFEN) {
+        if (status == Status.OFFEN) {
             holder.getStatus().setBackgroundColor(ResourcesCompat.getColor(context.getResources(), R.color.colorPrimaryDark, null));
             holder.getStatus().setText(context.getString(R.string.offen));
-        }
-
-        else if(status == Status.DEAKTIVIERT) {
+        } else if (status == Status.DEAKTIVIERT) {
             holder.getStatus().setBackgroundColor(ResourcesCompat.getColor(context.getResources(), R.color.transparent, null));
             holder.getStatus().setText(context.getString(R.string.deaktiviert));
-        }
-        else if(status == Status.ANGELEGT ) {
+        } else if (status == Status.ANGELEGT) {
             holder.getStatus().setBackgroundColor(ResourcesCompat.getColor(context.getResources(), R.color.transparent, null));
             holder.getStatus().setText(context.getString(R.string.angelegt));
-        }
-
-        else if(status == Status.BEWERTET) {
+        } else if (status == Status.BEWERTET) {
             holder.getStatus().setBackgroundColor(ResourcesCompat.getColor(context.getResources(), R.color.default_green, null));
             holder.getStatus().setText(context.getString(R.string.bewertet));
-        }
-
-        else  {
+        } else {
             holder.getStatus().setBackgroundColor(ResourcesCompat.getColor(context.getResources(), R.color.default_red, null));
             holder.getStatus().setText(context.getString(R.string.abgeschlossen));
         }
-
     }
 
     @Override
@@ -160,14 +138,12 @@ public class PollAdapter extends RecyclerView.Adapter<PollAdapter.PollViewHolder
     }
 
     public void createAlertDialog(String message) {
-
         AlertDialog.Builder builder = new AlertDialog.Builder(this.context);
         builder.setMessage(message);
         builder.setCancelable(false);
         builder.setNeutralButton(context.getString(R.string.ok), ((dialog, which) -> dialog.cancel()));
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
-
     }
 
     static class PollViewHolder extends RecyclerView.ViewHolder {

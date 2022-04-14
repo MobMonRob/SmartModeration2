@@ -14,44 +14,31 @@ public class ConsensusProposalDetailController extends SmartModerationController
     public ConsensusProposalDetailController(Long pollId) { this.pollId = pollId; }
 
     public void update() {
-
         try {
-
             this.synchronizationService.pull(getPrivateGroup());
-
         } catch (GroupNotFoundException e) {
             e.printStackTrace();
         }
     }
 
     private PrivateGroup getPrivateGroup() throws GroupNotFoundException {
-
         Long groupId = getPoll().getMeeting().getGroup().getGroupId();
 
         for (PrivateGroup group : connectionService.getGroups()){
-
             Long privateGroupId = Util.bytesToLong(group.getId().getBytes());
-
             if (privateGroupId.equals(groupId)) {
-
                 return group;
             }
-        };
-
+        }
         throw new GroupNotFoundException();
     }
 
     public Poll getPoll() {
-
         for(Poll poll : dataService.getPolls()) {
-
             if(poll.getPollId().equals(pollId)) {
                 return poll;
             }
         }
-
         return null;
     }
-
-
 }

@@ -32,41 +32,33 @@ public class SynchronizationServiceImpl implements SynchronizationService {
 	private final List<GroupUpdateObserver> groupUpdateObservers = new ArrayList<GroupUpdateObserver>();
 
 	public void setLocalAuthor(LocalAuthor localAuthor) {
-
 		serializationService.setLocalAuthor(localAuthor);
 	}
 
 	public SynchronizationServiceImpl() {
-
 		serializationService = new SerializationServiceImpl();
 	}
 
 	public void push(PrivateGroup group, Collection<ModelClass> data) {
-
 		connectionService.sendToGroup(serializationService.bulkSerialize(data), group);
 	}
 
 	public boolean pull(PrivateGroup group) {
 
 		boolean success = false;
-
 		long lastSynchronized = 0;
 
 		SynchronizationDao synchronizationDao = ((SmartModerationApplicationImpl)SmartModerationApplicationImpl.getApp()).getDaoSession().getSynchronizationDao();
 		List<Synchronization> synchronizations= synchronizationDao.loadAll();
-
 		Synchronization sync = null;
 
 		for (Synchronization synchronization : synchronizations) {
-
 			if(synchronization.getGroupId() == Util.bytesToLong(group.getId().getBytes())) {
-
 				sync = synchronization;
 			}
 		}
 
 		if(sync != null) {
-
 			lastSynchronized = sync.getLastSynchronizedGroupMessageTimestamp();
 		}
 
@@ -74,55 +66,39 @@ public class SynchronizationServiceImpl implements SynchronizationService {
 		ArrayList<GroupMessageHeader> headerList;
 
 		try {
-
 			 headers = connectionService.getMessageHeaders(group);
-
 			 headerList = new ArrayList<>(headers);
 
 			 Collections.sort(headerList, ((o1, o2) -> {
-
 				if(o1.getTimestamp() < o2.getTimestamp()) {
 					return -1;
 				}
 				else if(o1.getTimestamp() > o2.getTimestamp()) {
 					return 1;
 				}
-
 				return 0;
-
 			 }));
 
 		} catch (NoGroupHeadersFoundException exception) {
-
 			headerList = new ArrayList<>();
 			Log.d(TAG,exception.getMessage());
 		}
 
-
 		long newTimestamp = lastSynchronized;
 
 		for (GroupMessageHeader header : headerList) {
-
 			if (!header.getAuthor().getId().equals(connectionService.getLocalAuthor().getId()) && header.getTimestamp() > lastSynchronized) {
-
 				if (header.getTimestamp() > newTimestamp) {
-
 					newTimestamp = header.getTimestamp();
 				}
 
 				try{
 					String data = connectionService.getGroupMessageText(header.getId(), group.getId().toString());
-
 					if (data != null) {
-
 						ModelClassData modelClassData = serializationService.bulkDeserializeAndMerge(data);
-
 						fireGroupUpdateEvent(new GroupUpdateEvent(Util.bytesToLong(group.getId().getBytes())));
-
 						if (sync == null) {
-
 							sync = new Synchronization();
-
 							sync.setGroupId(Util.bytesToLong(group.getId().getBytes()));
 						}
 
@@ -133,13 +109,9 @@ public class SynchronizationServiceImpl implements SynchronizationService {
 				} catch (NoGroupMessageTextFoundException exception){
 					Log.d(TAG,exception.getMessage());
 				}
-
 			}
-
 		}
-
 		return success;
-
 	}
 
 	@Override

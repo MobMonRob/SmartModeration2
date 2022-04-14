@@ -18,7 +18,6 @@ public class MemberMeetingRelation {
 
     @Keep
     public MemberMeetingRelation() {
-
         this.relationId = ((SmartModerationApplicationImpl)SmartModerationApplicationImpl.getApp()).getUniqueId();
     }
 

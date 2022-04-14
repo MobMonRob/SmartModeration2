@@ -48,16 +48,12 @@ public class ConsensusProposalResult extends UpdateableExceptionHandlingActivity
     private TableRow selectedTableRow;
     private Long pollId;
     private SwipeRefreshLayout pullToRefresh;
-
-
     private View.OnClickListener endButtonClickListener = v -> {
-
         ConsensusProposalResultAsyncTask consensusProposalResultAsyncTask = new ConsensusProposalResultAsyncTask("closePoll");
         consensusProposalResultAsyncTask.execute();
     };
 
     private View.OnClickListener showButtonClickListener = v -> {
-
         Intent intent = new Intent(this, EvaluateConsensusProposal.class);
         intent.putExtra("pollId", this.pollId);
         intent.putExtra("activity", "ConsensusProposalResult");
@@ -72,14 +68,12 @@ public class ConsensusProposalResult extends UpdateableExceptionHandlingActivity
 
             HashMap<String, TableRow> tableRows = legendTableFragment.getTableRows();
 
-            String name = ((PieEntry)e).getLabel();
+            String name = ((PieEntry) e).getLabel();
 
-            if(tableRows.containsKey(name)) {
-
-                for(TableRow tableRow : tableRows.values()) {
+            if (tableRows.containsKey(name)) {
+                for (TableRow tableRow : tableRows.values()) {
                     tableRow.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.default_color));
                 }
-
                 tableRows.get(name).setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.light_grey));
                 selectedTableRow = tableRows.get(name);
             }
@@ -87,51 +81,40 @@ public class ConsensusProposalResult extends UpdateableExceptionHandlingActivity
 
         @Override
         public void onNothingSelected() {
-
             HashMap<String, TableRow> tableRows = legendTableFragment.getTableRows();
 
-            for(TableRow tableRow : tableRows.values()) {
+            for (TableRow tableRow : tableRows.values()) {
                 tableRow.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.default_color));
             }
-
             selectedTableRow = null;
-
         }
     };
 
     public View.OnClickListener tableRowClickListener = v -> {
-
         PieChart donutChart = this.chartFragment.getDonutChart();
-
-        if(v.equals(selectedTableRow)) {
-
+        if (v.equals(selectedTableRow)) {
             donutChart.highlightValue(0, -1, false);
             selectedTableRow.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.default_color));
             selectedTableRow = null;
             return;
         }
 
-        for(TableRow tableRow : legendTableFragment.getTableRows().values()) {
+        for (TableRow tableRow : legendTableFragment.getTableRows().values()) {
             tableRow.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.default_color));
         }
 
         List<PieEntry> pieEntries = donutChart.getData().getDataSetByIndex(0).getEntriesForXValue(0);
-        selectedTableRow = (TableRow)v;
+        selectedTableRow = (TableRow) v;
         selectedTableRow.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.light_grey));
 
-        for(Map.Entry<String, TableRow> entry : legendTableFragment.getTableRows().entrySet()) {
-
-            if(entry.getValue().equals(selectedTableRow)) {
-
-                for(PieEntry pieEntry : pieEntries) {
-
-                    if(pieEntry.getLabel().equals(entry.getKey())) {
-
+        for (Map.Entry<String, TableRow> entry : legendTableFragment.getTableRows().entrySet()) {
+            if (entry.getValue().equals(selectedTableRow)) {
+                for (PieEntry pieEntry : pieEntries) {
+                    if (pieEntry.getLabel().equals(entry.getKey())) {
                         donutChart.highlightValue(pieEntries.indexOf(pieEntry), 0, false);
                     }
                 }
             }
-
         }
     };
 
@@ -143,11 +126,7 @@ public class ConsensusProposalResult extends UpdateableExceptionHandlingActivity
         setTitle(getString(R.string.consensusproposalResultFragement_title));
 
         pullToRefresh = findViewById(R.id.pullToRefresh);
-        pullToRefresh.setOnRefreshListener(() -> {
-
-            updateUI();
-
-        });
+        pullToRefresh.setOnRefreshListener(this::updateUI);
 
         Intent intent = getIntent();
         this.pollId = intent.getLongExtra("pollId", 0);
@@ -232,39 +211,26 @@ public class ConsensusProposalResult extends UpdateableExceptionHandlingActivity
 
         ConstraintLayout buttonPanel = findViewById(R.id.buttons);
         buttonPanel.removeAllViews();
-
         Member currentMember = this.controller.getMemberFromLocalAuthor();
 
-        if(this.controller.isLocalAuthorModerator()) {
-
-            if(currentMember.hasPermissionToVote(this.controller.getPoll().getMeeting().getGroup())) {
-
-
-                if(this.controller.getPoll().getStatus(currentMember) == Status.ABGESCHLOSSEN && controller.getVoiceFromLocalAuthor() != null) {
+        if (this.controller.isLocalAuthorModerator()) {
+            if (currentMember.hasPermissionToVote(this.controller.getPoll().getMeeting().getGroup())) {
+                if (this.controller.getPoll().getStatus(currentMember) == Status.ABGESCHLOSSEN && controller.getVoiceFromLocalAuthor() != null) {
                     createShowButton(buttonPanel, 0.5f);
-                }
-
-                else {
+                } else {
                     createShowButton(buttonPanel, 0.25f);
                     createEndButton(buttonPanel, 0.75f);
                 }
-            }
-
-            else {
-
-                if(this.controller.getPoll().getStatus(currentMember) != Status.ABGESCHLOSSEN) {
+            } else {
+                if (this.controller.getPoll().getStatus(currentMember) != Status.ABGESCHLOSSEN) {
                     createEndButton(buttonPanel, 0.5f);
                 }
             }
-        }
-
-        else {
-
-            if(currentMember.hasPermissionToVote(this.controller.getPoll().getMeeting().getGroup()) && controller.getVoiceFromLocalAuthor() != null) {
+        } else {
+            if (currentMember.hasPermissionToVote(this.controller.getPoll().getMeeting().getGroup()) && controller.getVoiceFromLocalAuthor() != null) {
                 createShowButton(buttonPanel, 0.5f);
             }
         }
-
     }
 
     @Override
@@ -279,10 +245,8 @@ public class ConsensusProposalResult extends UpdateableExceptionHandlingActivity
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void updateUI() {
-
         ConsensusProposalResultAsyncTask consensusProposalResultAsyncTask = new ConsensusProposalResultAsyncTask("update");
         consensusProposalResultAsyncTask.execute();
-
     }
 
     public class ConsensusProposalResultAsyncTask extends AsyncTask<Object, Exception, String> {
@@ -290,7 +254,6 @@ public class ConsensusProposalResult extends UpdateableExceptionHandlingActivity
         String flag;
 
         public ConsensusProposalResultAsyncTask(String flag) {
-
             this.flag = flag;
         }
 
@@ -302,24 +265,17 @@ public class ConsensusProposalResult extends UpdateableExceptionHandlingActivity
 
         @Override
         protected String doInBackground(Object... objects) {
-
-            switch(flag) {
-
+            switch (flag) {
                 case "update":
                     controller.update();
                     break;
-
                 case "closePoll":
                     try {
-
                         controller.closePoll();
-
-                    } catch(PollCantBeClosedException exception){
-
+                    } catch (PollCantBeClosedException exception) {
                         publishProgress(exception);
                     }
                     break;
-
             }
             return null;
         }
@@ -329,8 +285,7 @@ public class ConsensusProposalResult extends UpdateableExceptionHandlingActivity
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
 
-            switch(flag) {
-
+            switch (flag) {
                 case "update":
                     createButtonPanel();
                     chartFragment.createDonutChart();
@@ -342,7 +297,6 @@ public class ConsensusProposalResult extends UpdateableExceptionHandlingActivity
                 case "closePoll":
                     createButtonPanel();
                     break;
-
             }
         }
     }

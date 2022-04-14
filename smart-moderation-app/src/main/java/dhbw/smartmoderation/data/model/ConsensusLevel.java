@@ -49,7 +49,6 @@ public class ConsensusLevel extends ModelClass {
 
     @Keep
     public ConsensusLevel() {
-
         this.consensusLevelId = ((SmartModerationApplicationImpl)SmartModerationApplicationImpl.getApp()).getUniqueId();
     }
 
@@ -209,5 +208,4 @@ public class ConsensusLevel extends ModelClass {
         this.daoSession = daoSession;
         myDao = daoSession != null ? daoSession.getConsensusLevelDao() : null;
     }
-
 }

@@ -23,8 +23,8 @@ import javax.annotation.Nullable;
 
 @NotNullByDefault
 public class QrCodeUtils {
-	public static final double HOTSPOT_QRCODE_FACTOR = 0.35;
 
+	public static final double HOTSPOT_QRCODE_FACTOR = 0.35;
 	private static final Logger LOG = getLogger(QrCodeUtils.class.getName());
 
 	@Nullable
@@ -35,7 +35,6 @@ public class QrCodeUtils {
 	@Nullable
 	public static Bitmap createQrCode(int edgeLen, String input) {
 		try {
-			// Generate QR code
 			BitMatrix encoded = new QRCodeWriter().encode(input, QR_CODE,
 					edgeLen, edgeLen);
 			return renderQrCode(encoded);

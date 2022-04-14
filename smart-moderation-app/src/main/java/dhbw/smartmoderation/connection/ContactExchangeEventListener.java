@@ -17,10 +17,8 @@ class ContactExchangeEventListener implements EventListener {
 	private final ConnectionService service;
 
 	ContactExchangeEventListener(ConnectionService service) {
-
 		this.service = service;
 	}
-
 
 	@Override
 	public void eventOccurred(Event e) {
@@ -43,5 +41,4 @@ class ContactExchangeEventListener implements EventListener {
 			}
 		}
 	}
-
 }

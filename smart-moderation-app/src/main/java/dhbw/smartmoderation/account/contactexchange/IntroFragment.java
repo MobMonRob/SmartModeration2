@@ -16,7 +16,6 @@ import dhbw.smartmoderation.SmartModerationApplicationImpl;
 public class IntroFragment extends Fragment {
 
     interface IntroScreenSeenListener {
-
         void showNextScreen();
     }
 
@@ -25,14 +24,11 @@ public class IntroFragment extends Fragment {
     private IntroScreenSeenListener screenSeenListener;
 
     public String getUniqueTag() {
-
         return TAG;
     }
 
     public static IntroFragment newInstance() {
-
         Bundle args = new Bundle();
-
         IntroFragment fragment = new IntroFragment();
         fragment.setArguments(args);
         return fragment;
@@ -48,7 +44,6 @@ public class IntroFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         View v = inflater.inflate(R.layout.fragment_keyagreement_intro, container, false);
         View button = v.findViewById(R.id.scanButton);
         button.setOnClickListener(view -> screenSeenListener.showNextScreen());

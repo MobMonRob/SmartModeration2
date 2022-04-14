@@ -88,18 +88,14 @@ public class DataServiceImpl implements DataService {
     public synchronized void saveMember(Member member) {
 
         Collection<Member> allMembers = getMembers();
-
         for (Member currentMember : allMembers) {
-
             if (currentMember.getMemberId().equals(member.getMemberId())) {
-
                 member.setMemberId(currentMember.getMemberId());
                 break;
             }
         }
 
         memberDao.insertOrReplaceInTx(member);
-
     }
 
     @Override
@@ -109,7 +105,6 @@ public class DataServiceImpl implements DataService {
         Member previousMember = null;
 
         for (Member currentMember : allMembers) {
-
             if (currentMember.getMemberId().equals(member.getMemberId())) {
                 previousMember = currentMember;
                 member.setMemberId(currentMember.getMemberId());
@@ -118,27 +113,20 @@ public class DataServiceImpl implements DataService {
         }
 
         if (previousMember != null) {
-
-            if (member.getName() == null || member.getName().isEmpty()) {
-
+            if (member.getName() == null || member.getName().isEmpty())
                 member.setName(previousMember.getName());
-            }
         }
 
         memberDao.insertOrReplaceInTx(member);
-
     }
 
     @Override
     public synchronized void deleteMember(Member member) {
-
         memberDao.deleteInTx(member);
-
     }
 
     @Override
     public synchronized Collection<Member> getMembers() {
-
         return memberDao.loadAll();
     }
 
@@ -148,7 +136,6 @@ public class DataServiceImpl implements DataService {
         Member member = memberDao.load(memberId);
 
         if (member != null) {
-
             return member;
         }
 
@@ -161,7 +148,6 @@ public class DataServiceImpl implements DataService {
         Member member = memberDao.load(contact.getId());
 
         if (member != null) {
-
             return member;
         }
 
@@ -174,7 +160,6 @@ public class DataServiceImpl implements DataService {
         Member member = memberDao.load(Util.bytesToLong(author.getId().getBytes()));
 
         if (member != null) {
-
             return member;
         }
 
@@ -192,56 +177,42 @@ public class DataServiceImpl implements DataService {
         Collection<Meeting> allMeetings = getMeetings();
 
         for (Meeting currentMeeting : allMeetings) {
-
             if (currentMeeting.getMeetingId().equals(meeting.getMeetingId())) {
                 meeting.setMeetingId(currentMeeting.getMeetingId());
                 break;
             }
-
         }
 
         meetingDao.insertOrReplaceInTx(meeting);
-
     }
 
     @Override
     public synchronized void mergeMeeting(Meeting meeting) {
 
         if (meeting.isDeleted()) {
-
             try {
-
                 Meeting meetingToDelete = getMeeting(meeting.getMeetingId());
                 deleteMeeting(meetingToDelete);
-
             } catch (MeetingNotFoundException e) {
-
                 e.printStackTrace();
             }
-
             return;
         }
 
         Group group = null;
 
         try {
-
             group = getGroup(meeting.getGroupId());
-
         } catch (GroupNotFoundException e) {
-
             e.printStackTrace();
         }
 
-        if (group == null) {
+        if (group == null) return;
 
-            return;
-        }
 
         Collection<Meeting> allMeetings = getMeetings();
 
         Meeting previousMeeting = null;
-
 
         for (Meeting currentMeeting : allMeetings) {
             if (currentMeeting.getMeetingId().equals(meeting.getMeetingId())) {
@@ -252,36 +223,28 @@ public class DataServiceImpl implements DataService {
         }
 
         if (previousMeeting != null) {
-
             if (meeting.getStartTime() == 0) {
                 meeting.setStartTime(previousMeeting.getStartTime());
             }
             if (meeting.getEndTime() == 0) {
                 meeting.setEndTime(previousMeeting.getEndTime());
             }
-
             if (meeting.getCause() == null || meeting.getCause().isEmpty()) {
                 meeting.setCause(previousMeeting.getCause());
             }
-
             if (meeting.getLocation() == null || meeting.getLocation().isEmpty()) {
                 meeting.setLocation(previousMeeting.getLocation());
             }
-
             if (!meeting.getOnline()) {
                 meeting.setOnline(previousMeeting.getOnline());
             }
-
             if (!meeting.getOpen()) {
                 meeting.setOpen(previousMeeting.getOpen());
             }
-
             if (meeting.getDate() == 0) {
                 meeting.setDate(previousMeeting.getDate());
             }
-
         }
-
         meetingDao.insertOrReplaceInTx(meeting);
     }
 
@@ -311,27 +274,20 @@ public class DataServiceImpl implements DataService {
 
     @Override
     public synchronized Collection<Meeting> getMeetings() {
-
         return meetingDao.loadAll();
     }
 
     @Override
     public synchronized Meeting getMeeting(Long meetingId) throws MeetingNotFoundException {
 
-        if (meetingDao.load(meetingId) != null) {
-
+        if (meetingDao.load(meetingId) != null)
             meetingDao.detach(meetingDao.load(meetingId));
-        }
 
         Meeting meeting = meetingDao.load(meetingId);
 
-        if (meeting != null) {
-
-            return meeting;
-        }
+        if (meeting != null) return meeting;
 
         throw new MeetingNotFoundException();
-
     }
 
     @Override
@@ -340,7 +296,6 @@ public class DataServiceImpl implements DataService {
         Collection<Group> allGroups = getGroups();
 
         for (Group currentGroup : allGroups) {
-
             if (currentGroup.getGroupId().equals(group.getGroupId())) {
                 group.setGroupId(currentGroup.getGroupId());
                 break;
@@ -348,7 +303,6 @@ public class DataServiceImpl implements DataService {
         }
 
         groupDao.insertOrReplaceInTx(group);
-
     }
 
     @Override
@@ -368,9 +322,7 @@ public class DataServiceImpl implements DataService {
         Group previousGroup = null;
 
         for (Group currentGroup : allGroups) {
-
             if (currentGroup.getGroupId().equals(group.getGroupId())) {
-
                 previousGroup = currentGroup;
                 group.setGroupId(currentGroup.getGroupId());
                 saveGroup(previousGroup);
@@ -378,14 +330,12 @@ public class DataServiceImpl implements DataService {
         }
 
         if (previousGroup != null) {
-
             if (group.getName() == null || group.getName().isEmpty()) {
                 group.setName(previousGroup.getName());
             }
         }
 
         groupDao.insertOrReplaceInTx(group);
-
     }
 
     @Override
@@ -406,17 +356,14 @@ public class DataServiceImpl implements DataService {
         groupDao.deleteInTx(group);
 
         for (Member member : members) {
-
             if (member.getGroups().size() == 0) {
                 deleteMember(member);
             }
         }
-
     }
 
     @Override
     public synchronized Collection<Group> getGroups() {
-
         return groupDao.loadAll();
     }
 
@@ -424,14 +371,12 @@ public class DataServiceImpl implements DataService {
     public synchronized Group getGroup(Long groupId) throws GroupNotFoundException {
 
         if (groupDao.load(groupId) != null) {
-
             groupDao.detach(groupDao.load(groupId));
         }
 
         Group group = groupDao.load(groupId);
 
         if (group != null) {
-
             return group;
         }
 
@@ -444,7 +389,6 @@ public class DataServiceImpl implements DataService {
         Group group = groupDao.load(privateGroup.getId());
 
         if (group != null) {
-
             return group;
         }
 
@@ -457,7 +401,6 @@ public class DataServiceImpl implements DataService {
         Group group = groupDao.load(Util.bytesToLong(connectionGroup.getId().getBytes()));
 
         if (group != null) {
-
             return group;
         }
 
@@ -470,7 +413,6 @@ public class DataServiceImpl implements DataService {
         Collection<Poll> allPolls = getPolls();
 
         for (Poll currentPoll : allPolls) {
-
             if (currentPoll.getPollId().equals(poll.getPollId())) {
                 poll.setPollId(currentPoll.getPollId());
                 break;
@@ -478,14 +420,12 @@ public class DataServiceImpl implements DataService {
         }
 
         pollDao.insertOrReplaceInTx(poll);
-
     }
 
     @Override
     public synchronized void mergePoll(Poll poll) {
 
         if (poll.isDeleted()) {
-
             deletePoll(poll);
             return;
         }
@@ -493,27 +433,19 @@ public class DataServiceImpl implements DataService {
         Meeting meeting = null;
 
         try {
-
             meeting = getMeeting(poll.getMeetingId());
-
         } catch (MeetingNotFoundException e) {
-
             e.printStackTrace();
         }
 
-        if (meeting == null) {
-
-            return;
-        }
+        if (meeting == null) return;
 
         Collection<Poll> allPolls = getPolls();
 
         Poll previousPoll = null;
 
         for (Poll currentPoll : allPolls) {
-
             if (currentPoll.getPollId().equals(poll.getPollId())) {
-
                 previousPoll = currentPoll;
                 poll.setPollId(currentPoll.getPollId());
                 savePoll(previousPoll);
@@ -521,35 +453,26 @@ public class DataServiceImpl implements DataService {
         }
 
         if (previousPoll != null) {
-
             if (poll.getTitle() == null || poll.getTitle().isEmpty()) {
                 poll.setTitle(previousPoll.getTitle());
             }
-
             if (poll.getNote() == null || poll.getNote().isEmpty()) {
                 poll.setNote(previousPoll.getNote());
             }
-
             if (!poll.getIsOpen()) {
                 poll.setIsOpen(previousPoll.getIsOpen());
             }
-
             if (!poll.getClosedByModerator()) {
                 poll.setClosedByModerator(previousPoll.getClosedByModerator());
             }
-
             if (poll.getConsensusProposal() == null || poll.getConsensusProposal().isEmpty()) {
                 poll.setConsensusProposal(previousPoll.getConsensusProposal());
             }
-
             if (poll.getVoteMembersCountOnClosed() == 0) {
                 poll.setVoteMembersCountOnClosed(previousPoll.getVoteMembersCountOnClosed());
             }
-
         }
-
         pollDao.insertOrReplaceInTx(poll);
-
     }
 
     @Override
@@ -557,17 +480,13 @@ public class DataServiceImpl implements DataService {
 
         poll = pollDao.load(poll.getPollId());
 
-        for (Voice voice : poll.getVoices()) {
-            deleteVoice(voice);
-        }
+        for (Voice voice : poll.getVoices()) deleteVoice(voice);
 
         pollDao.deleteInTx(poll);
-
     }
 
     @Override
     public synchronized Collection<Poll> getPolls() {
-
         return pollDao.loadAll();
     }
 
@@ -575,19 +494,14 @@ public class DataServiceImpl implements DataService {
     public synchronized Poll getPoll(Long pollId) throws PollNotFoundException {
 
         if (pollDao.load(pollId) != null) {
-
             pollDao.detach(pollDao.load(pollId));
         }
 
         Poll poll = pollDao.load(pollId);
 
-        if (poll != null) {
-
-            return poll;
-        }
+        if (poll != null) return poll;
 
         throw new PollNotFoundException();
-
     }
 
     @Override
@@ -596,7 +510,6 @@ public class DataServiceImpl implements DataService {
         Collection<Voice> allVoices = getVoices();
 
         for (Voice currentVoice : allVoices) {
-
             if (currentVoice.getVoiceId().equals(voice.getVoiceId())) {
                 voice.setVoiceId(currentVoice.getVoiceId());
                 break;
@@ -610,7 +523,6 @@ public class DataServiceImpl implements DataService {
     public synchronized void mergeVoice(Voice voice) {
 
         if (voice.isDeleted()) {
-
             deleteVoice(voice);
             return;
         }
@@ -619,16 +531,12 @@ public class DataServiceImpl implements DataService {
         Poll poll = null;
 
         try {
-
             poll = getPoll(voice.getPollId());
-
         } catch (PollNotFoundException e) {
-
             e.printStackTrace();
         }
 
         if (poll == null) {
-
             return;
         }
 
@@ -637,9 +545,7 @@ public class DataServiceImpl implements DataService {
         Voice previousVoice = null;
 
         for (Voice currentVoice : allVoices) {
-
             if (currentVoice.getVoiceId().equals(voice.getVoiceId())) {
-
                 previousVoice = currentVoice;
                 voice.setVoiceId(currentVoice.getVoiceId());
                 saveVoice(previousVoice);
@@ -647,11 +553,9 @@ public class DataServiceImpl implements DataService {
         }
 
         if (previousVoice != null) {
-
             if (voice.getExplanation() == null || voice.getExplanation().isEmpty()) {
                 voice.setExplanation(previousVoice.getExplanation());
             }
-
         }
 
         voiceDao.insertOrReplaceInTx(voice);
@@ -659,16 +563,12 @@ public class DataServiceImpl implements DataService {
         Voice savedVoice = null;
 
         try {
-
             savedVoice = getVoice(voice.getVoiceId());
-
         } catch (VoiceNotFoundException e) {
-
             e.printStackTrace();
         }
 
         if (savedVoice != null) {
-
             Collection<Long> presentVoteMemberIds = new ArrayList<>();
             for (Member presentVoteMember : savedVoice.getPoll().getMeeting().getPresentVoteMembers()) {
                 presentVoteMemberIds.add(presentVoteMember.getMemberId());
@@ -680,7 +580,6 @@ public class DataServiceImpl implements DataService {
             }
 
             if (voiceMemberIds.containsAll(presentVoteMemberIds)) {
-
                 Poll p = savedVoice.getPoll();
                 p.setVoteMembersCountOnClosed(presentVoteMemberIds.size());
                 p.setIsOpen(false);
@@ -691,31 +590,24 @@ public class DataServiceImpl implements DataService {
 
     @Override
     public synchronized void deleteVoice(Voice voice) {
-
         voiceDao.deleteInTx(voice);
-
     }
 
     @Override
     public synchronized Collection<Voice> getVoices() {
-
         return voiceDao.loadAll();
     }
 
     @Override
     public synchronized Voice getVoice(Long voiceId) throws VoiceNotFoundException {
 
-        if (voiceDao.load(voiceId) != null) {
-
+        if (voiceDao.load(voiceId) != null)
             voiceDao.detach(voiceDao.load(voiceId));
-        }
+
 
         Voice voice = voiceDao.load(voiceId);
 
-        if (voice != null) {
-
-            return voice;
-        }
+        if (voice != null) return voice;
 
         throw new VoiceNotFoundException();
 
@@ -727,7 +619,6 @@ public class DataServiceImpl implements DataService {
         Collection<ConsensusLevel> allLevels = getConsensusLevels();
 
         for (ConsensusLevel currentLevel : allLevels) {
-
             if (currentLevel.getConsensusLevelId().equals(level.getConsensusLevelId())) {
                 level.setConsensusLevelId(currentLevel.getConsensusLevelId());
                 break;
@@ -735,7 +626,6 @@ public class DataServiceImpl implements DataService {
         }
 
         consensusLevelDao.insertOrReplaceInTx(level);
-
     }
 
     @Override
@@ -751,9 +641,7 @@ public class DataServiceImpl implements DataService {
         ConsensusLevel previousLevel = null;
 
         for (ConsensusLevel currentLevel : allLevels) {
-
             if (currentLevel.getConsensusLevelId().equals(level.getConsensusLevelId())) {
-
                 previousLevel = currentLevel;
                 level.setConsensusLevelId(currentLevel.getConsensusLevelId());
                 saveConsensusLevel(previousLevel);
@@ -761,7 +649,6 @@ public class DataServiceImpl implements DataService {
         }
 
         if (previousLevel != null) {
-
             if (level.getName() == null || level.getName().isEmpty()) {
                 level.setName(previousLevel.getName());
             }
@@ -771,7 +658,6 @@ public class DataServiceImpl implements DataService {
             if (level.getColor() == 0) {
                 level.setColor(previousLevel.getColor());
             }
-
             if (level.getNumber() == 0) {
                 level.setNumber(previousLevel.getNumber());
             }
@@ -782,20 +668,16 @@ public class DataServiceImpl implements DataService {
 
     @Override
     public synchronized void deleteConsensusLevel(ConsensusLevel level) {
-
         consensusLevelDao.deleteInTx(level);
-
     }
 
     @Override
     public synchronized Collection<ConsensusLevel> getConsensusLevels() {
-
         return consensusLevelDao.loadAll();
     }
 
     @Override
     public synchronized ConsensusLevel getConsensusLevel(Long consensusLevelId) {
-
         return consensusLevelDao.load(consensusLevelId);
     }
 
@@ -805,7 +687,6 @@ public class DataServiceImpl implements DataService {
         Collection<Topic> allTopics = getTopics();
 
         for (Topic currentTopic : allTopics) {
-
             if (currentTopic.getTopicId().equals(topic.getTopicId())) {
                 topic.setTopicId(currentTopic.getTopicId());
                 break;
@@ -819,65 +700,49 @@ public class DataServiceImpl implements DataService {
     public synchronized void mergeTopic(Topic topic) {
 
         if (topic.isDeleted()) {
-
             deleteTopic(topic);
             return;
         }
 
-
         Meeting meeting = null;
 
         try {
-
             meeting = getMeeting(topic.getMeetingId());
-
         } catch (MeetingNotFoundException e) {
-
             e.printStackTrace();
         }
 
-        if (meeting == null) {
+        if (meeting == null) return;
 
-            return;
-        }
 
         Collection<Topic> allTopics = getTopics();
         Topic previousTopic = null;
 
         for (Topic currentTopic : allTopics) {
-
             if (currentTopic.getTopicId().equals(topic.getTopicId())) {
-
                 previousTopic = currentTopic;
                 topic.setTopicId(currentTopic.getTopicId());
                 saveTopic(previousTopic);
             }
         }
         if (previousTopic != null) {
-
             if (topic.getTitle() == null || topic.getTitle().isEmpty()) {
                 topic.setTitle(previousTopic.getTitle());
             }
-
             if (topic.getStatus() == null) {
                 topic.setStatus(previousTopic.getStatus());
             }
-
             if (topic.getDuration() == 0) {
                 topic.setDuration(previousTopic.getDuration());
             }
-
         }
 
         topicDao.insertOrReplaceInTx(topic);
-
     }
 
     @Override
     public synchronized void deleteTopic(Topic topic) {
-
         topicDao.deleteInTx(topic);
-
     }
 
     @Override
@@ -891,7 +756,6 @@ public class DataServiceImpl implements DataService {
         Collection<GroupSettings> allSettings = getGroupSettings();
 
         for (GroupSettings currentSettings : allSettings) {
-
             if (currentSettings.getSettingsId().equals(settings.getSettingsId())) {
                 settings.setSettingsId(currentSettings.getSettingsId());
                 break;
@@ -906,7 +770,6 @@ public class DataServiceImpl implements DataService {
     public void mergeGroupSettings(GroupSettings settings) {
 
         if (settings.isDeleted()) {
-
             deleteGroupSettings(settings);
             return;
         }
@@ -915,9 +778,7 @@ public class DataServiceImpl implements DataService {
         GroupSettings previousSettings = null;
 
         for (GroupSettings currentSettings : allSettings) {
-
             if (currentSettings.getSettingsId().equals(settings.getSettingsId())) {
-
                 previousSettings = currentSettings;
                 settings.setSettingsId(currentSettings.getSettingsId());
                 saveGroupSettings(previousSettings);
@@ -925,23 +786,19 @@ public class DataServiceImpl implements DataService {
         }
 
         if (previousSettings != null) {
-
             Set<Long> deletedConsensusLevels = new HashSet<>();
 
             saveGroupSettings(settings);
             settings = groupSettingsDao.load(settings.getSettingsId());
 
             for (ConsensusLevel consensusLevel : settings.getConsensusLevels()) {
-
                 if (consensusLevel.isDeleted()) {
-
                     deletedConsensusLevels.add(consensusLevel.getConsensusLevelId());
                 }
 
             }
 
             for (ConsensusLevel consensusLevel : previousSettings.getConsensusLevels()) {
-
                 if (deletedConsensusLevels.contains(consensusLevel.getConsensusLevelId())) {
                     deleteConsensusLevel(consensusLevel);
                 }
@@ -949,7 +806,6 @@ public class DataServiceImpl implements DataService {
         }
 
         groupSettingsDao.insertOrReplaceInTx(settings);
-
     }
 
     @Override
@@ -960,7 +816,6 @@ public class DataServiceImpl implements DataService {
         }
 
         groupSettingsDao.deleteInTx(settings);
-
     }
 
     @Override
@@ -971,17 +826,12 @@ public class DataServiceImpl implements DataService {
     @Override
     public synchronized GroupSettings getGroupSetting(Long settingsId) throws GroupSettingsNotFoundException {
 
-        if (groupSettingsDao.load(settingsId) != null) {
-
+        if (groupSettingsDao.load(settingsId) != null)
             groupSettingsDao.detach(groupSettingsDao.load(settingsId));
-        }
 
         GroupSettings groupSettings = groupSettingsDao.load(settingsId);
 
-        if (groupSettings != null) {
-
-            return groupSettings;
-        }
+        if (groupSettings != null) return groupSettings;
 
         throw new GroupSettingsNotFoundException();
     }
@@ -992,23 +842,18 @@ public class DataServiceImpl implements DataService {
         Collection<Participation> allParticipations = getParticipations();
 
         for (Participation currentParticipation : allParticipations) {
-
             if (currentParticipation.getParticipationId().equals(participation.getParticipationId())) {
-
                 participation.setParticipationId(currentParticipation.getParticipationId());
                 break;
             }
         }
-
         participationDao.insertOrReplaceInTx(participation);
-
     }
 
     @Override
     public void mergeParticipation(Participation participation) {
 
         if (participation.isDeleted()) {
-
             deleteParticipation(participation);
             return;
         }
@@ -1016,26 +861,18 @@ public class DataServiceImpl implements DataService {
         Meeting meeting = null;
 
         try {
-
             meeting = getMeeting(participation.getMeetingId());
-
         } catch (MeetingNotFoundException e) {
-
             e.printStackTrace();
         }
 
-        if (meeting == null) {
-
-            return;
-        }
+        if (meeting == null) return;
 
         Collection<Participation> allParticipation = getParticipations();
         Participation previousParticipation = null;
 
         for (Participation currentParticipation : allParticipation) {
-
             if (currentParticipation.getParticipationId().equals(participation.getParticipationId())) {
-
                 previousParticipation = currentParticipation;
                 participation.setParticipationId(currentParticipation.getParticipationId());
                 saveParticipation(previousParticipation);
@@ -1043,7 +880,6 @@ public class DataServiceImpl implements DataService {
         }
 
         if (previousParticipation != null) {
-
             if (participation.getContributions() == 0) {
                 participation.setContributions(previousParticipation.getContributions());
             }
@@ -1054,61 +890,49 @@ public class DataServiceImpl implements DataService {
         }
 
         participationDao.insertOrReplaceInTx(participation);
-
     }
 
     @Override
     public void deleteParticipation(Participation participation) {
-
         participationDao.deleteInTx(participation);
-
     }
 
     @Override
     public Collection<Participation> getParticipations() {
-
         return participationDao.loadAll();
     }
 
     public void saveMemberGroupRelation(MemberGroupRelation memberGroupRelation) {
-
         memberGroupRelationDao.insertOrReplaceInTx(memberGroupRelation);
     }
 
     public void saveMemberMeetingRelation(MemberMeetingRelation memberMeetingRelation) {
-
         memberMeetingRelationDao.insertOrReplaceInTx(memberMeetingRelation);
     }
 
     @Override
     public Collection<MemberGroupRelation> getMemberGroupRelations() {
-
         return memberGroupRelationDao.loadAll();
     }
 
     @Override
     public Collection<MemberMeetingRelation> getMemberMeetingRelations() {
-
         return memberMeetingRelationDao.loadAll();
     }
 
     @Override
     public void deleteMemberGroupRelation(MemberGroupRelation memberGroupRelation) {
-
         memberGroupRelationDao.delete(memberGroupRelation);
     }
 
     @Override
     public void deleteMemberMeetingRelation(MemberMeetingRelation memberMeetingRelation) {
-
         memberMeetingRelationDao.delete(memberMeetingRelation);
-
     }
 
     @Override
     public void mergeModerationCard(ModerationCard moderationCard) {
         if (moderationCard.isDeleted()) {
-
             deleteModerationCard(moderationCard);
             return;
         }
@@ -1116,18 +940,12 @@ public class DataServiceImpl implements DataService {
         Meeting meeting = null;
 
         try {
-
             meeting = getMeeting(moderationCard.getMeetingId());
-
         } catch (MeetingNotFoundException e) {
-
             e.printStackTrace();
         }
 
-        if (meeting == null) {
-
-            return;
-        }
+        if (meeting == null) return;
 
         moderationCardDao.insertOrReplaceInTx(moderationCard);
     }
@@ -1140,21 +958,13 @@ public class DataServiceImpl implements DataService {
     @Override
     public ModerationCard getModerationCard(Long cardId) throws ModerationCardNotFoundException {
         if (moderationCardDao.load(cardId) != null) {
-
             moderationCardDao.detach(moderationCardDao.load(cardId));
         }
 
         ModerationCard moderationCard = moderationCardDao.load(cardId);
 
-        if (moderationCard != null) {
-
-            return moderationCard;
-        }
+        if (moderationCard != null) return moderationCard;
 
         throw new ModerationCardNotFoundException();
-
     }
-
-
-
 }

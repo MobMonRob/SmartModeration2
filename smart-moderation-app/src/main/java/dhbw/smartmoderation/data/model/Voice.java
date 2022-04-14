@@ -45,7 +45,6 @@ public class Voice extends ModelClass {
     }
     @Keep
     public Voice() {
-
         this.voiceId = ((SmartModerationApplicationImpl)SmartModerationApplicationImpl.getApp()).getUniqueId();
     }
 
@@ -218,6 +217,4 @@ public class Voice extends ModelClass {
         this.daoSession = daoSession;
         myDao = daoSession != null ? daoSession.getVoiceDao() : null;
     }
-
-
 }

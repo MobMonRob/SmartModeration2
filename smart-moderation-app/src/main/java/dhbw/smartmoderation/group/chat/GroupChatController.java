@@ -12,40 +12,32 @@ import dhbw.smartmoderation.util.Util;
 
 public class GroupChatController extends SmartModerationController {
 
-	public Collection<String> getMessages() {
-		Collection<String> list = new ArrayList<String>();
-		list.add("Name : Hallo");
-		list.add("Name2 : Hallo ");
-		list.add("Name2 : Hallo ");
-		list.add("Name2 : Hallo ");
-		list.add("Name2 : Hallo ");
-		list.add("Name2 : Hallo ");
-		list.add("Name2 : Hallo ");
-		return list;
-	}
+    public Collection<String> getMessages() {
+        Collection<String> list = new ArrayList<>();
+        list.add("Name : Hallo");
+        list.add("Name2 : Hallo ");
+        list.add("Name2 : Hallo ");
+        list.add("Name2 : Hallo ");
+        list.add("Name2 : Hallo ");
+        list.add("Name2 : Hallo ");
+        list.add("Name2 : Hallo ");
+        return list;
+    }
 
-	public void createAndStoreMessage(String text, Long groupId) throws GroupNotFoundException {
+    public void createAndStoreMessage(String text, Long groupId) throws GroupNotFoundException {
+        PrivateGroup group = getPrivateGroup(groupId);
+        connectionService.createAndStoreMessage(text, group);
+    }
 
-		PrivateGroup group = getPrivateGroup(groupId);
-		connectionService.createAndStoreMessage(text,group);
-	}
+    public Collection<String> loadItems(Long groupId) throws NoGroupMessageTextFoundException, GroupNotFoundException {
+        PrivateGroup group = getPrivateGroup(groupId);
+        return connectionService.getMessages(group);
+    }
 
-	public Collection<String> loadItems(Long groupId) throws NoGroupMessageTextFoundException, GroupNotFoundException {
+    private PrivateGroup getPrivateGroup(Long groupId) throws GroupNotFoundException {
+        for (PrivateGroup group : connectionService.getGroups())
+            if (groupId.equals(Util.bytesToLong(group.getId().getBytes()))) return group;
 
-		PrivateGroup group = getPrivateGroup(groupId);
-		return connectionService.getMessages(group);
-	}
-
-	private PrivateGroup getPrivateGroup(Long groupId) throws GroupNotFoundException {
-
-		for (PrivateGroup group : connectionService.getGroups()){
-
-			if (groupId.equals(Util.bytesToLong(group.getId().getBytes()))) {
-
-				return group;
-			}
-		};
-
-		throw new GroupNotFoundException();
-	}
+        throw new GroupNotFoundException();
+    }
 }

@@ -171,7 +171,6 @@ public class LegendTableFragment extends Fragment {
     }
 
     public TextView createAmountTextView(int value) {
-
         TextView amount = new TextView(getActivity());
         TableRow.LayoutParams amountLayoutParams = new TableRow.LayoutParams(0, TableRow.LayoutParams.MATCH_PARENT, 0.65f);
         amount.setLayoutParams(amountLayoutParams);
@@ -183,7 +182,6 @@ public class LegendTableFragment extends Fragment {
     }
 
     public TextView createProportionTextView(int value) {
-
         float percentage = ((float)value/(float)this.controller.getVoteMembersCount())*100;
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
 

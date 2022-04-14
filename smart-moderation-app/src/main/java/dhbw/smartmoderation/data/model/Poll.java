@@ -44,7 +44,6 @@ public class Poll extends ModelClass {
 
     @Keep
     public Poll() {
-
         this.pollId = ((SmartModerationApplicationImpl)SmartModerationApplicationImpl.getApp()).getUniqueId();
     }
 
@@ -118,21 +117,17 @@ public class Poll extends ModelClass {
     }
 
     public Voice getVoice(Long voiceId) {
-
         for(Voice voice : getVoices()) {
-
             if(voice.getVoiceId().equals(voiceId)) {
                 return voice;
             }
         }
-
         return null;
     }
 
     public Status getStatus(Member member) {
 
         if(this.getClosedByModerator()) {
-
             return Status.ABGESCHLOSSEN;
         }
 
@@ -159,7 +154,6 @@ public class Poll extends ModelClass {
         if(presentVoteMemberIds.contains(member.getMemberId())) {
 
             if(this.getIsOpen()) {
-
                 return Status.OFFEN;
             }
 

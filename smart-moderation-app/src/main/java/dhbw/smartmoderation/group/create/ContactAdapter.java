@@ -27,7 +27,6 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
 
     public
     ContactAdapter(Context context, Collection<IContact> contactList) {
-
         this.context = context;
         this.contactList = new ArrayList<>();
         this.selectedContacts = new ArrayList<>();
@@ -51,7 +50,6 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
         holder.getTextView().setText(name);
 
         if(contact instanceof Ghost) {
-
             holder.getGhostHint().setText(context.getString(R.string.ghost));
             holder.getGhostHint().setVisibility(View.VISIBLE);
         }
@@ -63,12 +61,10 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
     }
 
     public Context getContext() {
-
         return this.context;
     }
 
     public ArrayList<IContact> getSelectedContacts() {
-
         return this.selectedContacts;
     }
 
@@ -78,12 +74,10 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
     }
 
     public boolean atLeastOneContactSelected() {
-
         return this.selectedContacts.size() > 0;
     }
 
     public void addGhost(String firstName, String lastName) {
-
         Ghost ghost = new Ghost();
         ghost.setFirstName(firstName);
         ghost.setLastName(lastName);
@@ -92,7 +86,6 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
     }
 
    static class ContactViewHolder extends RecyclerView.ViewHolder {
-
         private TextView contactName;
         private CheckBox selectCheckBox;
         private TextView ghostHint;
@@ -111,21 +104,16 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
             constraintLayout.addView(selectCheckBox);
 
             if (contact instanceof Ghost) {
-
                 selectCheckBox.setSelected(true);
                 adapter.getSelectedContacts().add(contact);
             }
 
             selectCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-
                 if (isChecked) {
-
                     adapter.getSelectedContacts().add(contact);
                 } else {
-
                     adapter.getSelectedContacts().remove(contact);
                 }
-
             });
 
             ConstraintSet checkBoxConstraintSet = new ConstraintSet();
@@ -141,7 +129,6 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
             textViewConstraintSet.connect(contactName.getId(), ConstraintSet.LEFT, selectCheckBox.getId(), ConstraintSet.RIGHT, 50);
             textViewConstraintSet.connect(contactName.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, 20);
             textViewConstraintSet.applyTo(constraintLayout);
-
 
             ghostHint = new TextView(context);
             ghostHint.setId(View.generateViewId());
@@ -163,17 +150,14 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
         }
 
         public void setContact(IContact contact) {
-
             this.contact = contact;
         }
 
         public TextView getTextView() {
-
             return this.contactName;
         }
 
         public TextView getGhostHint() {
-
             return this.ghostHint;
         }
     }

@@ -27,11 +27,8 @@ public class ConsensusProposalOverviewController extends SmartModerationControll
     }
 
     public void update() {
-
         try {
-
             this.synchronizationService.pull(getPrivateGroup());
-
         } catch (GroupNotFoundException e) {
             e.printStackTrace();
         }
@@ -39,18 +36,14 @@ public class ConsensusProposalOverviewController extends SmartModerationControll
 
 
     public Group getGroup() {
-
         Collection<Group> groups = dataService.getGroups();
         Long groupId = getMeeting().getGroup().getGroupId();
 
         for(Group group : groups) {
-
             if(group.getGroupId().equals(groupId)) {
-
                 return group;
             }
         }
-
         return null;
     }
 
@@ -59,24 +52,18 @@ public class ConsensusProposalOverviewController extends SmartModerationControll
         Collection<PrivateGroup> privateGroups = connectionService.getGroups();
 
         for(PrivateGroup group : privateGroups) {
-
             if(getMeeting().getGroup().getGroupId().equals(Util.bytesToLong(group.getId().getBytes()))) {
-
                 return group;
             }
         }
-
         throw new GroupNotFoundException();
     }
 
     public Meeting getMeeting() {
 
         try {
-
             return dataService.getMeeting(meetingId);
-
         } catch (MeetingNotFoundException e) {
-
             e.printStackTrace();
         }
 
@@ -84,75 +71,54 @@ public class ConsensusProposalOverviewController extends SmartModerationControll
     }
 
     public Collection<Poll> getPolls() {
-
-
-
         return getMeeting().getPolls();
     }
 
     public Member getMember() {
-
         for(Member member : getMeeting().getMembers()) {
-
             if(member.getMemberId().equals(connectionService.getLocalAuthorId())) {
-
                 return member;
             }
         }
-
         return null;
     }
 
     public boolean isLocalAuthorModerator() {
-
         Group group = getGroup();
-
         Long authorId = connectionService.getLocalAuthorId();
-
         Member member = group.getMember(authorId);
 
         if(member != null && member.getRoles(group).contains(Role.MODERATOR)) {
-
             return true;
         }
-
         return false;
     }
 
     public void deletePoll(Long pollId) throws PollCantBeDeletedException {
 
         try{
-
             Collection<ModelClass> data = new ArrayList<>();
-
             Poll poll = getMeeting().getPoll(pollId);
             poll.setIsDeleted(true);
             data.add(poll);
             synchronizationService.push(getPrivateGroup(), data);
             dataService.deletePoll(poll);
-
         } catch(GroupNotFoundException exception){
-
             throw new PollCantBeDeletedException();
         }
-
     }
 
     public void openPoll(Long pollId) throws PollCantBeOpenedException {
         try{
-
             Collection<ModelClass> data = new ArrayList<>();
-
             Poll poll = getMeeting().getPoll(pollId);
             poll.setIsOpen(true);
             data.add(poll);
             dataService.mergePoll(poll);
             synchronizationService.push(getPrivateGroup(), data);
-
         } catch(GroupNotFoundException exception){
             //TODO rollback
             throw new PollCantBeOpenedException();
         }
-
     }
 }

@@ -42,7 +42,6 @@ public class Participation extends ModelClass {
 
     @Keep
     public Participation() {
-
         this.participationId = ((SmartModerationApplicationImpl)SmartModerationApplicationImpl.getApp()).getUniqueId();
     }
 
@@ -240,6 +239,4 @@ public class Participation extends ModelClass {
         this.daoSession = daoSession;
         myDao = daoSession != null ? daoSession.getParticipationDao() : null;
     }
-
-
 }

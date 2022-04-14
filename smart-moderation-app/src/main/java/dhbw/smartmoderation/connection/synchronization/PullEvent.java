@@ -11,6 +11,7 @@ public class PullEvent {
             addDistictSynchronizableDataType(type);
         }
     }
+
     public PullEvent(){}
 
     public void addDistictSynchronizableDataType(SynchronizableDataType data){
@@ -22,5 +23,4 @@ public class PullEvent {
     public Collection<SynchronizableDataType> getDataTypes(){
         return SynchronizableDataTypeCollection;
     }
-
 }

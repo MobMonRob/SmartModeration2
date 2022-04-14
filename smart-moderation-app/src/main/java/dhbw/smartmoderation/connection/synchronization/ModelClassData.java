@@ -10,7 +10,6 @@ public class ModelClassData {
 
     private Collection<ModelClass> data;
 
-
     public dhbw.smartmoderation.connection.synchronization.PullEvent getPullEvent() {
         return PullEvent;
     }

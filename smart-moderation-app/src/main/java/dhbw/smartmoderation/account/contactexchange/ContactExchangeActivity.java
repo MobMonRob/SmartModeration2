@@ -25,7 +25,7 @@ import dhbw.smartmoderation.SmartModerationApplicationImpl;
 
 @MethodsNotNullByDefault
 @ParametersNotNullByDefault
-public class ContactExchangeActivity extends KeyAgreementActivity{
+public class ContactExchangeActivity extends KeyAgreementActivity {
 
     @Inject
     ViewModelProvider.Factory viewModelFactory;
@@ -34,7 +34,7 @@ public class ContactExchangeActivity extends KeyAgreementActivity{
 
     @Override
     public void onCreate(@Nullable Bundle state) {
-        ((SmartModerationApplicationImpl)getApplicationContext()).smartModerationComponent.inject(this);
+        ((SmartModerationApplicationImpl) getApplicationContext()).smartModerationComponent.inject(this);
         super.onCreate(state);
         requireNonNull(getSupportActionBar()).setTitle(this.getString(R.string.ContactExchangeActivity_Title));
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(ContactExchangeViewModel.class);
@@ -43,29 +43,18 @@ public class ContactExchangeActivity extends KeyAgreementActivity{
     private void startContactExchange(KeyAgreementResult result) {
 
         viewModel.getSucceeded().observe(this, succeeded -> {
-
             if (succeeded == null) {
                 return;
             }
-            if (succeeded) {
 
+            if (succeeded) {
                 Author remote = requireNonNull(viewModel.getRemoteAuthor());
                 contactExchangeSucceeded(remote);
-
-            }
-
-            else {
-
+            } else {
                 Author duplicate = viewModel.getDuplicateAuthor();
 
-                if (duplicate == null) {
-                    contactExchangeFailed();
-                }
-
-                else {
-
-                    duplicateContact(duplicate);
-                }
+                if (duplicate == null) contactExchangeFailed();
+                else duplicateContact(duplicate);
             }
         });
 
@@ -77,14 +66,13 @@ public class ContactExchangeActivity extends KeyAgreementActivity{
     @UiThread
     private void contactExchangeSucceeded(Author remoteAuthor) {
         String contactName = remoteAuthor.getName();
-        String text = getString(R.string.addContact) +" " + contactName;
+        String text = getString(R.string.addContact) + " " + contactName;
         Toast.makeText(this, text, LENGTH_LONG).show();
         supportFinishAfterTransition();
     }
 
     @UiThread
     private void duplicateContact(Author remoteAuthor) {
-
         String contactName = remoteAuthor.getName();
         String text = contactName + getString(R.string.already_exists);
         Toast.makeText(this, text, LENGTH_LONG).show();
@@ -93,16 +81,13 @@ public class ContactExchangeActivity extends KeyAgreementActivity{
 
     @UiThread
     private void contactExchangeFailed() {
-
         showErrorFragment();
     }
 
 
     @Override
     public void keyAgreementFailed() {
-
         showErrorFragment();
-
     }
 
     @Nullable
@@ -114,36 +99,28 @@ public class ContactExchangeActivity extends KeyAgreementActivity{
     @Nullable
     @Override
     public String keyAgreementStarted() {
-
         return getString(R.string.keyagreement_started);
     }
 
     @Override
     public void keyAgreementAborted(boolean remoteAborted) {
-
         showErrorFragment();
-
     }
 
     @Nullable
     @Override
     public String keyAgreementFinished(KeyAgreementResult result) {
-
         startContactExchange(result);
         return getString(R.string.keyagreement_finished);
     }
 
     private void showErrorFragment() {
-
         ContactExchangeErrorFragment fragment = new ContactExchangeErrorFragment();
         showNextFragment(fragment, fragment.getUniqueTag());
     }
 
     public void showNextFragment(Fragment fragment, String tag) {
-        if (!getLifecycle().getCurrentState().isAtLeast(STARTED)) {
-
-            return;
-        }
+        if (!getLifecycle().getCurrentState().isAtLeast(STARTED)) return;
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragmentContainer, fragment, tag)
@@ -154,8 +131,6 @@ public class ContactExchangeActivity extends KeyAgreementActivity{
 
     @Override
     public void handleException(Exception e) {
-
         supportFinishAfterTransition();
-
     }
 }

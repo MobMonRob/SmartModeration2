@@ -20,9 +20,7 @@ import dhbw.smartmoderation.account.contactexchange.QrCodeUtils;
 final class ContactExchangeUtil {
 
 	private static final String TAG = ContactExchangeUtil.class.getSimpleName();
-
 	private static final int QR_CODE_DIM = 1080;
-
 	private static ConnectionService service;
 
 	private ContactExchangeUtil() {

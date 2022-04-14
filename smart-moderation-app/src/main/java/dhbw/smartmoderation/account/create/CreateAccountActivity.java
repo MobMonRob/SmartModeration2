@@ -17,13 +17,9 @@ import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.home.HomeActivity;
 import dhbw.smartmoderation.util.Util;
 
-/**
- * Activity for creating an account.
- */
 public class CreateAccountActivity extends AppCompatActivity {
 
 	private CreateAccountController controller;
-
 	private EditText edtUsername;
 	private EditText edtPassword;
 	private Button btnCreate;
@@ -36,7 +32,6 @@ public class CreateAccountActivity extends AppCompatActivity {
 		setTitle(getString(R.string.CreateAccount_title));
 
 		controller = new CreateAccountController();
-
 		edtUsername = findViewById(R.id.edtUsername);
 		edtPassword = findViewById(R.id.edtPassword);
 		btnCreate = findViewById(R.id.btnCreate);
@@ -60,23 +55,14 @@ public class CreateAccountActivity extends AppCompatActivity {
 
 		edtUsername.addTextChangedListener(inputChangeListener);
 		edtPassword.addTextChangedListener(inputChangeListener);
-
 		btnCreate.setOnClickListener(this::onCreate);
 	}
 
 	public void onInputChange() {
-
-		if (!Util.isEmpty(edtUsername) && !Util.isEmpty(edtPassword)) {
-
-			btnCreate.setEnabled(true);
-		} else {
-
-			btnCreate.setEnabled(false);
-		}
+		btnCreate.setEnabled(!Util.isEmpty(edtUsername) && !Util.isEmpty(edtPassword));
 	}
 
 	public void onCreate(View v) {
-
 		CreateAccountAsyncTask createAccountAsyncTask = new CreateAccountAsyncTask();
 		createAccountAsyncTask.execute(Util.getText(edtUsername), Util.getText(edtPassword));
 	}
@@ -86,7 +72,6 @@ public class CreateAccountActivity extends AppCompatActivity {
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
-
 			progressDialog = new ProgressDialog(CreateAccountActivity.this, R.style.MyAlertDialogStyle);
 			progressDialog.setMessage(getString(R.string.create_account));
 			progressDialog.setCancelable(false);
@@ -95,19 +80,15 @@ public class CreateAccountActivity extends AppCompatActivity {
 
 		@Override
 		protected String doInBackground(String... strings) {
-
 			String userName = strings[0];
 			String password = strings[1];
-
 			controller.createAccount(userName, password);
-
 			return null;
 		}
 
 		@Override
 		protected void onPostExecute(String s) {
 			super.onPostExecute(s);
-
 			progressDialog.dismiss();
 			Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.account_created), Toast.LENGTH_SHORT);
 			toast.show();
@@ -116,5 +97,4 @@ public class CreateAccountActivity extends AppCompatActivity {
 			startActivity(homeIntent);
 		}
 	}
-
 }
