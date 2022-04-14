@@ -60,7 +60,6 @@ public class ConsensusProposalOverviewController extends SmartModerationControll
     }
 
     public Meeting getMeeting() {
-
         try {
             return dataService.getMeeting(meetingId);
         } catch (MeetingNotFoundException e) {

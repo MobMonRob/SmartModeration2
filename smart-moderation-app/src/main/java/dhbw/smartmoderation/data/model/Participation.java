@@ -46,8 +46,8 @@ public class Participation extends ModelClass {
     }
 
     @Generated(hash = 1143709538)
-    public Participation(Long participationId, int contributions, long time, boolean isInListOfSpeakers,
-            int number, boolean isSpeaking, long startTime, long meetingId, long memberId) {
+    public Participation(Long participationId, int contributions, long time, boolean isInListOfSpeakers, int number,
+            boolean isSpeaking, long startTime, long meetingId, long memberId) {
         this.participationId = participationId;
         this.contributions = contributions;
         this.time = time;
@@ -154,8 +154,7 @@ public class Participation extends ModelClass {
     @Generated(hash = 1727209912)
     public void setMeeting(@NotNull Meeting meeting) {
         if (meeting == null) {
-            throw new DaoException(
-                    "To-one property 'meetingId' has not-null constraint; cannot set to-one to null");
+            throw new DaoException("To-one property 'meetingId' has not-null constraint; cannot set to-one to null");
         }
         synchronized (this) {
             this.meeting = meeting;
@@ -187,8 +186,7 @@ public class Participation extends ModelClass {
     @Generated(hash = 307846971)
     public void setMember(@NotNull Member member) {
         if (member == null) {
-            throw new DaoException(
-                    "To-one property 'memberId' has not-null constraint; cannot set to-one to null");
+            throw new DaoException("To-one property 'memberId' has not-null constraint; cannot set to-one to null");
         }
         synchronized (this) {
             this.member = member;

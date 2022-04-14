@@ -38,14 +38,10 @@ public class Group extends ModelClass implements GroupUpdateObserver {
     @ToMany
     @JoinEntity(entity = MemberGroupRelation.class, sourceProperty = "groupId", targetProperty = "memberId")
     private List<Member> members;
-    /**
-     * Used to resolve relations
-     */
+    /** Used to resolve relations */
     @Generated(hash = 2040040024)
     private transient DaoSession daoSession;
-    /**
-     * Used for active entity operations.
-     */
+    /** Used for active entity operations. */
     @Generated(hash = 1591306109)
     private transient GroupDao myDao;
     @Generated(hash = 1158618483)
@@ -197,9 +193,7 @@ public class Group extends ModelClass implements GroupUpdateObserver {
         if (getGroupId().equals(event.getId())) this.hasBeenUpdated = true;
     }
 
-    /**
-     * To-one relationship, resolved on first access.
-     */
+    /** To-one relationship, resolved on first access. */
     @Generated(hash = 976034199)
     public GroupSettings getGroupSettings() {
         long __key = this.settingsId;
@@ -218,9 +212,7 @@ public class Group extends ModelClass implements GroupUpdateObserver {
         return groupSettings;
     }
 
-    /**
-     * called by internal mechanisms, do not call yourself.
-     */
+    /** called by internal mechanisms, do not call yourself. */
     @Generated(hash = 1186862619)
     public void setGroupSettings(@NotNull GroupSettings groupSettings) {
         if (groupSettings == null) {
@@ -255,9 +247,7 @@ public class Group extends ModelClass implements GroupUpdateObserver {
         return meetings;
     }
 
-    /**
-     * Resets a to-many relationship, making the next get call to query for a fresh result.
-     */
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
     @Generated(hash = 495885775)
     public synchronized void resetMeetings() {
         meetings = null;
@@ -285,9 +275,7 @@ public class Group extends ModelClass implements GroupUpdateObserver {
         return members;
     }
 
-    /**
-     * Resets a to-many relationship, making the next get call to query for a fresh result.
-     */
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
     @Generated(hash = 1358688666)
     public synchronized void resetMembers() {
         members = null;
@@ -329,9 +317,7 @@ public class Group extends ModelClass implements GroupUpdateObserver {
         myDao.update(this);
     }
 
-    /**
-     * called by internal mechanisms, do not call yourself.
-     */
+    /** called by internal mechanisms, do not call yourself. */
     @Generated(hash = 1333602095)
     public void __setDaoSession(DaoSession daoSession) {
         this.daoSession = daoSession;

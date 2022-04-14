@@ -35,8 +35,7 @@ public class Voice extends ModelClass {
     @Generated(hash = 207264020)
     private transient VoiceDao myDao;
     @Generated(hash = 948260480)
-    public Voice(Long voiceId, String explanation, long consensusLevelId,
-            long pollId, long memberId) {
+    public Voice(Long voiceId, String explanation, long consensusLevelId, long pollId, long memberId) {
         this.voiceId = voiceId;
         this.explanation = explanation;
         this.consensusLevelId = consensusLevelId;
@@ -84,8 +83,7 @@ public class Voice extends ModelClass {
     @Generated(hash = 1352950148)
     public ConsensusLevel getConsensusLevel() {
         long __key = this.consensusLevelId;
-        if (consensusLevel__resolvedKey == null
-                || !consensusLevel__resolvedKey.equals(__key)) {
+        if (consensusLevel__resolvedKey == null || !consensusLevel__resolvedKey.equals(__key)) {
             final DaoSession daoSession = this.daoSession;
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
@@ -136,8 +134,7 @@ public class Voice extends ModelClass {
     @Generated(hash = 1448390100)
     public void setPoll(@NotNull Poll poll) {
         if (poll == null) {
-            throw new DaoException(
-                    "To-one property 'pollId' has not-null constraint; cannot set to-one to null");
+            throw new DaoException("To-one property 'pollId' has not-null constraint; cannot set to-one to null");
         }
         synchronized (this) {
             this.poll = poll;

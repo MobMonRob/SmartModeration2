@@ -50,14 +50,10 @@ public class Meeting extends ModelClass {
     @ToMany
     @JoinEntity(entity = MemberMeetingRelation.class, sourceProperty = "meetingId", targetProperty = "memberId")
     private List<Member> members;
-    /**
-     * Used to resolve relations
-     */
+    /** Used to resolve relations */
     @Generated(hash = 2040040024)
     private transient DaoSession daoSession;
-    /**
-     * Used for active entity operations.
-     */
+    /** Used for active entity operations. */
     @Generated(hash = 1797444500)
     private transient MeetingDao myDao;
     @Generated(hash = 201187923)
@@ -69,8 +65,8 @@ public class Meeting extends ModelClass {
     }
 
     @Generated(hash = 1628552253)
-    public Meeting(Long meetingId, long startTime, long endTime, long date, String cause, String location,
-                   boolean online, boolean open, long groupId) {
+    public Meeting(Long meetingId, long startTime, long endTime, long date, String cause, String location, boolean online, boolean open,
+            long groupId) {
         this.meetingId = meetingId;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -240,9 +236,7 @@ public class Meeting extends ModelClass {
         return null;
     }
 
-    /**
-     * To-one relationship, resolved on first access.
-     */
+    /** To-one relationship, resolved on first access. */
     @Generated(hash = 1458728405)
     public Group getGroup() {
         long __key = this.groupId;
@@ -261,9 +255,7 @@ public class Meeting extends ModelClass {
         return group;
     }
 
-    /**
-     * called by internal mechanisms, do not call yourself.
-     */
+    /** called by internal mechanisms, do not call yourself. */
     @Generated(hash = 2061332765)
     public void setGroup(@NotNull Group group) {
         if (group == null) {
@@ -290,15 +282,15 @@ public class Meeting extends ModelClass {
             PollDao targetDao = daoSession.getPollDao();
             List<Poll> pollsNew = targetDao._queryMeeting_Polls(meetingId);
             synchronized (this) {
-                if (polls == null) polls = pollsNew;
+                if (polls == null) {
+                    polls = pollsNew;
+                }
             }
         }
         return polls;
     }
 
-    /**
-     * Resets a to-many relationship, making the next get call to query for a fresh result.
-     */
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
     @Generated(hash = 928798354)
     public synchronized void resetPolls() {
         polls = null;
@@ -326,9 +318,7 @@ public class Meeting extends ModelClass {
         return topics;
     }
 
-    /**
-     * Resets a to-many relationship, making the next get call to query for a fresh result.
-     */
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
     @Generated(hash = 1067351932)
     public synchronized void resetTopics() {
         topics = null;
@@ -356,9 +346,7 @@ public class Meeting extends ModelClass {
         return participations;
     }
 
-    /**
-     * Resets a to-many relationship, making the next get call to query for a fresh result.
-     */
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
     @Generated(hash = 2135771202)
     public synchronized void resetParticipations() {
         participations = null;
@@ -386,9 +374,7 @@ public class Meeting extends ModelClass {
         return members;
     }
 
-    /**
-     * Resets a to-many relationship, making the next get call to query for a fresh result.
-     */
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
     @Generated(hash = 1358688666)
     public synchronized void resetMembers() {
         members = null;
@@ -438,31 +424,27 @@ public class Meeting extends ModelClass {
     public List<ModerationCard> getModerationCards() {
         if (moderationCards == null) {
             final DaoSession daoSession = this.daoSession;
-
-            if (daoSession == null)
+            if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
-
+            }
             ModerationCardDao targetDao = daoSession.getModerationCardDao();
             List<ModerationCard> moderationCardsNew = targetDao._queryMeeting_ModerationCards(meetingId);
             synchronized (this) {
-                if (moderationCards == null)
+                if (moderationCards == null) {
                     moderationCards = moderationCardsNew;
+                }
             }
         }
         return moderationCards;
     }
 
-    /**
-     * Resets a to-many relationship, making the next get call to query for a fresh result.
-     */
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
     @Generated(hash = 1384012850)
     public synchronized void resetModerationCards() {
         moderationCards = null;
     }
 
-    /**
-     * called by internal mechanisms, do not call yourself.
-     */
+    /** called by internal mechanisms, do not call yourself. */
     @Generated(hash = 1584316095)
     public void __setDaoSession(DaoSession daoSession) {
         this.daoSession = daoSession;

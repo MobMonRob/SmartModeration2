@@ -37,8 +37,7 @@ public class ConsensusLevel extends ModelClass {
     private transient ConsensusLevelDao myDao;
 
     @Generated(hash = 675369423)
-    public ConsensusLevel(Long consensusLevelId, String name, String description,
-            int number, int color, long settingsId) {
+    public ConsensusLevel(Long consensusLevelId, String name, String description, int number, int color, long settingsId) {
         this.consensusLevelId = consensusLevelId;
         this.name = name;
         this.description = description;
@@ -107,8 +106,7 @@ public class ConsensusLevel extends ModelClass {
     @Generated(hash = 976034199)
     public GroupSettings getGroupSettings() {
         long __key = this.settingsId;
-        if (groupSettings__resolvedKey == null
-                || !groupSettings__resolvedKey.equals(__key)) {
+        if (groupSettings__resolvedKey == null || !groupSettings__resolvedKey.equals(__key)) {
             final DaoSession daoSession = this.daoSession;
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
@@ -127,8 +125,7 @@ public class ConsensusLevel extends ModelClass {
     @Generated(hash = 1186862619)
     public void setGroupSettings(@NotNull GroupSettings groupSettings) {
         if (groupSettings == null) {
-            throw new DaoException(
-                    "To-one property 'settingsId' has not-null constraint; cannot set to-one to null");
+            throw new DaoException("To-one property 'settingsId' has not-null constraint; cannot set to-one to null");
         }
         synchronized (this) {
             this.groupSettings = groupSettings;
@@ -149,8 +146,7 @@ public class ConsensusLevel extends ModelClass {
                 throw new DaoException("Entity is detached from DAO context");
             }
             VoiceDao targetDao = daoSession.getVoiceDao();
-            List<Voice> voicesNew = targetDao
-                    ._queryConsensusLevel_Voices(consensusLevelId);
+            List<Voice> voicesNew = targetDao._queryConsensusLevel_Voices(consensusLevelId);
             synchronized (this) {
                 if (voices == null) {
                     voices = voicesNew;
