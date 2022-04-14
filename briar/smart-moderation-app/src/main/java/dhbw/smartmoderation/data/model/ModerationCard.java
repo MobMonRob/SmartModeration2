@@ -16,6 +16,7 @@ public class ModerationCard extends ModelClass{
     @Id
     private Long cardId;
     private String content;
+    private String author;
     private int backgroundColor;
     private int fontColor;
 
@@ -32,11 +33,12 @@ public class ModerationCard extends ModelClass{
     @Generated(hash = 1311574920)
     private transient Long meeting__resolvedKey;
 
-    @Generated(hash = 1755335378)
-    public ModerationCard(Long cardId, String content, int backgroundColor, int fontColor,
-            long meetingId) {
+    @Generated(hash = 1053031392)
+    public ModerationCard(Long cardId, String content, String author, int backgroundColor,
+            int fontColor, long meetingId) {
         this.cardId = cardId;
         this.content = content;
+        this.author = author;
         this.backgroundColor = backgroundColor;
         this.fontColor = fontColor;
         this.meetingId = meetingId;
@@ -74,6 +76,12 @@ public class ModerationCard extends ModelClass{
     }
     public void setMeetingId(long meetingId) {
         this.meetingId = meetingId;
+    }
+    public String getAuthor() {
+        return this.author;
+    }
+    public void setAuthor(String author) {
+        this.author = author;
     }
     /** To-one relationship, resolved on first access. */
     @Generated(hash = 283313835)

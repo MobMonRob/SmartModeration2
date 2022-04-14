@@ -8,7 +8,6 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.SmartModerationApplicationImpl;
 import dhbw.smartmoderation.data.model.ModerationCard;
@@ -20,9 +19,10 @@ import petrov.kristiyan.colorpicker.ColorPicker;
 
 public class EditModerationCard{
     private long cardId;
-    private int cardColor;
-    private int fontColor;
+    private String cardAuthor;
     private String moderationCardContent;
+    private int backgroundColor;
+    private int fontColor;
     private AlertDialog alertDialog;
     private EditText moderationCardContentHolder;
     private SurfaceView cardColorViewer;
@@ -39,7 +39,7 @@ public class EditModerationCard{
         colorPicker.setOnFastChooseColorListener(new ColorPicker.OnFastChooseColorListener() {
             @Override
             public void setOnFastChooseColorListener(int position, int color) {
-                cardColor = color;
+                backgroundColor = color;
                 cardColorViewer.setBackgroundColor(color);
                 colorPicker.dismissDialog();
             }
@@ -57,7 +57,7 @@ public class EditModerationCard{
     private final View.OnClickListener saveModerationCardClickListener = v -> {
         try {
             moderationCardContent = moderationCardContentHolder.getText().toString();
-            ModerationCard moderationCard = controller.editModerationCard(moderationCardContent, cardColor, fontColor, cardId);
+            ModerationCard moderationCard = controller.editModerationCard(moderationCardContent, cardAuthor, backgroundColor, fontColor, cardId);
             moderationCardsFragment.onResume();
             if(client != null && client.isRunning()) client.updateModerationCard(moderationCard);
         } catch (ModerationCardNotFoundException | CantEditModerationCardException e) {
@@ -79,10 +79,11 @@ public class EditModerationCard{
     };
 
     public EditModerationCard(ModerationCard moderationCard, ModerationCardsFragment moderationCardsFragment) {
-        cardColor = moderationCard.getBackgroundColor();
+        backgroundColor = moderationCard.getBackgroundColor();
         fontColor = moderationCard.getFontColor();
         moderationCardContent = moderationCard.getContent();
         cardId = moderationCard.getCardId();
+        cardAuthor = moderationCard.getAuthor();
         long meetingId = moderationCard.getMeetingId();
         controller = new ModerationCardsController(meetingId);
         client = app.getClient();

@@ -115,7 +115,6 @@ public class ListOfSpeakersController extends SmartModerationController {
     public boolean isLocalAuthorModerator() {
 
         Group group = getMeeting().getGroup();
-
         Long authorId =  connectionService.getLocalAuthorId();
         Member member = group.getMember(authorId);
 
