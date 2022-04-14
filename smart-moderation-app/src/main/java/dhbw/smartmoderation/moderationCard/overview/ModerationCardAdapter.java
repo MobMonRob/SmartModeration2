@@ -16,7 +16,7 @@ import java.util.Collection;
 
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.data.model.ModerationCard;
-import dhbw.smartmoderation.moderationCard.detail.EditModerationCard;
+import dhbw.smartmoderation.moderationCard.detail.DetailModerationCard;
 
 public class ModerationCardAdapter extends RecyclerView.Adapter<ModerationCardAdapter.ModerationCardViewHolder>{
     private final Context context;
@@ -26,8 +26,8 @@ public class ModerationCardAdapter extends RecyclerView.Adapter<ModerationCardAd
     private final View.OnClickListener onClickListener = view -> {
         int position = this.recyclerView.getChildLayoutPosition(view);
         ModerationCard moderationCard = this.moderationCards.get(position);
-        EditModerationCard editModerationCardView = new EditModerationCard(moderationCard, FragmentManager.findFragment(view));
-        editModerationCardView.show();
+        DetailModerationCard detailModerationCardView = new DetailModerationCard(moderationCard, FragmentManager.findFragment(view));
+        detailModerationCardView.show();
 
     };
 

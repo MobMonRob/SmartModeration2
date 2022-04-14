@@ -142,7 +142,7 @@ public interface DataService {
 
     void mergeModerationCard(ModerationCard moderationCard);
 
-	void deleteModerationCard(ModerationCard moderationCard);
+	void deleteModerationCard(Long cardId);
 
 	ModerationCard getModerationCard(Long cardId) throws ModerationCardNotFoundException;
 }
