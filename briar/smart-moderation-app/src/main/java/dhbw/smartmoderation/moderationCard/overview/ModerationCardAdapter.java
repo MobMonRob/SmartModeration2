@@ -1,5 +1,6 @@
-package dhbw.smartmoderation.moderationCard;
+package dhbw.smartmoderation.moderationCard.overview;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,13 +16,14 @@ import java.util.Collection;
 
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.data.model.ModerationCard;
+import dhbw.smartmoderation.moderationCard.detail.EditModerationCard;
 
 public class ModerationCardAdapter extends RecyclerView.Adapter<ModerationCardAdapter.ModerationCardViewHolder>{
-    private Context context;
-    private ArrayList<ModerationCard> moderationCards = new ArrayList<ModerationCard>();
+    private final Context context;
+    private final ArrayList<ModerationCard> moderationCards = new ArrayList<>();
     private RecyclerView recyclerView;
 
-    private View.OnClickListener onClickListener = view -> {
+    private final View.OnClickListener onClickListener = view -> {
         int position = this.recyclerView.getChildLayoutPosition(view);
         ModerationCard moderationCard = this.moderationCards.get(position);
         EditModerationCard editModerationCardView = new EditModerationCard(moderationCard, FragmentManager.findFragment(view));
@@ -33,6 +35,7 @@ public class ModerationCardAdapter extends RecyclerView.Adapter<ModerationCardAd
         this.context = context;
         updateModerationCards(moderationCards);
     }
+    @SuppressLint("NotifyDataSetChanged")
     public void updateModerationCards(Collection<ModerationCard> moderationCards){
         this.moderationCards.clear();
         this.moderationCards.addAll(moderationCards);
@@ -40,7 +43,7 @@ public class ModerationCardAdapter extends RecyclerView.Adapter<ModerationCardAd
     }
 
     @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
 
         this.recyclerView = recyclerView;
     }
@@ -48,6 +51,7 @@ public class ModerationCardAdapter extends RecyclerView.Adapter<ModerationCardAd
     @NonNull
     @Override
     public ModerationCardAdapter.ModerationCardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        @SuppressLint("InflateParams")
         View cardView = LayoutInflater.from(context).inflate(R.layout.moderationcardlistitem, null);
         cardView.setOnClickListener(onClickListener);
         return new ModerationCardViewHolder(cardView);

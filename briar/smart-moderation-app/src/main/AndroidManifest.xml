@@ -110,7 +110,7 @@
         </activity>
 
         <activity
-            android:name=".moderationCard.CreateModerationCard"
+            android:name=".moderationCard.create.CreateModerationCard"
             android:screenOrientation="fullSensor"
             tools:ignore="Instantiatable">
         </activity >

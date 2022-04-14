@@ -1,4 +1,4 @@
-package dhbw.smartmoderation.moderationCard;
+package dhbw.smartmoderation.moderationCard.overview;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,15 +16,13 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.meeting.detail.BaseActivity;
+import dhbw.smartmoderation.moderationCard.DesktopLoginQRScanner;
+import dhbw.smartmoderation.moderationCard.create.CreateModerationCard;
 
 public class ModerationCardsFragment extends Fragment {
-    private View view;
     private ModerationCardsController controller;
-    private FloatingActionButton addButton;
-    private FloatingActionButton loginButton;
     private long meetingId;
     private ModerationCardAdapter moderationCardAdapter;
-    private RecyclerView moderationCardsRecyclerView;
 
     public final View.OnClickListener addButtonClickListener = v -> {
         CreateModerationCard createModerationCard = new CreateModerationCard(this);
@@ -41,23 +39,23 @@ public class ModerationCardsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        this.view = inflater.inflate(R.layout.fragment_moderation_cards, container, false);
+        View view = inflater.inflate(R.layout.fragment_moderation_cards, container, false);
         Intent intent = getActivity().getIntent();
         Bundle extra = intent.getExtras();
         this.meetingId = extra.getLong("meetingId");
         controller = new ModerationCardsController(meetingId);
         getActivity().setTitle(getString(R.string.moderationCardTitle));
-        addButton = this.view.findViewById(R.id.floatingActionButton);
-        loginButton = this.view.findViewById(R.id.floatingActionButtonQRCode);
-        this.addButton.setOnClickListener(addButtonClickListener);
-        this.loginButton.setOnClickListener(loginButtonClickListener);
-        this.moderationCardsRecyclerView = this.view.findViewById(R.id.moderationCardList);
+        FloatingActionButton addButton = view.findViewById(R.id.floatingActionButton);
+        FloatingActionButton loginButton = view.findViewById(R.id.floatingActionButtonQRCode);
+        addButton.setOnClickListener(addButtonClickListener);
+        loginButton.setOnClickListener(loginButtonClickListener);
+        RecyclerView moderationCardsRecyclerView = view.findViewById(R.id.moderationCardList);
         this.moderationCardAdapter = new ModerationCardAdapter(getActivity(), controller.getAllModerationCards());
-        this.moderationCardsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        this.moderationCardsRecyclerView.setAdapter(moderationCardAdapter);
+        moderationCardsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        moderationCardsRecyclerView.setAdapter(moderationCardAdapter);
         ((BaseActivity)getActivity()).getPullToRefresh().setOnRefreshListener(this::onResume);
 
-        return this.view;
+        return view;
     }
     @Override
     public void onResume() {

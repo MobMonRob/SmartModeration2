@@ -1,4 +1,4 @@
-package dhbw.smartmoderation.moderationCard;
+package dhbw.smartmoderation.moderationCard.detail;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -14,6 +14,8 @@ import dhbw.smartmoderation.data.model.ModerationCard;
 import dhbw.smartmoderation.exceptions.CantEditModerationCardException;
 import dhbw.smartmoderation.exceptions.CouldNotDeleteModerationCard;
 import dhbw.smartmoderation.exceptions.ModerationCardNotFoundException;
+import dhbw.smartmoderation.moderationCard.ModerationCardColorImporter;
+import dhbw.smartmoderation.moderationCard.overview.ModerationCardsFragment;
 import dhbw.smartmoderation.util.Client;
 import petrov.kristiyan.colorpicker.ColorPicker;
 
@@ -26,11 +28,8 @@ public class EditModerationCard{
     private AlertDialog alertDialog;
     private EditText moderationCardContentHolder;
     private SurfaceView cardColorViewer;
-    private ModerationCardsController controller;
-    private Client client;
+    private EditModerationCardController controller;
     private ModerationCardsFragment moderationCardsFragment;
-    SmartModerationApplicationImpl app = (SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp();
-
     private final View.OnClickListener pickColorButtonClickListener = v -> {
         ColorPicker colorPicker = new ColorPicker((Activity) v.getContext());
         ModerationCardColorImporter cardColorImporter = ModerationCardColorImporter.getInstance();
@@ -59,6 +58,7 @@ public class EditModerationCard{
             moderationCardContent = moderationCardContentHolder.getText().toString();
             ModerationCard moderationCard = controller.editModerationCard(moderationCardContent, cardAuthor, backgroundColor, fontColor, cardId);
             moderationCardsFragment.onResume();
+            Client client = ((SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp()).getClient();
             if(client != null && client.isRunning()) client.updateModerationCard(moderationCard);
         } catch (ModerationCardNotFoundException | CantEditModerationCardException e) {
             e.printStackTrace();
@@ -71,6 +71,7 @@ public class EditModerationCard{
         try {
             controller.deleteModerationCard(cardId);
             moderationCardsFragment.onResume();
+            Client client = ((SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp()).getClient();
             if(client != null && client.isRunning()) client.deleteModerationCard(cardId);
         } catch (CouldNotDeleteModerationCard | ModerationCardNotFoundException couldNotDeleteModerationCard) {
             couldNotDeleteModerationCard.printStackTrace();
@@ -85,8 +86,7 @@ public class EditModerationCard{
         cardId = moderationCard.getCardId();
         cardAuthor = moderationCard.getAuthor();
         long meetingId = moderationCard.getMeetingId();
-        controller = new ModerationCardsController(meetingId);
-        client = app.getClient();
+        controller = new EditModerationCardController(meetingId);
         this.moderationCardsFragment = moderationCardsFragment;
         initializePopup(moderationCardsFragment.getContext());
         fillInModerationCardData(moderationCard);
