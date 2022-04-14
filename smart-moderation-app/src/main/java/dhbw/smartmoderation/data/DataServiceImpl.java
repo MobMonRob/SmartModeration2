@@ -1109,7 +1109,7 @@ public class DataServiceImpl implements DataService {
     public void mergeModerationCard(ModerationCard moderationCard) {
         if (moderationCard.isDeleted()) {
 
-            deleteModerationCard(moderationCard);
+            deleteModerationCard(moderationCard.getCardId());
             return;
         }
 
@@ -1133,14 +1133,13 @@ public class DataServiceImpl implements DataService {
     }
 
     @Override
-    public void deleteModerationCard(ModerationCard moderationCard) {
-        moderationCardDao.deleteInTx(moderationCard);
+    public void deleteModerationCard(Long cardId) {
+        moderationCardDao.deleteByKey(cardId);
     }
 
     @Override
     public ModerationCard getModerationCard(Long cardId) throws ModerationCardNotFoundException {
         if (moderationCardDao.load(cardId) != null) {
-
             moderationCardDao.detach(moderationCardDao.load(cardId));
         }
 

@@ -64,7 +64,7 @@ public class CreateModerationCardController extends SmartModerationController {
             synchronizationService.push(getPrivateGroup(), data);
 
         } catch (GroupNotFoundException exception) {
-            dataService.deleteModerationCard(moderationCard);
+            dataService.deleteModerationCard(moderationCard.getCardId());
             throw new CantCreateModerationCardException();
         }
         return moderationCard;
