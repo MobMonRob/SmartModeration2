@@ -1,15 +1,13 @@
 package dhbw.smartmoderation.group.settings;
 
-import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.PaintDrawable;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.util.ExceptionHandlingActivity;
 

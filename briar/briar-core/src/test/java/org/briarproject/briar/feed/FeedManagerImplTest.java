@@ -3,6 +3,7 @@ package org.briarproject.briar.feed;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndEntryImpl;
 
+import org.briarproject.bramble.api.WeakSingletonProvider;
 import org.briarproject.bramble.api.client.ClientHelper;
 import org.briarproject.bramble.api.client.ContactGroupFactory;
 import org.briarproject.bramble.api.data.BdfDictionary;
@@ -17,6 +18,7 @@ import org.briarproject.bramble.api.sync.Message;
 import org.briarproject.bramble.api.system.Clock;
 import org.briarproject.bramble.api.system.TaskScheduler;
 import org.briarproject.bramble.test.BrambleMockTestCase;
+import org.briarproject.bramble.test.DbExpectations;
 import org.briarproject.bramble.test.ImmediateExecutor;
 import org.briarproject.briar.api.blog.Blog;
 import org.briarproject.briar.api.blog.BlogManager;
@@ -32,10 +34,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executor;
 
+import javax.annotation.Nonnull;
 import javax.net.SocketFactory;
 
 import okhttp3.Dns;
+import okhttp3.OkHttpClient;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.briarproject.bramble.test.TestUtils.getGroup;
 import static org.briarproject.bramble.test.TestUtils.getLocalAuthor;
 import static org.briarproject.bramble.test.TestUtils.getMessage;
@@ -58,6 +63,19 @@ public class FeedManagerImplTest extends BrambleMockTestCase {
 	private final Clock clock = context.mock(Clock.class);
 	private final Dns noDnsLookups = context.mock(Dns.class);
 
+	private final OkHttpClient client = new OkHttpClient.Builder()
+			.socketFactory(SocketFactory.getDefault())
+			.dns(noDnsLookups)
+			.connectTimeout(60_000, MILLISECONDS)
+			.build();
+	private final WeakSingletonProvider<OkHttpClient> httpClientProvider =
+			new WeakSingletonProvider<OkHttpClient>() {
+				@Override
+				@Nonnull
+				public OkHttpClient createInstance() {
+					return client;
+				}
+			};
 	private final Group localGroup = getGroup(CLIENT_ID, MAJOR_VERSION);
 	private final GroupId localGroupId = localGroup.getId();
 	private final Group blogGroup =
@@ -72,7 +90,7 @@ public class FeedManagerImplTest extends BrambleMockTestCase {
 	private final FeedManagerImpl feedManager =
 			new FeedManagerImpl(scheduler, ioExecutor, db, contactGroupFactory,
 					clientHelper, blogManager, blogPostFactory, feedFactory,
-					SocketFactory.getDefault(), clock, noDnsLookups);
+					httpClientProvider, clock);
 
 	@Test
 	public void testFetchFeedsReturnsEarlyIfTorIsNotActive() {
@@ -145,17 +163,14 @@ public class FeedManagerImplTest extends BrambleMockTestCase {
 		BdfDictionary feedsDict =
 				BdfDictionary.of(new BdfEntry(KEY_FEEDS, feedList));
 		expectGetLocalGroup();
-		context.checking(new Expectations() {{
-			oneOf(db).startTransaction(true);
-			will(returnValue(txn));
+		context.checking(new DbExpectations() {{
+			oneOf(db).transactionWithResult(with(true), withDbCallable(txn));
 			oneOf(clientHelper).getGroupMetadataAsDictionary(txn, localGroupId);
 			will(returnValue(feedsDict));
 			if (feedList.size() == 1) {
 				oneOf(feedFactory).createFeed(feedDict);
 				will(returnValue(feed));
 			}
-			oneOf(db).commitTransaction(txn);
-			oneOf(db).endTransaction(txn);
 		}});
 	}
 

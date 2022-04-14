@@ -25,11 +25,9 @@ import java.util.Collections;
 import java.util.List;
 
 import dhbw.smartmoderation.R;
-
 import dhbw.smartmoderation.data.model.Group;
 import dhbw.smartmoderation.data.model.Member;
 import dhbw.smartmoderation.data.model.Role;
-import dhbw.smartmoderation.exceptions.GroupNotFoundException;
 import dhbw.smartmoderation.uiUtils.ItemTouchHelperAdapter;
 import dhbw.smartmoderation.uiUtils.ItemTouchHelperViewHolder;
 import dhbw.smartmoderation.uiUtils.OnStartDragListener;

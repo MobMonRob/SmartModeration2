@@ -1,13 +1,9 @@
 package dhbw.smartmoderation.group.detail;
 
 import org.briarproject.bramble.api.contact.Contact;
-import org.briarproject.bramble.api.identity.Author;
-import org.briarproject.bramble.api.identity.LocalAuthor;
-import org.briarproject.bramble.api.sync.GroupId;
 import org.briarproject.briar.api.privategroup.PrivateGroup;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 
 import dhbw.smartmoderation.controller.SmartModerationController;

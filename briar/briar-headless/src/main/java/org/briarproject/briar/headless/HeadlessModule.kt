@@ -7,7 +7,11 @@ import org.briarproject.bramble.account.AccountModule
 import org.briarproject.bramble.api.FeatureFlags
 import org.briarproject.bramble.api.db.DatabaseConfig
 import org.briarproject.bramble.api.plugin.PluginConfig
+import org.briarproject.bramble.api.plugin.TorConstants.DEFAULT_CONTROL_PORT
+import org.briarproject.bramble.api.plugin.TorConstants.DEFAULT_SOCKS_PORT
+import org.briarproject.bramble.api.plugin.TorControlPort
 import org.briarproject.bramble.api.plugin.TorDirectory
+import org.briarproject.bramble.api.plugin.TorSocksPort
 import org.briarproject.bramble.api.plugin.TransportId
 import org.briarproject.bramble.api.plugin.duplex.DuplexPluginFactory
 import org.briarproject.bramble.api.plugin.simplex.SimplexPluginFactory
@@ -17,6 +21,7 @@ import org.briarproject.bramble.network.JavaNetworkModule
 import org.briarproject.bramble.plugin.tor.CircumventionModule
 import org.briarproject.bramble.plugin.tor.UnixTorPluginFactory
 import org.briarproject.bramble.socks.SocksModule
+import org.briarproject.bramble.system.ClockModule
 import org.briarproject.bramble.system.DefaultTaskSchedulerModule
 import org.briarproject.bramble.system.DefaultWakefulIoExecutorModule
 import org.briarproject.bramble.system.DesktopSecureRandomModule
@@ -36,6 +41,7 @@ import javax.inject.Singleton
     includes = [
         AccountModule::class,
         CircumventionModule::class,
+        ClockModule::class,
         DefaultBatteryManagerModule::class,
         DefaultEventExecutorModule::class,
         DefaultTaskSchedulerModule::class,
@@ -72,6 +78,15 @@ internal class HeadlessModule(private val appDir: File) {
     }
 
     @Provides
+    @TorSocksPort
+    internal fun provideTorSocksPort(): Int = DEFAULT_SOCKS_PORT
+
+    @Provides
+    @TorControlPort
+    internal fun provideTorControlPort(): Int = DEFAULT_CONTROL_PORT
+
+    @Provides
+    @Singleton
     internal fun providePluginConfig(tor: UnixTorPluginFactory): PluginConfig {
         val duplex: List<DuplexPluginFactory> =
             if (isLinux() || isMac()) listOf(tor) else emptyList()
@@ -91,5 +106,10 @@ internal class HeadlessModule(private val appDir: File) {
     internal fun provideFeatureFlags() = object : FeatureFlags {
         override fun shouldEnableImageAttachments() = false
         override fun shouldEnableProfilePictures() = false
+        override fun shouldEnableDisappearingMessages() = false
+        override fun shouldEnableMailbox() = false
+        override fun shouldEnablePrivateGroupsInCore() = false
+        override fun shouldEnableForumsInCore() = true
+        override fun shouldEnableBlogsInCore() = true
     }
 }

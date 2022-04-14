@@ -5,7 +5,6 @@ import org.briarproject.briar.api.privategroup.PrivateGroup;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import dhbw.smartmoderation.controller.SmartModerationController;
 import dhbw.smartmoderation.data.model.Attendance;
@@ -15,7 +14,6 @@ import dhbw.smartmoderation.data.model.Member;
 import dhbw.smartmoderation.data.model.MemberGroupRelation;
 import dhbw.smartmoderation.data.model.MemberMeetingRelation;
 import dhbw.smartmoderation.data.model.ModelClass;
-
 import dhbw.smartmoderation.data.model.Poll;
 import dhbw.smartmoderation.data.model.Role;
 import dhbw.smartmoderation.exceptions.CantLinkContactToMember;

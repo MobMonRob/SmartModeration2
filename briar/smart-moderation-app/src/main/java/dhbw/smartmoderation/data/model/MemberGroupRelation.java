@@ -1,11 +1,11 @@
 package dhbw.smartmoderation.data.model;
 
 import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Keep;
 
-import dhbw.smartmoderation.SmartModerationApplication;
-import org.greenrobot.greendao.annotation.Generated;
+import dhbw.smartmoderation.SmartModerationApplicationImpl;
 
 @Entity
 public class MemberGroupRelation {
@@ -19,7 +19,7 @@ public class MemberGroupRelation {
     @Keep
     public MemberGroupRelation() {
 
-        this.relationId = ((SmartModerationApplication)SmartModerationApplication.getApp()).getUniqueId();
+        this.relationId = ((SmartModerationApplicationImpl)SmartModerationApplicationImpl.getApp()).getUniqueId();
     }
 
     @Generated(hash = 785262835)

@@ -13,7 +13,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
-import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,12 +20,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.data.model.Meeting;
-import dhbw.smartmoderation.exceptions.GroupNotFoundException;
 import dhbw.smartmoderation.uiUtils.ItemTouchHelperAdapter;
 import dhbw.smartmoderation.uiUtils.ItemTouchHelperViewHolder;
 import dhbw.smartmoderation.util.Util;

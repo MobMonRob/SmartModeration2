@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.HashMap;
 
 import dhbw.smartmoderation.R;
-import dhbw.smartmoderation.SmartModerationApplication;
+import dhbw.smartmoderation.SmartModerationApplicationImpl;
 
 public class ModerationCardColorImporter {
     private static ModerationCardColorImporter moderationCardColorImporter;
@@ -25,7 +25,7 @@ public class ModerationCardColorImporter {
     }
 
     public ModerationCardColorImporter() {
-        Context context = SmartModerationApplication.getApp().getApplicationContext();
+        Context context = SmartModerationApplicationImpl.getApp().getApplicationContext();
         textColorOfBackground = new HashMap<>();
         ArrayList<String> backgroundColorSet = new ArrayList<>();
         Collections.addAll(backgroundColorSet,  context.getResources().getStringArray(R.array.moderationCardBackgroundColorset));

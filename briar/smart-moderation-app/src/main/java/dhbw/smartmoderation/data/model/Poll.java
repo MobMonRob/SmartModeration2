@@ -1,18 +1,19 @@
 package dhbw.smartmoderation.data.model;
 
+import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Keep;
+import org.greenrobot.greendao.annotation.NotNull;
 import org.greenrobot.greendao.annotation.ToMany;
 import org.greenrobot.greendao.annotation.ToOne;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import dhbw.smartmoderation.SmartModerationApplication;
-import org.greenrobot.greendao.annotation.Generated;
-import org.greenrobot.greendao.DaoException;
-import org.greenrobot.greendao.annotation.NotNull;
+
+import dhbw.smartmoderation.SmartModerationApplicationImpl;
 
 @Entity
 public class Poll extends ModelClass {
@@ -44,7 +45,7 @@ public class Poll extends ModelClass {
     @Keep
     public Poll() {
 
-        this.pollId = ((SmartModerationApplication)SmartModerationApplication.getApp()).getUniqueId();
+        this.pollId = ((SmartModerationApplicationImpl)SmartModerationApplicationImpl.getApp()).getUniqueId();
     }
 
     @Generated(hash = 1231661361)

@@ -3,8 +3,6 @@ package dhbw.smartmoderation.connection.synchronization;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import dhbw.smartmoderation.connection.synchronization.SynchronizableDataType;
-
 public class PullEvent {
     private Collection<SynchronizableDataType> SynchronizableDataTypeCollection = new ArrayList<SynchronizableDataType>();
 

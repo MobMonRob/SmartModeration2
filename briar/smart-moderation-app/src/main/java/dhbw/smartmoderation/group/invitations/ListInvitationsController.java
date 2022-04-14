@@ -1,7 +1,5 @@
 package dhbw.smartmoderation.group.invitations;
 
-import android.util.Log;
-
 import org.briarproject.bramble.api.identity.LocalAuthor;
 import org.briarproject.briar.api.privategroup.PrivateGroup;
 
@@ -13,7 +11,6 @@ import dhbw.smartmoderation.connection.GroupInvitationVisitor;
 import dhbw.smartmoderation.connection.Invitation;
 import dhbw.smartmoderation.controller.SmartModerationController;
 import dhbw.smartmoderation.data.model.Attendance;
-import dhbw.smartmoderation.data.model.Contact;
 import dhbw.smartmoderation.data.model.Group;
 import dhbw.smartmoderation.data.model.Meeting;
 import dhbw.smartmoderation.data.model.Member;

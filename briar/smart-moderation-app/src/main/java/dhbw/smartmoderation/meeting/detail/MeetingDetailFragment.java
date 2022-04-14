@@ -31,6 +31,7 @@ import java.util.Collection;
 import java.util.List;
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.SmartModerationApplication;
+import dhbw.smartmoderation.SmartModerationApplicationImpl;
 import dhbw.smartmoderation.data.model.Attendance;
 import dhbw.smartmoderation.data.model.Meeting;
 import dhbw.smartmoderation.data.model.Member;
@@ -387,7 +388,7 @@ public class MeetingDetailFragment extends Fragment {
                 Member currentMember = memberViewHolder.getMember();
 
                 underLayButtons.add(new UnderLayButton(getString(R.string.delete), 0,
-                        ResourcesCompat.getColor(SmartModerationApplication.getApp().getApplicationContext().getResources(), R.color.default_red, null),
+                        ResourcesCompat.getColor(SmartModerationApplicationImpl.getApp().getApplicationContext().getResources(), R.color.default_red, null),
                         (UnderLayButtonClickListener) position -> {
 
                             MeetingDetailAsyncTask meetingDetailAsyncTask = new MeetingDetailAsyncTask("deleteMember");
@@ -398,7 +399,7 @@ public class MeetingDetailFragment extends Fragment {
                 if(currentMember.getAttendance(meeting) == Attendance.PRESENT) {
 
                     underLayButtons.add(new UnderLayButton(getString(R.string.absent), 0,
-                            ResourcesCompat.getColor(SmartModerationApplication.getApp().getApplicationContext().getResources(), R.color.default_blue, null),
+                            ResourcesCompat.getColor(SmartModerationApplicationImpl.getApp().getApplicationContext().getResources(), R.color.default_blue, null),
                             (UnderLayButtonClickListener) position -> {
 
                                 MeetingDetailAsyncTask meetingDetailAsyncTask = new MeetingDetailAsyncTask("changeMemberStatus");
@@ -407,7 +408,7 @@ public class MeetingDetailFragment extends Fragment {
                             }));
 
                     underLayButtons.add(new UnderLayButton(getString(R.string.excused), 0,
-                            ResourcesCompat.getColor(SmartModerationApplication.getApp().getApplicationContext().getResources(), R.color.colorPrimaryDark, null),
+                            ResourcesCompat.getColor(SmartModerationApplicationImpl.getApp().getApplicationContext().getResources(), R.color.colorPrimaryDark, null),
                             (UnderLayButtonClickListener) position -> {
 
                                 MeetingDetailAsyncTask meetingDetailAsyncTask = new MeetingDetailAsyncTask("changeMemberStatus");
@@ -419,7 +420,7 @@ public class MeetingDetailFragment extends Fragment {
                 else if (currentMember.getAttendance(meeting) == Attendance.EXCUSED) {
 
                     underLayButtons.add(new UnderLayButton(getString(R.string.absent), 0,
-                            ResourcesCompat.getColor(SmartModerationApplication.getApp().getApplicationContext().getResources(), R.color.default_blue, null),
+                            ResourcesCompat.getColor(SmartModerationApplicationImpl.getApp().getApplicationContext().getResources(), R.color.default_blue, null),
                             (UnderLayButtonClickListener) position -> {
 
                                 MeetingDetailAsyncTask meetingDetailAsyncTask = new MeetingDetailAsyncTask("changeMemberStatus");
@@ -428,7 +429,7 @@ public class MeetingDetailFragment extends Fragment {
                             }));
 
                     underLayButtons.add(new UnderLayButton(getString(R.string.present), 0,
-                            ResourcesCompat.getColor(SmartModerationApplication.getApp().getApplicationContext().getResources(), R.color.default_green, null),
+                            ResourcesCompat.getColor(SmartModerationApplicationImpl.getApp().getApplicationContext().getResources(), R.color.default_green, null),
                             (UnderLayButtonClickListener) position -> {
 
                                 MeetingDetailAsyncTask meetingDetailAsyncTask = new MeetingDetailAsyncTask("changeMemberStatus");
@@ -440,7 +441,7 @@ public class MeetingDetailFragment extends Fragment {
                 else {
 
                     underLayButtons.add(new UnderLayButton(getString(R.string.excused), 0,
-                            ResourcesCompat.getColor(SmartModerationApplication.getApp().getApplicationContext().getResources(), R.color.colorPrimaryDark, null),
+                            ResourcesCompat.getColor(SmartModerationApplicationImpl.getApp().getApplicationContext().getResources(), R.color.colorPrimaryDark, null),
                             (UnderLayButtonClickListener) position -> {
 
                                 MeetingDetailAsyncTask meetingDetailAsyncTask = new MeetingDetailAsyncTask("changeMemberStatus");
@@ -449,7 +450,7 @@ public class MeetingDetailFragment extends Fragment {
                             }));
 
                     underLayButtons.add(new UnderLayButton(getString(R.string.present), 0,
-                            ResourcesCompat.getColor(SmartModerationApplication.getApp().getApplicationContext().getResources(), R.color.default_green, null),
+                            ResourcesCompat.getColor(SmartModerationApplicationImpl.getApp().getApplicationContext().getResources(), R.color.default_green, null),
                             (UnderLayButtonClickListener) position -> {
 
                                 MeetingDetailAsyncTask meetingDetailAsyncTask = new MeetingDetailAsyncTask("changeMemberStatus");
@@ -473,7 +474,7 @@ public class MeetingDetailFragment extends Fragment {
                 Topic currentTopic = topicViewHolder.getTopic();
 
                 underLayButtons.add(new UnderLayButton(getString(R.string.delete), 0,
-                        ResourcesCompat.getColor(SmartModerationApplication.getApp().getApplicationContext().getResources(), R.color.default_red, null),
+                        ResourcesCompat.getColor(SmartModerationApplicationImpl.getApp().getApplicationContext().getResources(), R.color.default_red, null),
                         (UnderLayButtonClickListener) position -> {
 
                             MeetingDetailAsyncTask meetingDetailAsyncTask = new MeetingDetailAsyncTask("deleteTopic");
@@ -484,7 +485,7 @@ public class MeetingDetailFragment extends Fragment {
                 if(currentTopic.getTopicStatus() == TopicStatus.UPCOMING) {
 
                     underLayButtons.add(new UnderLayButton(getString(R.string.running), 0,
-                            ResourcesCompat.getColor(SmartModerationApplication.getApp().getApplicationContext().getResources(), R.color.colorPrimaryDark, null),
+                            ResourcesCompat.getColor(SmartModerationApplicationImpl.getApp().getApplicationContext().getResources(), R.color.colorPrimaryDark, null),
                             (UnderLayButtonClickListener) position -> {
 
                                 MeetingDetailAsyncTask meetingDetailAsyncTask = new MeetingDetailAsyncTask("changeTopicStatus");
@@ -496,7 +497,7 @@ public class MeetingDetailFragment extends Fragment {
                 else if(currentTopic.getTopicStatus() == TopicStatus.RUNNING) {
 
                     underLayButtons.add(new UnderLayButton(getString(R.string.finished), 0,
-                            ResourcesCompat.getColor(SmartModerationApplication.getApp().getApplicationContext().getResources(), R.color.default_green, null),
+                            ResourcesCompat.getColor(SmartModerationApplicationImpl.getApp().getApplicationContext().getResources(), R.color.default_green, null),
                             (UnderLayButtonClickListener) position -> {
 
                                 MeetingDetailAsyncTask meetingDetailAsyncTask = new MeetingDetailAsyncTask("changeTopicStatus");

@@ -1,9 +1,12 @@
 package dhbw.smartmoderation.data.model;
 
+import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.JoinEntity;
 import org.greenrobot.greendao.annotation.Keep;
+import org.greenrobot.greendao.annotation.NotNull;
 import org.greenrobot.greendao.annotation.ToMany;
 import org.greenrobot.greendao.annotation.ToOne;
 
@@ -13,10 +16,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import dhbw.smartmoderation.SmartModerationApplication;
-import org.greenrobot.greendao.annotation.Generated;
-import org.greenrobot.greendao.DaoException;
-import org.greenrobot.greendao.annotation.NotNull;
+
+import dhbw.smartmoderation.SmartModerationApplicationImpl;
 
 @Entity
 public class Meeting extends ModelClass {
@@ -61,7 +62,7 @@ public class Meeting extends ModelClass {
 	@Keep
 	public Meeting() {
 
-		this.meetingId = ((SmartModerationApplication)SmartModerationApplication.getApp()).getUniqueId();
+		this.meetingId = ((SmartModerationApplicationImpl)SmartModerationApplicationImpl.getApp()).getUniqueId();
 	}
 
 	@Generated(hash = 1628552253)
@@ -190,7 +191,7 @@ public class Meeting extends ModelClass {
 
 	public MemberMeetingRelation addMember(Member member) {
 
-		DaoSession daoSession = ((SmartModerationApplication)SmartModerationApplication.getApp()).getDaoSession();
+		DaoSession daoSession = ((SmartModerationApplicationImpl)SmartModerationApplicationImpl.getApp()).getDaoSession();
 		MemberMeetingRelationDao memberMeetingRelationDao = daoSession.getMemberMeetingRelationDao();
 
 		for(MemberMeetingRelation memberMeetingRelation : memberMeetingRelationDao.loadAll()) {
@@ -211,7 +212,7 @@ public class Meeting extends ModelClass {
 
 	public MemberMeetingRelation addMember(Member member, Attendance attendance) {
 
-		DaoSession daoSession = ((SmartModerationApplication)SmartModerationApplication.getApp()).getDaoSession();
+		DaoSession daoSession = ((SmartModerationApplicationImpl)SmartModerationApplicationImpl.getApp()).getDaoSession();
 		MemberMeetingRelationDao memberMeetingRelationDao = daoSession.getMemberMeetingRelationDao();
 
 		for(MemberMeetingRelation memberMeetingRelation : memberMeetingRelationDao.loadAll()) {
@@ -232,7 +233,7 @@ public class Meeting extends ModelClass {
 
 	public void removeMember(Member member) {
 
-		DaoSession daoSession = ((SmartModerationApplication)SmartModerationApplication.getApp()).getDaoSession();
+		DaoSession daoSession = ((SmartModerationApplicationImpl)SmartModerationApplicationImpl.getApp()).getDaoSession();
 		MemberMeetingRelationDao memberMeetingRelationDao = daoSession.getMemberMeetingRelationDao();
 
 		for(MemberMeetingRelation memberMeetingRelation : memberMeetingRelationDao.loadAll()) {

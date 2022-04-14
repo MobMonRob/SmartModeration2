@@ -1,4 +1,6 @@
 package dhbw.smartmoderation.util;
+
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -8,9 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.button.MaterialButton;
 
-
 import dhbw.smartmoderation.R;
-import dhbw.smartmoderation.SmartModerationApplication;
+import dhbw.smartmoderation.SmartModerationApplicationImpl;
 import dhbw.smartmoderation.exceptions.SmartModerationException;
 
 public abstract class ExceptionHandlingActivity extends AppCompatActivity {
@@ -19,12 +20,12 @@ public abstract class ExceptionHandlingActivity extends AppCompatActivity {
     private MaterialButton okButton;
     private MaterialButton exceptionActionButton;
 
-    private SmartModerationApplication app;
+    private SmartModerationApplicationImpl app;
 
     @Override
     protected void onResume() {
         super.onResume();
-        app = (SmartModerationApplication) SmartModerationApplication.getApp();
+        app = (SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp();
         app.setCurrentActivity(this);
     }
 
@@ -48,6 +49,7 @@ public abstract class ExceptionHandlingActivity extends AppCompatActivity {
     }
 
 
+    @SuppressLint("InflateParams")
     private AlertDialog defaultExceptionHandling(Exception exception) {
         LayoutInflater inflater = LayoutInflater.from(this);
         exceptionPopup = inflater.inflate(R.layout.popup_exceptions, null);
@@ -63,9 +65,7 @@ public abstract class ExceptionHandlingActivity extends AppCompatActivity {
         okButton = exceptionPopup.findViewById(R.id.okButton);
         exceptionActionButton = exceptionPopup.findViewById(R.id.exceptionActionButton);
 
-        okButton.setOnClickListener(v -> {
-            exceptionAlertDialog.cancel();
-        });
+        okButton.setOnClickListener(v -> exceptionAlertDialog.cancel());
 
         exceptionActionButton.setVisibility(View.GONE);
         exceptionAlertDialog.show();

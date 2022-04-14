@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import dhbw.smartmoderation.SmartModerationApplication;
+import dhbw.smartmoderation.SmartModerationApplicationImpl;
 import dhbw.smartmoderation.data.model.ConsensusLevel;
 import dhbw.smartmoderation.data.model.ConsensusLevelDao;
 import dhbw.smartmoderation.data.model.Contact;
@@ -66,7 +67,7 @@ public class DataServiceImpl implements DataService {
 
     public DataServiceImpl() {
 
-        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(((SmartModerationApplication) SmartModerationApplication.getApp()).getApplicationContext(), "notes-db");
+        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(((SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp()).getApplicationContext(), "notes-db");
         Database db = helper.getWritableDb();
         daoSession = new DaoMaster(db).newSession();
         memberDao = daoSession.getMemberDao();

@@ -108,6 +108,32 @@ public interface ContactManager {
 	String getHandshakeLink() throws DbException;
 
 	/**
+	 * Returns the handshake link that needs to be sent to a contact we want
+	 * to add.
+	 */
+	String getHandshakeLink(Transaction txn) throws DbException;
+
+	/**
+	 * Creates a {@link PendingContact} from the given handshake link and
+	 * alias, adds it to the database and returns it.
+	 *
+	 * @param link The handshake link received from the pending contact
+	 * @param alias The alias the user has given this pending contact
+	 * @throws UnsupportedVersionException If the link uses a format version
+	 * that is not supported
+	 * @throws FormatException If the link is invalid
+	 * @throws GeneralSecurityException If the pending contact's handshake
+	 * public key is invalid
+	 * @throws ContactExistsException If a contact with the same handshake
+	 * public key already exists
+	 * @throws PendingContactExistsException If a pending contact with the same
+	 * handshake public key already exists
+	 */
+	PendingContact addPendingContact(Transaction txn, String link, String alias)
+			throws DbException, FormatException, GeneralSecurityException,
+			ContactExistsException, PendingContactExistsException;
+
+	/**
 	 * Creates a {@link PendingContact} from the given handshake link and
 	 * alias, adds it to the database and returns it.
 	 *
@@ -141,9 +167,22 @@ public interface ContactManager {
 			throws DbException;
 
 	/**
+	 * Returns a list of {@link PendingContact PendingContacts} and their
+	 * {@link PendingContactState states}.
+	 */
+	Collection<Pair<PendingContact, PendingContactState>> getPendingContacts(Transaction txn)
+			throws DbException;
+
+	/**
 	 * Removes a {@link PendingContact}.
 	 */
 	void removePendingContact(PendingContactId p) throws DbException;
+
+	/**
+	 * Removes a {@link PendingContact}.
+	 */
+	void removePendingContact(Transaction txn, PendingContactId p)
+			throws DbException;
 
 	/**
 	 * Returns the contact with the given ID.

@@ -1,9 +1,10 @@
 package dhbw.smartmoderation.meeting.detail;
 
-import org.briarproject.bramble.api.identity.LocalAuthor;
 import org.briarproject.briar.api.privategroup.PrivateGroup;
+
 import java.util.ArrayList;
 import java.util.Collection;
+
 import dhbw.smartmoderation.controller.SmartModerationController;
 import dhbw.smartmoderation.data.model.Attendance;
 import dhbw.smartmoderation.data.model.Group;

@@ -1,14 +1,14 @@
 package dhbw.smartmoderation.data.model;
 
+import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.annotation.Entity;
-import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Keep;
+import org.greenrobot.greendao.annotation.NotNull;
 import org.greenrobot.greendao.annotation.ToOne;
 
-import dhbw.smartmoderation.SmartModerationApplication;
-import org.greenrobot.greendao.DaoException;
-import org.greenrobot.greendao.annotation.NotNull;
+import dhbw.smartmoderation.SmartModerationApplicationImpl;
 
 @Entity
 public class ModerationCard extends ModelClass{
@@ -45,7 +45,7 @@ public class ModerationCard extends ModelClass{
     }
     @Keep
     public ModerationCard() {
-        cardId = ((SmartModerationApplication) SmartModerationApplication.getApp()).getUniqueId();
+        cardId = ((SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp()).getUniqueId();
     }
     public Long getCardId() {
         return this.cardId;

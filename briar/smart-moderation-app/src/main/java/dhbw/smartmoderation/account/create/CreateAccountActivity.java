@@ -12,8 +12,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import dhbw.smartmoderation.R;
-import dhbw.smartmoderation.group.create.CreateGroup;
 import dhbw.smartmoderation.home.HomeActivity;
 import dhbw.smartmoderation.util.Util;
 

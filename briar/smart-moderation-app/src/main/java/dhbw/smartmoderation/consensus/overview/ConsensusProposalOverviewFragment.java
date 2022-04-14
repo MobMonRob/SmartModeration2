@@ -1,15 +1,13 @@
 package dhbw.smartmoderation.consensus.overview;
 
+import static android.content.Context.WIFI_SERVICE;
+
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Application;
-import android.content.Context;
 import android.content.Intent;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.text.format.Formatter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
@@ -26,20 +25,20 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteOrder;
-import java.util.ArrayList;
 import java.util.List;
+
 import dhbw.smartmoderation.R;
-import dhbw.smartmoderation.SmartModerationApplication;
+import dhbw.smartmoderation.SmartModerationApplicationImpl;
 import dhbw.smartmoderation.consensus.create.CreateConsensusProposal;
 import dhbw.smartmoderation.consensus.detail.ConsensusProposalDetail;
 import dhbw.smartmoderation.data.model.Poll;
-import dhbw.smartmoderation.exceptions.PollCantBeCreatedException;
 import dhbw.smartmoderation.exceptions.PollCantBeDeletedException;
 import dhbw.smartmoderation.exceptions.PollCantBeOpenedException;
 import dhbw.smartmoderation.meeting.detail.BaseActivity;
@@ -47,8 +46,6 @@ import dhbw.smartmoderation.uiUtils.SwipeHelper;
 import dhbw.smartmoderation.uiUtils.UnderLayButton;
 import dhbw.smartmoderation.uiUtils.UnderLayButtonClickListener;
 import dhbw.smartmoderation.util.ExceptionHandlingActivity;
-
-import static android.content.Context.WIFI_SERVICE;
 
 public class ConsensusProposalOverviewFragment extends Fragment {
 
@@ -65,7 +62,7 @@ public class ConsensusProposalOverviewFragment extends Fragment {
     private ConsensusProposalOverviewController controller;
     private Long meetingId;
 
-    SmartModerationApplication app =  (SmartModerationApplication) SmartModerationApplication.getApp();
+    SmartModerationApplicationImpl app =  (SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp();
 
     public String getTitle(){
         return getString(R.string.consensusProposalOverviewFragment_title);

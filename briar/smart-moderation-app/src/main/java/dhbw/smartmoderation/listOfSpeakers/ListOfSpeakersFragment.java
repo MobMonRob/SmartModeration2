@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -17,26 +18,22 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import dhbw.smartmoderation.R;
-import dhbw.smartmoderation.data.model.ConsensusLevel;
 import dhbw.smartmoderation.data.model.Member;
 import dhbw.smartmoderation.data.model.Participation;
-import dhbw.smartmoderation.exceptions.MemberNotFoundException;
 import dhbw.smartmoderation.exceptions.ParitcipationCantBeChangedException;
 import dhbw.smartmoderation.exceptions.ParticipationCantBeAddedException;
 import dhbw.smartmoderation.exceptions.ParticipationCantBeCreatedException;
-import dhbw.smartmoderation.exceptions.ParticipationCantBeDeletedException;
 import dhbw.smartmoderation.exceptions.ParticipationListCouldNotBeCleared;
 import dhbw.smartmoderation.exceptions.SmartModerationException;
 import dhbw.smartmoderation.exceptions.SpeechCantBeStartedException;
 import dhbw.smartmoderation.meeting.detail.BaseActivity;
-import dhbw.smartmoderation.uiUtils.ItemTouchListener;
 import dhbw.smartmoderation.uiUtils.OnStartDragListener;
 import dhbw.smartmoderation.uiUtils.SimpleItemTouchHelperCallback;
 import dhbw.smartmoderation.util.ExceptionHandlingActivity;

@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import dhbw.smartmoderation.SmartModerationApplication;
+import dhbw.smartmoderation.SmartModerationApplicationImpl;
 import dhbw.smartmoderation.data.DataService;
 import dhbw.smartmoderation.data.DataServiceImpl;
 import dhbw.smartmoderation.data.model.*;
@@ -25,7 +26,7 @@ public class SerializationServiceImpl implements SerializationService {
 
 	private LocalAuthor localAuthor;
 
-	private DataService dataService = ((SmartModerationApplication)SmartModerationApplication.getApp()).getDataService();
+	private DataService dataService = ((SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp()).getDataService();
 
 	public void setLocalAuthor(LocalAuthor localAuthor) {
 		this.localAuthor = localAuthor;

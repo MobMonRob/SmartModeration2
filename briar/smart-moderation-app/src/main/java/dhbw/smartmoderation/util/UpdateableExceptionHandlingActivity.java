@@ -2,7 +2,6 @@ package dhbw.smartmoderation.util;
 
 import android.os.Handler;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 import dhbw.smartmoderation.connection.synchronization.PullEvent;
@@ -18,7 +17,7 @@ public abstract class UpdateableExceptionHandlingActivity extends ExceptionHandl
         Collection<SynchronizableDataType> thisActivityDataTypes = this.getSynchronizableDataTypes();
         for (SynchronizableDataType dataType : event.getDataTypes()){
             if (thisActivityDataTypes.contains(dataType)){
-                handler.post(() -> updateUI());
+                handler.post(this::updateUI);
                 return;
             }
         }

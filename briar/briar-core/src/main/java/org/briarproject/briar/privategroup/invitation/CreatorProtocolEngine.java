@@ -11,9 +11,10 @@ import org.briarproject.bramble.api.nullsafety.NotNullByDefault;
 import org.briarproject.bramble.api.sync.Message;
 import org.briarproject.bramble.api.system.Clock;
 import org.briarproject.bramble.api.versioning.ClientVersioningManager;
-import org.briarproject.briar.api.client.MessageTracker;
+import org.briarproject.briar.api.autodelete.AutoDeleteManager;
 import org.briarproject.briar.api.client.ProtocolStateException;
 import org.briarproject.briar.api.client.SessionId;
+import org.briarproject.briar.api.conversation.ConversationManager;
 import org.briarproject.briar.api.privategroup.GroupMessageFactory;
 import org.briarproject.briar.api.privategroup.PrivateGroupFactory;
 import org.briarproject.briar.api.privategroup.PrivateGroupManager;
@@ -23,6 +24,7 @@ import org.briarproject.briar.api.privategroup.invitation.GroupInvitationRespons
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
+import static java.lang.Math.max;
 import static org.briarproject.bramble.api.sync.Group.Visibility.INVISIBLE;
 import static org.briarproject.bramble.api.sync.Group.Visibility.SHARED;
 import static org.briarproject.briar.privategroup.invitation.CreatorState.DISSOLVED;
@@ -36,26 +38,33 @@ import static org.briarproject.briar.privategroup.invitation.CreatorState.START;
 @NotNullByDefault
 class CreatorProtocolEngine extends AbstractProtocolEngine<CreatorSession> {
 
-	CreatorProtocolEngine(DatabaseComponent db, ClientHelper clientHelper,
+	CreatorProtocolEngine(
+			DatabaseComponent db,
+			ClientHelper clientHelper,
 			ClientVersioningManager clientVersioningManager,
 			PrivateGroupManager privateGroupManager,
 			PrivateGroupFactory privateGroupFactory,
 			GroupMessageFactory groupMessageFactory,
-			IdentityManager identityManager, MessageParser messageParser,
-			MessageEncoder messageEncoder, MessageTracker messageTracker,
+			IdentityManager identityManager,
+			MessageParser messageParser,
+			MessageEncoder messageEncoder,
+			AutoDeleteManager autoDeleteManager,
+			ConversationManager conversationManager,
 			Clock clock) {
 		super(db, clientHelper, clientVersioningManager, privateGroupManager,
 				privateGroupFactory, groupMessageFactory, identityManager,
-				messageParser, messageEncoder, messageTracker, clock);
+				messageParser, messageEncoder,
+				autoDeleteManager, conversationManager, clock);
 	}
 
 	@Override
 	public CreatorSession onInviteAction(Transaction txn, CreatorSession s,
-			@Nullable String text, long timestamp, byte[] signature)
-			throws DbException {
+			@Nullable String text, long timestamp, byte[] signature,
+			long autoDeleteTimer) throws DbException {
 		switch (s.getState()) {
 			case START:
-				return onLocalInvite(txn, s, text, timestamp, signature);
+				return onLocalInvite(txn, s, text, timestamp, signature,
+						autoDeleteTimer);
 			case INVITED:
 			case JOINED:
 			case LEFT:
@@ -73,8 +82,8 @@ class CreatorProtocolEngine extends AbstractProtocolEngine<CreatorSession> {
 	}
 
 	@Override
-	public CreatorSession onLeaveAction(Transaction txn, CreatorSession s)
-			throws DbException {
+	public CreatorSession onLeaveAction(Transaction txn, CreatorSession s,
+			boolean isAutoDecline) throws DbException {
 		switch (s.getState()) {
 			case START:
 			case DISSOLVED:
@@ -145,14 +154,16 @@ class CreatorProtocolEngine extends AbstractProtocolEngine<CreatorSession> {
 	}
 
 	private CreatorSession onLocalInvite(Transaction txn, CreatorSession s,
-			@Nullable String text, long timestamp, byte[] signature)
-			throws DbException {
+			@Nullable String text, long timestamp, byte[] signature,
+			long autoDeleteTimer) throws DbException {
 		// Send an INVITE message
-		Message sent = sendInviteMessage(txn, s, text, timestamp, signature);
+		Message sent = sendInviteMessage(txn, s, text, timestamp, signature,
+				autoDeleteTimer);
 		// Track the message
-		messageTracker.trackOutgoingMessage(txn, sent);
+		conversationManager.trackOutgoingMessage(txn, sent);
 		// Move to the INVITED state
-		long localTimestamp = Math.max(timestamp, getLocalTimestamp(s));
+		long localTimestamp =
+				max(timestamp, getTimestampForVisibleMessage(txn, s));
 		return new CreatorSession(s.getContactGroupId(), s.getPrivateGroupId(),
 				sent.getId(), s.getLastRemoteMessageId(), localTimestamp,
 				timestamp, INVITED);
@@ -167,7 +178,7 @@ class CreatorProtocolEngine extends AbstractProtocolEngine<CreatorSession> {
 			throw new DbException(e); // Invalid group metadata
 		}
 		// Send a LEAVE message
-		Message sent = sendLeaveMessage(txn, s, false);
+		Message sent = sendLeaveMessage(txn, s);
 		// Move to the DISSOLVED state
 		return new CreatorSession(s.getContactGroupId(), s.getPrivateGroupId(),
 				sent.getId(), s.getLastRemoteMessageId(), sent.getTimestamp(),
@@ -186,12 +197,15 @@ class CreatorProtocolEngine extends AbstractProtocolEngine<CreatorSession> {
 		// Mark the response visible in the UI
 		markMessageVisibleInUi(txn, m.getId());
 		// Track the message
-		messageTracker.trackMessage(txn, m.getContactGroupId(),
+		conversationManager.trackMessage(txn, m.getContactGroupId(),
 				m.getTimestamp(), false);
+		// Receive the auto-delete timer
+		receiveAutoDeleteTimer(txn, m);
 		// Share the private group with the contact
 		setPrivateGroupVisibility(txn, s, SHARED);
 		// Broadcast an event
-		ContactId contactId = getContactId(txn, m.getContactGroupId());
+		ContactId contactId =
+				clientHelper.getContactId(txn, m.getContactGroupId());
 		txn.attach(new GroupInvitationResponseReceivedEvent(
 				createInvitationResponse(m, true), contactId));
 		// Move to the JOINED state
@@ -210,10 +224,13 @@ class CreatorProtocolEngine extends AbstractProtocolEngine<CreatorSession> {
 		// Mark the response visible in the UI
 		markMessageVisibleInUi(txn, m.getId());
 		// Track the message
-		messageTracker.trackMessage(txn, m.getContactGroupId(),
+		conversationManager.trackMessage(txn, m.getContactGroupId(),
 				m.getTimestamp(), false);
+		// Receive the auto-delete timer
+		receiveAutoDeleteTimer(txn, m);
 		// Broadcast an event
-		ContactId contactId = getContactId(txn, m.getContactGroupId());
+		ContactId contactId =
+				clientHelper.getContactId(txn, m.getContactGroupId());
 		txn.attach(new GroupInvitationResponseReceivedEvent(
 				createInvitationResponse(m, false), contactId));
 		// Move to the START state
@@ -253,10 +270,10 @@ class CreatorProtocolEngine extends AbstractProtocolEngine<CreatorSession> {
 	}
 
 	private GroupInvitationResponse createInvitationResponse(
-			GroupInvitationMessage m, boolean accept) {
+			DeletableGroupInvitationMessage m, boolean accept) {
 		SessionId sessionId = new SessionId(m.getPrivateGroupId().getBytes());
 		return new GroupInvitationResponse(m.getId(), m.getContactGroupId(),
 				m.getTimestamp(), false, false, false, false, sessionId,
-				accept, m.getPrivateGroupId());
+				accept, m.getPrivateGroupId(), m.getAutoDeleteTimer(), false);
 	}
 }
