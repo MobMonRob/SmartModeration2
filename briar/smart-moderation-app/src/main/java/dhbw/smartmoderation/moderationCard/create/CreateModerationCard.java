@@ -30,8 +30,6 @@ public class CreateModerationCard {
     private CreateModerationCardController controller;
     private ModerationCardsFragment moderationCardsFragment;
     ModerationCardColorImporter cardColorImporter = ModerationCardColorImporter.getInstance();
-    private Client client;
-    SmartModerationApplicationImpl app = (SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp();
 
     private final View.OnClickListener pickColorButtonClickListener = v -> {
         ColorPicker colorPicker = new ColorPicker((Activity) v.getContext());
@@ -59,8 +57,8 @@ public class CreateModerationCard {
             String cardAuthor = controller.getLocalAuthorName();
             ModerationCard moderationCard = controller.createModerationCard(moderationCardContent, cardAuthor, backgroundColor, fontColor);
             moderationCardsFragment.onResume();
+            Client client = ((SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp()).getClient();
             if(client != null && client.isRunning()) client.addModerationCard(moderationCard);
-
         } catch (CantCreateModerationCardException | ModerationCardNotFoundException e) {
             e.printStackTrace();
         }
@@ -73,7 +71,6 @@ public class CreateModerationCard {
         Bundle extra = intent.getExtras();
         long meetingId = extra.getLong("meetingId");
         controller = new CreateModerationCardController(meetingId);
-        client = app.getClient();
         initializePopup(fragment.getActivity());
         moderationCardsFragment = fragment;
     }

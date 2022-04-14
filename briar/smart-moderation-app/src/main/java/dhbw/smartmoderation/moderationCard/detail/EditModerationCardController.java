@@ -26,20 +26,17 @@ public class EditModerationCardController extends SmartModerationController {
     }
 
     public PrivateGroup getPrivateGroup() throws GroupNotFoundException {
-
         Collection<PrivateGroup> privateGroups = connectionService.getGroups();
 
         for (PrivateGroup group : privateGroups) {
-
             try {
-                if (getMeeting().getGroup().getGroupId().equals(Util.bytesToLong(group.getId().getBytes()))) {
+                if (getMeeting().getGroup().getGroupId().equals(Util.bytesToLong(group.getId().getBytes())))
                     return group;
-                }
+
             } catch (MeetingNotFoundException e) {
                 e.printStackTrace();
             }
         }
-
         throw new GroupNotFoundException();
     }
 
@@ -52,20 +49,17 @@ public class EditModerationCardController extends SmartModerationController {
         }
 
         ModerationCard moderationCard = new ModerationCard();
-
         try {
-
+            moderationCard.setCardId(cardId);
             moderationCard.setContent(content);
+            moderationCard.setAuthor(author);
             moderationCard.setBackgroundColor(backgroundColor);
             moderationCard.setFontColor(fontColor);
-            moderationCard.setCardId(cardId);
             moderationCard.setMeeting(meeting);
             dataService.mergeModerationCard(moderationCard);
-
             Collection<ModelClass> data = new ArrayList<>();
             data.add(moderationCard);
             synchronizationService.push(getPrivateGroup(), data);
-
         } catch (GroupNotFoundException exception) {
             throw new CantEditModerationCardException();
         }
@@ -73,21 +67,15 @@ public class EditModerationCardController extends SmartModerationController {
     }
 
     public void deleteModerationCard(long cardId) throws CouldNotDeleteModerationCard, ModerationCardNotFoundException {
-
         PrivateGroup group;
-
         try {
-
             group = getPrivateGroup();
 
         } catch (GroupNotFoundException groupNotFoundException) {
-
             throw new CouldNotDeleteModerationCard();
         }
-
         ModerationCard moderationCard = dataService.getModerationCard(cardId);
         dataService.deleteModerationCard(moderationCard);
-
         Collection<ModelClass> data = new ArrayList<>();
         moderationCard.setIsDeleted(true);
         data.add(moderationCard);

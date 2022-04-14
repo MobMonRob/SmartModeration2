@@ -2,19 +2,13 @@ package dhbw.smartmoderation.moderationCard.overview;
 
 import org.briarproject.briar.api.privategroup.PrivateGroup;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 import dhbw.smartmoderation.controller.SmartModerationController;
 import dhbw.smartmoderation.data.model.Meeting;
-import dhbw.smartmoderation.data.model.ModelClass;
 import dhbw.smartmoderation.data.model.ModerationCard;
-import dhbw.smartmoderation.exceptions.CantCreateModerationCardException;
-import dhbw.smartmoderation.exceptions.CantEditModerationCardException;
-import dhbw.smartmoderation.exceptions.CouldNotDeleteModerationCard;
 import dhbw.smartmoderation.exceptions.GroupNotFoundException;
 import dhbw.smartmoderation.exceptions.MeetingNotFoundException;
-import dhbw.smartmoderation.exceptions.ModerationCardNotFoundException;
 import dhbw.smartmoderation.util.Util;
 
 public class ModerationCardsController extends SmartModerationController {

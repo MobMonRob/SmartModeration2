@@ -13,8 +13,8 @@ import dhbw.smartmoderation.SmartModerationApplicationImpl;
 public class ModerationCardColorImporter {
     private static ModerationCardColorImporter moderationCardColorImporter;
 
-    private HashMap<Integer, Integer> textColorOfBackground;
-    private int[] backgroundColors;
+    private final HashMap<Integer, Integer> textColorOfBackground;
+    private final int[] backgroundColors;
 
 
     public static ModerationCardColorImporter getInstance() {
