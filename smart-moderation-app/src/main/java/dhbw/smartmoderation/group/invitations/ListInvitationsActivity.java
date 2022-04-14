@@ -21,9 +21,7 @@ import dhbw.smartmoderation.util.ExceptionHandlingActivity;
 public class ListInvitationsActivity extends ExceptionHandlingActivity implements GroupInvitationHandler {
 
 	private static final String TAG = ListInvitationsActivity.class.getSimpleName();
-
 	private ListInvitationsController controller;
-
 	private RecyclerView recInvitations;
 	private InvitationsAdapter invitationsAdapter;
 	private LinearLayoutManager invitationsLayoutManager;
@@ -43,12 +41,9 @@ public class ListInvitationsActivity extends ExceptionHandlingActivity implement
 		recInvitations.setLayoutManager(invitationsLayoutManager);
 
 		try {
-
 			invitationsAdapter = new InvitationsAdapter(this, controller.getGroupInvitations(), this);
 			recInvitations.setAdapter(invitationsAdapter);
-
 		} catch (SmartModerationException exception){
-
 			handleException(exception);
 		}
 
@@ -61,35 +56,28 @@ public class ListInvitationsActivity extends ExceptionHandlingActivity implement
 
 		super.onResume();
 		try {
-
 			invitationsAdapter.updateInvitations(controller.getGroupInvitations());
 			Log.d(TAG, "Invitations: " + controller.getGroupInvitations());
-
 		} catch (SmartModerationException exception){
-
 			handleException(exception);
 		}
-
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
-
 		InvitationsAsyncTask invitationsAsyncTask = new InvitationsAsyncTask("synchronize");
 		invitationsAsyncTask.execute();
 	}
 
 	@Override
 	public void acceptGroupInvitation(Invitation invitation) {
-
 		InvitationsAsyncTask invitationsAsyncTask = new InvitationsAsyncTask("accept");
 		invitationsAsyncTask.execute(invitation);
 	}
 
 	@Override
 	public void rejectGroupInvitation(Invitation invitation) {
-
 		InvitationsAsyncTask invitationsAsyncTask = new InvitationsAsyncTask("reject");
 		invitationsAsyncTask.execute(invitation);
 
@@ -100,7 +88,6 @@ public class ListInvitationsActivity extends ExceptionHandlingActivity implement
 		String flag;
 
 		public InvitationsAsyncTask(String flag) {
-
 			this.flag = flag;
 		}
 
@@ -116,33 +103,25 @@ public class ListInvitationsActivity extends ExceptionHandlingActivity implement
 			String returnString = "";
 
 			switch(flag) {
-
-
 				case "accept":
 					Invitation invitationToAccept = (Invitation)objects[0];
 					controller.acceptInvitation(invitationToAccept);
 					returnString = "acceptOrReject";
 					break;
-
 				case "reject":
 					Invitation invitationToReject = (Invitation)objects[0];
 					controller.rejectInvitation(invitationToReject);
 					returnString = "acceptOrReject";
 					break;
-
 				case "synchronize":
 					try {
-
 						controller.synchronizeData();
-
 					} catch (SmartModerationException exception) {
-
 						publishProgress(exception);
 					}
 					returnString = "synchronize";
 					break;
 			}
-
 
 			return returnString;
 		}
@@ -152,24 +131,15 @@ public class ListInvitationsActivity extends ExceptionHandlingActivity implement
 			super.onPostExecute(s);
 
 			switch(s) {
-
 				case "acceptOrReject":
-
 					try {
-
 						invitationsAdapter.updateInvitations(controller.getGroupInvitations());
 						invitationsAdapter.notifyDataSetChanged();
-
 					} catch (NoContactsFoundException exception) {
-
 						handleException(exception);
 					}
 					break;
-
 			}
-
-
 		}
 	}
-
 }

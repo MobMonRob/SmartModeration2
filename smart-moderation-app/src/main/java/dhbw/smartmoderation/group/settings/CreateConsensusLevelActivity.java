@@ -37,31 +37,22 @@ public class CreateConsensusLevelActivity extends ExceptionHandlingActivity {
         extra = intent.getExtras();
         position = extra.getInt("position");
 
-        if(position != -1) {
-
+        if (position != -1) {
             this.color = extra.getInt("color");
             nameInput.setText(extra.getString("name"));
             nameInput.setEnabled(false);
             colorInput.setBackgroundColor(color);
             descriptionInput.setText(extra.getString("description"));
-
-        }
-
-        else {
-
+        } else {
             colorInput.setBackgroundColor(getResources().getColor(R.color.colorPrimary, null));
         }
 
         colorInput.setOnClickListener(v -> {
-
             ColorDrawable buttonColor = new ColorDrawable(color);
-
         });
 
         saveButton.setOnClickListener(v -> {
-
-            if(nameInput.getText().toString().length() > 0) {
-
+            if (nameInput.getText().toString().length() > 0) {
                 Intent resultIntent = new Intent();
                 resultIntent.putExtra("position", position);
                 resultIntent.putExtra("name", nameInput.getText().toString());
@@ -70,10 +61,7 @@ public class CreateConsensusLevelActivity extends ExceptionHandlingActivity {
                 resultIntent.putExtra("description", descriptionInput.getText().toString());
                 setResult(Activity.RESULT_OK, resultIntent);
                 finish();
-            }
-
-            else {
-
+            } else {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage(getString(R.string.noConsensusLevelName));
                 builder.setCancelable(false);
@@ -84,9 +72,6 @@ public class CreateConsensusLevelActivity extends ExceptionHandlingActivity {
                 AlertDialog alertDialog = builder.create();
                 alertDialog.show();
             }
-
         });
     }
-
-
 }

@@ -29,9 +29,7 @@ public class SettingsController extends SmartModerationController  {
     public void update() {
 
         try {
-
             this.synchronizationService.pull(getPrivateGroup());
-
         } catch (GroupNotFoundException e) {
             e.printStackTrace();
         }
@@ -41,13 +39,8 @@ public class SettingsController extends SmartModerationController  {
 
         Collection<PrivateGroup> privateGroups = connectionService.getGroups();
 
-        for(PrivateGroup group : privateGroups) {
-
-            if(groupId.equals(Util.bytesToLong(group.getId().getBytes()))) {
-
-                return group;
-            }
-        }
+        for(PrivateGroup group : privateGroups)
+            if (groupId.equals(Util.bytesToLong(group.getId().getBytes()))) return group;
 
         throw new GroupNotFoundException();
     }
@@ -55,11 +48,8 @@ public class SettingsController extends SmartModerationController  {
     public Group getGroup() throws GroupNotFoundException {
 
         try {
-
             return dataService.getGroup(groupId);
-
         } catch (GroupNotFoundException e) {
-
             e.printStackTrace();
             throw new GroupNotFoundException();
         }
@@ -68,11 +58,8 @@ public class SettingsController extends SmartModerationController  {
     public GroupSettings getGroupSettings() throws GroupSettingsNotFoundException {
 
         try {
-
             return getGroup().getGroupSettings();
-
         } catch (GroupNotFoundException e) {
-
             e.printStackTrace();
             throw new GroupSettingsNotFoundException();
         }
@@ -84,19 +71,13 @@ public class SettingsController extends SmartModerationController  {
         GroupSettings groupSettings = null;
 
         try {
-
             groupSettings = getGroupSettings();
-
             groupSettings = dataService.getGroupSetting(groupSettings.getSettingsId());
-
             return groupSettings.getConsensusLevels();
-
         } catch (GroupSettingsNotFoundException e) {
-
             e.printStackTrace();
             throw new ConsensusLevelsNotFoundException();
         }
-
     }
 
     public ConsensusLevel createConsensusLevel(String name, int color, String description, int number) {
@@ -109,9 +90,7 @@ public class SettingsController extends SmartModerationController  {
 
         try {
             consensusLevel.setGroupSettings(getGroupSettings());
-
         } catch (GroupSettingsNotFoundException e) {
-
             e.printStackTrace();
         }
         dataService.mergeConsensusLevel(consensusLevel);
@@ -124,11 +103,8 @@ public class SettingsController extends SmartModerationController  {
         PrivateGroup group;
 
         try{
-
             group = getPrivateGroup();
-
         } catch(GroupNotFoundException exception){
-
             throw new CouldNotAddConsensusLevel();
         }
 
@@ -142,11 +118,8 @@ public class SettingsController extends SmartModerationController  {
         PrivateGroup group;
 
         try{
-
             group = getPrivateGroup();
-
         } catch (GroupNotFoundException exception){
-
             throw new CouldNotChangeConsensusLevel();
         }
 
@@ -154,44 +127,33 @@ public class SettingsController extends SmartModerationController  {
         pushData.add(consensusLevel);
         synchronizationService.push(group, pushData);
         dataService.mergeConsensusLevel(consensusLevel);
-
     }
 
     public void changeConsensusLevelNumbering(Collection<ConsensusLevel> consensusLevels) throws CouldNotChangeConsensusLevel {
-
         PrivateGroup group;
 
         try {
-
             group = getPrivateGroup();
-
         } catch (GroupNotFoundException exception) {
-
             throw new CouldNotChangeConsensusLevel();
         }
 
         Collection<ModelClass> pushData = new ArrayList<>();
 
         for (ConsensusLevel consensusLevel : consensusLevels) {
-
             dataService.saveConsensusLevel(consensusLevel);
             pushData.add(consensusLevel);
         }
 
         synchronizationService.push(group, pushData);
-
     }
 
     public void deleteConsensusLevel(Long consensusLevelId) throws CouldNotDeleteConsensusLevel {
-
         PrivateGroup group;
 
         try {
-
             group = getPrivateGroup();
-
         } catch (GroupNotFoundException groupNotFoundException) {
-
             throw new CouldNotDeleteConsensusLevel();
         }
 

@@ -76,24 +76,21 @@ public class ListOfSpeakersFragment extends Fragment implements OnStartDragListe
     private Handler handler;
 
 
-    public String getTitle(){
+    public String getTitle() {
         return getString(R.string.speechList_title);
     }
 
     private View.OnClickListener playButtonClickListener = v -> {
-
         ListOfSpeakersAsyncTask listOfSpeakersAsyncTask = new ListOfSpeakersAsyncTask("play");
         listOfSpeakersAsyncTask.execute();
     };
 
     private View.OnClickListener pauseButtonClickListener = v -> {
-
         ListOfSpeakersAsyncTask listOfSpeakersAsyncTask = new ListOfSpeakersAsyncTask("pause");
         listOfSpeakersAsyncTask.execute();
     };
 
     private View.OnClickListener addSpeakerButtonClickListener = v -> {
-
         LayoutInflater inflater = LayoutInflater.from(getActivity());
         this.popUp = inflater.inflate(R.layout.popup_speaker, null);
         this.memberList = this.popUp.findViewById(R.id.speakerList);
@@ -109,34 +106,28 @@ public class ListOfSpeakersFragment extends Fragment implements OnStartDragListe
         AlertDialog alertDialog = builder.create();
 
         Button addBtn = this.popUp.findViewById(R.id.addButton);
-        addBtn.setOnClickListener( view -> {
-
+        addBtn.setOnClickListener(view -> {
             ListOfSpeakersAsyncTask listOfSpeakersAsyncTask = new ListOfSpeakersAsyncTask("addSpeaker");
             listOfSpeakersAsyncTask.execute(alertDialog);
-
         });
 
         Button cancelBtn = this.popUp.findViewById(R.id.cancelButton);
-        cancelBtn.setOnClickListener( view -> alertDialog.cancel());
+        cancelBtn.setOnClickListener(view -> alertDialog.cancel());
         alertDialog.show();
 
     };
 
     private View.OnClickListener clearSpeechListButtonClickListener = v -> {
-
         ListOfSpeakersAsyncTask listOfSpeakersAsyncTask = new ListOfSpeakersAsyncTask("clearList");
         listOfSpeakersAsyncTask.execute();
     };
 
     private View.OnClickListener addMeButtonClickListener = v -> {
-
         ListOfSpeakersAsyncTask listOfSpeakersAsyncTask = new ListOfSpeakersAsyncTask("addMe");
         listOfSpeakersAsyncTask.execute();
     };
 
     private View.OnClickListener removeMeButtonClickListener = v -> {
-
-
         ListOfSpeakersAsyncTask listOfSpeakersAsyncTask = new ListOfSpeakersAsyncTask("removeMe");
         listOfSpeakersAsyncTask.execute();
     };
@@ -144,8 +135,7 @@ public class ListOfSpeakersFragment extends Fragment implements OnStartDragListe
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        this.controller = ((BaseActivity)getActivity()).getListOfSpeakersController();
+        this.controller = ((BaseActivity) getActivity()).getListOfSpeakersController();
     }
 
     @Override
@@ -157,8 +147,7 @@ public class ListOfSpeakersFragment extends Fragment implements OnStartDragListe
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-
-        if(hidden) {
+        if (hidden) {
             endDurationThread();
         }
     }
@@ -193,7 +182,7 @@ public class ListOfSpeakersFragment extends Fragment implements OnStartDragListe
         this.removeMeButton = this.view.findViewById(R.id.removeMeButton);
         this.removeMeButton.setOnClickListener(this.removeMeButtonClickListener);
 
-        this.participationAdapter = new ParticipationAdapter(this, getActivity(),this , controller.isLocalAuthorModerator(), this);
+        this.participationAdapter = new ParticipationAdapter(this, getActivity(), this, controller.isLocalAuthorModerator(), this);
         this.listOfSpeakers = this.view.findViewById(R.id.participationList);
         this.listOfSpeakersLayoutManager = new WrapContentLinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         this.listOfSpeakers.setLayoutManager(this.listOfSpeakersLayoutManager);
@@ -202,8 +191,7 @@ public class ListOfSpeakersFragment extends Fragment implements OnStartDragListe
         DividerItemDecoration speakersDividerItemDecoration = new DividerItemDecoration(listOfSpeakers.getContext(), listOfSpeakersLayoutManager.getOrientation());
         this.listOfSpeakers.addItemDecoration(speakersDividerItemDecoration);
 
-        if(this.controller.isLocalAuthorModerator()) {
-
+        if (this.controller.isLocalAuthorModerator()) {
             ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(this.participationAdapter, R.color.default_red, R.drawable.trash, ItemTouchHelper.START);
             this.itemTouchHelper = new ItemTouchHelper(callback);
             this.itemTouchHelper.attachToRecyclerView(this.listOfSpeakers);
@@ -215,47 +203,37 @@ public class ListOfSpeakersFragment extends Fragment implements OnStartDragListe
     }
 
     public void reloadItemTouchHelper() {
-
         this.itemTouchHelper.attachToRecyclerView(null);
         this.participationAdapter.updateParticipations(this.controller.getParticipationsInList());
         this.itemTouchHelper.attachToRecyclerView(this.listOfSpeakers);
     }
 
     private void changeUiOnEmptySpeechList() {
-
         this.startStopPanel.setVisibility(View.GONE);
         this.clearSpeechListButton.setVisibility(View.GONE);
 
-        ConstraintLayout.LayoutParams layoutParams =  (ConstraintLayout.LayoutParams)this.addSpeakerButton.getLayoutParams();
+        ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) this.addSpeakerButton.getLayoutParams();
         layoutParams.horizontalBias = 0.5f;
         this.addSpeakerButton.setLayoutParams(layoutParams);
     }
 
     private void changeUiOnAddSpeaker() {
-
         this.startStopPanel.setVisibility(View.VISIBLE);
         this.playButton.setVisibility(View.VISIBLE);
         this.clearSpeechListButton.setVisibility(View.VISIBLE);
 
-        ConstraintLayout.LayoutParams layoutParams =  (ConstraintLayout.LayoutParams)this.addSpeakerButton.getLayoutParams();
+        ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) this.addSpeakerButton.getLayoutParams();
         layoutParams.horizontalBias = 0.2f;
         this.addSpeakerButton.setLayoutParams(layoutParams);
     }
 
     public void initializeCurrentSpeakerPanel() {
-
-        if(this.controller.getParticipationsInList().size() > 0) {
-
+        if (this.controller.getParticipationsInList().size() > 0) {
             Participation nextParticipation = this.controller.getNextParticipation();
-
             this.currentSpeakerTag.setText(getString(R.string.nextSpeaker));
-
             long duration = 0;
-
-            if(nextParticipation != null) {
-
-                if(nextParticipation.getIsSpeaking()) {
-
+            if (nextParticipation != null) {
+                if (nextParticipation.getIsSpeaking()) {
                     this.currentSpeakerTag.setText(getString(R.string.currentSpeaker));
                     duration = System.currentTimeMillis() - nextParticipation.getStartTime();
                 }
@@ -268,12 +246,8 @@ public class ListOfSpeakersFragment extends Fragment implements OnStartDragListe
                 long total = nextParticipation.getTime() + duration;
                 String totalDurationString = Util.convertMilliSecondsToMinutesTimeString(total) + " " + getString(R.string.minute);
                 this.totalDuration.setText(totalDurationString);
-
             }
-        }
-
-        else {
-
+        } else {
             this.currentSpeakerTag.setText(getString(R.string.nextSpeaker));
             this.currentSpeaker.setText("-");
             this.duration.setText("-");
@@ -283,38 +257,25 @@ public class ListOfSpeakersFragment extends Fragment implements OnStartDragListe
 
     public void initializeStartStopPanel() {
 
-        if(!this.controller.isLocalAuthorModerator()) {
-
+        if (!this.controller.isLocalAuthorModerator()) {
             this.startStopPanel.setVisibility(View.GONE);
             return;
         }
 
-        if(this.controller.getParticipationsInList().size() > 0) {
+        if (this.controller.getParticipationsInList().size() > 0) {
+            Participation nextParticipation = this.controller.getNextParticipation();
 
-           Participation nextParticipation = this.controller.getNextParticipation();
-
-            if(nextParticipation != null) {
-
-                if(nextParticipation.getIsSpeaking()) {
-
+            if (nextParticipation != null) {
+                if (nextParticipation.getIsSpeaking()) {
                     this.playButton.setVisibility(View.GONE);
                     this.pauseButton.setVisibility(View.VISIBLE);
-                }
-
-                else {
-
+                } else {
                     this.playButton.setVisibility(View.VISIBLE);
                     this.pauseButton.setVisibility(View.GONE);
                 }
-
                 this.playButton.setEnabled(true);
-
             }
-
-        }
-
-        else {
-
+        } else {
             this.playButton.setVisibility(View.VISIBLE);
             this.playButton.setEnabled(false);
             this.pauseButton.setVisibility(View.GONE);
@@ -323,35 +284,23 @@ public class ListOfSpeakersFragment extends Fragment implements OnStartDragListe
 
     private void initializeSubscribePanel() {
 
-        if(this.controller.isLocalAuthorModerator()) {
-
+        if (this.controller.isLocalAuthorModerator()) {
             this.subscribePanelModerator.setVisibility(View.VISIBLE);
             this.subscribePanelParticipant.setVisibility(View.GONE);
 
-            if(this.controller.getParticipationsInList().size() == 0) {
-
+            if (this.controller.getParticipationsInList().size() == 0) {
                 changeUiOnEmptySpeechList();
-            }
-
-            else {
-
+            } else {
                 changeUiOnAddSpeaker();
             }
-        }
-
-        else {
-
+        } else {
             this.subscribePanelModerator.setVisibility(View.GONE);
             this.subscribePanelParticipant.setVisibility(View.VISIBLE);
 
-            if(this.controller.isLocalAuthorInSpeechList()) {
-
+            if (this.controller.isLocalAuthorInSpeechList()) {
                 this.addMeButton.setVisibility(View.GONE);
                 this.removeMeButton.setVisibility(View.VISIBLE);
-            }
-
-            else {
-
+            } else {
                 this.addMeButton.setVisibility(View.VISIBLE);
                 this.removeMeButton.setVisibility(View.GONE);
             }
@@ -362,53 +311,39 @@ public class ListOfSpeakersFragment extends Fragment implements OnStartDragListe
 
         Participation nextParticipation = this.controller.getNextParticipation();
 
-        if(nextParticipation.getIsSpeaking()) {
-
+        if (nextParticipation.getIsSpeaking()) {
             long startTime = nextParticipation.getStartTime();
-
             this.durationThread = new Thread(() -> {
-
                 while (!Thread.currentThread().isInterrupted()) {
-
                     long difference = System.currentTimeMillis() - startTime;
-
                     String durationString = Util.convertMilliSecondsToMinutesTimeString(difference) + " " + getString(R.string.minute);
                     handler.post(() -> duration.setText(durationString));
-
                     long total = nextParticipation.getTime() + difference;
                     String totalDurationString = Util.convertMilliSecondsToMinutesTimeString(total) + " " + getString(R.string.minute);
                     handler.post(() -> totalDuration.setText(totalDurationString));
-
                     try {
-
                         Thread.sleep(1000);
-
                     } catch (InterruptedException e) {
-
                         e.printStackTrace();
                         Thread.currentThread().interrupt();
                     }
 
                 }
             });
-
             this.durationThread.start();
         }
 
     }
 
     public void endDurationThread() {
-
-        if(this.durationThread != null) {
-
-            if(!this.durationThread.isInterrupted()) {
-
+        if (this.durationThread != null) {
+            if (!this.durationThread.isInterrupted()) {
                 this.durationThread.interrupt();
             }
         }
     }
-    private void createAlertDialog(String message) {
 
+    private void createAlertDialog(String message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(message);
         builder.setCancelable(false);
@@ -418,7 +353,6 @@ public class ListOfSpeakersFragment extends Fragment implements OnStartDragListe
     }
 
     public void update() {
-
         ListOfSpeakersAsyncTask listOfSpeakersAsyncTask = new ListOfSpeakersAsyncTask("update");
         listOfSpeakersAsyncTask.execute();
     }
@@ -431,41 +365,33 @@ public class ListOfSpeakersFragment extends Fragment implements OnStartDragListe
 
     @Override
     public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
-
-        if(this.controller.isLocalAuthorModerator()) {
-
+        if (this.controller.isLocalAuthorModerator())
             this.itemTouchHelper.startDrag(viewHolder);
-        }
     }
 
 
     @Override
     public void onParticipationDismiss(Participation participation) {
-
         ListOfSpeakersAsyncTask listOfSpeakersAsyncTask = new ListOfSpeakersAsyncTask("delete");
         listOfSpeakersAsyncTask.execute(participation);
     }
 
     @Override
     public void changeNumberingAfterOrderChange(ArrayList<Participation> collection) {
+        for (int i = 0; i < collection.size(); i++)
+            collection.get(i).setNumber(i + 1);
 
-        for (int i = 0; i < collection.size(); i++) {
-
-            collection.get(i).setNumber(i+1);
-        }
-
-        for (int i = 0; i < collection.size(); i++) {
-
+        for (int i = 0; i < collection.size(); i++)
             participationAdapter.notifyItemChanged(i);
-        }
-
 
         ListOfSpeakersAsyncTask listOfSpeakersAsyncTask = new ListOfSpeakersAsyncTask("numbering");
         listOfSpeakersAsyncTask.execute(collection);
     }
 
     @Override
-    public Collection<Participation> getCollections() { return controller.getParticipations(); }
+    public Collection<Participation> getCollections() {
+        return controller.getParticipations();
+    }
 
 
     public class ListOfSpeakersAsyncTask extends AsyncTask<Object, Object, String> {
@@ -473,7 +399,6 @@ public class ListOfSpeakersFragment extends Fragment implements OnStartDragListe
         String flag;
 
         public ListOfSpeakersAsyncTask(String flag) {
-
             this.flag = flag;
         }
 
@@ -481,220 +406,125 @@ public class ListOfSpeakersFragment extends Fragment implements OnStartDragListe
         protected void onProgressUpdate(Object... values) {
             super.onProgressUpdate(values);
 
-            if(values[0] instanceof Exception) {
+            if (values[0] instanceof Exception)
+                ((ExceptionHandlingActivity) getActivity()).handleException((Exception) values[0]);
 
-                ((ExceptionHandlingActivity)getActivity()).handleException((Exception)values[0]);
-            }
+            if (values[0] instanceof Thread)
+                ((Thread) values[0]).interrupt();
 
-            if(values[0] instanceof Thread) {
-
-                ((Thread)values[0]).interrupt();
-            }
-
-            if(values[0] instanceof AlertDialog) {
-
-                ((AlertDialog)values[0]).cancel();
-            }
+            if (values[0] instanceof AlertDialog)
+                ((AlertDialog) values[0]).cancel();
         }
 
         @Override
         protected String doInBackground(Object... objects) {
-
             String returnString = "";
 
-            switch(flag) {
-
+            switch (flag) {
                 case "play":
-
                     try {
-
                         controller.startNextSpeech();
-
                     } catch (SpeechCantBeStartedException exception) {
-
                         publishProgress(exception);
                     }
                     break;
-
                 case "pause":
-
                     try {
-
                         controller.stopSpeech();
                         publishProgress(durationThread);
-
                     } catch (SmartModerationException exception) {
-
                         publishProgress(exception);
                     }
                     break;
 
                 case "addSpeaker":
-
-                    AlertDialog alertDialog = (AlertDialog)objects[0];
+                    AlertDialog alertDialog = (AlertDialog) objects[0];
                     Member selectedMember = memberAdapter.getSelectedMember();
-
-                    if(selectedMember != null) {
-
-                        if(controller.participationAlreadyExistsFor(selectedMember.getMemberId())) {
-
+                    if (selectedMember != null) {
+                        if (controller.participationAlreadyExistsFor(selectedMember.getMemberId())) {
                             Participation participation = controller.getParticipation(selectedMember.getMemberId());
-
                             try {
-
                                 controller.addParticipationToSpeechList(participation);
-
                             } catch (ParticipationCantBeAddedException exception) {
-
                                 publishProgress(exception);
                             }
-
-                        }
-
-                        else {
-
+                        } else {
                             try {
-
                                 controller.createParticipation(selectedMember);
-
                             } catch (ParticipationCantBeCreatedException exception) {
-
                                 publishProgress(exception);
                             }
                         }
                     }
-
                     publishProgress(alertDialog);
                     break;
-
                 case "clearList":
-
                     Participation nextParticipation = controller.getNextParticipation();
-
-                    if(!nextParticipation.getIsSpeaking()) {
-
+                    if (!nextParticipation.getIsSpeaking()) {
                         try {
-
                             controller.clearParticipationList();
-
                         } catch (ParticipationListCouldNotBeCleared exception) {
-
                             publishProgress(exception);
                         }
-
-                    }
-
-                    else {
-
+                    } else {
                         returnString = "alert";
                     }
                     break;
-
                 case "addMe":
-
-                    if(controller.isLocalAuthorPresent()) {
-
-                        if(controller.participationAlreadyExistsFor(controller.getLocalAuthorId())) {
-
+                    if (controller.isLocalAuthorPresent()) {
+                        if (controller.participationAlreadyExistsFor(controller.getLocalAuthorId())) {
                             Participation participation = controller.getParticipation(controller.getLocalAuthorId());
-
                             try {
-
                                 controller.addParticipationToSpeechList(participation);
-
-                            } catch(ParticipationCantBeAddedException exception){
-
+                            } catch (ParticipationCantBeAddedException exception) {
                                 publishProgress(exception);
                             }
-
-                        }
-
-                        else {
-
+                        } else {
                             try {
-
                                 controller.createParticipationForLocalAuthor();
-
-                            } catch(ParticipationCantBeCreatedException exception){
-
+                            } catch (ParticipationCantBeCreatedException exception) {
                                 publishProgress(exception);
                             }
-
                         }
-                    }
-
-                    else {
-
+                    } else {
                         returnString = "alert";
                     }
                     break;
-
                 case "removeMe":
-
                     Participation participation = controller.getParticipation(controller.getLocalAuthorId());
-
-                    if(!participation.getIsSpeaking()) {
-
+                    if (!participation.getIsSpeaking()) {
                         try {
-
                             controller.removeParticipationFromSpeechList(participation);
-
                         } catch (SmartModerationException exception) {
-
                             publishProgress(exception);
                         }
-                    }
-
-                    else {
-
+                    } else {
                         returnString = "alert";
                     }
                     break;
-
                 case "update":
-
                     controller.update();
                     break;
-
                 case "delete":
-
-                    Participation participationToDelete = (Participation)objects[0];
-
+                    Participation participationToDelete = (Participation) objects[0];
                     try {
-
                         controller.removeParticipationFromSpeechList(participationToDelete);
-
                     } catch (SmartModerationException exception) {
-
                         publishProgress(exception);
                     }
                     break;
-
                 case "numbering":
-
-                    ArrayList<?> collection = (ArrayList<?>)objects[0];
-
+                    ArrayList<?> collection = (ArrayList<?>) objects[0];
                     Collection<Participation> participations = new ArrayList<>();
-
-                    for(Object o : collection) {
-
-                        if(o instanceof Participation) {
-
-                            participations.add((Participation) o);
-                        }
-                    }
-
+                    for (Object o : collection)
+                        if (o instanceof Participation) participations.add((Participation) o);
                     try {
-
                         controller.changeParticipationNumbering(participations);
-
                     } catch (ParitcipationCantBeChangedException exception) {
-
                         publishProgress(exception);
                     }
                     break;
             }
-
             return returnString;
         }
 
@@ -702,8 +532,7 @@ public class ListOfSpeakersFragment extends Fragment implements OnStartDragListe
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
 
-            switch(flag) {
-
+            switch (flag) {
                 case "play":
                     runTimerThread();
                     participationAdapter.notifyDataSetChanged();
@@ -711,7 +540,6 @@ public class ListOfSpeakersFragment extends Fragment implements OnStartDragListe
                     initializeCurrentSpeakerPanel();
                     initializeStartStopPanel();
                     break;
-
                 case "pause":
                     participationAdapter.updateParticipations(controller.getParticipationsInList());
                     participationAdapter.changeNumberingAfterOrderChange();
@@ -719,106 +547,67 @@ public class ListOfSpeakersFragment extends Fragment implements OnStartDragListe
                     initializeCurrentSpeakerPanel();
                     initializeSubscribePanel();
                     break;
-
                 case "addSpeaker":
                     participationAdapter.updateParticipations(controller.getParticipationsInList());
                     initializeCurrentSpeakerPanel();
                     changeUiOnAddSpeaker();
                     break;
-
                 case "clearList":
-
-                    if(s.equals("alert")) {
-
+                    if (s.equals("alert")) {
                         createAlertDialog(getString(R.string.speechListCanNotBeEmptiedWhileRunning));
-                    }
-
-                    else {
-
+                    } else {
                         participationAdapter.updateParticipations(controller.getParticipationsInList());
                         initializeCurrentSpeakerPanel();
                         changeUiOnEmptySpeechList();
                     }
                     break;
-
                 case "addMe":
-
-                    if(s.equals("alert")) {
-
+                    if (s.equals("alert")) {
                         createAlertDialog(getString(R.string.statusMustBePresentToAddToSpeechList));
-                    }
-
-                    else {
-
+                    } else {
                         participationAdapter.updateParticipations(controller.getParticipationsInList());
                         initializeSubscribePanel();
                         initializeCurrentSpeakerPanel();
                         changeUiOnAddSpeaker();
                     }
                     break;
-
                 case "removeMe":
-
-                    if(s.equals("alert")) {
-
+                    if (s.equals("alert")) {
                         createAlertDialog(getString(R.string.cantRemoveYourselfFromTheListWhileRunningSpeech));
-                    }
-
-                    else {
-
+                    } else {
                         participationAdapter.updateParticipations(controller.getParticipationsInList());
                         participationAdapter.changeNumberingAfterOrderChange();
                         initializeSubscribePanel();
                     }
                     break;
-
                 case "update":
-
                     Participation nextParticipation = controller.getNextParticipation();
-
-                    if(nextParticipation != null) {
-
-                        if(!nextParticipation.getIsSpeaking()) {
-
-                            endDurationThread();
-                        }
-
-                    }
-
-                    else {
-
-                        endDurationThread();
-                    }
+                    if (nextParticipation != null) {
+                        if (!nextParticipation.getIsSpeaking()) endDurationThread();
+                    } else endDurationThread();
 
                     initializeCurrentSpeakerPanel();
                     initializeStartStopPanel();
                     initializeSubscribePanel();
                     participationAdapter.updateParticipations(controller.getParticipationsInList());
 
-                    if(nextParticipation != null) {
-
-                        if(nextParticipation.getIsSpeaking()) {
-
+                    if (nextParticipation != null) {
+                        if (nextParticipation.getIsSpeaking()) {
                             endDurationThread();
                             runTimerThread();
                         }
                     }
-                    ((BaseActivity)getActivity()).getPullToRefresh().setRefreshing(false);
+                    ((BaseActivity) getActivity()).getPullToRefresh().setRefreshing(false);
                     break;
-
                 case "delete":
-
-                    if(participationAdapter.getParticipationList().size() == 0) {
-
+                    if (participationAdapter.getParticipationList().size() == 0) {
                         reloadItemTouchHelper();
                         changeUiOnEmptySpeechList();
                     }
                     break;
-
                 case "numbering":
                     initializeCurrentSpeakerPanel();
                     break;
-
             }
         }
     }

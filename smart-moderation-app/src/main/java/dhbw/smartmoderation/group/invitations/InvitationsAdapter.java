@@ -31,7 +31,6 @@ class InvitationsAdapter extends RecyclerView.Adapter<InvitationsAdapter.Invitat
 		this.context = context;
 		this.invitations = invitations;
 		this.handler = handler;
-
 		updateInvitations(invitations);
 	}
 

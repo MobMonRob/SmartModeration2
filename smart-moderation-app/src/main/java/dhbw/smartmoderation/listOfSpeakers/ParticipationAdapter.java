@@ -36,7 +36,7 @@ public class ParticipationAdapter extends RecyclerView.Adapter<ParticipationAdap
     private boolean isLocalAuthorModerator;
     private ListOfSpeakersFragment fragment;
 
-    public ParticipationAdapter(ListOfSpeakersFragment fragment, Context context, OnParticipationListener onParticipationListener, boolean isLocalAuthorModerator,OnStartDragListener onStartDragListener) {
+    public ParticipationAdapter(ListOfSpeakersFragment fragment, Context context, OnParticipationListener onParticipationListener, boolean isLocalAuthorModerator, OnStartDragListener onStartDragListener) {
         this.fragment = fragment;
         this.context = context;
         this.participationList = new ArrayList<>();
@@ -53,15 +53,11 @@ public class ParticipationAdapter extends RecyclerView.Adapter<ParticipationAdap
         this.participationList.addAll(participationList);
 
         Collections.sort(this.participationList, ((o1, o2) -> {
-
-            if(o1.getNumber() < o2.getNumber()) {
+            if (o1.getNumber() < o2.getNumber()) {
                 return -1;
-            }
-
-            else if(o1.getNumber() > o2.getNumber()) {
+            } else if (o1.getNumber() > o2.getNumber()) {
                 return 1;
             }
-
             return 0;
         }));
 
@@ -86,32 +82,24 @@ public class ParticipationAdapter extends RecyclerView.Adapter<ParticipationAdap
         holder.setParticipation(participation);
         holder.getNumber().setText(participation.getNumber() + "");
         holder.getName().setText(participation.getMember().getName());
-        if(participation.getIsSpeaking()) {
+        if (participation.getIsSpeaking()) {
             holder.getSpeakingHint().setText(context.getString(R.string.isTalking));
             holder.getSpeakingHint().setVisibility(View.VISIBLE);
-        }
-
-        else {
+        } else {
             holder.getSpeakingHint().setVisibility(View.GONE);
         }
 
-        if(this.isLocalAuthorModerator) {
-
+        if (this.isLocalAuthorModerator) {
             holder.getReorder().setVisibility(View.VISIBLE);
-        }
-
-        else {
-
+        } else {
             holder.getReorder().setVisibility(View.GONE);
         }
 
         holder.getReorder().setOnTouchListener((v, event) -> {
-
-            if(event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+            if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
                 onStartDragListener.onStartDrag(holder);
             }
             return false;
-
         });
     }
 
@@ -131,17 +119,12 @@ public class ParticipationAdapter extends RecyclerView.Adapter<ParticipationAdap
     @Override
     public void onItemMove(int fromPosition, int toPosition) {
 
-        if(fromPosition < toPosition) {
-
-            for(int i = fromPosition; i < toPosition; i++) {
+        if (fromPosition < toPosition) {
+            for (int i = fromPosition; i < toPosition; i++) {
                 Collections.swap(participationList, i, i + 1);
             }
-        }
-
-        else {
-
-            for(int i = fromPosition; i > toPosition; i--) {
-
+        } else {
+            for (int i = fromPosition; i > toPosition; i--) {
                 Collections.swap(participationList, i, i - 1);
             }
         }
@@ -151,20 +134,15 @@ public class ParticipationAdapter extends RecyclerView.Adapter<ParticipationAdap
 
     @Override
     public void onItemDismiss(int position) {
-
         Participation participation = this.participationList.remove(position);
-
         onParticipationListener.onParticipationDismiss(participation);
         Handler handler = new Handler();
         handler.post(() -> notifyItemRemoved(position));
-
         changeNumberingAfterOrderChange();
-
     }
 
     public void changeNumberingAfterOrderChange() {
         onParticipationListener.changeNumberingAfterOrderChange(participationList);
-
     }
 
     static class ParticipationViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder {
@@ -177,7 +155,7 @@ public class ParticipationAdapter extends RecyclerView.Adapter<ParticipationAdap
         private TextView speakingHint;
         private ImageView reorder;
 
-        public ParticipationViewHolder(ConstraintLayout constraintLayout, Context context, ParticipationAdapter participationAdapter)  {
+        public ParticipationViewHolder(ConstraintLayout constraintLayout, Context context, ParticipationAdapter participationAdapter) {
             super(constraintLayout);
             this.participationAdapter = participationAdapter;
             this.constraintLayout = constraintLayout;
@@ -212,7 +190,6 @@ public class ParticipationAdapter extends RecyclerView.Adapter<ParticipationAdap
             reorder.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             reorder.setBackgroundResource(R.drawable.reorder);
             constraintLayout.addView(reorder);
-
 
             ConstraintSet numberConstraintSet = new ConstraintSet();
             numberConstraintSet.clone(constraintLayout);
@@ -270,17 +247,18 @@ public class ParticipationAdapter extends RecyclerView.Adapter<ParticipationAdap
 
         @Override
         public void onItemClear() {
-
             this.participationAdapter.changeNumberingAfterOrderChange();
 
         }
 
     }
 
-    public interface OnParticipationListener{
+    public interface OnParticipationListener {
 
         void onParticipationDismiss(Participation participation);
+
         void changeNumberingAfterOrderChange(ArrayList<Participation> collection);
+
         Collection<Participation> getCollections();
     }
 }

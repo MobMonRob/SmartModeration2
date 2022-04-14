@@ -44,10 +44,8 @@ public class AddContactActivity extends ExceptionHandlingActivity {
         addContactList = findViewById(R.id.addContactList);
         doneFab = findViewById(R.id.doneFab);
         doneFab.setOnClickListener(v -> {
-
             AddContactAsyncTask addContactAsyncTask = new AddContactAsyncTask();
             addContactAsyncTask.execute();
-
         });
 
         controller = new PersonInfoController(this.groupId);
@@ -56,12 +54,9 @@ public class AddContactActivity extends ExceptionHandlingActivity {
         addContactList.setLayoutManager(contactLayoutManager);
 
         try {
-
             contactAdapter = new ContactAdapter(this, controller.getContacts());
             addContactList.setAdapter(contactAdapter);
-
         } catch (SmartModerationException exception){
-
             handleException(exception);
         }
 
@@ -81,13 +76,10 @@ public class AddContactActivity extends ExceptionHandlingActivity {
         protected Long doInBackground(String... strings) {
 
             try {
-
                 Contact selectedContact = contactAdapter.getSelectedContact();
                 Long memberId = controller.linkContactToMember(selectedContact, AddContactActivity.this.memberId);
                 return memberId;
-
             } catch (CantLinkContactToMember exception) {
-
                 publishProgress(exception);
             }
 
@@ -99,7 +91,6 @@ public class AddContactActivity extends ExceptionHandlingActivity {
             super.onPostExecute(l);
 
             if(l != null) {
-
                 Intent i = new Intent();
                 i.putExtra("memberId", l);
                 setResult(Activity.RESULT_OK, i);

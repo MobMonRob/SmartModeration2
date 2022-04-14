@@ -36,41 +36,27 @@ public class MeetingDetailController extends SmartModerationController {
     public void update() {
 
         try {
-
             this.synchronizationService.pull(getPrivateGroup());
-
         } catch (GroupNotFoundException e) {
             e.printStackTrace();
         }
     }
 
     public Meeting getMeeting() {
-
-       for(Meeting meeting : dataService.getMeetings()) {
-
-            if(meeting.getMeetingId().equals(this.meetingId)) {
-                return meeting;
-            }
-        }
-
+        for (Meeting meeting : dataService.getMeetings())
+            if (meeting.getMeetingId().equals(this.meetingId)) return meeting;
         return null;
     }
 
     public Collection<Member> getMembers() {
-
         return getMeeting().getMembers();
     }
 
     public Collection<Topic> getTopics() {
-
         Meeting meeting = null;
-
         try {
-
             meeting = dataService.getMeeting(getMeeting().getMeetingId());
-
         } catch (MeetingNotFoundException e) {
-
             e.printStackTrace();
         }
 
@@ -78,12 +64,10 @@ public class MeetingDetailController extends SmartModerationController {
     }
 
     public long getTotalTimeOfUpcomingTopics() {
-
         long totalTime = 0;
 
         for (Topic topic : getTopics()) {
-
-            if(topic.getTopicStatus() == TopicStatus.UPCOMING) {
+            if (topic.getTopicStatus() == TopicStatus.UPCOMING) {
                 totalTime += topic.getDuration();
             }
         }
@@ -96,13 +80,8 @@ public class MeetingDetailController extends SmartModerationController {
         Collection<Group> groups = dataService.getGroups();
         Long groupId = getMeeting().getGroup().getGroupId();
 
-        for(Group group : groups) {
-
-            if(group.getGroupId().equals(groupId)) {
-
-                return group;
-            }
-        }
+        for (Group group : groups)
+            if (group.getGroupId().equals(groupId)) return group;
 
         return null;
     }
@@ -111,48 +90,31 @@ public class MeetingDetailController extends SmartModerationController {
 
         Collection<PrivateGroup> privateGroups = connectionService.getGroups();
 
-        for(PrivateGroup group : privateGroups) {
-
-            if(getGroup().getGroupId().equals(Util.bytesToLong(group.getId().getBytes()))) {
-
+        for (PrivateGroup group : privateGroups) {
+            if (getGroup().getGroupId().equals(Util.bytesToLong(group.getId().getBytes())))
                 return group;
-            }
         }
 
         return null;
     }
 
     public Long getLocalAuthorId() {
-
         return connectionService.getLocalAuthorId();
     }
 
     public boolean isLocalAuthorModerator() {
-
         Group group = getGroup();
-
         Long authorId = connectionService.getLocalAuthorId();
         Member member = group.getMember(authorId);
-
-        if(member != null && member.getRoles(group).contains(Role.MODERATOR)) {
-
-            return true;
-        }
-
-        return false;
-
+        return member != null && member.getRoles(group).contains(Role.MODERATOR);
     }
 
     public void changeMemberStatus(Member member, Attendance attendance) throws MemberCantBeChangedException {
 
         PrivateGroup group;
-
         try {
-
             group = getPrivateGroup();
-
         } catch (GroupNotFoundException exception) {
-
             throw new MemberCantBeChangedException();
         }
 
@@ -167,31 +129,19 @@ public class MeetingDetailController extends SmartModerationController {
 
     public boolean hasMemberAlreadyVoted(Member member) {
 
-        for(Poll poll : getMeeting().getPolls()) {
-
-            for(Voice voice : poll.getVoices()) {
-
-                if(voice.getMemberId() == member.getMemberId()) {
-
-                    return true;
-                }
-            }
+        for (Poll poll : getMeeting().getPolls()) {
+            for (Voice voice : poll.getVoices())
+                if (voice.getMemberId() == member.getMemberId()) return true;
         }
 
         return false;
-
     }
 
     public void deleteMember(Member member) throws MemberCantBeDeleteException {
-
         PrivateGroup group;
-
         try {
-
             group = getPrivateGroup();
-
         } catch (GroupNotFoundException exception) {
-
             throw new MemberCantBeDeleteException();
         }
 
@@ -205,26 +155,19 @@ public class MeetingDetailController extends SmartModerationController {
     }
 
     public void changeTopicStatus(Topic topic, TopicStatus status) throws TopicCantBeChangedException {
-
         PrivateGroup group;
 
         try {
-
             group = getPrivateGroup();
-
         } catch (GroupNotFoundException exception) {
-
             throw new TopicCantBeChangedException();
         }
 
         Collection<ModelClass> data = new ArrayList<>();
 
-        if(status == TopicStatus.RUNNING) {
-
-            for(Topic t : getMeeting().getTopics()) {
-
-                if(t.getTopicStatus() == TopicStatus.RUNNING) {
-
+        if (status == TopicStatus.RUNNING) {
+            for (Topic t : getMeeting().getTopics()) {
+                if (t.getTopicStatus() == TopicStatus.RUNNING) {
                     t.setStatus(TopicStatus.FINISHED.name());
                     dataService.saveTopic(t);
                 }
@@ -237,16 +180,12 @@ public class MeetingDetailController extends SmartModerationController {
         Meeting meeting = null;
 
         try {
-
             meeting = dataService.getMeeting(meetingId);
-
         } catch (MeetingNotFoundException e) {
-
             e.printStackTrace();
         }
 
-        for(Topic t : meeting.getTopics()) {
-
+        for (Topic t : meeting.getTopics()) {
             data.add(t);
         }
 
@@ -254,15 +193,10 @@ public class MeetingDetailController extends SmartModerationController {
     }
 
     public void deleteTopic(Topic topic) throws TopicCantBeDeletedException {
-
         PrivateGroup group;
-
         try {
-
             group = getPrivateGroup();
-
         } catch (GroupNotFoundException exception) {
-
             throw new TopicCantBeDeletedException();
         }
 

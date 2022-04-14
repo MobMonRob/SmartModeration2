@@ -54,7 +54,6 @@ public class ContactAdapter extends  RecyclerView.Adapter<ContactAdapter.Contact
         holder.getTextView().setText(name);
 
         holder.itemView.setOnClickListener( v -> {
-
             this.selectedContact = contact;
             index = position;
             notifyDataSetChanged();

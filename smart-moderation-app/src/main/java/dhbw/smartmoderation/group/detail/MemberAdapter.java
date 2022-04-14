@@ -43,7 +43,7 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberView
     private OnStartDragListener onStartDragListener;
     private DetailGroupController controller;
 
-    public MemberAdapter(Context context, Collection<Member> members, OnMemberListener onMemberListener, Group group, OnStartDragListener onStartDragListener, DetailGroupController controller){
+    public MemberAdapter(Context context, Collection<Member> members, OnMemberListener onMemberListener, Group group, OnStartDragListener onStartDragListener, DetailGroupController controller) {
         super();
         this.context = context;
         this.group = group;
@@ -77,7 +77,7 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberView
         return members.size();
     }
 
-    public void updateMembers(Collection<Member>  members){
+    public void updateMembers(Collection<Member> members) {
         this.members.clear();
         this.members.addAll(members);
         notifyDataSetChanged();
@@ -85,43 +85,36 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberView
 
     @Override
     public void onItemMove(int fromPosition, int toPosition) {
-        Collections.swap(members,fromPosition,toPosition);
-        notifyItemMoved(fromPosition,toPosition);
+        Collections.swap(members, fromPosition, toPosition);
+        notifyItemMoved(fromPosition, toPosition);
     }
 
     @Override
     public void onItemDismiss(int position) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setMessage(context.getString(R.string.member_reaffirmation,members.get(position).getName()));
+        builder.setMessage(context.getString(R.string.member_reaffirmation, members.get(position).getName()));
         builder.setCancelable(false);
         builder.setNegativeButton(context.getString(R.string.yes), ((dialog, which) -> {
 
             Long memberId = members.get(position).getMemberId();
             boolean success = onMemberListener.onMemberDismiss(memberId);
 
-            if(success) {
-
+            if (success) {
                 members.remove(position);
                 notifyItemRemoved(position);
-
+            } else {
+                ((DetailGroupActivity) context).reloadMemberItemTouchHelper();
             }
-
-            else {
-
-                ((DetailGroupActivity)context).reloadMemberItemTouchHelper();
-            }
-
         }));
 
         builder.setPositiveButton(context.getString(R.string.no), ((dialog, which) -> {
             dialog.cancel();
-            ((DetailGroupActivity)context).reloadMemberItemTouchHelper();
+            ((DetailGroupActivity) context).reloadMemberItemTouchHelper();
         }));
 
         android.app.AlertDialog alertDialog = builder.create();
         alertDialog.show();
-
     }
 
     static class MemberViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, ItemTouchHelperViewHolder {
@@ -135,7 +128,7 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberView
         private DetailGroupController controller;
         private Member member;
 
-        public MemberViewHolder(ConstraintLayout layout, Context context, MemberAdapter.OnMemberListener onMemberListener,OnStartDragListener onStartDragListener, DetailGroupController controller) {
+        public MemberViewHolder(ConstraintLayout layout, Context context, MemberAdapter.OnMemberListener onMemberListener, OnStartDragListener onStartDragListener, DetailGroupController controller) {
             super(layout);
             layout.setOnClickListener(this);
             this.context = context;
@@ -160,7 +153,6 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberView
             role.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             layout.addView(role);
 
-
             ghost = new TextView(context);
             ghost.setId(View.generateViewId());
             ghost.setTypeface(ghost.getTypeface(), Typeface.BOLD);
@@ -176,9 +168,9 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberView
             //Init IsOnline
             ConstraintSet memberIsOnlineConstraintSet = new ConstraintSet();
             memberIsOnlineConstraintSet.clone(layout);
-            memberIsOnlineConstraintSet.connect(isOnline.getId(),ConstraintSet.TOP,ConstraintSet.PARENT_ID,ConstraintSet.TOP, 20);
-            memberIsOnlineConstraintSet.connect(isOnline.getId(),ConstraintSet.BOTTOM,ConstraintSet.PARENT_ID,ConstraintSet.BOTTOM, 20);
-            memberIsOnlineConstraintSet.connect(isOnline.getId(),ConstraintSet.LEFT,ConstraintSet.PARENT_ID,ConstraintSet.LEFT, 20);
+            memberIsOnlineConstraintSet.connect(isOnline.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, 20);
+            memberIsOnlineConstraintSet.connect(isOnline.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, 20);
+            memberIsOnlineConstraintSet.connect(isOnline.getId(), ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT, 20);
             memberIsOnlineConstraintSet.applyTo(layout);
 
             //Init Name
@@ -192,9 +184,9 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberView
             //Init Role
             ConstraintSet memberRolleConstraintSet = new ConstraintSet();
             memberRolleConstraintSet.clone(layout);
-            memberRolleConstraintSet.connect(role.getId(),ConstraintSet.TOP,ConstraintSet.PARENT_ID,ConstraintSet.TOP,20);
-            memberRolleConstraintSet.connect(role.getId(),ConstraintSet.BOTTOM,ConstraintSet.PARENT_ID,ConstraintSet.BOTTOM,20);
-            memberRolleConstraintSet.connect(role.getId(),ConstraintSet.LEFT, name.getId(),ConstraintSet.RIGHT,40);
+            memberRolleConstraintSet.connect(role.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, 20);
+            memberRolleConstraintSet.connect(role.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, 20);
+            memberRolleConstraintSet.connect(role.getId(), ConstraintSet.LEFT, name.getId(), ConstraintSet.RIGHT, 40);
             memberRolleConstraintSet.applyTo(layout);
 
             //Init Ghost
@@ -206,7 +198,7 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberView
             memberGhostConstraintSet.applyTo(layout);
         }
 
-        public void setMember(Member member,Group group) {
+        public void setMember(Member member, Group group) {
             this.member = member;
             name.setText(this.member.getName());
             updateVisibilityIsOnline();
@@ -214,69 +206,48 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberView
             updateVisibilityGhost();
         }
 
-        private void updateVisibilityGhost(){
+        private void updateVisibilityGhost() {
 
-            if (member.getIsGhost()){
-
+            if (member.getIsGhost()) {
                 ghost.setVisibility(View.VISIBLE);
-
-            }
-
-            else{
-
+            } else {
                 ghost.setVisibility(View.GONE);
             }
         }
 
-        private void updateVisibilityIsOnline(){
+        private void updateVisibilityIsOnline() {
 
             Contact contact = this.controller.getContact(member.getMemberId());
 
             if (this.controller.isConnectedToContact(contact)) {
-
                 isOnline.setVisibility(View.VISIBLE);
-            }
-
-            else if (this.controller.getLocalAuthorId().equals(member.getMemberId())) {
-
+            } else if (this.controller.getLocalAuthorId().equals(member.getMemberId())) {
                 isOnline.setVisibility(View.VISIBLE);
-
-            }
-
-            else {
-
+            } else {
                 isOnline.setVisibility(View.GONE);
             }
         }
 
-        private void updateVisibilityRole(Group group){
+        private void updateVisibilityRole(Group group) {
 
             boolean setModeratorVisible = false;
 
-            for (Role role : member.getRoles(group)){
-
-                if (role.equals(dhbw.smartmoderation.data.model.Role.MODERATOR)){
-
+            for (Role role : member.getRoles(group)) {
+                if (role.equals(dhbw.smartmoderation.data.model.Role.MODERATOR)) {
                     setModeratorVisible = true;
                     break;
                 }
             }
 
-            if (setModeratorVisible){
-
+            if (setModeratorVisible) {
                 role.setVisibility(View.VISIBLE);
-
-            }
-
-            else{
-
+            } else {
                 role.setVisibility(View.GONE);
             }
         }
 
         @Override
         public void onClick(View v) {
-
             this.onMemberListener.onMemberClick(this.member.getMemberId());
         }
 
@@ -292,7 +263,7 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberView
         }
     }
 
-    public interface OnMemberListener{
+    public interface OnMemberListener {
 
         void onMemberClick(Long memberId);
 

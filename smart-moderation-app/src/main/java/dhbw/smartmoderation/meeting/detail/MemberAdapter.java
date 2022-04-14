@@ -6,11 +6,13 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -21,7 +23,7 @@ import dhbw.smartmoderation.data.model.Member;
 import dhbw.smartmoderation.data.model.Role;
 
 
-public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberViewHolder>  {
+public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberViewHolder> {
 
     private Context context;
     private MeetingDetailController controller;
@@ -40,15 +42,11 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberView
         this.memberList.addAll(members);
 
         Collections.sort(this.memberList, (o1, o2) -> {
-
-            if(o1.getAttendance(controller.getMeeting()).getNumber() < o2.getAttendance(controller.getMeeting()).getNumber()) {
+            if (o1.getAttendance(controller.getMeeting()).getNumber() < o2.getAttendance(controller.getMeeting()).getNumber()) {
                 return -1;
-            }
-
-            else if (o1.getAttendance(controller.getMeeting()).getNumber() > o2.getAttendance(controller.getMeeting()).getNumber()) {
+            } else if (o1.getAttendance(controller.getMeeting()).getNumber() > o2.getAttendance(controller.getMeeting()).getNumber()) {
                 return 1;
             }
-
             return 0;
         });
         this.notifyDataSetChanged();
@@ -71,28 +69,23 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberView
 
         holder.getRole().setVisibility(View.GONE);
 
-        if(member.getRoles(this.controller.getGroup()).contains(Role.MODERATOR)) {
+        if (member.getRoles(this.controller.getGroup()).contains(Role.MODERATOR)) {
             holder.getRole().setText(context.getString(R.string.moderator));
             holder.getRole().setVisibility(View.VISIBLE);
         }
 
         Attendance status = member.getAttendance(this.controller.getMeeting());
 
-        if(status == Attendance.PRESENT) {
+        if (status == Attendance.PRESENT) {
             holder.getStatus().setBackgroundColor(ResourcesCompat.getColor(context.getResources(), R.color.default_green, null));
             holder.getStatus().setText(context.getString(R.string.present));
-        }
-
-        else if (status == Attendance.EXCUSED) {
+        } else if (status == Attendance.EXCUSED) {
             holder.getStatus().setBackgroundColor(ResourcesCompat.getColor(context.getResources(), R.color.colorPrimaryDark, null));
             holder.getStatus().setText(context.getString(R.string.excused));
-        }
-
-        else {
+        } else {
             holder.getStatus().setBackgroundColor(ResourcesCompat.getColor(context.getResources(), R.color.default_blue, null));
             holder.getStatus().setText(context.getString(R.string.absent));
         }
-
     }
 
     @Override

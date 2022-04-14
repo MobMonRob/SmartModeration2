@@ -40,19 +40,15 @@ class ListInvitationsController extends SmartModerationController {
 	}
 
 	public List<Invitation> getGroupInvitations() throws NoContactsFoundException {
-
 		return connectionService.getGroupInvitations();
-
 	}
 
 	public void acceptInvitation(Invitation invitation) {
-
 		connectionService.acceptGroupInvitation(invitation);
 		joinedGroups.add(invitation.getPrivateGroup());
 	}
 
 	public void rejectInvitation(Invitation invitation) {
-
 		connectionService.rejectGroupInvitation(invitation);
 	}
 
@@ -60,11 +56,8 @@ class ListInvitationsController extends SmartModerationController {
 	void synchronizeData() throws MemberNotFoundException, GroupNotFoundException {
 
 		for (PrivateGroup joinedGroup : joinedGroups) {
-
 			boolean success = false;
-
 			while(!success) {
-
 				success = synchronizationService.pull(joinedGroup);
 			}
 
@@ -84,7 +77,6 @@ class ListInvitationsController extends SmartModerationController {
 			ArrayList<Meeting> meetings = new ArrayList<>();
 
 			for(Meeting meeting : group.getMeetings()) {
-
 				MemberMeetingRelation memberMeetingRelation = meeting.addMember(local, Attendance.ABSENT);
 				dataService.saveMemberMeetingRelation(memberMeetingRelation);
 				meetings.add(meeting);
@@ -100,5 +92,4 @@ class ListInvitationsController extends SmartModerationController {
 
 		joinedGroups.clear();
 	}
-
 }

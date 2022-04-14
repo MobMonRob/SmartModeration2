@@ -82,7 +82,6 @@ public class LoginActivity extends AppCompatActivity {
             progressDialog.show();
         }
 
-
         @Override
         protected Boolean doInBackground(String... strings) {
             String password = strings[0];
