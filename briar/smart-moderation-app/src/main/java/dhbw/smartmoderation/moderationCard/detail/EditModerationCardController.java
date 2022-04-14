@@ -1,15 +1,12 @@
-package dhbw.smartmoderation.moderationCard;
+package dhbw.smartmoderation.moderationCard.detail;
 
 import org.briarproject.briar.api.privategroup.PrivateGroup;
-
 import java.util.ArrayList;
 import java.util.Collection;
-
 import dhbw.smartmoderation.controller.SmartModerationController;
 import dhbw.smartmoderation.data.model.Meeting;
 import dhbw.smartmoderation.data.model.ModelClass;
 import dhbw.smartmoderation.data.model.ModerationCard;
-import dhbw.smartmoderation.exceptions.CantCreateModerationCardException;
 import dhbw.smartmoderation.exceptions.CantEditModerationCardException;
 import dhbw.smartmoderation.exceptions.CouldNotDeleteModerationCard;
 import dhbw.smartmoderation.exceptions.GroupNotFoundException;
@@ -17,10 +14,10 @@ import dhbw.smartmoderation.exceptions.MeetingNotFoundException;
 import dhbw.smartmoderation.exceptions.ModerationCardNotFoundException;
 import dhbw.smartmoderation.util.Util;
 
-public class ModerationCardsController extends SmartModerationController {
+public class EditModerationCardController extends SmartModerationController {
     public long meetingId;
 
-    public ModerationCardsController(long meetingId) {
+    public EditModerationCardController(long meetingId) {
         this.meetingId = meetingId;
     }
 
@@ -44,39 +41,6 @@ public class ModerationCardsController extends SmartModerationController {
         }
 
         throw new GroupNotFoundException();
-    }
-
-
-    public ModerationCard createModerationCard(String content, String author, int backgroundColor, int fontColor) throws CantCreateModerationCardException, ModerationCardNotFoundException {
-        Meeting meeting = null;
-        try {
-            meeting = this.getMeeting();
-        } catch (MeetingNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        ModerationCard moderationCard = new ModerationCard();
-
-        try {
-
-            moderationCard.setContent(content);
-            moderationCard.setBackgroundColor(backgroundColor);
-            moderationCard.setFontColor(fontColor);
-            moderationCard.setMeeting(meeting);
-            moderationCard.setAuthor(author);
-            dataService.mergeModerationCard(moderationCard);
-
-            Collection<ModelClass> data = new ArrayList<>();
-            data.add(moderationCard);
-            synchronizationService.push(getPrivateGroup(), data);
-
-        } catch (GroupNotFoundException exception) {
-
-            dataService.deleteModerationCard(moderationCard);
-            throw new CantCreateModerationCardException();
-
-        }
-        return moderationCard;
     }
 
     public ModerationCard editModerationCard(String content, String author, int backgroundColor, int fontColor, long cardId) throws ModerationCardNotFoundException, CantEditModerationCardException {
@@ -128,25 +92,5 @@ public class ModerationCardsController extends SmartModerationController {
         moderationCard.setIsDeleted(true);
         data.add(moderationCard);
         synchronizationService.push(group, data);
-
-    }
-
-    public Collection<ModerationCard> getAllModerationCards() {
-        try {
-            this.synchronizationService.pull(getPrivateGroup());
-
-        } catch (GroupNotFoundException e) {
-            e.printStackTrace();
-        }
-        try {
-            return getMeeting().getModerationCards();
-        } catch (MeetingNotFoundException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public String getAuthorName() {
-        return connectionService.getLocalAuthor().getName();
     }
 }

@@ -1,4 +1,4 @@
-package dhbw.smartmoderation.moderationCard;
+package dhbw.smartmoderation.moderationCard.detail;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -14,6 +14,9 @@ import dhbw.smartmoderation.data.model.ModerationCard;
 import dhbw.smartmoderation.exceptions.CantEditModerationCardException;
 import dhbw.smartmoderation.exceptions.CouldNotDeleteModerationCard;
 import dhbw.smartmoderation.exceptions.ModerationCardNotFoundException;
+import dhbw.smartmoderation.moderationCard.ModerationCardColorImporter;
+import dhbw.smartmoderation.moderationCard.overview.ModerationCardsController;
+import dhbw.smartmoderation.moderationCard.overview.ModerationCardsFragment;
 import dhbw.smartmoderation.util.Client;
 import petrov.kristiyan.colorpicker.ColorPicker;
 
@@ -26,7 +29,7 @@ public class EditModerationCard{
     private AlertDialog alertDialog;
     private EditText moderationCardContentHolder;
     private SurfaceView cardColorViewer;
-    private ModerationCardsController controller;
+    private EditModerationCardController controller;
     private Client client;
     private ModerationCardsFragment moderationCardsFragment;
     SmartModerationApplicationImpl app = (SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp();
@@ -85,7 +88,7 @@ public class EditModerationCard{
         cardId = moderationCard.getCardId();
         cardAuthor = moderationCard.getAuthor();
         long meetingId = moderationCard.getMeetingId();
-        controller = new ModerationCardsController(meetingId);
+        controller = new EditModerationCardController(meetingId);
         client = app.getClient();
         this.moderationCardsFragment = moderationCardsFragment;
         initializePopup(moderationCardsFragment.getContext());

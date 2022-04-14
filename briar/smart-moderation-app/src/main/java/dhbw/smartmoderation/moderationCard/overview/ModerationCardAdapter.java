@@ -1,4 +1,4 @@
-package dhbw.smartmoderation.moderationCard;
+package dhbw.smartmoderation.moderationCard.overview;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -15,6 +15,7 @@ import java.util.Collection;
 
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.data.model.ModerationCard;
+import dhbw.smartmoderation.moderationCard.detail.EditModerationCard;
 
 public class ModerationCardAdapter extends RecyclerView.Adapter<ModerationCardAdapter.ModerationCardViewHolder>{
     private Context context;

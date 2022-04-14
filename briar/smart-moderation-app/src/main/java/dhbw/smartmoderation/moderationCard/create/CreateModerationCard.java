@@ -1,4 +1,4 @@
-package dhbw.smartmoderation.moderationCard;
+package dhbw.smartmoderation.moderationCard.create;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -10,14 +10,14 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.PopupWindow;
-import android.widget.TextView;
-import androidx.fragment.app.FragmentActivity;
+
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.SmartModerationApplicationImpl;
 import dhbw.smartmoderation.data.model.ModerationCard;
 import dhbw.smartmoderation.exceptions.CantCreateModerationCardException;
 import dhbw.smartmoderation.exceptions.ModerationCardNotFoundException;
+import dhbw.smartmoderation.moderationCard.ModerationCardColorImporter;
+import dhbw.smartmoderation.moderationCard.overview.ModerationCardsFragment;
 import dhbw.smartmoderation.util.Client;
 import petrov.kristiyan.colorpicker.ColorPicker;
 
@@ -27,7 +27,7 @@ public class CreateModerationCard {
     private AlertDialog alertDialog;
     private EditText moderationCardContentHolder;
     private SurfaceView cardColorViewer;
-    private ModerationCardsController controller;
+    private CreateModerationCardController controller;
     private ModerationCardsFragment moderationCardsFragment;
     ModerationCardColorImporter cardColorImporter = ModerationCardColorImporter.getInstance();
     private Client client;
@@ -56,7 +56,7 @@ public class CreateModerationCard {
     private final View.OnClickListener addModerationCardClickListener = v -> {
         try {
             String moderationCardContent = moderationCardContentHolder.getText().toString();
-            String cardAuthor = controller.getAuthorName();
+            String cardAuthor = controller.getLocalAuthorName();
             ModerationCard moderationCard = controller.createModerationCard(moderationCardContent, cardAuthor, backgroundColor, fontColor);
             moderationCardsFragment.onResume();
             if(client != null && client.isRunning()) client.addModerationCard(moderationCard);
@@ -72,7 +72,7 @@ public class CreateModerationCard {
         Intent intent = fragment.getActivity().getIntent();
         Bundle extra = intent.getExtras();
         long meetingId = extra.getLong("meetingId");
-        controller = new ModerationCardsController(meetingId);
+        controller = new CreateModerationCardController(meetingId);
         client = app.getClient();
         initializePopup(fragment.getActivity());
         moderationCardsFragment = fragment;

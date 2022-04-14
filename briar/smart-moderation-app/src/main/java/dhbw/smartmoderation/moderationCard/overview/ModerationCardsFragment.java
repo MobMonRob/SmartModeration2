@@ -1,4 +1,4 @@
-package dhbw.smartmoderation.moderationCard;
+package dhbw.smartmoderation.moderationCard.overview;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,6 +16,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.meeting.detail.BaseActivity;
+import dhbw.smartmoderation.moderationCard.DesktopLoginQRScanner;
+import dhbw.smartmoderation.moderationCard.create.CreateModerationCard;
 
 public class ModerationCardsFragment extends Fragment {
     private View view;
