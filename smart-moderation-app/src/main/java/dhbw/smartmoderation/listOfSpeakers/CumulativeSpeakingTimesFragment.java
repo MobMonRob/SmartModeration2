@@ -1,5 +1,6 @@
 package dhbw.smartmoderation.listOfSpeakers;
 
+import android.annotation.SuppressLint;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
@@ -34,7 +35,6 @@ public class CumulativeSpeakingTimesFragment extends Fragment {
     private TableLayout speakingTimesTable;
     private Collection<Participation> participations;
     private ListOfSpeakersController controller;
-    private View view;
 
     public String getTitle() {
         return getString(R.string.cumulativeSpeakingTimesFragment_title);
@@ -43,17 +43,17 @@ public class CumulativeSpeakingTimesFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.controller = ((BaseActivity) getActivity()).getListOfSpeakersController();
+        this.controller = ((BaseActivity) requireActivity()).getListOfSpeakersController();
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        this.view = inflater.inflate(R.layout.fragment_cumulative_speaking_times, container, false);
+        View view = inflater.inflate(R.layout.fragment_cumulative_speaking_times, container, false);
 
-        getActivity().setTitle(getTitle());
-        this.tableContainer = this.view.findViewById(R.id.tableContainer);
+        requireActivity().setTitle(getTitle());
+        this.tableContainer = view.findViewById(R.id.tableContainer);
         this.speakingTimesTable = new TableLayout(getActivity());
         TableLayout.LayoutParams layoutParams = new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT);
         layoutParams.setMargins(20, 40, 20, 20);
@@ -62,7 +62,7 @@ public class CumulativeSpeakingTimesFragment extends Fragment {
         this.participations = this.controller.getParticipations();
         createTableHeader();
         createSpeakingTimesTable();
-        return this.view;
+        return view;
     }
 
     public void createTableHeader() {
@@ -76,8 +76,9 @@ public class CumulativeSpeakingTimesFragment extends Fragment {
         participant.setTypeface(participant.getTypeface(), Typeface.BOLD);
         participant.setGravity(Gravity.CENTER);
 
-        GradientDrawable gradientDrawable = (GradientDrawable) ContextCompat.getDrawable(getActivity(), R.drawable.rectangle_4_borders);
-        gradientDrawable.setColor(ContextCompat.getColor(getActivity(), R.color.light_grey));
+        GradientDrawable gradientDrawable = (GradientDrawable) ContextCompat.getDrawable(requireActivity(), R.drawable.rectangle_4_borders);
+        assert gradientDrawable != null;
+        gradientDrawable.setColor(ContextCompat.getColor(requireActivity(), R.color.light_grey));
 
         participant.setBackground(gradientDrawable);
         participant.setText(getString(R.string.participant));
@@ -89,9 +90,10 @@ public class CumulativeSpeakingTimesFragment extends Fragment {
         contribution.setTypeface(contribution.getTypeface(), Typeface.BOLD);
         contribution.setGravity(Gravity.CENTER);
 
-        LayerDrawable layerDrawable = (LayerDrawable) ContextCompat.getDrawable(getActivity(), R.drawable.rectangle_trb_borders);
+        LayerDrawable layerDrawable = (LayerDrawable) ContextCompat.getDrawable(requireActivity(), R.drawable.rectangle_trb_borders);
+        assert layerDrawable != null;
         GradientDrawable shape = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.trb_drawable);
-        shape.setColor(ContextCompat.getColor(getActivity(), R.color.light_grey));
+        shape.setColor(ContextCompat.getColor(requireActivity(), R.color.light_grey));
 
         contribution.setBackground(layerDrawable);
         contribution.setText(getString(R.string.contributions));
@@ -120,6 +122,7 @@ public class CumulativeSpeakingTimesFragment extends Fragment {
         this.speakingTimesTable.addView(header);
     }
 
+    @SuppressLint("SetTextI18n")
     public void createSpeakingTimesTable() {
 
         for (Participation participation : this.participations) {
@@ -127,8 +130,8 @@ public class CumulativeSpeakingTimesFragment extends Fragment {
             TableRow row = new TableRow(getActivity());
             row.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
 
-            LayerDrawable rbl_layerDrawable = (LayerDrawable) ContextCompat.getDrawable(getActivity(), R.drawable.rectangle_rbl_borders);
-            LayerDrawable rb_layerDrawable = (LayerDrawable) ContextCompat.getDrawable(getActivity(), R.drawable.rectangle_rb_borders);
+            LayerDrawable rbl_layerDrawable = (LayerDrawable) ContextCompat.getDrawable(requireActivity(), R.drawable.rectangle_rbl_borders);
+            LayerDrawable rb_layerDrawable = (LayerDrawable) ContextCompat.getDrawable(requireActivity(), R.drawable.rectangle_rb_borders);
 
             TextView participant = new TextView(getActivity());
             TableRow.LayoutParams participantLayoutParams = new TableRow.LayoutParams(0, TableRow.LayoutParams.MATCH_PARENT, 1.4f);
@@ -206,6 +209,7 @@ public class CumulativeSpeakingTimesFragment extends Fragment {
         cumulativeSpeakingTimesAsyncTask.execute();
     }
 
+    @SuppressLint("StaticFieldLeak")
     public class CumulativeSpeakingTimesAsyncTask extends AsyncTask<String, String, String> {
 
         @Override
@@ -226,7 +230,7 @@ public class CumulativeSpeakingTimesFragment extends Fragment {
                 createNoDataLabel();
             }
 
-            ((BaseActivity) getActivity()).getPullToRefresh().setRefreshing(false);
+            ((BaseActivity) requireActivity()).getPullToRefresh().setRefreshing(false);
         }
     }
 }

@@ -41,7 +41,6 @@ public class ContactExchangeErrorFragment extends Fragment {
         super.onAttach(context);
     }
 
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

@@ -6,6 +6,9 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.Objects;
+
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.account.create.CreateAccountActivity;
 import dhbw.smartmoderation.login.LoginActivity;
@@ -15,18 +18,16 @@ import dhbw.smartmoderation.login.LoginActivity;
  */
 public class LauncherActivity extends AppCompatActivity {
 
-	private LauncherController controller;
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		this.getSupportActionBar().hide();
+		Objects.requireNonNull(this.getSupportActionBar()).hide();
 
 		setContentView(R.layout.activity_launcher);
 
-		controller = new LauncherController();
+		LauncherController controller = new LauncherController();
 
 		if (controller.accountExists()) {
 			Intent loginIntent = new Intent(LauncherActivity.this, LoginActivity.class);

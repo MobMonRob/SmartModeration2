@@ -10,7 +10,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import dhbw.smartmoderation.SmartModerationApplication;
 import dhbw.smartmoderation.SmartModerationApplicationImpl;
 import dhbw.smartmoderation.data.model.ConsensusLevel;
 import dhbw.smartmoderation.data.model.ConsensusLevelDao;
@@ -51,25 +50,24 @@ import dhbw.smartmoderation.util.Util;
 
 public class DataServiceImpl implements DataService {
 
-    private DaoSession daoSession;
-    private MemberDao memberDao;
-    private MeetingDao meetingDao;
-    private GroupDao groupDao;
-    private GroupSettingsDao groupSettingsDao;
-    private PollDao pollDao;
-    private TopicDao topicDao;
-    private VoiceDao voiceDao;
-    private ParticipationDao participationDao;
-    private ConsensusLevelDao consensusLevelDao;
-    private MemberGroupRelationDao memberGroupRelationDao;
-    private MemberMeetingRelationDao memberMeetingRelationDao;
-    private ModerationCardDao moderationCardDao;
+    private final MemberDao memberDao;
+    private final MeetingDao meetingDao;
+    private final GroupDao groupDao;
+    private final GroupSettingsDao groupSettingsDao;
+    private final PollDao pollDao;
+    private final TopicDao topicDao;
+    private final VoiceDao voiceDao;
+    private final ParticipationDao participationDao;
+    private final ConsensusLevelDao consensusLevelDao;
+    private final MemberGroupRelationDao memberGroupRelationDao;
+    private final MemberMeetingRelationDao memberMeetingRelationDao;
+    private final ModerationCardDao moderationCardDao;
 
     public DataServiceImpl() {
 
         DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(((SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp()).getApplicationContext(), "notes-db");
         Database db = helper.getWritableDb();
-        daoSession = new DaoMaster(db).newSession();
+        DaoSession daoSession = new DaoMaster(db).newSession();
         memberDao = daoSession.getMemberDao();
         meetingDao = daoSession.getMeetingDao();
         groupDao = daoSession.getGroupDao();
@@ -132,7 +130,6 @@ public class DataServiceImpl implements DataService {
 
     @Override
     public synchronized Member getMember(Long memberId) throws MemberNotFoundException {
-
         Member member = memberDao.load(memberId);
 
         if (member != null) {
@@ -144,7 +141,6 @@ public class DataServiceImpl implements DataService {
 
     @Override
     public Member getMember(Contact contact) throws MemberNotFoundException {
-
         Member member = memberDao.load(contact.getId());
 
         if (member != null) {
@@ -156,7 +152,6 @@ public class DataServiceImpl implements DataService {
 
     @Override
     public Member getMember(Author author) throws MemberNotFoundException {
-
         Member member = memberDao.load(Util.bytesToLong(author.getId().getBytes()));
 
         if (member != null) {
@@ -173,7 +168,6 @@ public class DataServiceImpl implements DataService {
 
     @Override
     public void saveMeeting(Meeting meeting) {
-
         Collection<Meeting> allMeetings = getMeetings();
 
         for (Meeting currentMeeting : allMeetings) {
@@ -188,7 +182,6 @@ public class DataServiceImpl implements DataService {
 
     @Override
     public synchronized void mergeMeeting(Meeting meeting) {
-
         if (meeting.isDeleted()) {
             try {
                 Meeting meetingToDelete = getMeeting(meeting.getMeetingId());

@@ -14,41 +14,42 @@ import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+
 import java.util.Collection;
+
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.data.model.Voice;
 
 public class ResultTableFragment extends Fragment {
 
-    private LinearLayout tableContainer;
     private TableLayout resultTable;
     private Collection<Voice> voices;
-    private View view;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        this.view = inflater.inflate(R.layout.fragment_result_table, container, false);
-        this.voices = ((ConsensusProposalResult)getActivity()).getController().getVoices();
-        this.tableContainer = this.view.findViewById(R.id.tableContainer);
+        View view = inflater.inflate(R.layout.fragment_result_table, container, false);
+        this.voices = ((ConsensusProposalResult) requireActivity()).getController().getVoices();
+        LinearLayout tableContainer = view.findViewById(R.id.tableContainer);
 
         this.resultTable = new TableLayout(getActivity());
         TableLayout.LayoutParams layoutParams = new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT);
         layoutParams.setMargins(20, 20, 20, 20);
         this.resultTable.setLayoutParams(layoutParams);
-        this.tableContainer.addView(this.resultTable);
-        return this.view;
+        tableContainer.addView(this.resultTable);
+        return view;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void update(){
-        this.voices = ((ConsensusProposalResult)getActivity()).getController().getVoices();
+        this.voices = ((ConsensusProposalResult)requireActivity()).getController().getVoices();
         this.resultTable.removeAllViews();
         createTableHeader();
         createResultTable();
@@ -65,22 +66,24 @@ public class ResultTableFragment extends Fragment {
         name.setTypeface(name.getTypeface(), Typeface.BOLD);
         name.setGravity(Gravity.CENTER);
 
-        GradientDrawable gradientDrawable = (GradientDrawable) ContextCompat.getDrawable(getActivity(), R.drawable.rectangle_4_borders);
-        gradientDrawable.setColor(ContextCompat.getColor(getActivity(), R.color.light_grey));
+        GradientDrawable gradientDrawable = (GradientDrawable) ContextCompat.getDrawable(requireActivity(), R.drawable.rectangle_4_borders);
+        assert gradientDrawable != null;
+        gradientDrawable.setColor(ContextCompat.getColor(requireActivity(), R.color.light_grey));
 
         name.setBackground(gradientDrawable);
         name.setText(getString(R.string.name));
         header.addView(name);
 
-        TextView description = new TextView(getActivity());
+        TextView description = new TextView(requireActivity());
         TableRow.LayoutParams descriptionLayoutParams = new TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1.3f);
         description.setLayoutParams(descriptionLayoutParams);
         description.setTypeface(description.getTypeface(), Typeface.BOLD);
         description.setGravity(Gravity.CENTER);
 
-        LayerDrawable layerDrawable = (LayerDrawable) ContextCompat.getDrawable(getActivity(), R.drawable.rectangle_trb_borders);
+        LayerDrawable layerDrawable = (LayerDrawable) ContextCompat.getDrawable(requireActivity(), R.drawable.rectangle_trb_borders);
+        assert layerDrawable != null;
         GradientDrawable shape = (GradientDrawable)layerDrawable.findDrawableByLayerId(R.id.trb_drawable);
-        shape.setColor(ContextCompat.getColor(getActivity(), R.color.light_grey));
+        shape.setColor(ContextCompat.getColor(requireActivity(), R.color.light_grey));
 
         description.setBackground(layerDrawable);
         description.setText(getString(R.string.explanation));
@@ -102,7 +105,8 @@ public class ResultTableFragment extends Fragment {
             name.setTypeface(name.getTypeface(), Typeface.BOLD);
             name.setGravity(Gravity.CENTER);
 
-            LayerDrawable layerDrawable = (LayerDrawable) ContextCompat.getDrawable(getActivity(), R.drawable.rectangle_rbl_borders);
+            LayerDrawable layerDrawable = (LayerDrawable) ContextCompat.getDrawable(requireActivity(), R.drawable.rectangle_rbl_borders);
+            assert layerDrawable != null;
             GradientDrawable shape = (GradientDrawable)layerDrawable.findDrawableByLayerId(R.id.rbl_drawable);
             shape.setColor(voice.getConsensusLevel().getColor());
 
@@ -117,9 +121,10 @@ public class ResultTableFragment extends Fragment {
             description.setLayoutParams(descriptionLayoutParams);
             description.setGravity(Gravity.CENTER);
 
-            layerDrawable = (LayerDrawable) ContextCompat.getDrawable(getActivity(), R.drawable.rectangle_rb_borders);
+            layerDrawable = (LayerDrawable) ContextCompat.getDrawable(requireActivity(), R.drawable.rectangle_rb_borders);
+            assert layerDrawable != null;
             shape = (GradientDrawable)layerDrawable.findDrawableByLayerId(R.id.rb_drawable);
-            shape.setColor(ContextCompat.getColor(getActivity(), R.color.default_color));
+            shape.setColor(ContextCompat.getColor(requireActivity(), R.color.default_color));
 
             description.setBackground(layerDrawable);
             description.offsetLeftAndRight(2);
@@ -133,7 +138,9 @@ public class ResultTableFragment extends Fragment {
             else {
                 description.setText(voice.getExplanation());
                 description.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
-                description.setJustificationMode(LineBreaker.JUSTIFICATION_MODE_INTER_WORD);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    description.setJustificationMode(LineBreaker.JUSTIFICATION_MODE_INTER_WORD);
+                }
             }
 
             description.setMaxLines(4);

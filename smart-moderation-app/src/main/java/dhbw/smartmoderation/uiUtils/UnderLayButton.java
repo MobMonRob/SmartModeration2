@@ -12,16 +12,14 @@ import dhbw.smartmoderation.SmartModerationApplicationImpl;
 
 public class UnderLayButton {
 
-    private String text;
-    private int imageResId;
-    private int color;
+    private final String text;
+    private final int color;
     private int position;
     private RectF clickRegion;
-    private UnderLayButtonClickListener clickListener;
+    private final UnderLayButtonClickListener clickListener;
 
-    public UnderLayButton(String text, int imageResId, int color, UnderLayButtonClickListener clickListener) {
+    public UnderLayButton(String text, int color, UnderLayButtonClickListener clickListener) {
         this.text = text;
-        this.imageResId = imageResId;
         this.color = color;
         this.clickListener = clickListener;
     }
@@ -52,5 +50,4 @@ public class UnderLayButton {
         this.clickRegion = rect;
         this.position = position;
     }
-
 }

@@ -1,17 +1,13 @@
 package dhbw.smartmoderation.meeting.create;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +16,12 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.RequiresApi;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -37,11 +39,12 @@ import dhbw.smartmoderation.uiUtils.SimpleItemTouchHelperCallback;
 import dhbw.smartmoderation.util.ExceptionHandlingActivity;
 import dhbw.smartmoderation.util.Util;
 
+@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class CreateMeetingActivity extends ExceptionHandlingActivity implements TopicAdapter.OnTopicListener {
 
     private CreateMeetingController createMeetingController;
     private TopicAdapter topicAdapter;
-    private ArrayList<Topic> dataSet = new ArrayList<>();
+    private final ArrayList<Topic> dataSet = new ArrayList<>();
 
     private RadioGroup onlineSwitch;
     private RadioGroup openSwitch;
@@ -50,17 +53,9 @@ public class CreateMeetingActivity extends ExceptionHandlingActivity implements 
     private EditText causeInput;
     private EditText locationInput;
     private RecyclerView topicList;
-    private ItemTouchHelper itemTouchHelper;
-    private LinearLayoutManager topicLayoutManager;
     private TextView endTag;
     private TextView expectedEndInput;
     private EditText plannedEndInput;
-
-    private FloatingActionButton generalFab;
-    private FloatingActionButton addTopicFab;
-    private TextView addTopicFabText;
-    private FloatingActionButton createMeetingFab;
-    private TextView createMeetingFabText;
 
     private ArrayList<FloatingActionButton> fabList;
     private ArrayList<TextView> textList;
@@ -69,12 +64,10 @@ public class CreateMeetingActivity extends ExceptionHandlingActivity implements 
 
     @Override
     public void onTopicClick(View view, Topic topic) {
-        onChangeTopic(view, topic);
+        onChangeTopic(topic);
     }
 
     enum Answer {YES, NO}
-
-    ;
 
     private View popUp;
     private AlertDialog alertDialog;
@@ -85,14 +78,14 @@ public class CreateMeetingActivity extends ExceptionHandlingActivity implements 
 
     final Calendar calendar = Calendar.getInstance();
 
-    private DatePickerDialog.OnDateSetListener date = (view, year, month, dayOfMonth) -> {
+    private final DatePickerDialog.OnDateSetListener date = (view, year, month, dayOfMonth) -> {
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.MONTH, month);
         calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
         updateDateLabel();
     };
 
-    private TimePickerDialog.OnTimeSetListener time = (view, hourOfDay, minute) -> {
+    private final TimePickerDialog.OnTimeSetListener time = (view, hourOfDay, minute) -> {
 
         if (callback.equals("for_planned_end_time")) {
             updateTimeLabel(plannedEndInput, hourOfDay, minute);
@@ -144,18 +137,18 @@ public class CreateMeetingActivity extends ExceptionHandlingActivity implements 
         expectedEndInput = findViewById(R.id.expectedEndInput);
         expectedEndInput.setVisibility(View.VISIBLE);
 
-        generalFab = findViewById(R.id.generalFab);
+        FloatingActionButton generalFab = findViewById(R.id.generalFab);
 
-        addTopicFab = findViewById(R.id.addTopicFab);
+        FloatingActionButton addTopicFab = findViewById(R.id.addTopicFab);
         fabList.add(addTopicFab);
 
-        addTopicFabText = findViewById(R.id.addTopicText);
+        TextView addTopicFabText = findViewById(R.id.addTopicText);
         textList.add(addTopicFabText);
 
-        createMeetingFab = findViewById(R.id.createMeetingFab);
+        FloatingActionButton createMeetingFab = findViewById(R.id.createMeetingFab);
         fabList.add(createMeetingFab);
 
-        createMeetingFabText = findViewById(R.id.createMeetingText);
+        TextView createMeetingFabText = findViewById(R.id.createMeetingText);
         textList.add(createMeetingFabText);
 
         addTopicFab.setVisibility(View.GONE);
@@ -192,15 +185,15 @@ public class CreateMeetingActivity extends ExceptionHandlingActivity implements 
 
         beginTimeInput.setOnClickListener(v -> {
             callback = "for_start_time";
-            this.onSetStartTime(v);
+            this.onSetStartTime();
         });
 
         plannedEndInput.setOnClickListener(v -> {
             callback = "for_planned_end_time";
-            this.onSetStartTime(v);
+            this.onSetStartTime();
         });
 
-        topicLayoutManager = new LinearLayoutManager(this);
+        LinearLayoutManager topicLayoutManager = new LinearLayoutManager(this);
         topicList.setLayoutManager(topicLayoutManager);
 
         topicAdapter = new TopicAdapter(this, dataSet, this);
@@ -226,7 +219,7 @@ public class CreateMeetingActivity extends ExceptionHandlingActivity implements 
         }));
 
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(topicAdapter, R.color.default_red, R.drawable.trash, ItemTouchHelper.START);
-        itemTouchHelper = new ItemTouchHelper(callback);
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
         itemTouchHelper.attachToRecyclerView(topicList);
     }
 
@@ -286,9 +279,7 @@ public class CreateMeetingActivity extends ExceptionHandlingActivity implements 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(getString(R.string.allFieldsMustBeFilled));
         builder.setCancelable(false);
-        builder.setNeutralButton(getString(R.string.ok), (dialog, which) -> {
-            dialog.cancel();
-        });
+        builder.setNeutralButton(getString(R.string.ok), (dialog, which) -> dialog.cancel());
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
@@ -310,7 +301,7 @@ public class CreateMeetingActivity extends ExceptionHandlingActivity implements 
         createMeetingAsyncTask.execute(open, online, causeInput.getText().toString(), date, begin, locationInput.getText().toString(), end);
     }
 
-    private void onSetStartTime(View view) {
+    private void onSetStartTime() {
         TimePickerDialog timePicker = new TimePickerDialog(this, R.style.TimePickerTheme, time, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true);
         timePicker.show();
     }
@@ -320,7 +311,8 @@ public class CreateMeetingActivity extends ExceptionHandlingActivity implements 
     }
 
 
-    private void onChangeTopic(View view, Topic topic) {
+    @SuppressLint("InflateParams")
+    private void onChangeTopic(Topic topic) {
         LayoutInflater inflater = LayoutInflater.from(this);
         popUp = inflater.inflate(R.layout.popup_topic, null);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
@@ -351,6 +343,7 @@ public class CreateMeetingActivity extends ExceptionHandlingActivity implements 
         alertDialog.show();
     }
 
+    @SuppressLint("InflateParams")
     private void onAddTopic(View view) {
 
         LayoutInflater inflater = LayoutInflater.from(this);
@@ -403,15 +396,15 @@ public class CreateMeetingActivity extends ExceptionHandlingActivity implements 
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage(getString(R.string.bothFieldNeedToBeFilled));
                 builder.setCancelable(false);
-                builder.setNeutralButton(getString(R.string.ok), ((dialog, which) -> {
-                    dialog.cancel();
-                }));
+                builder.setNeutralButton(getString(R.string.ok), ((dialog, which) -> dialog.cancel()));
                 AlertDialog alertDialog = builder.create();
                 alertDialog.show();
             }
         }
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void checkTopicsLength() {
 
         String beginTime = String.valueOf(beginTimeInput.getText());
@@ -438,6 +431,7 @@ public class CreateMeetingActivity extends ExceptionHandlingActivity implements 
         this.beginDateInput.setText(dateFormat.format(calendar.getTime()));
     }
 
+    @SuppressLint("SetTextI18n")
     public void updateTimeLabel(EditText input, int hour, int minute) {
 
         String minuteStr = minute + "";
@@ -465,6 +459,7 @@ public class CreateMeetingActivity extends ExceptionHandlingActivity implements 
 
     }
 
+    @SuppressLint("StaticFieldLeak")
     public class CreateMeetingAsyncTask extends AsyncTask<Object, Exception, String> {
 
         @Override

@@ -123,6 +123,7 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback, C
         }
 
         setDisplayOrientation(getScreenRotationDegrees());
+        assert camera != null;
         Camera.Parameters params = camera.getParameters();
         params = setSceneMode(camera, params);
 
@@ -409,11 +410,9 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback, C
         }
 
         if (bestSize != null) {
-
             if (LOG.isLoggable(INFO)) {
                 LOG.info("Best size " + bestSize.width + "x" + bestSize.height);
             }
-
             params.setPreviewSize(bestSize.width, bestSize.height);
         }
     }
@@ -427,7 +426,6 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback, C
     private void logCameraParameters() throws CameraException {
 
         if (camera == null) throw new AssertionError();
-
 
         if (LOG.isLoggable(INFO)) {
             Camera.Parameters params;
@@ -530,9 +528,7 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback, C
 
     @Override
     public void onAutoFocus(boolean success, Camera camera) {
-
         if (LOG.isLoggable(INFO)) LOG.info("Auto focus succeeded: " + success);
-
         autoFocusRunning = false;
         postDelayed(autoFocusRetry, AUTO_FOCUS_RETRY_DELAY);
     }
@@ -545,7 +541,6 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback, C
             logException(LOG, WARNING, e);
         }
     }
-
 
     @Override
     public void onClick(View v) {

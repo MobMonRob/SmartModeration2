@@ -1,5 +1,6 @@
 package dhbw.smartmoderation.group.detail;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Typeface;
@@ -37,18 +38,16 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberView
     private static final String TAG = MemberAdapter.class.getSimpleName();
 
     private final List<Member> members = new ArrayList<>();
-    private Group group;
-    private Context context;
-    private OnMemberListener onMemberListener;
-    private OnStartDragListener onStartDragListener;
-    private DetailGroupController controller;
+    private final Group group;
+    private final Context context;
+    private final OnMemberListener onMemberListener;
+    private final DetailGroupController controller;
 
-    public MemberAdapter(Context context, Collection<Member> members, OnMemberListener onMemberListener, Group group, OnStartDragListener onStartDragListener, DetailGroupController controller) {
+    public MemberAdapter(Context context, Collection<Member> members, OnMemberListener onMemberListener, Group group, DetailGroupController controller) {
         super();
         this.context = context;
         this.group = group;
         this.onMemberListener = onMemberListener;
-        this.onStartDragListener = onStartDragListener;
         this.controller = controller;
         updateMembers(members);
     }
@@ -58,7 +57,7 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberView
     public MemberViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ConstraintLayout layout = new ConstraintLayout(context);
         layout.setLayoutParams(new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, 130));
-        MemberAdapter.MemberViewHolder memberViewHolder = new MemberAdapter.MemberViewHolder(layout, context, onMemberListener, onStartDragListener, controller);
+        MemberAdapter.MemberViewHolder memberViewHolder = new MemberAdapter.MemberViewHolder(layout, context, onMemberListener, controller);
         TypedValue value = new TypedValue();
         context.getTheme().resolveAttribute(android.R.attr.selectableItemBackground, value, true);
         layout.setBackgroundResource(value.resourceId);
@@ -77,6 +76,7 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberView
         return members.size();
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void updateMembers(Collection<Member> members) {
         this.members.clear();
         this.members.addAll(members);
@@ -119,35 +119,33 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberView
 
     static class MemberViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, ItemTouchHelperViewHolder {
 
-        private Context context;
-        private ImageView isOnline;
-        private TextView name;
-        private TextView ghost;
-        private TextView role;
-        private OnMemberListener onMemberListener;
-        private DetailGroupController controller;
+        private final ImageView isOnline;
+        private final TextView name;
+        private final TextView ghost;
+        private final TextView role;
+        private final OnMemberListener onMemberListener;
+        private final DetailGroupController controller;
         private Member member;
 
-        public MemberViewHolder(ConstraintLayout layout, Context context, MemberAdapter.OnMemberListener onMemberListener, OnStartDragListener onStartDragListener, DetailGroupController controller) {
+        public MemberViewHolder(ConstraintLayout layout, Context context, MemberAdapter.OnMemberListener onMemberListener, DetailGroupController controller) {
             super(layout);
             layout.setOnClickListener(this);
-            this.context = context;
             this.onMemberListener = onMemberListener;
             this.controller = controller;
 
-            isOnline = new ImageView(this.context);
+            isOnline = new ImageView(context);
             isOnline.setId(View.generateViewId());
             isOnline.setImageResource(R.drawable.circle_green_background);
             isOnline.setLayoutParams(new ViewGroup.LayoutParams(50, 50));
             layout.addView(isOnline);
 
-            name = new TextView(this.context);
+            name = new TextView(context);
             name.setId(View.generateViewId());
             name.setTypeface(name.getTypeface(), Typeface.BOLD);
             name.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             layout.addView(name);
 
-            role = new TextView(this.context);
+            role = new TextView(context);
             role.setId(View.generateViewId());
             role.setText(R.string.role_moderator);
             role.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -156,7 +154,7 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberView
             ghost = new TextView(context);
             ghost.setId(View.generateViewId());
             ghost.setTypeface(ghost.getTypeface(), Typeface.BOLD);
-            ghost.setText(this.context.getString(R.string.online));
+            ghost.setText(context.getString(R.string.online));
             ghost.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             ghost.setGravity(Gravity.CENTER);
             ghost.setEms(4);

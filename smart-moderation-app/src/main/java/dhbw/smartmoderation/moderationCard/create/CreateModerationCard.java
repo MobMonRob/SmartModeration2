@@ -67,7 +67,7 @@ public class CreateModerationCard {
 
 
     public CreateModerationCard(ModerationCardsFragment fragment) {
-        Intent intent = fragment.getActivity().getIntent();
+        Intent intent = fragment.requireActivity().getIntent();
         Bundle extra = intent.getExtras();
         long meetingId = extra.getLong("meetingId");
         controller = new CreateModerationCardController(meetingId);

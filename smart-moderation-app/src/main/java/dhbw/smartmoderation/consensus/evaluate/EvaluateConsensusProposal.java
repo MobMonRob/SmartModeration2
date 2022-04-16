@@ -1,5 +1,6 @@
 package dhbw.smartmoderation.consensus.evaluate;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -34,14 +35,11 @@ public class EvaluateConsensusProposal extends UpdateableExceptionHandlingActivi
 
     private TextView title;
     private TextView consensusProposal;
-    private RecyclerView consensusLevelList;
     private ConsensusLevelAdapter consensusLevelAdapter;
-    private LinearLayoutManager consensusLevelLayoutManager;
     private EditText description;
     private Button sendButton;
     private EvaluateConsensusProposalController controller;
     private Poll poll;
-    private ItemTouchHelper itemTouchHelper;
     private boolean isPrefilled;
     private Long voiceId;
     private ProgressDialog progressDialog;
@@ -53,7 +51,7 @@ public class EvaluateConsensusProposal extends UpdateableExceptionHandlingActivi
         setContentView(R.layout.activity_evaluate_consensus_proposal);
 
         pullToRefresh = findViewById(R.id.pullToRefresh);
-        pullToRefresh.setOnRefreshListener(() -> updateUI());
+        pullToRefresh.setOnRefreshListener(this::updateUI);
 
         Intent intent = getIntent();
         Long pollId = intent.getLongExtra("pollId", 0);
@@ -70,16 +68,16 @@ public class EvaluateConsensusProposal extends UpdateableExceptionHandlingActivi
 
         this.title = findViewById(R.id.consensusProposalTitle);
         this.consensusProposal = findViewById(R.id.consensusProposal);
-        this.consensusLevelList = findViewById(R.id.consensusLevelList);
+        RecyclerView consensusLevelList = findViewById(R.id.consensusLevelList);
         this.description = findViewById(R.id.descriptionInput);
         this.sendButton = findViewById(R.id.sendButton);
 
-        this.consensusLevelLayoutManager = new LinearLayoutManager(this);
-        this.consensusLevelList.setLayoutManager(this.consensusLevelLayoutManager);
+        LinearLayoutManager consensusLevelLayoutManager = new LinearLayoutManager(this);
+        consensusLevelList.setLayoutManager(consensusLevelLayoutManager);
         this.consensusLevelAdapter = new ConsensusLevelAdapter(this, this.controller);
-        this.consensusLevelList.setAdapter(this.consensusLevelAdapter);
+        consensusLevelList.setAdapter(this.consensusLevelAdapter);
         DividerItemDecoration consensusLevelDividerItemDecoration = new DividerItemDecoration(consensusLevelList.getContext(), consensusLevelLayoutManager.getOrientation());
-        this.consensusLevelList.addItemDecoration(consensusLevelDividerItemDecoration);
+        consensusLevelList.addItemDecoration(consensusLevelDividerItemDecoration);
 
         this.sendButton.setOnClickListener(this::onSendVoice);
 
@@ -87,8 +85,8 @@ public class EvaluateConsensusProposal extends UpdateableExceptionHandlingActivi
         setTitle(title);
 
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(consensusLevelAdapter, R.color.default_black, R.drawable.hand, ItemTouchHelper.END);
-        this.itemTouchHelper = new ItemTouchHelper(callback);
-        this.itemTouchHelper.attachToRecyclerView(consensusLevelList);
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
+        itemTouchHelper.attachToRecyclerView(consensusLevelList);
         if (isPrefilled) {
             prefillRecyclerViewAndEditText();
         }
@@ -100,6 +98,7 @@ public class EvaluateConsensusProposal extends UpdateableExceptionHandlingActivi
         updateUI();
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void prefillRecyclerViewAndEditText() {
         Voice voice = this.poll.getVoice(this.voiceId);
         int position = voice.getConsensusLevel().getNumber() - 1;
@@ -151,6 +150,7 @@ public class EvaluateConsensusProposal extends UpdateableExceptionHandlingActivi
         evaluateConsensusProposalAsyncTask.execute();
     }
 
+    @SuppressLint("StaticFieldLeak")
     public class EvaluateConsensusProposalAsyncTask extends AsyncTask<Object, Exception, String> {
 
         String flag;
@@ -190,7 +190,7 @@ public class EvaluateConsensusProposal extends UpdateableExceptionHandlingActivi
                     ConsensusLevel consensusLevel = (ConsensusLevel) objects[1];
                     String description = objects[2].toString();
                     try {
-                        if (mode == "change") {
+                        if (mode.equals("change")) {
                             Voice voice = (Voice) objects[3];
                             controller.createVoice(voice, consensusLevel, description);
                         } else {

@@ -1,5 +1,6 @@
 package dhbw.smartmoderation.group.overview;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -29,10 +30,7 @@ public class OverviewGroupActivity extends UpdateableExceptionHandlingActivity i
     private static final String TAG = OverviewGroupActivity.class.getSimpleName();
 
     private OverviewGroupController controller;
-    private RecyclerView recGroup;
     private GroupAdapter groupAdapter;
-    private LinearLayoutManager groupLayoutManager;
-    private FloatingActionButton createGroupButton;
     private SwipeRefreshLayout pullToRefresh;
 
     @Override
@@ -42,16 +40,16 @@ public class OverviewGroupActivity extends UpdateableExceptionHandlingActivity i
         setTitle(R.string.title_activity_group_overview);
 
         pullToRefresh = findViewById(R.id.pullToRefresh);
-        pullToRefresh.setOnRefreshListener(() -> updateUI());
+        pullToRefresh.setOnRefreshListener(this::updateUI);
 
         controller = new OverviewGroupController();
 
-        recGroup = findViewById(R.id.recGroupsOverView);
+        RecyclerView recGroup = findViewById(R.id.recGroupsOverView);
 
-        createGroupButton = findViewById(R.id.btnAddGroup);
+        FloatingActionButton createGroupButton = findViewById(R.id.btnAddGroup);
         createGroupButton.setOnClickListener(this::onAddGroup);
 
-        groupLayoutManager = new LinearLayoutManager(this);
+        LinearLayoutManager groupLayoutManager = new LinearLayoutManager(this);
         recGroup.setLayoutManager(groupLayoutManager);
         groupAdapter = new GroupAdapter(this, controller.getGroups(),this);
         recGroup.setAdapter(groupAdapter);
@@ -92,6 +90,7 @@ public class OverviewGroupActivity extends UpdateableExceptionHandlingActivity i
     }
 
 
+    @SuppressLint("StaticFieldLeak")
     public class OverviewGroupAsyncTask extends AsyncTask<String, String, String> {
 
         @Override

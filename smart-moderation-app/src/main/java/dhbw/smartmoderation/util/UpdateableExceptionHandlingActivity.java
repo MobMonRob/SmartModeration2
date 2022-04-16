@@ -8,7 +8,7 @@ import dhbw.smartmoderation.connection.synchronization.PullEvent;
 import dhbw.smartmoderation.connection.synchronization.SynchronizableDataType;
 
 public abstract class UpdateableExceptionHandlingActivity extends ExceptionHandlingActivity {
-
+    //can this be deleted?
     private final Handler handler = new Handler();
 
     public abstract Collection<SynchronizableDataType> getSynchronizableDataTypes();

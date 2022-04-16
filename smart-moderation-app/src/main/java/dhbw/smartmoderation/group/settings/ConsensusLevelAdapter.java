@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RectShape;
+import android.os.Build;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,10 +31,10 @@ import dhbw.smartmoderation.util.Util;
 
 public class ConsensusLevelAdapter extends RecyclerView.Adapter<ConsensusLevelAdapter.ConsensusLevelViewHolder> implements ItemTouchHelperAdapter {
 
-    private Context context;
+    private final Context context;
     public ArrayList<ConsensusLevel> consensusLevelList;
     private final OnStartDragListener onStartDragListener;
-    private OnConsensusLevelListener onConsensusLevelListener;
+    private final OnConsensusLevelListener onConsensusLevelListener;
 
     public ConsensusLevelAdapter(Context context, Collection<ConsensusLevel> consensusLevels, OnStartDragListener onStartDragListener, OnConsensusLevelListener onConsensusLevelListener) {
         this.context = context;
@@ -44,6 +45,7 @@ public class ConsensusLevelAdapter extends RecyclerView.Adapter<ConsensusLevelAd
         updateConsensusLevelList(consensusLevels);
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void updateConsensusLevelList(Collection<ConsensusLevel> consensusLevels) {
         int previousSize = consensusLevelList.size();
         this.consensusLevelList.clear();
@@ -69,8 +71,7 @@ public class ConsensusLevelAdapter extends RecyclerView.Adapter<ConsensusLevelAd
     public ConsensusLevelViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ConstraintLayout constraintLayout = new ConstraintLayout(context);
         constraintLayout.setLayoutParams(new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, 200));
-        ConsensusLevelViewHolder consensusLevelViewHolder = new ConsensusLevelViewHolder(constraintLayout, context, this);
-        return consensusLevelViewHolder;
+        return new ConsensusLevelViewHolder(constraintLayout, context, this);
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -78,7 +79,6 @@ public class ConsensusLevelAdapter extends RecyclerView.Adapter<ConsensusLevelAd
     public void onBindViewHolder(@NonNull ConsensusLevelViewHolder holder, int position) {
 
         ConsensusLevel consensusLevel = consensusLevelList.get(position);
-        holder.setConsensusLevel(consensusLevel);
 
         String numbering = Util.toRoman(consensusLevel.getNumber());
         holder.getTextViewNumbering().setText(numbering);
@@ -95,7 +95,6 @@ public class ConsensusLevelAdapter extends RecyclerView.Adapter<ConsensusLevelAd
             }
             return false;
         });
-
 
         holder.getLaunch().setOnClickListener(v -> {
             if (context instanceof SettingsActivity) {
@@ -152,21 +151,15 @@ public class ConsensusLevelAdapter extends RecyclerView.Adapter<ConsensusLevelAd
         onConsensusLevelListener.changeNumberingAfterOrderChange(consensusLevelList);
     }
 
-    public Collection<ConsensusLevel> getConsensusLevelList() {
-        return consensusLevelList;
-    }
-
     static class ConsensusLevelViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder {
 
-        private TextView numbering;
-        private TextView name;
-        private ImageView color;
-        private ShapeDrawable rectangle;
-        private ImageView launch;
-        private ImageView reorder;
-        private ConsensusLevel consensusLevel;
-        private ConsensusLevelAdapter consensusLevelAdapter;
-        private Context Context;
+        private final TextView numbering;
+        private final TextView name;
+        private final ShapeDrawable rectangle;
+        private final ImageView launch;
+        private final ImageView reorder;
+        private final ConsensusLevelAdapter consensusLevelAdapter;
+        private final Context Context;
 
         ConsensusLevelViewHolder(ConstraintLayout constraintLayout, Context context, ConsensusLevelAdapter consensusLevelAdapter) {
             super(constraintLayout);
@@ -187,7 +180,7 @@ public class ConsensusLevelAdapter extends RecyclerView.Adapter<ConsensusLevelAd
             name.setTypeface(name.getTypeface(), Typeface.BOLD);
             constraintLayout.addView(name);
 
-            color = new ImageView(context);
+            ImageView color = new ImageView(context);
             color.setId(View.generateViewId());
             color.setLayoutParams(new ViewGroup.LayoutParams(75, 75));
             rectangle = new ShapeDrawable(new RectShape());
@@ -244,10 +237,6 @@ public class ConsensusLevelAdapter extends RecyclerView.Adapter<ConsensusLevelAd
             reorderConstraintSet.applyTo(constraintLayout);
         }
 
-        public void setConsensusLevel(ConsensusLevel consensusLevel) {
-            this.consensusLevel = consensusLevel;
-        }
-
         public TextView getTextViewNumbering() {
             return this.numbering;
         }
@@ -270,7 +259,9 @@ public class ConsensusLevelAdapter extends RecyclerView.Adapter<ConsensusLevelAd
 
         @Override
         public void onItemSelected() {
-            itemView.setBackgroundColor(Context.getColor(R.color.default_drag_color));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                itemView.setBackgroundColor(Context.getColor(R.color.default_drag_color));
+            }
         }
 
         @Override

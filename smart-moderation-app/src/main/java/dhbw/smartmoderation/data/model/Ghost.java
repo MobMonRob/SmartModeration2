@@ -6,7 +6,7 @@ public class Ghost implements IContact {
 
     private String firstName;
     private String lastName;
-    private Long id;
+    private final Long id;
 
     public Ghost() {
         this.id = ((SmartModerationApplicationImpl)SmartModerationApplicationImpl.getApp()).getUniqueId();
@@ -30,11 +30,4 @@ public class Ghost implements IContact {
         this.lastName = lastName;
     }
 
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
 }

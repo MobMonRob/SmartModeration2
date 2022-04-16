@@ -1,5 +1,6 @@
 package dhbw.smartmoderation.meeting.detail;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.view.Gravity;
@@ -25,9 +26,9 @@ import dhbw.smartmoderation.data.model.Role;
 
 public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberViewHolder> {
 
-    private Context context;
-    private MeetingDetailController controller;
-    private ArrayList<Member> memberList;
+    private final Context context;
+    private final MeetingDetailController controller;
+    private final ArrayList<Member> memberList;
 
     public MemberAdapter(Context context, MeetingDetailController controller) {
         this.context = context;
@@ -37,6 +38,7 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberView
         updateMemberList(members);
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void updateMemberList(Collection<Member> members) {
         this.memberList.clear();
         this.memberList.addAll(members);
@@ -57,8 +59,7 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberView
     public MemberViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ConstraintLayout constraintLayout = new ConstraintLayout(context);
         constraintLayout.setLayoutParams(new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, 150));
-        MemberViewHolder memberViewHolder = new MemberViewHolder(constraintLayout, context, this);
-        return memberViewHolder;
+        return new MemberViewHolder(constraintLayout, context);
     }
 
     @Override
@@ -99,15 +100,13 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberView
 
     static class MemberViewHolder extends RecyclerView.ViewHolder {
 
-        private MemberAdapter memberAdapter;
         private Member member;
-        private TextView name;
-        private TextView role;
-        private TextView status;
+        private final TextView name;
+        private final TextView role;
+        private final TextView status;
 
-        public MemberViewHolder(ConstraintLayout constraintLayout, Context context, MemberAdapter memberAdapter) {
+        public MemberViewHolder(ConstraintLayout constraintLayout, Context context) {
             super(constraintLayout);
-            this.memberAdapter = memberAdapter;
 
             name = new TextView(context);
             name.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));

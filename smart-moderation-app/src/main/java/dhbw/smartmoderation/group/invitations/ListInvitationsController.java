@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import dhbw.smartmoderation.connection.GroupInvitationVisitor;
 import dhbw.smartmoderation.connection.Invitation;
 import dhbw.smartmoderation.controller.SmartModerationController;
 import dhbw.smartmoderation.data.model.Attendance;
@@ -27,15 +26,9 @@ import dhbw.smartmoderation.exceptions.NoContactsFoundException;
  */
 class ListInvitationsController extends SmartModerationController {
 
-	private static final String TAG = ListInvitationsController.class.getSimpleName();
-
-	private GroupInvitationVisitor groupInvitationVisitor;
-
-	private List<PrivateGroup> joinedGroups;
+	private final List<PrivateGroup> joinedGroups;
 
 	public ListInvitationsController() {
-
-		groupInvitationVisitor = new GroupInvitationVisitor();
 		joinedGroups = new ArrayList<>();
 	}
 

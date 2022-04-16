@@ -1,9 +1,11 @@
 package dhbw.smartmoderation.consensus.evaluate;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -11,6 +13,7 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.content.res.ResourcesCompat;
@@ -27,20 +30,19 @@ import dhbw.smartmoderation.util.Util;
 
 public class ConsensusLevelAdapter extends RecyclerView.Adapter<ConsensusLevelAdapter.ConsensusLevelViewHolder> implements ItemTouchHelperAdapter {
 
-    private Context context;
-    private EvaluateConsensusProposalController controller;
-    private ArrayList<ConsensusLevel> consensusLevelList;
+    private final Context context;
+    private final ArrayList<ConsensusLevel> consensusLevelList;
     private int selectedPosition = -1;
     private boolean selectionDisabled;
 
     public ConsensusLevelAdapter(Context context, EvaluateConsensusProposalController controller) {
         this.context = context;
-        this.controller = controller;
         this.consensusLevelList = new ArrayList<>();
-        Collection<ConsensusLevel> consensusLevels = this.controller.getConsensusLevels();
+        Collection<ConsensusLevel> consensusLevels = controller.getConsensusLevels();
         this.updateConsensusLevelList(consensusLevels);
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void updateConsensusLevelList(Collection<ConsensusLevel> consensusLevels) {
         this.consensusLevelList.clear();
         this.consensusLevelList.addAll(consensusLevels);
@@ -57,13 +59,13 @@ public class ConsensusLevelAdapter extends RecyclerView.Adapter<ConsensusLevelAd
         this.notifyDataSetChanged();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @NonNull
     @Override
     public ConsensusLevelViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ConstraintLayout constraintLayout = new ConstraintLayout(context);
         constraintLayout.setLayoutParams(new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, 130));
-        ConsensusLevelViewHolder consensusLevelViewHolder = new ConsensusLevelViewHolder(constraintLayout, context, this);
-        return consensusLevelViewHolder;
+        return new ConsensusLevelViewHolder(constraintLayout, context, this);
     }
 
     @Override
@@ -119,14 +121,15 @@ public class ConsensusLevelAdapter extends RecyclerView.Adapter<ConsensusLevelAd
     }
 
     static class ConsensusLevelViewHolder extends RecyclerView.ViewHolder implements CheckBox.OnCheckedChangeListener {
-        private ConsensusLevelAdapter consensusLevelAdapter;
+        private final ConsensusLevelAdapter consensusLevelAdapter;
         private ConsensusLevel consensusLevel;
-        private ConstraintLayout constraintLayout;
-        private TextView number;
-        private TextView title;
-        private CheckBox selectCheckBox;
+        private final ConstraintLayout constraintLayout;
+        private final TextView number;
+        private final TextView title;
+        private final CheckBox selectCheckBox;
         public boolean onBind;
 
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         public ConsensusLevelViewHolder(ConstraintLayout constraintLayout, Context context, ConsensusLevelAdapter consensusLevelAdapter) {
             super(constraintLayout);
             this.consensusLevelAdapter = consensusLevelAdapter;
@@ -196,6 +199,7 @@ public class ConsensusLevelAdapter extends RecyclerView.Adapter<ConsensusLevelAd
             return this.constraintLayout;
         }
 
+        @SuppressLint("NotifyDataSetChanged")
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             if (!onBind) {

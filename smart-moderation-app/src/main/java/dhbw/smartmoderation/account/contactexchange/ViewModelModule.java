@@ -9,7 +9,7 @@ import dagger.Module;
 
 @Module
 public abstract class ViewModelModule {
-
+    //class not needed?
     @Binds
     @Singleton
     abstract ViewModelProvider.Factory bindViewModelFactory(

@@ -34,7 +34,6 @@ public class WebServer extends NanoHTTPD {
 
     @Override
     public Response serve(IHTTPSession session) {
-
         String uri = session.getUri();
         Method method = session.getMethod();
         String filename = uri.substring(1);
@@ -42,21 +41,14 @@ public class WebServer extends NanoHTTPD {
         boolean is_ascii = true;
 
         if (uri.equals("/polls")) {
-
             mimetype = "application/json";
-
             try {
-
                 JSONArray pollArray = new JSONArray();
-
                 for (Poll poll : getMeeting().getPolls()) {
-
                     JSONObject pollJSON = new JSONObject();
-
                     pollJSON.put("id", String.valueOf(poll.getPollId()))
                             .put("title", poll.getTitle())
                             .put("consensusProposal", poll.getConsensusProposal());
-
                     pollArray.put(pollJSON);
                 }
 
@@ -69,19 +61,13 @@ public class WebServer extends NanoHTTPD {
                 return newFixedLengthResponse(Response.Status.OK, mimetype, meetingJSON.toString());
 
             } catch (JSONException e) {
-
                 e.printStackTrace();
             }
         } else if (uri.equals("/moderationcards") && Method.GET.equals(method)) {
-
             mimetype = "application/json";
-
             try {
-
                 JSONArray cardsArray = new JSONArray();
-
                 for (ModerationCard card : getMeeting().getModerationCards()) {
-
                     JSONObject cardJSON = new JSONObject();
                     String backgroundColor = String.format("#%06X", (0xFFFFFF & card.getBackgroundColor()));
                     String fontColor = String.format("#%06X", (0xFFFFFF & card.getFontColor()));
@@ -90,14 +76,12 @@ public class WebServer extends NanoHTTPD {
                             .put("content", card.getContent())
                             .put("backgroundColor", backgroundColor)
                             .put("fontColor", fontColor);
-
                     cardsArray.put(cardJSON);
                 }
 
                 JSONObject cardsOutputJSON = new JSONObject();
                 cardsOutputJSON.put("meetingId", getMeeting().getMeetingId());
                 cardsOutputJSON.put("moderationCards", cardsArray);
-                String s = cardsOutputJSON.toString();
                 return newFixedLengthResponse(Response.Status.OK, mimetype, cardsOutputJSON.toString());
 
             } catch (JSONException e) {
@@ -105,7 +89,6 @@ public class WebServer extends NanoHTTPD {
             }
 
         } else if (uri.startsWith("/moderationcard/") && Method.DELETE.equals(method)) {
-
             mimetype = "application/json";
             DetailModerationCardController detailModerationCardController = new DetailModerationCardController(meetingId);
             long cardId = Long.parseLong(uri.split("/")[2]);
@@ -117,26 +100,16 @@ public class WebServer extends NanoHTTPD {
             } catch (ModerationCardNotFoundException e) {
                 return newFixedLengthResponse(Response.Status.NOT_FOUND, mimetype, e.toString());
             }
-
-
         } else if (uri.contains("/result/voices") && Method.GET.equals(method)) {
-
             mimetype = "application/json";
-
             Long pollId = Long.parseLong(Objects.requireNonNull(session.getParameters().get("pollId")).get(0));
-
             try {
-
                 JSONArray voiceArray = new JSONArray();
-
                 for (Voice voice : getMeeting().getPoll(pollId).getVoices()) {
-
                     JSONObject voiceJSON = new JSONObject();
-
                     voiceJSON.put("consensusLevel", String.valueOf(voice.getConsensusLevel().getConsensusLevelId()))
                             .put("explanation", voice.getExplanation())
                             .put("member", voice.getMember().getName());
-
                     voiceArray.put(voiceJSON);
                 }
 
@@ -146,59 +119,37 @@ public class WebServer extends NanoHTTPD {
                         .put("voices", voiceArray);
 
                 return newFixedLengthResponse(Response.Status.OK, mimetype, pollJSON.toString());
-
             } catch (JSONException e) {
-
                 e.printStackTrace();
             }
-
         } else if (uri.contains("/result/consensusLevels") && Method.GET.equals(method)) {
-
             mimetype = "application/json";
 
             try {
-
                 JSONArray consensusLevelArray = new JSONArray();
-
                 for (ConsensusLevel consensusLevel : getMeeting().getGroup().getGroupSettings().getConsensusLevels()) {
-
                     JSONObject consensusLevelJSON = new JSONObject();
-
                     String hexColor = String.format("#%06X", (0xFFFFFF & consensusLevel.getColor()));
-
                     consensusLevelJSON.put("id", String.valueOf(consensusLevel.getConsensusLevelId()))
                             .put("color", hexColor)
                             .put("name", consensusLevel.getName());
-
                     consensusLevelArray.put(consensusLevelJSON);
                 }
 
                 JSONObject consensusLevelJSON = new JSONObject();
                 consensusLevelJSON.put("consensusLevels", consensusLevelArray);
-
                 return newFixedLengthResponse(Response.Status.OK, mimetype, consensusLevelJSON.toString());
-
             } catch (JSONException e) {
-
                 e.printStackTrace();
             }
-
         } else if (uri.contains("/result/members") && Method.GET.equals(method)) {
-
             mimetype = "application/json";
-
             int count = getMeeting().getPresentVoteMembers().size();
-
             JSONObject countJSON = new JSONObject();
-
             try {
-
                 countJSON.put("count", count);
-
                 return newFixedLengthResponse(Response.Status.OK, mimetype, countJSON.toString());
-
             } catch (JSONException e) {
-
                 e.printStackTrace();
             }
         } else if (uri.equals("/")) {
@@ -210,12 +161,9 @@ public class WebServer extends NanoHTTPD {
             mimetype = "text/html";
             is_ascii = true;
         } else {
-
             if (uri.contains("/result")) {
-
                 filename = uri.substring(1);
             }
-
             if (filename.contains(".html")) {
                 mimetype = "text/html";
                 is_ascii = true;
@@ -238,47 +186,30 @@ public class WebServer extends NanoHTTPD {
         }
 
         if (is_ascii) {
-
             StringBuilder response = new StringBuilder();
             String line;
-
             try {
-
                 BufferedReader reader = new BufferedReader(new InputStreamReader(app.getApplicationContext().getAssets().open(filename)));
-
                 while ((line = reader.readLine()) != null) {
-
                     response.append(line);
                 }
-
                 reader.close();
-
             } catch (IOException e) {
-
                 e.printStackTrace();
             }
-
             return newFixedLengthResponse(Response.Status.OK, mimetype, response.toString());
-
         } else {
-
             try {
-
                 InputStream inputStream = app.getApplicationContext().getAssets().open(filename);
                 return newFixedLengthResponse(Response.Status.OK, mimetype, inputStream, inputStream.available());
-
             } catch (IOException e) {
-
                 e.printStackTrace();
             }
-
         }
-
         return super.serve(session);
     }
 
     public void setMeetingId(Long meetingId) {
-
         this.meetingId = meetingId;
     }
 
@@ -287,15 +218,11 @@ public class WebServer extends NanoHTTPD {
     }
 
     public Meeting getMeeting() {
-
         for (Meeting meeting : app.getDataService().getMeetings()) {
             if (meeting.getMeetingId().equals(meetingId)) {
-
                 return meeting;
             }
         }
-
-
         return null;
     }
 
@@ -303,7 +230,4 @@ public class WebServer extends NanoHTTPD {
         return PORT;
     }
 
-    public String getIpAddress() {
-        return this.getHostname();
-    }
 }

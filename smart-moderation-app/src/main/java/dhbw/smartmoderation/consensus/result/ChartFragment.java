@@ -2,6 +2,7 @@ package dhbw.smartmoderation.consensus.result;
 
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -27,7 +29,6 @@ import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.data.model.ConsensusLevel;
 
 public class ChartFragment extends Fragment {
-    private View view;
     private PieChart donutChart;
     private ConsensusProposalResultController controller;
     private ConstraintLayout constraintLayout;
@@ -35,23 +36,24 @@ public class ChartFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        this.view = inflater.inflate(R.layout.fragment_chart, container, false);
-        this.controller = ((ConsensusProposalResult)getActivity()).getController();
-        constraintLayout = this.view.findViewById(R.id.constraintLayout);
-        return this.view;
+        View view = inflater.inflate(R.layout.fragment_chart, container, false);
+        this.controller = ((ConsensusProposalResult) requireActivity()).getController();
+        constraintLayout = view.findViewById(R.id.constraintLayout);
+        return view;
     }
 
     public PieChart getDonutChart() {
         return  this.donutChart;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     public void createDonutChart(){
         constraintLayout.removeAllViews();
         donutChart = new PieChart(getActivity());
-        donutChart.setOnChartValueSelectedListener(((ConsensusProposalResult)getActivity()).chartValueSelectedListener);
+        donutChart.setOnChartValueSelectedListener(((ConsensusProposalResult) requireActivity()).chartValueSelectedListener);
         donutChart.setCenterTextSize(14f);
         donutChart.setCenterTextTypeface(Typeface.create((Typeface)null, Typeface.BOLD));
-        donutChart.setCenterTextColor(getActivity().getColor(R.color.default_black));
+        donutChart.setCenterTextColor(requireActivity().getColor(R.color.default_black));
         String centerText = this.controller.getVoiceCount() + "/" + this.controller.getVoteMembersCount();
         donutChart.setCenterText(centerText);
         constraintLayout.addView(donutChart);
@@ -70,7 +72,7 @@ public class ChartFragment extends Fragment {
 
         float notVotedPercentage = ((float)(this.controller.getVoteMembersCount()- this.controller.getVoiceCount())/(float)this.controller.getVoteMembersCount())*100;
         chartData.add(new PieEntry(notVotedPercentage, getString(R.string.novoteTaken)));
-        colors.add(ContextCompat.getColor(getActivity(), R.color.default_grey));
+        colors.add(ContextCompat.getColor(requireActivity(), R.color.default_grey));
 
         PieDataSet chartDataSet = new PieDataSet(chartData, "");
         chartDataSet.setColors(colors);
@@ -88,6 +90,7 @@ public class ChartFragment extends Fragment {
         donutChart.invalidate();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onResume() {
         super.onResume();

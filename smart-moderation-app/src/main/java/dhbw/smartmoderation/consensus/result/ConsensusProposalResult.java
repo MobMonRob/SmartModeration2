@@ -1,5 +1,6 @@
 package dhbw.smartmoderation.consensus.result;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
@@ -30,6 +31,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.connection.synchronization.SynchronizableDataType;
@@ -48,12 +50,12 @@ public class ConsensusProposalResult extends UpdateableExceptionHandlingActivity
     private TableRow selectedTableRow;
     private Long pollId;
     private SwipeRefreshLayout pullToRefresh;
-    private View.OnClickListener endButtonClickListener = v -> {
+    private final View.OnClickListener endButtonClickListener = v -> {
         ConsensusProposalResultAsyncTask consensusProposalResultAsyncTask = new ConsensusProposalResultAsyncTask("closePoll");
         consensusProposalResultAsyncTask.execute();
     };
 
-    private View.OnClickListener showButtonClickListener = v -> {
+    private final View.OnClickListener showButtonClickListener = v -> {
         Intent intent = new Intent(this, EvaluateConsensusProposal.class);
         intent.putExtra("pollId", this.pollId);
         intent.putExtra("activity", "ConsensusProposalResult");
@@ -74,7 +76,7 @@ public class ConsensusProposalResult extends UpdateableExceptionHandlingActivity
                 for (TableRow tableRow : tableRows.values()) {
                     tableRow.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.default_color));
                 }
-                tableRows.get(name).setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.light_grey));
+                Objects.requireNonNull(tableRows.get(name)).setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.light_grey));
                 selectedTableRow = tableRows.get(name);
             }
         }
@@ -165,6 +167,7 @@ public class ConsensusProposalResult extends UpdateableExceptionHandlingActivity
         endButton.setTypeface(endButton.getTypeface(), Typeface.BOLD);
         endButton.setText(getString(R.string.end_evaluation));
         GradientDrawable gradientDrawable = (GradientDrawable) ContextCompat.getDrawable(this, R.drawable.rounded);
+        assert gradientDrawable != null;
         gradientDrawable.setColor(ContextCompat.getColor(this, R.color.default_red));
         endButton.setBackground(gradientDrawable);
         endButton.setOnClickListener(endButtonClickListener);
@@ -180,7 +183,7 @@ public class ConsensusProposalResult extends UpdateableExceptionHandlingActivity
         endButtonConstraintSet.applyTo(constraintLayout);
     }
 
-    public int createShowButton(ConstraintLayout constraintLayout, float bias) {
+    public void createShowButton(ConstraintLayout constraintLayout, float bias) {
 
         Button showButton = new Button(this);
         showButton.setId(View.generateViewId());
@@ -190,6 +193,7 @@ public class ConsensusProposalResult extends UpdateableExceptionHandlingActivity
         showButton.setTypeface(showButton.getTypeface(), Typeface.BOLD);
         showButton.setText(getString(R.string.show_evaluation));
         GradientDrawable gradientDrawable = (GradientDrawable) ContextCompat.getDrawable(this, R.drawable.rounded);
+        assert gradientDrawable != null;
         gradientDrawable.setColor(ContextCompat.getColor(this, R.color.colorPrimary));
         showButton.setBackground(gradientDrawable);
         showButton.setOnClickListener(showButtonClickListener);
@@ -204,7 +208,7 @@ public class ConsensusProposalResult extends UpdateableExceptionHandlingActivity
         showButtonConstraintSet.setHorizontalBias(showButton.getId(), bias);
 
         showButtonConstraintSet.applyTo(constraintLayout);
-        return showButton.getId();
+        showButton.getId();
     }
 
     public void createButtonPanel() {
@@ -249,6 +253,7 @@ public class ConsensusProposalResult extends UpdateableExceptionHandlingActivity
         consensusProposalResultAsyncTask.execute();
     }
 
+    @SuppressLint("StaticFieldLeak")
     public class ConsensusProposalResultAsyncTask extends AsyncTask<Object, Exception, String> {
 
         String flag;
@@ -293,7 +298,6 @@ public class ConsensusProposalResult extends UpdateableExceptionHandlingActivity
                     resultTableFragment.update();
                     pullToRefresh.setRefreshing(false);
                     break;
-
                 case "closePoll":
                     createButtonPanel();
                     break;

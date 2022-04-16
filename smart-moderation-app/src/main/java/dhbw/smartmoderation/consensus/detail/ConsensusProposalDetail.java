@@ -1,5 +1,6 @@
 package dhbw.smartmoderation.consensus.detail;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.text.LineBreaker;
 import android.os.AsyncTask;
@@ -26,7 +27,6 @@ public class ConsensusProposalDetail extends UpdateableExceptionHandlingActivity
     private ConsensusProposalDetailController controller;
     private SwipeRefreshLayout pullToRefresh;
     private Poll poll;
-    private Long pollId;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -36,19 +36,23 @@ public class ConsensusProposalDetail extends UpdateableExceptionHandlingActivity
         setTitle(getString(R.string.ConsensusProposalDetail_title));
         pullToRefresh = findViewById(R.id.pullToRefresh);
 
-        pullToRefresh.setOnRefreshListener(() -> {
-            updateUI();
-        });
+        pullToRefresh.setOnRefreshListener(this::updateUI);
 
         Intent intent = getIntent();
-        pollId = intent.getLongExtra("pollId", 0);
+        Long pollId = intent.getLongExtra("pollId", 0);
         this.titleText = findViewById(R.id.titleText);
-        this.titleText.setJustificationMode(LineBreaker.JUSTIFICATION_MODE_INTER_WORD);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            this.titleText.setJustificationMode(LineBreaker.JUSTIFICATION_MODE_INTER_WORD);
+        }
         this.consensusProposalText = findViewById(R.id.consensusProposalText);
-        this.consensusProposalText.setJustificationMode(LineBreaker.JUSTIFICATION_MODE_INTER_WORD);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            this.consensusProposalText.setJustificationMode(LineBreaker.JUSTIFICATION_MODE_INTER_WORD);
+        }
         this.notesText = findViewById(R.id.notesText);
-        this.notesText.setJustificationMode(LineBreaker.JUSTIFICATION_MODE_INTER_WORD);
-        this.controller = new ConsensusProposalDetailController(this.pollId);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            this.notesText.setJustificationMode(LineBreaker.JUSTIFICATION_MODE_INTER_WORD);
+        }
+        this.controller = new ConsensusProposalDetailController(pollId);
         this.poll = this.controller.getPoll();
         initializeTextViews();
     }
@@ -72,6 +76,7 @@ public class ConsensusProposalDetail extends UpdateableExceptionHandlingActivity
         return dataTypes;
     }
 
+    @SuppressLint("StaticFieldLeak")
     public class ConsensusProposalDetailAsyncTask extends AsyncTask<Object, Exception, String> {
         @Override
         protected String doInBackground(Object... objects) {

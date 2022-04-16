@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -25,7 +26,6 @@ import dhbw.smartmoderation.util.UpdateableExceptionHandlingActivity;
 
 public class BaseActivity extends UpdateableExceptionHandlingActivity {
 
-    private BottomNavigationView bottomNavigationView;
     private ListOfSpeakersController listOfSpeakersController;
     private MeetingDetailController meetingDetailController;
     private SwipeRefreshLayout pullToRefresh;
@@ -51,8 +51,8 @@ public class BaseActivity extends UpdateableExceptionHandlingActivity {
 
         this.meetingDetailController = new MeetingDetailController(meetingId);
 
-        this.bottomNavigationView = findViewById(R.id.bottom_navigation);
-        this.bottomNavigationView.setOnNavigationItemSelectedListener(navigationListener);
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(navigationListener);
 
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, consensusProposalOverviewFragment, "2").hide(consensusProposalOverviewFragment).commit();
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, listOfSpeakersFragment, "3").hide(listOfSpeakersFragment).commit();
@@ -79,7 +79,8 @@ public class BaseActivity extends UpdateableExceptionHandlingActivity {
 
     }
 
-    private BottomNavigationView.OnNavigationItemSelectedListener navigationListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
+    private final BottomNavigationView.OnNavigationItemSelectedListener navigationListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
+        @SuppressLint("NonConstantResourceId")
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 

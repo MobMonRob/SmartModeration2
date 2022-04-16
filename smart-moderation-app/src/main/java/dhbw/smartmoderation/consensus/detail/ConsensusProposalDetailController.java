@@ -9,7 +9,7 @@ import dhbw.smartmoderation.util.Util;
 
 public class ConsensusProposalDetailController extends SmartModerationController {
 
-    private Long pollId;
+    private final Long pollId;
 
     public ConsensusProposalDetailController(Long pollId) { this.pollId = pollId; }
 

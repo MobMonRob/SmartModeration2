@@ -1,5 +1,7 @@
 package dhbw.smartmoderation;
 
+import androidx.annotation.NonNull;
+
 import org.briarproject.bramble.api.crypto.KeyStrengthener;
 import org.briarproject.bramble.api.db.DatabaseConfig;
 
@@ -17,11 +19,13 @@ class SmartModerationDatabaseConfig implements DatabaseConfig {
 		this.dbKeyDir = dbKeyDir;
 	}
 
+	@NonNull
 	@Override
 	public File getDatabaseDirectory() {
 		return dbDir;
 	}
 
+	@NonNull
 	@Override
 	public File getDatabaseKeyDirectory() {
 		return dbKeyDir;

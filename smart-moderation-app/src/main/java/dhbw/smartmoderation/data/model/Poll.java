@@ -218,12 +218,6 @@ public class Poll extends ModelClass {
         return voices;
     }
 
-    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
-    @Generated(hash = 237630216)
-    public synchronized void resetVoices() {
-        voices = null;
-    }
-
     /**
      * Convenient call for {@link org.greenrobot.greendao.AbstractDao#delete(Object)}.
      * Entity must attached to an entity context.
@@ -234,18 +228,6 @@ public class Poll extends ModelClass {
             throw new DaoException("Entity is detached from DAO context");
         }
         myDao.delete(this);
-    }
-
-    /**
-     * Convenient call for {@link org.greenrobot.greendao.AbstractDao#refresh(Object)}.
-     * Entity must attached to an entity context.
-     */
-    @Generated(hash = 1942392019)
-    public void refresh() {
-        if (myDao == null) {
-            throw new DaoException("Entity is detached from DAO context");
-        }
-        myDao.refresh(this);
     }
 
     /**
@@ -266,6 +248,24 @@ public class Poll extends ModelClass {
 
     public void setVoteMembersCountOnClosed(int voteMembersCountOnClosed) {
         this.voteMembersCountOnClosed = voteMembersCountOnClosed;
+    }
+
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
+    @Generated(hash = 237630216)
+    public synchronized void resetVoices() {
+        voices = null;
+    }
+
+    /**
+     * Convenient call for {@link org.greenrobot.greendao.AbstractDao#refresh(Object)}.
+     * Entity must attached to an entity context.
+     */
+    @Generated(hash = 1942392019)
+    public void refresh() {
+        if (myDao == null) {
+            throw new DaoException("Entity is detached from DAO context");
+        }
+        myDao.refresh(this);
     }
 
     /** called by internal mechanisms, do not call yourself. */

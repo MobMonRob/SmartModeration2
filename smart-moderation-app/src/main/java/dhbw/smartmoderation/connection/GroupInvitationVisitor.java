@@ -17,8 +17,6 @@ import org.briarproject.briar.api.privategroup.invitation.GroupInvitationRespons
  */
 public class GroupInvitationVisitor implements ConversationMessageVisitor<PrivateGroup> {
 
-	private static final String TAG = GroupInvitationVisitor.class.getSimpleName();
-
 	@Override
 	public PrivateGroup visitPrivateMessageHeader(PrivateMessageHeader h) {
 		return null;

@@ -8,7 +8,7 @@ import dagger.multibindings.IntoMap;
 
 @Module
 public abstract class ContactExchangeModule {
-
+    //class not needed?
     @Binds
     @IntoMap
     @ViewModelKey(ContactExchangeViewModel.class)

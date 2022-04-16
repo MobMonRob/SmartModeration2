@@ -1,5 +1,6 @@
 package dhbw.smartmoderation.group.personInfo;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -20,7 +21,6 @@ import dhbw.smartmoderation.util.ExceptionHandlingActivity;
 
 public class PersonInfoActivity extends ExceptionHandlingActivity {
 
-    private TextView name;
     private TextView moderatorText;
     private RadioGroup moderatorSwitch;
     private TextView guestText;
@@ -31,7 +31,7 @@ public class PersonInfoActivity extends ExceptionHandlingActivity {
     private PersonInfoController controller;
     private Group group;
     private Member member;
-    private RadioGroup.OnCheckedChangeListener moderatorListener = new RadioGroup.OnCheckedChangeListener() {
+    private final RadioGroup.OnCheckedChangeListener moderatorListener = new RadioGroup.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(RadioGroup group, int checkedId) {
             int id = moderatorSwitch.getCheckedRadioButtonId();
@@ -48,9 +48,7 @@ public class PersonInfoActivity extends ExceptionHandlingActivity {
                         AlertDialog.Builder builder = new AlertDialog.Builder(PersonInfoActivity.this);
                         builder.setMessage(getString(R.string.canNotRemoveModeratorRights));
                         builder.setCancelable(false);
-                        builder.setNeutralButton(getString(R.string.ok), (dialog, which) -> {
-                            dialog.cancel();
-                        });
+                        builder.setNeutralButton(getString(R.string.ok), (dialog, which) -> dialog.cancel());
                         AlertDialog alertDialog = builder.create();
                         alertDialog.show();
                         moderatorSwitch.setOnCheckedChangeListener(null);
@@ -65,7 +63,7 @@ public class PersonInfoActivity extends ExceptionHandlingActivity {
         }
     };
 
-    private RadioGroup.OnCheckedChangeListener guestListener = new RadioGroup.OnCheckedChangeListener() {
+    private final RadioGroup.OnCheckedChangeListener guestListener = new RadioGroup.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(RadioGroup group, int checkedId) {
 
@@ -111,7 +109,7 @@ public class PersonInfoActivity extends ExceptionHandlingActivity {
         setContentView(R.layout.activity_person_info);
         setTitle(getString(R.string.PersonInfo_title));
 
-        name = findViewById(R.id.personInfoName);
+        TextView name = findViewById(R.id.personInfoName);
 
         moderatorText = findViewById(R.id.moderatorTag);
         moderatorSwitch = findViewById(R.id.moderatorSwitch);
@@ -144,6 +142,7 @@ public class PersonInfoActivity extends ExceptionHandlingActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        assert data != null;
         this.memberId = data.getLongExtra("memberId", 0);
     }
 
@@ -205,14 +204,13 @@ public class PersonInfoActivity extends ExceptionHandlingActivity {
     }
 
 
+    @SuppressLint("StaticFieldLeak")
     public class PersonInfoAsyncTask extends AsyncTask<Object, Exception, String> {
 
         String flag;
 
         public PersonInfoAsyncTask(String flag) {
-
             this.flag = flag;
-
         }
 
         @Override
@@ -257,9 +255,8 @@ public class PersonInfoActivity extends ExceptionHandlingActivity {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
 
-            switch (flag) {
-                case "submit":
-                    finish();
+            if ("submit".equals(flag)) {
+                finish();
             }
         }
     }

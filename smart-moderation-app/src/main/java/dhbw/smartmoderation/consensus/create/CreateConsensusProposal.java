@@ -1,5 +1,6 @@
 package dhbw.smartmoderation.consensus.create;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -30,8 +31,6 @@ public class CreateConsensusProposal extends ExceptionHandlingActivity {
     private TextView titleCount;
     private TextView consensusProposalCount;
     private TextView notesCount;
-    private Button createButton;
-    private Long meetingId;
     private CreateConsensusProposalController controller;
     private ProgressDialog progressDialog;
 
@@ -42,7 +41,7 @@ public class CreateConsensusProposal extends ExceptionHandlingActivity {
         setTitle(getString(R.string.CreateConsensusProposal_title));
         Intent intent = getIntent();
         Bundle extra = intent.getExtras();
-        this.meetingId = extra.getLong("meetingId");
+        Long meetingId = extra.getLong("meetingId");
         this.titleInput = findViewById(R.id.titleInput);
 
         this.titleInput.setFilters(new InputFilter[]{
@@ -67,9 +66,9 @@ public class CreateConsensusProposal extends ExceptionHandlingActivity {
         this.titleCount = findViewById(R.id.titleCount);
         this.consensusProposalCount = findViewById(R.id.consensusProposalCount);
         this.notesCount = findViewById(R.id.notesCount);
-        this.createButton = findViewById(R.id.createButton);
-        this.createButton.setOnClickListener(createListener);
-        this.controller = new CreateConsensusProposalController(this.meetingId);
+        Button createButton = findViewById(R.id.createButton);
+        createButton.setOnClickListener(createListener);
+        this.controller = new CreateConsensusProposalController(meetingId);
     }
 
     private final View.OnClickListener createListener = v -> {
@@ -80,9 +79,7 @@ public class CreateConsensusProposal extends ExceptionHandlingActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage(getString(R.string.titleAndConsensusproposalCantBeEmpty));
             builder.setCancelable(false);
-            builder.setNeutralButton(getString(R.string.ok), ((dialog, which) -> {
-                dialog.cancel();
-            }));
+            builder.setNeutralButton(getString(R.string.ok), ((dialog, which) -> dialog.cancel()));
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
         }
@@ -137,6 +134,7 @@ public class CreateConsensusProposal extends ExceptionHandlingActivity {
         }
     };
 
+    @SuppressLint("StaticFieldLeak")
     public class CreateConsensusProposalAsyncTask extends AsyncTask<Object, Exception, String> {
 
         @Override

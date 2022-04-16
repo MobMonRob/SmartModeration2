@@ -1,8 +1,10 @@
 package dhbw.smartmoderation.group.create;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,9 +23,9 @@ import dhbw.smartmoderation.data.model.IContact;
 
 public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactViewHolder> {
 
-   private Context context;
-   private ArrayList<IContact> contactList;
-   private ArrayList<IContact> selectedContacts;
+   private final Context context;
+   private final ArrayList<IContact> contactList;
+   private final ArrayList<IContact> selectedContacts;
 
     public
     ContactAdapter(Context context, Collection<IContact> contactList) {
@@ -38,8 +40,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
     public ContactViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ConstraintLayout constraintLayout = new ConstraintLayout(context);
         constraintLayout.setLayoutParams(new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, 130));
-        ContactViewHolder contactViewHolder = new ContactViewHolder(constraintLayout, context, this);
-        return contactViewHolder;
+        return new ContactViewHolder(constraintLayout, context, this);
     }
 
     @Override
@@ -77,6 +78,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
         return this.selectedContacts.size() > 0;
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void addGhost(String firstName, String lastName) {
         Ghost ghost = new Ghost();
         ghost.setFirstName(firstName);
@@ -86,9 +88,8 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
     }
 
    static class ContactViewHolder extends RecyclerView.ViewHolder {
-        private TextView contactName;
-        private CheckBox selectCheckBox;
-        private TextView ghostHint;
+        private final TextView contactName;
+       private final TextView ghostHint;
         private IContact contact;
 
         public ContactViewHolder(ConstraintLayout constraintLayout, Context context, ContactAdapter adapter) {
@@ -98,9 +99,11 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
             contactName.setId(View.generateViewId());
             constraintLayout.addView(contactName);
 
-            selectCheckBox = new CheckBox(context);
+            CheckBox selectCheckBox = new CheckBox(context);
             selectCheckBox.setId(View.generateViewId());
-            selectCheckBox.setButtonTintList(ColorStateList.valueOf(ResourcesCompat.getColor(context.getResources(), R.color.colorPrimary, null)));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                selectCheckBox.setButtonTintList(ColorStateList.valueOf(ResourcesCompat.getColor(context.getResources(), R.color.colorPrimary, null)));
+            }
             constraintLayout.addView(selectCheckBox);
 
             if (contact instanceof Ghost) {

@@ -34,7 +34,7 @@ public class UpdateChecker implements Runnable{
 
         try {
             Thread.sleep(10000);
-        }catch (InterruptedException exception){
+        }catch (InterruptedException ignored){
         }
     }
 

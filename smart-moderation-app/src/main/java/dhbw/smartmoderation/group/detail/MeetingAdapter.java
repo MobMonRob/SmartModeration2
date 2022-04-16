@@ -1,5 +1,6 @@
 package dhbw.smartmoderation.group.detail;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Typeface;
@@ -16,7 +17,6 @@ import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -32,10 +32,10 @@ public class MeetingAdapter extends RecyclerView.Adapter<MeetingAdapter.MeetingV
 
     private static final String TAG = MeetingAdapter.class.getSimpleName();
 
-    private final List<Meeting> meetings = new ArrayList<Meeting>();
+    private final List<Meeting> meetings = new ArrayList<>();
 
-    private Context context;
-    private OnMeetingListener onMeetingListener;
+    private final Context context;
+    private final OnMeetingListener onMeetingListener;
 
     public MeetingAdapter(Context context, Collection<Meeting> meetings, OnMeetingListener onMeetingListener) {
         super();
@@ -44,6 +44,7 @@ public class MeetingAdapter extends RecyclerView.Adapter<MeetingAdapter.MeetingV
         this.onMeetingListener = onMeetingListener;
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void updateMeetings(Collection<Meeting> meetings) {
         this.meetings.clear();
         this.meetings.addAll(meetings);
@@ -118,28 +119,25 @@ public class MeetingAdapter extends RecyclerView.Adapter<MeetingAdapter.MeetingV
     static class MeetingViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, ItemTouchHelperViewHolder {
 
         private Meeting meeting;
-        private Context context;
 
-        private TextView name;
-        private TextView startDateTime;
-        private TextView isOnline;
-        private final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm dd.MM.yyyy");
+        private final TextView name;
+        private final TextView startDateTime;
+        private final TextView isOnline;
 
-        private OnMeetingListener listener;
+        private final OnMeetingListener listener;
 
         public MeetingViewHolder(ConstraintLayout layout, Context context, OnMeetingListener listener) {
             super(layout);
             layout.setOnClickListener(this);
-            this.context = context;
             this.listener = listener;
 
-            name = new TextView(this.context);
+            name = new TextView(context);
             name.setId(View.generateViewId());
             name.setTypeface(name.getTypeface(), Typeface.BOLD);
             name.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             layout.addView(name);
 
-            startDateTime = new TextView(this.context);
+            startDateTime = new TextView(context);
             startDateTime.setId(View.generateViewId());
             startDateTime.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             layout.addView(startDateTime);
@@ -147,7 +145,7 @@ public class MeetingAdapter extends RecyclerView.Adapter<MeetingAdapter.MeetingV
             isOnline = new TextView(context);
             isOnline.setId(View.generateViewId());
             isOnline.setTypeface(isOnline.getTypeface(), Typeface.BOLD);
-            isOnline.setText(this.context.getString(R.string.online));
+            isOnline.setText(context.getString(R.string.online));
             isOnline.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             isOnline.setGravity(Gravity.CENTER);
             isOnline.setEms(4);

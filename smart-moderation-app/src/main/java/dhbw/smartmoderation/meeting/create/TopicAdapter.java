@@ -1,5 +1,6 @@
 package dhbw.smartmoderation.meeting.create;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.TypedValue;
 import android.view.View;
@@ -21,9 +22,9 @@ import dhbw.smartmoderation.uiUtils.ItemTouchHelperAdapter;
 
 public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHolder> implements ItemTouchHelperAdapter {
 
-    private Context context;
-    private ArrayList<Topic> topicList;
-    private OnTopicListener onTopicListener;
+    private final Context context;
+    private final ArrayList<Topic> topicList;
+    private final OnTopicListener onTopicListener;
 
     public TopicAdapter(Context context, Collection<Topic> topicList, OnTopicListener onTopicListener) {
         this.context = context;
@@ -32,12 +33,14 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHol
         updateTopics(topicList);
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void updateTopics(Collection<Topic> topics) {
         this.topicList.clear();
         this.topicList.addAll(topics);
         this.notifyDataSetChanged();
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void updateTopic(Topic previousTopic, String title, String duration) {
         topicList.remove(previousTopic);
         Topic topic = new Topic();
@@ -49,6 +52,7 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHol
         notifyDataSetChanged();
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void addTopic(String title, String duration) {
         Topic topic = new Topic();
         topic.setTitle(title);
@@ -68,10 +72,10 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHol
     public TopicViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ConstraintLayout constraintLayout = new ConstraintLayout(context);
         constraintLayout.setLayoutParams(new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, 100));
-        TopicViewHolder topicViewHolder = new TopicViewHolder(constraintLayout, context, this, onTopicListener);
-        return topicViewHolder;
+        return new TopicViewHolder(constraintLayout, context, onTopicListener);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull TopicViewHolder holder, int position) {
         Topic topic = this.topicList.get(position);
@@ -103,11 +107,11 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHol
 
     static class TopicViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private TextView title;
+        private final TextView title;
         private Topic topic;
-        private TopicAdapter.OnTopicListener onTopicListener;
+        private final TopicAdapter.OnTopicListener onTopicListener;
 
-        public TopicViewHolder(ConstraintLayout constraintLayout, Context context, TopicAdapter topicAdapter, OnTopicListener onTopicListener) {
+        public TopicViewHolder(ConstraintLayout constraintLayout, Context context, OnTopicListener onTopicListener) {
             super(constraintLayout);
             constraintLayout.setOnClickListener(this);
             title = new TextView(context);

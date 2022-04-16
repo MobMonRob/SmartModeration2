@@ -1,9 +1,14 @@
 package dhbw.smartmoderation.consensus.result;
 
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
+
 import org.briarproject.briar.api.privategroup.PrivateGroup;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.TreeMap;
 
 import dhbw.smartmoderation.controller.SmartModerationController;
@@ -21,7 +26,7 @@ import dhbw.smartmoderation.util.Util;
 
 public class ConsensusProposalResultController extends SmartModerationController {
 
-    private Long pollId;
+    private final Long pollId;
 
     public ConsensusProposalResultController(Long pollId) {
         this.pollId = pollId;
@@ -83,8 +88,9 @@ public class ConsensusProposalResultController extends SmartModerationController
         return null;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public TreeMap<Long, Integer> getCountPerConsensusLevel() {
-        TreeMap<Long, Integer> consensusLevelCount = new TreeMap<>((o1, o2) -> getConsensusLevel(o1).getNumber() - getConsensusLevel(o2).getNumber());
+        TreeMap<Long, Integer> consensusLevelCount = new TreeMap<>(Comparator.comparingInt(o -> getConsensusLevel(o).getNumber()));
         for(ConsensusLevel consensusLevel : getPoll().getMeeting().getGroup().getGroupSettings().getConsensusLevels()) {
             consensusLevelCount.put(consensusLevel.getConsensusLevelId(), 0);
         }
@@ -99,21 +105,14 @@ public class ConsensusProposalResultController extends SmartModerationController
     }
 
     public boolean isLocalAuthorModerator() {
-
         Group group = getPoll().getMeeting().getGroup();
         Long authorId = connectionService.getLocalAuthorId();
         Member member = group.getMember(authorId);
-
-        if(member != null && member.getRoles(group).contains(Role.MODERATOR)) {
-            return true;
-        }
-        return false;
+        return member != null && member.getRoles(group).contains(Role.MODERATOR);
     }
 
     public Member getMemberFromLocalAuthor() {
-
         Long authorId = connectionService.getLocalAuthorId();
-
         for (Member member : getPoll().getMeeting().getMembers()) {
             if(member.getMemberId().equals(authorId)) {
                 return member;

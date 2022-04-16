@@ -38,7 +38,7 @@ public class ModerationCardColorImporter {
             backgroundColors[i] = Color.parseColor(backgroundColorSet.get(i));
             textColorOfBackground.put(backgroundColors[i], Color.parseColor(fontColorSet.get(i)));
         }
-    };
+    }
 
     public int[] getBackgroundColors() {
         return backgroundColors;

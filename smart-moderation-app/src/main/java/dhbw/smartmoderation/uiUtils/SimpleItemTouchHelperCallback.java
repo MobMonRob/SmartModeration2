@@ -21,9 +21,9 @@ import dhbw.smartmoderation.R;
 public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     private final ItemTouchHelperAdapter itemTouchHelperAdapter;
-    private int color;
-    private int icon;
-    private int swipeFlag;
+    private final int color;
+    private final int icon;
+    private final int swipeFlag;
 
     public SimpleItemTouchHelperCallback(ItemTouchHelperAdapter itemTouchHelperAdapter, int color, int icon, int swipeFlag) {
 
@@ -36,6 +36,7 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
     private DrawCommand createDrawCommand(View viewItem, float dX, int iconResId) {
         Context context = viewItem.getContext();
         Drawable icon = ContextCompat.getDrawable(context, iconResId);
+        assert icon != null;
         icon = DrawableCompat.wrap(icon).mutate();
         icon.setColorFilter(new PorterDuffColorFilter(ContextCompat.getColor(context, R.color.default_color), PorterDuff.Mode.SRC_IN));
         int backgroundColor = getBackgroundColor(this.color, R.color.default_grey, dX, viewItem);
@@ -114,8 +115,7 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
     @Override
     public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
         int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
-        int swipeFlags = this.swipeFlag;
-        return makeMovementFlags(dragFlags, swipeFlags);
+        return makeMovementFlags(dragFlags, this.swipeFlag);
     }
 
     @Override
@@ -131,7 +131,8 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
     }
 
     @Override
-    public void onChildDraw(Canvas canvas, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+    public void onChildDraw(@NonNull Canvas canvas, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder,
+                            float dX, float dY, int actionState, boolean isCurrentlyActive) {
         if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
             View viewItem = viewHolder.itemView;
             paintCommandToStart(canvas, viewItem, this.icon, dX);
@@ -151,7 +152,7 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
     }
 
     @Override
-    public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+    public void clearView(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
         super.clearView(recyclerView, viewHolder);
         if (viewHolder instanceof ItemTouchHelperViewHolder) {
             ItemTouchHelperViewHolder itemTouchHelperViewHolder = (ItemTouchHelperViewHolder) viewHolder;

@@ -1,5 +1,6 @@
 package dhbw.smartmoderation.group.create;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -30,16 +31,11 @@ import dhbw.smartmoderation.util.Util;
 
 public class CreateGroup extends ExceptionHandlingActivity {
 
-    private RecyclerView recyclerView;
     private ContactAdapter contactAdapter;
     private CreateGroupController createGroupController;
-    private LinearLayoutManager contactLayoutManager;
     private EditText groupName;
-    private FloatingActionButton generalFab;
     private FloatingActionButton createGroupFab;
-    private FloatingActionButton addGhostFab;
     private TextView addGroupText;
-    private TextView addGhostText;
     private ArrayList<FloatingActionButton> fabList;
     private ArrayList<TextView> textList;
     private boolean allFabVisible;
@@ -48,7 +44,6 @@ public class CreateGroup extends ExceptionHandlingActivity {
 
     enum Answer {YES, NO}
 
-    ;
     private ProgressDialog progressDialog;
 
     @Override
@@ -62,21 +57,21 @@ public class CreateGroup extends ExceptionHandlingActivity {
         fabList = new ArrayList<>();
         textList = new ArrayList<>();
 
-        recyclerView = findViewById(R.id.contactList);
+        RecyclerView recyclerView = findViewById(R.id.contactList);
         groupName = findViewById(R.id.groupNameInput);
 
-        generalFab = findViewById(R.id.generalFab);
+        FloatingActionButton generalFab = findViewById(R.id.generalFab);
 
         createGroupFab = findViewById(R.id.createGroupFab);
         fabList.add(createGroupFab);
 
-        addGhostFab = findViewById(R.id.addGhostFab);
+        FloatingActionButton addGhostFab = findViewById(R.id.addGhostFab);
         fabList.add(addGhostFab);
 
         addGroupText = findViewById(R.id.createGroupText);
         textList.add(addGroupText);
 
-        addGhostText = findViewById(R.id.addGhostText);
+        TextView addGhostText = findViewById(R.id.addGhostText);
         textList.add(addGhostText);
 
         generalFab.setVisibility(View.VISIBLE);
@@ -116,7 +111,7 @@ public class CreateGroup extends ExceptionHandlingActivity {
         addGhostFab.setOnClickListener(this::onAddGhost);
 
         createGroupController = new CreateGroupController(this);
-        contactLayoutManager = new LinearLayoutManager(this);
+        LinearLayoutManager contactLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(contactLayoutManager);
 
         try {
@@ -158,6 +153,7 @@ public class CreateGroup extends ExceptionHandlingActivity {
         createGroupAsyncTask.execute(groupName);
     }
 
+    @SuppressLint("InflateParams")
     private void onAddGhost(View view) {
         LayoutInflater inflater = LayoutInflater.from(this);
         popup = inflater.inflate(R.layout.popup_add_ghost, null);
@@ -198,6 +194,7 @@ public class CreateGroup extends ExceptionHandlingActivity {
     }
 
 
+    @SuppressLint("StaticFieldLeak")
     public class CreateGroupAsyncTask extends AsyncTask<String, Exception, String> {
 
         @Override

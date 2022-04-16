@@ -94,10 +94,6 @@ public class Topic extends ModelClass{
         }
     }
 
-    public void setTopicStatus(TopicStatus status) {
-        this.status = status.name();
-    }
-
     /** To-one relationship, resolved on first access. */
     @Generated(hash = 283313835)
     public Meeting getMeeting() {
@@ -144,18 +140,6 @@ public class Topic extends ModelClass{
     }
 
     /**
-     * Convenient call for {@link org.greenrobot.greendao.AbstractDao#refresh(Object)}.
-     * Entity must attached to an entity context.
-     */
-    @Generated(hash = 1942392019)
-    public void refresh() {
-        if (myDao == null) {
-            throw new DaoException("Entity is detached from DAO context");
-        }
-        myDao.refresh(this);
-    }
-
-    /**
      * Convenient call for {@link org.greenrobot.greendao.AbstractDao#update(Object)}.
      * Entity must attached to an entity context.
      */
@@ -165,6 +149,18 @@ public class Topic extends ModelClass{
             throw new DaoException("Entity is detached from DAO context");
         }
         myDao.update(this);
+    }
+
+    /**
+     * Convenient call for {@link org.greenrobot.greendao.AbstractDao#refresh(Object)}.
+     * Entity must attached to an entity context.
+     */
+    @Generated(hash = 1942392019)
+    public void refresh() {
+        if (myDao == null) {
+            throw new DaoException("Entity is detached from DAO context");
+        }
+        myDao.refresh(this);
     }
 
     /** called by internal mechanisms, do not call yourself. */

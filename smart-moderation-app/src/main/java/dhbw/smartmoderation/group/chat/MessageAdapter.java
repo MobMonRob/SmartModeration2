@@ -16,8 +16,8 @@ import java.util.Collection;
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
 
-	private Context context;
-	private ArrayList<String> Messages = new ArrayList<>();
+	private final Context context;
+	private final ArrayList<String> Messages = new ArrayList<>();
 
 	public MessageAdapter(Context context,Collection<String> messages){
 		this.context = context;
@@ -35,9 +35,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 			int viewType) {
 		ConstraintLayout constraintLayout = new ConstraintLayout(context);
 		constraintLayout.setLayoutParams(new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-		MessageAdapter.MessageViewHolder
-				messageViewHolder = new MessageAdapter.MessageViewHolder(constraintLayout, context);
-		return messageViewHolder;
+		return new MessageViewHolder(constraintLayout, context);
 	}
 
 	@Override
@@ -53,13 +51,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
 	protected static class MessageViewHolder extends RecyclerView.ViewHolder{
 
-		private TextView MessageText;
-		private Context context;
+		private final TextView MessageText;
 
 		public MessageViewHolder(ConstraintLayout layout, Context context) {
 			super(layout);
-			this.context = context;
-			MessageText = new TextView(this.context);
+			MessageText = new TextView(context);
 			MessageText.setId(View.generateViewId());
 			MessageText.setLayoutParams(new ViewGroup.LayoutParams(
 					ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));

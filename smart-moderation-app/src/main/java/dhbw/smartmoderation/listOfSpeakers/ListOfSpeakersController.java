@@ -27,7 +27,7 @@ import dhbw.smartmoderation.util.Util;
 
 public class ListOfSpeakersController extends SmartModerationController {
 
-    private Long meetingId;
+    private final Long meetingId;
 
     public ListOfSpeakersController(Long meetingId) {
         this.meetingId = meetingId;

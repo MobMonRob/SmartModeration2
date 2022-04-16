@@ -4,6 +4,7 @@ import org.briarproject.briar.api.privategroup.PrivateGroup;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 import dhbw.smartmoderation.controller.SmartModerationController;
 import dhbw.smartmoderation.data.model.Meeting;
@@ -15,7 +16,7 @@ import dhbw.smartmoderation.util.Util;
 
 public class CreateConsensusProposalController extends SmartModerationController {
 
-    private Long meetingId;
+    private final Long meetingId;
 
     public CreateConsensusProposalController(Long meetingId) {
         this.meetingId = meetingId;
@@ -33,7 +34,7 @@ public class CreateConsensusProposalController extends SmartModerationController
     public PrivateGroup getPrivateGroup() throws GroupNotFoundException {
         Collection<PrivateGroup> privateGroups = connectionService.getGroups();
         for(PrivateGroup group : privateGroups) {
-            if(getMeeting().getGroup().getGroupId().equals(Util.bytesToLong(group.getId().getBytes()))) {
+            if(Objects.requireNonNull(getMeeting()).getGroup().getGroupId().equals(Util.bytesToLong(group.getId().getBytes()))) {
                 return group;
             }
         }

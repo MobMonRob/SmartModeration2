@@ -24,7 +24,6 @@ import javax.annotation.Nullable;
 @NotNullByDefault
 public class QrCodeUtils {
 
-	public static final double HOTSPOT_QRCODE_FACTOR = 0.35;
 	private static final Logger LOG = getLogger(QrCodeUtils.class.getName());
 
 	@Nullable

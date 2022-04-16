@@ -1,6 +1,5 @@
 package dhbw.smartmoderation.controller;
 
-import dhbw.smartmoderation.SmartModerationApplication;
 import dhbw.smartmoderation.SmartModerationApplicationImpl;
 import dhbw.smartmoderation.connection.ConnectionService;
 import dhbw.smartmoderation.connection.synchronization.SynchronizationService;

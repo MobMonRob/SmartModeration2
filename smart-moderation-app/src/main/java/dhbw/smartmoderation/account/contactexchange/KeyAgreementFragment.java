@@ -1,5 +1,14 @@
 package dhbw.smartmoderation.account.contactexchange;
 
+import static android.view.View.INVISIBLE;
+import static android.view.View.VISIBLE;
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+import static android.widget.LinearLayout.HORIZONTAL;
+import static android.widget.Toast.LENGTH_LONG;
+import static org.briarproject.bramble.util.LogUtils.logException;
+import static java.util.logging.Level.INFO;
+import static java.util.logging.Level.WARNING;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
@@ -14,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.CallSuper;
+import androidx.annotation.NonNull;
 import androidx.annotation.UiThread;
 import androidx.fragment.app.Fragment;
 
@@ -48,17 +58,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import dhbw.smartmoderation.R;
-import dhbw.smartmoderation.SmartModerationApplication;
 import dhbw.smartmoderation.SmartModerationApplicationImpl;
-
-import static android.view.View.INVISIBLE;
-import static android.view.View.VISIBLE;
-import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
-import static android.widget.LinearLayout.HORIZONTAL;
-import static android.widget.Toast.LENGTH_LONG;
-import static java.util.logging.Level.INFO;
-import static java.util.logging.Level.WARNING;
-import static org.briarproject.bramble.util.LogUtils.logException;
 
 public class KeyAgreementFragment extends Fragment implements EventListener, QrCodeDecoder.ResultCallback, QrCodeView.FullScreenListener, DestroyableContext {
 
@@ -104,8 +104,8 @@ public class KeyAgreementFragment extends Fragment implements EventListener, QrC
 
 
     @Override
-    public void onAttach(Context context) {
-        ((SmartModerationApplicationImpl) getActivity().getApplicationContext()).smartModerationComponent.inject(this);
+    public void onAttach(@NonNull Context context) {
+        ((SmartModerationApplicationImpl) requireActivity().getApplicationContext()).smartModerationComponent.inject(this);
         super.onAttach(context);
         listener = (KeyAgreementEventListener) context;
         baseFragmentListener = (BaseFragmentListener) context;
@@ -122,7 +122,7 @@ public class KeyAgreementFragment extends Fragment implements EventListener, QrC
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         cameraView = view.findViewById(R.id.camera_view);
         cameraOverlay = view.findViewById(R.id.camera_overlay);
@@ -277,7 +277,7 @@ public class KeyAgreementFragment extends Fragment implements EventListener, QrC
 
 
     @Override
-    public void eventOccurred(Event e) {
+    public void eventOccurred(@NonNull Event e) {
 
         if (e instanceof KeyAgreementListeningEvent) {
             KeyAgreementListeningEvent event = (KeyAgreementListeningEvent) e;
@@ -362,8 +362,7 @@ public class KeyAgreementFragment extends Fragment implements EventListener, QrC
     }
 
     @Override
-    public void handleResult(Result result) {
-
+    public void handleResult(@NonNull Result result) {
         runOnUiThreadUnlessDestroyed(() -> {
             LOG.info("Got result from decoder");
             if (!gotLocalPayload) {
@@ -378,7 +377,7 @@ public class KeyAgreementFragment extends Fragment implements EventListener, QrC
     }
 
     protected void finish() {
-        getActivity().getSupportFragmentManager().popBackStack();
+        requireActivity().getSupportFragmentManager().popBackStack();
     }
 
     protected void showNextFragment(Fragment fragment, String tag) {

@@ -2,9 +2,11 @@ package dhbw.smartmoderation.account.contactexchange;
 
 import static java.util.logging.Level.WARNING;
 
+import android.annotation.SuppressLint;
 import android.hardware.Camera;
 import android.os.AsyncTask;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.UiThread;
 
 import com.google.zxing.BinaryBitmap;
@@ -27,7 +29,7 @@ public class QrCodeDecoder implements PreviewConsumer, Camera.PreviewCallback {
 
     private static final Logger LOG = Logger.getLogger(QrCodeDecoder.class.getName());
     private final Reader reader = new QRCodeReader();
-    private ResultCallback callback;
+    private final ResultCallback callback;
     private Camera camera = null;
     private int cameraIndex = 0;
 
@@ -36,7 +38,7 @@ public class QrCodeDecoder implements PreviewConsumer, Camera.PreviewCallback {
     }
 
     @Override
-    public void start(Camera camera, int cameraIndex) {
+    public void start(@NonNull Camera camera, int cameraIndex) {
         this.camera = camera;
         this.cameraIndex = cameraIndex;
         askForPreviewFrame();
@@ -76,6 +78,7 @@ public class QrCodeDecoder implements PreviewConsumer, Camera.PreviewCallback {
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class DecoderTask extends AsyncTask<Void, Void, Void> {
 
         private final byte[] data;

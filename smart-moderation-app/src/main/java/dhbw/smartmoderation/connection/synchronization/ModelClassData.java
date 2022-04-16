@@ -6,13 +6,7 @@ import dhbw.smartmoderation.data.model.ModelClass;
 
 public class ModelClassData {
 
-    private PullEvent PullEvent;
-
     private Collection<ModelClass> data;
-
-    public dhbw.smartmoderation.connection.synchronization.PullEvent getPullEvent() {
-        return PullEvent;
-    }
 
     public Collection<ModelClass> getData() {
         return data;
@@ -22,7 +16,4 @@ public class ModelClassData {
         this.data = data;
     }
 
-    public void setPullEvent(PullEvent event){
-        this.PullEvent = event;
-    }
 }

@@ -16,7 +16,7 @@ import dhbw.smartmoderation.util.Util;
 
 public class EvaluateConsensusProposalController extends SmartModerationController {
 
-    private Long pollId;
+    private final Long pollId;
 
     public EvaluateConsensusProposalController(Long pollId) {
         this.pollId = pollId;

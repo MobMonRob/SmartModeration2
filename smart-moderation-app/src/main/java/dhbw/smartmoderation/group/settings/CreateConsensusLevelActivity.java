@@ -4,9 +4,12 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+
+import androidx.annotation.RequiresApi;
 
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.util.ExceptionHandlingActivity;
@@ -15,13 +18,11 @@ import dhbw.smartmoderation.util.ExceptionHandlingActivity;
 public class CreateConsensusLevelActivity extends ExceptionHandlingActivity {
 
     private EditText nameInput;
-    private Button colorInput;
     private EditText descriptionInput;
-    private Button saveButton;
-    private Bundle extra;
     private int position;
     private int color;
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,12 +30,12 @@ public class CreateConsensusLevelActivity extends ExceptionHandlingActivity {
         setTitle(getString(R.string.CreateConsensusLevel_title));
 
         nameInput = findViewById(R.id.consensusLevelNameInput);
-        colorInput = findViewById(R.id.consensusLevelColorInput);
+        Button colorInput = findViewById(R.id.consensusLevelColorInput);
         descriptionInput = findViewById(R.id.consensusLevelDescriptionInput);
-        saveButton = findViewById(R.id.saveButton);
+        Button saveButton = findViewById(R.id.saveButton);
 
         Intent intent = getIntent();
-        extra = intent.getExtras();
+        Bundle extra = intent.getExtras();
         position = extra.getInt("position");
 
         if (position != -1) {
@@ -65,9 +66,7 @@ public class CreateConsensusLevelActivity extends ExceptionHandlingActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage(getString(R.string.noConsensusLevelName));
                 builder.setCancelable(false);
-                builder.setNeutralButton(getString(R.string.ok), (dialog, which) -> {
-                    dialog.cancel();
-                });
+                builder.setNeutralButton(getString(R.string.ok), (dialog, which) -> dialog.cancel());
 
                 AlertDialog alertDialog = builder.create();
                 alertDialog.show();

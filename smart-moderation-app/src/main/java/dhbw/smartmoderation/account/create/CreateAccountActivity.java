@@ -1,5 +1,6 @@
 package dhbw.smartmoderation.account.create;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -67,6 +68,7 @@ public class CreateAccountActivity extends AppCompatActivity {
 		createAccountAsyncTask.execute(Util.getText(edtUsername), Util.getText(edtPassword));
 	}
 
+	@SuppressLint("StaticFieldLeak")
 	public class CreateAccountAsyncTask extends AsyncTask<String, String, String> {
 
 		@Override

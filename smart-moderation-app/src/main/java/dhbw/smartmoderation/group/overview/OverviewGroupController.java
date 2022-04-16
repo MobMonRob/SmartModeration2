@@ -30,5 +30,4 @@ public class OverviewGroupController extends SmartModerationController {
             synchronizationService.pull(privateGroup);
         }
     }
-
 }

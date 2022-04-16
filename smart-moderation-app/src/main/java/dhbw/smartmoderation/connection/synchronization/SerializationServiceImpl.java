@@ -11,13 +11,26 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
-import dhbw.smartmoderation.SmartModerationApplication;
 import dhbw.smartmoderation.SmartModerationApplicationImpl;
 import dhbw.smartmoderation.data.DataService;
-import dhbw.smartmoderation.data.DataServiceImpl;
-import dhbw.smartmoderation.data.model.*;
+import dhbw.smartmoderation.data.model.Attendance;
+import dhbw.smartmoderation.data.model.ConsensusLevel;
+import dhbw.smartmoderation.data.model.Group;
+import dhbw.smartmoderation.data.model.GroupSettings;
+import dhbw.smartmoderation.data.model.Meeting;
+import dhbw.smartmoderation.data.model.Member;
+import dhbw.smartmoderation.data.model.MemberGroupRelation;
+import dhbw.smartmoderation.data.model.MemberMeetingRelation;
+import dhbw.smartmoderation.data.model.ModelClass;
+import dhbw.smartmoderation.data.model.ModerationCard;
+import dhbw.smartmoderation.data.model.Participation;
+import dhbw.smartmoderation.data.model.Poll;
+import dhbw.smartmoderation.data.model.Role;
+import dhbw.smartmoderation.data.model.Topic;
+import dhbw.smartmoderation.data.model.Voice;
 import dhbw.smartmoderation.exceptions.GroupNotFoundException;
 import dhbw.smartmoderation.exceptions.GroupSettingsNotFoundException;
 import dhbw.smartmoderation.exceptions.MeetingNotFoundException;
@@ -29,7 +42,7 @@ public class SerializationServiceImpl implements SerializationService {
 
     private LocalAuthor localAuthor;
 
-    private DataService dataService = ((SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp()).getDataService();
+    private final DataService dataService = ((SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp()).getDataService();
 
     public void setLocalAuthor(LocalAuthor localAuthor) {
         this.localAuthor = localAuthor;
@@ -37,52 +50,52 @@ public class SerializationServiceImpl implements SerializationService {
 
     @Override
     public String serialize(Member member) {
-        return jsonify(member).toString();
+        return Objects.requireNonNull(jsonify(member)).toString();
     }
 
     @Override
     public String serialize(Meeting meeting) {
-        return jsonify(meeting).toString();
+        return Objects.requireNonNull(jsonify(meeting)).toString();
     }
 
     @Override
     public String serialize(Group group) {
-        return jsonify(group).toString();
+        return Objects.requireNonNull(jsonify(group)).toString();
     }
 
     @Override
     public String serialize(Poll poll) {
-        return jsonify(poll).toString();
+        return Objects.requireNonNull(jsonify(poll)).toString();
     }
 
     @Override
     public String serialize(ModerationCard moderationCard) {
-        return jsonify(moderationCard).toString();
+        return Objects.requireNonNull(jsonify(moderationCard)).toString();
     }
 
     @Override
     public String serialize(Voice voice) {
-        return jsonify(voice).toString();
+        return Objects.requireNonNull(jsonify(voice)).toString();
     }
 
     @Override
     public String serialize(Participation participation) {
-        return jsonify(participation).toString();
+        return Objects.requireNonNull(jsonify(participation)).toString();
     }
 
     @Override
     public String serialize(Topic topic) {
-        return jsonify(topic).toString();
+        return Objects.requireNonNull(jsonify(topic)).toString();
     }
 
     @Override
     public String serialize(ConsensusLevel consensusLevel) {
-        return jsonify(consensusLevel).toString();
+        return Objects.requireNonNull(jsonify(consensusLevel)).toString();
     }
 
     @Override
     public String serialize(GroupSettings groupSettings) {
-        return jsonify(groupSettings).toString();
+        return Objects.requireNonNull(jsonify(groupSettings)).toString();
     }
 
     @Override
@@ -437,7 +450,7 @@ public class SerializationServiceImpl implements SerializationService {
             for (Long memberId : membersWithAttendance.keySet()) {
                 JSONObject memberJSON = new JSONObject()
                         .put("memberId", memberId)
-                        .put("attendance", membersWithAttendance.get(memberId).name());
+                        .put("attendance", Objects.requireNonNull(membersWithAttendance.get(memberId)).name());
                 members.put(memberJSON);
             }
 
@@ -480,8 +493,8 @@ public class SerializationServiceImpl implements SerializationService {
 
             for (Long memberId : membersWithRoles.keySet()) {
                 JSONArray roles = new JSONArray();
-                if (membersWithRoles.get(memberId) != null && !membersWithRoles.get(memberId).isEmpty()) {
-                    for (Role role : membersWithRoles.get(memberId)) {
+                if (membersWithRoles.get(memberId) != null && !Objects.requireNonNull(membersWithRoles.get(memberId)).isEmpty()) {
+                    for (Role role : Objects.requireNonNull(membersWithRoles.get(memberId))) {
                         roles.put(role.name());
                     }
                 }

@@ -1,5 +1,6 @@
 package dhbw.smartmoderation.consensus.overview;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -32,7 +33,6 @@ public class PollAdapter extends RecyclerView.Adapter<PollAdapter.PollViewHolder
     private ConsensusProposalOverviewController controller;
     private ArrayList<Poll> pollList;
     private RecyclerView recyclerView;
-    private PollViewHolder pollViewHolder;
 
     public PollAdapter(Context context, ConsensusProposalOverviewController controller) {
         this.context = context;
@@ -46,6 +46,7 @@ public class PollAdapter extends RecyclerView.Adapter<PollAdapter.PollViewHolder
         return this.pollList;
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void updatePollList(Collection<Poll> polls) {
         this.pollList.clear();
         this.pollList.addAll(polls);
@@ -84,7 +85,7 @@ public class PollAdapter extends RecyclerView.Adapter<PollAdapter.PollViewHolder
     };
 
     @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         this.recyclerView = recyclerView;
     }
 
@@ -98,7 +99,7 @@ public class PollAdapter extends RecyclerView.Adapter<PollAdapter.PollViewHolder
         context.getTheme().resolveAttribute(android.R.attr.selectableItemBackground, value, true);
         constraintLayout.setBackgroundResource(value.resourceId);
 
-        pollViewHolder = new PollViewHolder(constraintLayout, context, this);
+        PollViewHolder pollViewHolder = new PollViewHolder(constraintLayout, context);
         pollViewHolder.itemView.setOnClickListener(onClickListener);
         return pollViewHolder;
     }
@@ -148,14 +149,12 @@ public class PollAdapter extends RecyclerView.Adapter<PollAdapter.PollViewHolder
 
     static class PollViewHolder extends RecyclerView.ViewHolder {
 
-        private PollAdapter pollAdapter;
         private Poll poll;
-        private TextView title;
-        private TextView status;
+        private final TextView title;
+        private final TextView status;
 
-        public PollViewHolder(ConstraintLayout constraintLayout, Context context, PollAdapter pollAdapter) {
+        public PollViewHolder(ConstraintLayout constraintLayout, Context context) {
             super(constraintLayout);
-            this.pollAdapter = pollAdapter;
 
             title = new TextView(context);
             title.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));

@@ -20,7 +20,7 @@ import dhbw.smartmoderation.util.Util;
 
 public class ConsensusProposalOverviewController extends SmartModerationController {
 
-    private Long meetingId;
+    private final Long meetingId;
 
     public ConsensusProposalOverviewController(Long meetingId) {
         this.meetingId = meetingId;
@@ -86,15 +86,10 @@ public class ConsensusProposalOverviewController extends SmartModerationControll
         Group group = getGroup();
         Long authorId = connectionService.getLocalAuthorId();
         Member member = group.getMember(authorId);
-
-        if(member != null && member.getRoles(group).contains(Role.MODERATOR)) {
-            return true;
-        }
-        return false;
+        return member != null && member.getRoles(group).contains(Role.MODERATOR);
     }
 
     public void deletePoll(Long pollId) throws PollCantBeDeletedException {
-
         try{
             Collection<ModelClass> data = new ArrayList<>();
             Poll poll = getMeeting().getPoll(pollId);

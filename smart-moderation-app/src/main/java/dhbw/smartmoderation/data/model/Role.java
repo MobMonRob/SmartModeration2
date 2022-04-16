@@ -5,6 +5,6 @@ package dhbw.smartmoderation.data.model;
  */
 public enum Role {
 
-	MODERATOR, PARTICIPANT, SPECTATOR;
+	MODERATOR, PARTICIPANT, SPECTATOR
 
 }

@@ -40,11 +40,11 @@ public class ModerationCardsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_moderation_cards, container, false);
-        Intent intent = getActivity().getIntent();
+        Intent intent = requireActivity().getIntent();
         Bundle extra = intent.getExtras();
         this.meetingId = extra.getLong("meetingId");
         controller = new ModerationCardsController(meetingId);
-        getActivity().setTitle(getString(R.string.moderationCardTitle));
+        requireActivity().setTitle(getString(R.string.moderationCardTitle));
         FloatingActionButton addButton = view.findViewById(R.id.floatingActionButton);
         FloatingActionButton loginButton = view.findViewById(R.id.floatingActionButtonQRCode);
         addButton.setOnClickListener(addButtonClickListener);
@@ -53,7 +53,7 @@ public class ModerationCardsFragment extends Fragment {
         this.moderationCardAdapter = new ModerationCardAdapter(getActivity(), controller.getAllModerationCards());
         moderationCardsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         moderationCardsRecyclerView.setAdapter(moderationCardAdapter);
-        ((BaseActivity)getActivity()).getPullToRefresh().setOnRefreshListener(this::onResume);
+        ((BaseActivity) requireActivity()).getPullToRefresh().setOnRefreshListener(this::onResume);
 
         return view;
     }
@@ -61,7 +61,7 @@ public class ModerationCardsFragment extends Fragment {
     public void onResume() {
         super.onResume();
         moderationCardAdapter.updateModerationCards(controller.getAllModerationCards());
-        ((BaseActivity)getActivity()).getPullToRefresh().setRefreshing(false);
+        ((BaseActivity) requireActivity()).getPullToRefresh().setRefreshing(false);
     }
 
 }

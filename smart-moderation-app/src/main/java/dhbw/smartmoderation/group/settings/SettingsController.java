@@ -20,7 +20,7 @@ import dhbw.smartmoderation.util.Util;
 
 public class SettingsController extends SmartModerationController  {
 
-    private Long groupId;
+    private final Long groupId;
 
     public SettingsController(Long groupId) {
         this.groupId = groupId;
@@ -68,7 +68,7 @@ public class SettingsController extends SmartModerationController  {
 
     public Collection<ConsensusLevel> getConsensusLevels() throws ConsensusLevelsNotFoundException  {
 
-        GroupSettings groupSettings = null;
+        GroupSettings groupSettings;
 
         try {
             groupSettings = getGroupSettings();

@@ -1,5 +1,6 @@
 package dhbw.smartmoderation.listOfSpeakers;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -41,15 +42,12 @@ import dhbw.smartmoderation.util.Util;
 
 public class ListOfSpeakersFragment extends Fragment implements OnStartDragListener, ParticipationAdapter.OnParticipationListener {
 
-    private View view;
     private ListOfSpeakersController controller;
 
     private RecyclerView listOfSpeakers;
-    private LinearLayoutManager listOfSpeakersLayoutManager;
     private ParticipationAdapter participationAdapter;
     private ItemTouchHelper itemTouchHelper;
 
-    private ConstraintLayout currentSpeakerPanel;
     private TextView currentSpeakerTag;
     private TextView currentSpeaker;
     private TextView duration;
@@ -67,9 +65,6 @@ public class ListOfSpeakersFragment extends Fragment implements OnStartDragListe
     private MaterialButton addMeButton;
     private MaterialButton removeMeButton;
 
-    private View popUp;
-    private RecyclerView memberList;
-    private LinearLayoutManager memberListLayoutManager;
     private MemberAdapter memberAdapter;
 
     private Thread durationThread;
@@ -80,54 +75,55 @@ public class ListOfSpeakersFragment extends Fragment implements OnStartDragListe
         return getString(R.string.speechList_title);
     }
 
-    private View.OnClickListener playButtonClickListener = v -> {
+    private final View.OnClickListener playButtonClickListener = v -> {
         ListOfSpeakersAsyncTask listOfSpeakersAsyncTask = new ListOfSpeakersAsyncTask("play");
         listOfSpeakersAsyncTask.execute();
     };
 
-    private View.OnClickListener pauseButtonClickListener = v -> {
+    private final View.OnClickListener pauseButtonClickListener = v -> {
         ListOfSpeakersAsyncTask listOfSpeakersAsyncTask = new ListOfSpeakersAsyncTask("pause");
         listOfSpeakersAsyncTask.execute();
     };
 
-    private View.OnClickListener addSpeakerButtonClickListener = v -> {
+    @SuppressLint("InflateParams")
+    private final View.OnClickListener addSpeakerButtonClickListener = v -> {
         LayoutInflater inflater = LayoutInflater.from(getActivity());
-        this.popUp = inflater.inflate(R.layout.popup_speaker, null);
-        this.memberList = this.popUp.findViewById(R.id.speakerList);
-        this.memberListLayoutManager = new LinearLayoutManager(getActivity());
-        this.memberList.setLayoutManager(this.memberListLayoutManager);
+        View popUp = inflater.inflate(R.layout.popup_speaker, null);
+        RecyclerView memberList = popUp.findViewById(R.id.speakerList);
+        LinearLayoutManager memberListLayoutManager = new LinearLayoutManager(getActivity());
+        memberList.setLayoutManager(memberListLayoutManager);
 
         Collection<Member> presentMembers = this.controller.getPresentMembersNotInSpeechList();
         this.memberAdapter = new MemberAdapter(getActivity(), presentMembers);
-        this.memberList.setAdapter(this.memberAdapter);
+        memberList.setAdapter(this.memberAdapter);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setView(this.popUp);
+        builder.setView(popUp);
         AlertDialog alertDialog = builder.create();
 
-        Button addBtn = this.popUp.findViewById(R.id.addButton);
+        Button addBtn = popUp.findViewById(R.id.addButton);
         addBtn.setOnClickListener(view -> {
             ListOfSpeakersAsyncTask listOfSpeakersAsyncTask = new ListOfSpeakersAsyncTask("addSpeaker");
             listOfSpeakersAsyncTask.execute(alertDialog);
         });
 
-        Button cancelBtn = this.popUp.findViewById(R.id.cancelButton);
+        Button cancelBtn = popUp.findViewById(R.id.cancelButton);
         cancelBtn.setOnClickListener(view -> alertDialog.cancel());
         alertDialog.show();
 
     };
 
-    private View.OnClickListener clearSpeechListButtonClickListener = v -> {
+    private final View.OnClickListener clearSpeechListButtonClickListener = v -> {
         ListOfSpeakersAsyncTask listOfSpeakersAsyncTask = new ListOfSpeakersAsyncTask("clearList");
         listOfSpeakersAsyncTask.execute();
     };
 
-    private View.OnClickListener addMeButtonClickListener = v -> {
+    private final View.OnClickListener addMeButtonClickListener = v -> {
         ListOfSpeakersAsyncTask listOfSpeakersAsyncTask = new ListOfSpeakersAsyncTask("addMe");
         listOfSpeakersAsyncTask.execute();
     };
 
-    private View.OnClickListener removeMeButtonClickListener = v -> {
+    private final View.OnClickListener removeMeButtonClickListener = v -> {
         ListOfSpeakersAsyncTask listOfSpeakersAsyncTask = new ListOfSpeakersAsyncTask("removeMe");
         listOfSpeakersAsyncTask.execute();
     };
@@ -135,7 +131,7 @@ public class ListOfSpeakersFragment extends Fragment implements OnStartDragListe
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.controller = ((BaseActivity) getActivity()).getListOfSpeakersController();
+        this.controller = ((BaseActivity) requireActivity()).getListOfSpeakersController();
     }
 
     @Override
@@ -156,36 +152,35 @@ public class ListOfSpeakersFragment extends Fragment implements OnStartDragListe
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        this.view = inflater.inflate(R.layout.fragment_list_of_speakers, container, false);
+        View view = inflater.inflate(R.layout.fragment_list_of_speakers, container, false);
 
-        this.currentSpeakerPanel = this.view.findViewById(R.id.currentSpeakerPanel);
-        this.currentSpeakerTag = this.view.findViewById(R.id.currentSpeakerTag);
-        this.currentSpeaker = this.view.findViewById(R.id.currentSpeakerInfo);
-        this.duration = this.view.findViewById(R.id.durationInfo);
-        this.totalDuration = this.view.findViewById(R.id.totalDurationInfo);
+        this.currentSpeakerTag = view.findViewById(R.id.currentSpeakerTag);
+        this.currentSpeaker = view.findViewById(R.id.currentSpeakerInfo);
+        this.duration = view.findViewById(R.id.durationInfo);
+        this.totalDuration = view.findViewById(R.id.totalDurationInfo);
 
-        this.startStopPanel = this.view.findViewById(R.id.runStopPanel);
-        this.playButton = this.view.findViewById(R.id.playButton);
+        this.startStopPanel = view.findViewById(R.id.runStopPanel);
+        this.playButton = view.findViewById(R.id.playButton);
         this.playButton.setOnClickListener(this.playButtonClickListener);
-        this.pauseButton = this.view.findViewById(R.id.pauseButton);
+        this.pauseButton = view.findViewById(R.id.pauseButton);
         this.pauseButton.setOnClickListener(this.pauseButtonClickListener);
 
-        this.subscribePanelModerator = this.view.findViewById(R.id.subscribePanelModerator);
-        this.addSpeakerButton = this.view.findViewById(R.id.addSpeakerButton);
+        this.subscribePanelModerator = view.findViewById(R.id.subscribePanelModerator);
+        this.addSpeakerButton = view.findViewById(R.id.addSpeakerButton);
         this.addSpeakerButton.setOnClickListener(this.addSpeakerButtonClickListener);
-        this.clearSpeechListButton = this.view.findViewById(R.id.clearSpeechListButton);
+        this.clearSpeechListButton = view.findViewById(R.id.clearSpeechListButton);
         this.clearSpeechListButton.setOnClickListener(this.clearSpeechListButtonClickListener);
 
-        this.subscribePanelParticipant = this.view.findViewById(R.id.subscribePanelParticipant);
-        this.addMeButton = this.view.findViewById(R.id.addMeButton);
+        this.subscribePanelParticipant = view.findViewById(R.id.subscribePanelParticipant);
+        this.addMeButton = view.findViewById(R.id.addMeButton);
         this.addMeButton.setOnClickListener(this.addMeButtonClickListener);
-        this.removeMeButton = this.view.findViewById(R.id.removeMeButton);
+        this.removeMeButton = view.findViewById(R.id.removeMeButton);
         this.removeMeButton.setOnClickListener(this.removeMeButtonClickListener);
 
         this.participationAdapter = new ParticipationAdapter(this, getActivity(), this, controller.isLocalAuthorModerator(), this);
-        this.listOfSpeakers = this.view.findViewById(R.id.participationList);
-        this.listOfSpeakersLayoutManager = new WrapContentLinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-        this.listOfSpeakers.setLayoutManager(this.listOfSpeakersLayoutManager);
+        this.listOfSpeakers = view.findViewById(R.id.participationList);
+        LinearLayoutManager listOfSpeakersLayoutManager = new WrapContentLinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        this.listOfSpeakers.setLayoutManager(listOfSpeakersLayoutManager);
         this.listOfSpeakers.setAdapter(this.participationAdapter);
 
         DividerItemDecoration speakersDividerItemDecoration = new DividerItemDecoration(listOfSpeakers.getContext(), listOfSpeakersLayoutManager.getOrientation());
@@ -199,7 +194,7 @@ public class ListOfSpeakersFragment extends Fragment implements OnStartDragListe
 
         this.handler = new Handler();
 
-        return this.view;
+        return view;
     }
 
     public void reloadItemTouchHelper() {
@@ -332,7 +327,6 @@ public class ListOfSpeakersFragment extends Fragment implements OnStartDragListe
             });
             this.durationThread.start();
         }
-
     }
 
     public void endDurationThread() {
@@ -394,6 +388,7 @@ public class ListOfSpeakersFragment extends Fragment implements OnStartDragListe
     }
 
 
+    @SuppressLint("StaticFieldLeak")
     public class ListOfSpeakersAsyncTask extends AsyncTask<Object, Object, String> {
 
         String flag;
@@ -407,7 +402,7 @@ public class ListOfSpeakersFragment extends Fragment implements OnStartDragListe
             super.onProgressUpdate(values);
 
             if (values[0] instanceof Exception)
-                ((ExceptionHandlingActivity) getActivity()).handleException((Exception) values[0]);
+                ((ExceptionHandlingActivity) requireActivity()).handleException((Exception) values[0]);
 
             if (values[0] instanceof Thread)
                 ((Thread) values[0]).interrupt();
@@ -528,6 +523,7 @@ public class ListOfSpeakersFragment extends Fragment implements OnStartDragListe
             return returnString;
         }
 
+        @SuppressLint("NotifyDataSetChanged")
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
@@ -597,7 +593,7 @@ public class ListOfSpeakersFragment extends Fragment implements OnStartDragListe
                             runTimerThread();
                         }
                     }
-                    ((BaseActivity) getActivity()).getPullToRefresh().setRefreshing(false);
+                    ((BaseActivity) requireActivity()).getPullToRefresh().setRefreshing(false);
                     break;
                 case "delete":
                     if (participationAdapter.getParticipationList().size() == 0) {

@@ -1,6 +1,15 @@
 package dhbw.smartmoderation.account.contactexchange;
 
 
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.Manifest.permission.CAMERA;
+import static android.content.Intent.CATEGORY_DEFAULT;
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
+import static java.util.logging.Level.INFO;
+import static dhbw.smartmoderation.BuildConfig.APPLICATION_ID;
+
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -31,16 +40,7 @@ import java.util.logging.Logger;
 import javax.inject.Inject;
 
 import dhbw.smartmoderation.R;
-import dhbw.smartmoderation.SmartModerationApplication;
 import dhbw.smartmoderation.SmartModerationApplicationImpl;
-
-import static android.Manifest.permission.ACCESS_FINE_LOCATION;
-import static android.Manifest.permission.CAMERA;
-import static android.content.Intent.CATEGORY_DEFAULT;
-import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
-import static android.content.pm.PackageManager.PERMISSION_GRANTED;
-import static dhbw.smartmoderation.BuildConfig.APPLICATION_ID;
-import static java.util.logging.Level.INFO;
 
 
 public abstract class KeyAgreementActivity extends AppCompatActivity implements BaseFragmentListener, EventListener, IntroFragment.IntroScreenSeenListener, KeyAgreementFragment.KeyAgreementEventListener {
@@ -79,7 +79,6 @@ public abstract class KeyAgreementActivity extends AppCompatActivity implements 
     private Plugin wifiPlugin = null;
     private Plugin bluetoothPlugin = null;
     private BluetoothAdapter bluetoothAdapter = null;
-    private KeyAgreementController controller;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -93,7 +92,7 @@ public abstract class KeyAgreementActivity extends AppCompatActivity implements 
         IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
         bluetoothReceiver = new BluetoothStateReceiver();
         registerReceiver(bluetoothReceiver, filter);
-        controller = new KeyAgreementController();
+        KeyAgreementController controller = new KeyAgreementController();
         pluginManager = controller.getPluginManager();
         eventBus = controller.getEventBus();
         wifiPlugin = pluginManager.getPlugin(LanTcpConstants.ID);
@@ -110,7 +109,6 @@ public abstract class KeyAgreementActivity extends AppCompatActivity implements 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
         if (bluetoothReceiver != null) unregisterReceiver(bluetoothReceiver);
     }
 
@@ -143,7 +141,6 @@ public abstract class KeyAgreementActivity extends AppCompatActivity implements 
 
     @Override
     public void onActivityResult(int request, int result, @Nullable Intent data) {
-
         if (request == REQUEST_BLUETOOTH_DISCOVERABLE) {
             if (result == RESULT_CANCELED) {
                 LOG.info("Bluetooth discoverability was refused");
@@ -157,7 +154,6 @@ public abstract class KeyAgreementActivity extends AppCompatActivity implements 
     }
 
     public void showNextScreen() {
-
         continueClicked = true;
 
         if (bluetoothDecision == BluetoothDecision.REFUSED)
@@ -205,7 +201,6 @@ public abstract class KeyAgreementActivity extends AppCompatActivity implements 
     }
 
     private void showQrCodeFragmentIfAllowed() {
-
         if (isResumed && continueClicked && areEssentialPermissionsGranted()) {
             if (isWifiReady() && isBluetoothReady()) {
                 LOG.info("Wifi and Bluetooth are ready");
@@ -230,7 +225,6 @@ public abstract class KeyAgreementActivity extends AppCompatActivity implements 
     }
 
     private boolean isWifiReady() {
-
         if (wifiPlugin == null) {
             return true;
         }
@@ -273,13 +267,9 @@ public abstract class KeyAgreementActivity extends AppCompatActivity implements 
 
     private boolean shouldEnableWifi() {
 
-        if (hasEnabledWifi) {
-            return false;
-        }
+        if (hasEnabledWifi) return false;
 
-        if (wifiPlugin == null) {
-            return false;
-        }
+        if (wifiPlugin == null) return false;
 
         Plugin.State state = wifiPlugin.getState();
         return state == Plugin.State.STARTING_STOPPING || state == Plugin.State.DISABLED;
@@ -297,6 +287,7 @@ public abstract class KeyAgreementActivity extends AppCompatActivity implements 
         return state == Plugin.State.STARTING_STOPPING || state == Plugin.State.DISABLED;
     }
 
+    @SuppressLint("QueryPermissionsNeeded")
     private void requestBluetoothDiscoverable() {
 
         if (!isBluetoothSupported()) {
@@ -376,11 +367,9 @@ public abstract class KeyAgreementActivity extends AppCompatActivity implements 
     }
 
     @Override
-    public void eventOccurred(Event e) {
-
+    public void eventOccurred(@NonNull Event e) {
         if (e instanceof TransportStateEvent) {
             TransportStateEvent t = (TransportStateEvent) e;
-
             if (t.getTransportId().equals(BluetoothConstants.ID)) {
                 if (LOG.isLoggable(INFO)) {
                     LOG.info("Bluetooth state changed to " + t.getState());
@@ -391,7 +380,6 @@ public abstract class KeyAgreementActivity extends AppCompatActivity implements 
     }
 
     private boolean gotPermission(String permission, String[] permissions, int[] grantResults) {
-
         for (int i = 0; i < permissions.length; i++) {
             if (permission.equals(permissions[i])) {
                 return grantResults[i] == PERMISSION_GRANTED;

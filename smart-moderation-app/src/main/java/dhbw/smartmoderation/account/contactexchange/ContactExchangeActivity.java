@@ -128,7 +128,6 @@ public class ContactExchangeActivity extends KeyAgreementActivity {
                 .commit();
     }
 
-
     @Override
     public void handleException(Exception e) {
         supportFinishAfterTransition();

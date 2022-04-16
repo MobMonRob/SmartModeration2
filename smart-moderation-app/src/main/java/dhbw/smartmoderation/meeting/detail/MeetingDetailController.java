@@ -27,7 +27,7 @@ import dhbw.smartmoderation.util.Util;
 
 public class MeetingDetailController extends SmartModerationController {
 
-    private Long meetingId;
+    private final Long meetingId;
 
     public MeetingDetailController(Long meetingId) {
         this.meetingId = meetingId;
@@ -60,6 +60,7 @@ public class MeetingDetailController extends SmartModerationController {
             e.printStackTrace();
         }
 
+        assert meeting != null;
         return meeting.getTopics();
     }
 
@@ -163,8 +164,6 @@ public class MeetingDetailController extends SmartModerationController {
             throw new TopicCantBeChangedException();
         }
 
-        Collection<ModelClass> data = new ArrayList<>();
-
         if (status == TopicStatus.RUNNING) {
             for (Topic t : getMeeting().getTopics()) {
                 if (t.getTopicStatus() == TopicStatus.RUNNING) {
@@ -185,9 +184,8 @@ public class MeetingDetailController extends SmartModerationController {
             e.printStackTrace();
         }
 
-        for (Topic t : meeting.getTopics()) {
-            data.add(t);
-        }
+        assert meeting != null;
+        Collection<ModelClass> data = new ArrayList<>(meeting.getTopics());
 
         synchronizationService.push(group, data);
     }

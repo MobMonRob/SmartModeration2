@@ -1,5 +1,6 @@
 package dhbw.smartmoderation.util;
 
+import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.widget.EditText;
 
@@ -16,7 +17,7 @@ import java.util.concurrent.TimeUnit;
  */
 public final class Util {
 
-	private final static TreeMap<Integer, String> map = new TreeMap<Integer, String>();
+	private final static TreeMap<Integer, String> map = new TreeMap<>();
 
 	private Util() {
 
@@ -84,7 +85,7 @@ public final class Util {
 		return true;
 	}
 
-	public final static String toRoman(int number) {
+	public static String toRoman(int number) {
 
 		fillTreeMap();
 
@@ -133,9 +134,7 @@ public final class Util {
 	}
 
 	public static long milliSecondsToMinutes(long milliSeconds) {
-
-		long minutes = milliSeconds/(60*1000);
-		return minutes;
+		return milliSeconds/(60*1000);
 	}
 
 	public static long convertTimeStringToMilliSeconds(String timeString) {
@@ -146,12 +145,13 @@ public final class Util {
 
 	public static long convertDateStringToMilliSeconds(String dateString) {
 
-		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+		@SuppressLint("SimpleDateFormat") SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
 		long milliseconds = 0;
 
 		try {
 
 			Date date = format.parse(dateString);
+			assert date != null;
 			milliseconds = date.getTime();
 
 		} catch (ParseException e) {

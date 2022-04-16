@@ -2,7 +2,7 @@ package dhbw.smartmoderation.data.events;
 
 public class GroupUpdateEvent {
 
-    private Long groupId;
+    private final Long groupId;
 
     public GroupUpdateEvent(Long groupId){
         this.groupId = groupId;

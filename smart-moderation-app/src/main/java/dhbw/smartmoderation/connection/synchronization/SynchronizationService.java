@@ -31,8 +31,6 @@ public interface SynchronizationService {
 
 	void addGroupUpdateObserver(GroupUpdateObserver observer);
 
-	void deleteGroupUpdateObserver(GroupUpdateObserver observer);
-
 	void fireGroupUpdateEvent(GroupUpdateEvent event);
 
 	void setLocalAuthor(LocalAuthor localAuthor);

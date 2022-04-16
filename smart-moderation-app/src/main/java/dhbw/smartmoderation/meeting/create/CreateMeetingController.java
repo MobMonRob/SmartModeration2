@@ -61,6 +61,7 @@ public class CreateMeetingController extends SmartModerationController {
                 e.printStackTrace();
             }
 
+            assert meeting != null;
             for (Topic topic : meeting.getTopics()) {
                 topic.setIsDeleted(true);
                 data.add(topic);
@@ -111,10 +112,14 @@ public class CreateMeetingController extends SmartModerationController {
                 e.printStackTrace();
             }
 
+            assert meeting != null;
             for (Topic topic : meeting.getTopics()) {
                 boolean delete = true;
                 for (Topic t : topics)
-                    if (t.getTopicId().equals(topic.getTopicId())) delete = false;
+                    if (t.getTopicId().equals(topic.getTopicId())) {
+                        delete = false;
+                        break;
+                    }
 
                 topic.setIsDeleted(delete);
                 data.add(topic);

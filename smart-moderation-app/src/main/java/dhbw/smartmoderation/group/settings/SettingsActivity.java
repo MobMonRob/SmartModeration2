@@ -1,5 +1,6 @@
 package dhbw.smartmoderation.group.settings;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -35,8 +36,6 @@ public class SettingsActivity extends UpdateableExceptionHandlingActivity implem
     private SettingsController controller;
     private ConsensusLevelAdapter consensusLevelAdapter;
     private RecyclerView consensusLevelList;
-    private LinearLayoutManager consensusLevelLayoutManager;
-    private FloatingActionButton generalFab;
     private ItemTouchHelper itemTouchHelper;
 
 
@@ -54,12 +53,12 @@ public class SettingsActivity extends UpdateableExceptionHandlingActivity implem
 
         consensusLevelList = findViewById(R.id.consensusLevelList);
 
-        generalFab = findViewById(R.id.topFab);
+        FloatingActionButton generalFab = findViewById(R.id.topFab);
         generalFab.setVisibility(View.VISIBLE);
 
         generalFab.setOnClickListener(v -> startCreateConsensusLevelActivity(v, null, -1));
 
-        consensusLevelLayoutManager = new LinearLayoutManager(this);
+        LinearLayoutManager consensusLevelLayoutManager = new LinearLayoutManager(this);
         consensusLevelList.setLayoutManager(consensusLevelLayoutManager);
 
         try {
@@ -169,6 +168,7 @@ public class SettingsActivity extends UpdateableExceptionHandlingActivity implem
         settingsAsyncTask.execute(consensusLevelId);
     }
 
+    @SuppressLint("StaticFieldLeak")
     public class SettingsAsyncTask extends AsyncTask<Object, Exception, String> {
 
         String flag;
@@ -235,9 +235,7 @@ public class SettingsActivity extends UpdateableExceptionHandlingActivity implem
                         publishProgress(exception);
                     }
                     break;
-
                 case "delete":
-
                     Long consensusLevelId = Long.valueOf(objects[0].toString());
 
                     try {

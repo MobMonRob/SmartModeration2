@@ -19,15 +19,11 @@ import org.briarproject.bramble.api.keyagreement.Payload;
 import org.briarproject.bramble.api.keyagreement.PayloadEncoder;
 import org.briarproject.bramble.api.keyagreement.PayloadParser;
 import org.briarproject.bramble.api.lifecycle.LifecycleManager;
-import org.briarproject.bramble.api.plugin.BluetoothConstants;
 import org.briarproject.bramble.api.connection.ConnectionManager;
 import org.briarproject.bramble.api.connection.ConnectionRegistry;
 import org.briarproject.bramble.api.plugin.PluginManager;
-import org.briarproject.bramble.api.plugin.TorConstants;
 import org.briarproject.bramble.api.plugin.TransportId;
-import org.briarproject.bramble.api.plugin.duplex.DuplexPlugin;
 import org.briarproject.bramble.api.plugin.duplex.DuplexTransportConnection;
-import org.briarproject.bramble.api.properties.TransportProperties;
 import org.briarproject.bramble.api.properties.TransportPropertyManager;
 import org.briarproject.bramble.api.sync.GroupId;
 import org.briarproject.bramble.api.sync.MessageId;
@@ -139,11 +135,7 @@ public class ConnectionService {
         this.messagingManager = messagingManager;
         this.eventBus = eventBus;
         this.clock = clock;
-
-        ContactExchangeUtil.init(this);
-
         groupInvitationVisitor = new GroupInvitationVisitor();
-
     }
 
     public boolean isConnected(ContactId contactId) {
@@ -197,13 +189,6 @@ public class ConnectionService {
     }
 
     /**
-     * Delete the Briar-account.
-     */
-    public void deleteAccount() {
-        accountManager.deleteAccount();
-    }
-
-    /**
      * Initiate the contact exchange. When the execution of this method was finished, {@code performContactExchange} can be called.
      *
      * @param callback The {@code ContactExchangeCallback} to be called when the initial setup was performed.
@@ -224,16 +209,8 @@ public class ConnectionService {
         return pluginManager;
     }
 
-    public Provider<KeyAgreementTask> getKeyAgreementTaskProvider() {
-        return this.keyAgreementTaskProvider;
-    }
-
     public PayloadEncoder getPayloadEncoder() {
         return this.payloadEncoder;
-    }
-
-    public PayloadParser getPayloadParser() {
-        return this.payloadParser;
     }
 
     /**
@@ -280,11 +257,8 @@ public class ConnectionService {
             PrivateGroup group = privateGroupFactory.createPrivateGroup(name, author);
             GroupMessage joinMessage = groupMessageFactory.createJoinMessage(group.getId(), System.currentTimeMillis(), author);
             privateGroupManager.addPrivateGroup(group, joinMessage, true);
-
             long timestamp = System.currentTimeMillis();
-            for (Contact contact :
-                    contacts) {
-                connectToContact(contact); // TODO Maybe has to be removed in the future
+            for (Contact contact : contacts) {
                 byte[] signature = groupInvitationFactory.signInvitation(contact, group.getId(), timestamp, author.getPrivateKey());
                 groupInvitationManager.sendInvitation(group.getId(), contact.getId(), null, timestamp, signature, 1000000L);
             }
@@ -299,7 +273,6 @@ public class ConnectionService {
         try {
             LocalAuthor author = identityManager.getLocalAuthor();
             long timestamp = System.currentTimeMillis();
-            //connectToContact(contact);
             byte[] signature = groupInvitationFactory.signInvitation(contact, group.getId(), timestamp, author.getPrivateKey());
             groupInvitationManager.sendInvitation(group.getId(), contact.getId(), null, timestamp, signature, 1000000L);
         } catch (DbException e) {
@@ -405,18 +378,11 @@ public class ConnectionService {
 
         List<Invitation> groupInvitations = new ArrayList<>();
 
-        // For all messages by all contacts
         for (Map.Entry<ContactId, Collection<ConversationMessageHeader>> messagesForContact : messages.entrySet()) {
-            // ID of current contact
             ContactId contactId = messagesForContact.getKey();
-
-            // For all messages by this contact
             for (ConversationMessageHeader message : messagesForContact.getValue()) {
                 PrivateGroup group = message.accept(groupInvitationVisitor);
-                // If the current message is a group invitation
-                if (group != null) {
-                    groupInvitations.add(new Invitation(contactId, group));
-                }
+                groupInvitations.add(new Invitation(contactId, group));
             }
         }
         return groupInvitations;
@@ -479,7 +445,6 @@ public class ConnectionService {
 
     public Long getLocalAuthorId() {
         LocalAuthor briarLocalAuthor = getLocalAuthor();
-
         if (briarLocalAuthor != null) {
             return Util.bytesToLong(briarLocalAuthor.getId().getBytes());
         } else {
@@ -536,47 +501,6 @@ public class ConnectionService {
         }
     }
 
-    /**
-     * Does currently not work, maybe has to be removed in the future.
-     * <p>
-     * This is an attempt in reconnecting to a user added via Bluetooth, but a bug in Briar currently prevents it form working.
-     *
-     * @param contact The contact to connect to
-     */
-    // TODO Is maybe useless in the future, since it will be done automatically
-    private void connectToContact(Contact contact) {
-        Collection<DuplexPlugin> duplexPlugins = pluginManager.getDuplexPlugins();
-        DuplexPlugin bluetoothPlugin = null;
-        DuplexPlugin torPlugin = null;
-        for (DuplexPlugin duplexPlugin : duplexPlugins) {
-            if (duplexPlugin.getId().equals(BluetoothConstants.ID)) {
-                bluetoothPlugin = duplexPlugin;
-            }
-            if (duplexPlugin.getId().equals(TorConstants.ID)) {
-                torPlugin = torPlugin;
-            }
-        }
-        if (bluetoothPlugin == null)
-            throw new AssertionError("Bluetooth Plugin should have been found to connect");
-
-        if (!connectionRegistry.isConnected(contact.getId(), bluetoothPlugin.getId())) {
-            try {
-                TransportProperties transportProperties = transportPropertyManager.getRemoteProperties(contact.getId(), bluetoothPlugin.getId());
-                DuplexTransportConnection connection = bluetoothPlugin.createConnection(transportProperties);
-                try {
-                    connectionManager.manageOutgoingConnection(contact.getId(), bluetoothPlugin.getId(), connection);
-                    Log.d(TAG, "Connected to contact with id: " + contact.getId().getInt());
-                } catch (NullPointerException e) {
-                    // Happens if contact is not available
-                    // At the moment: Happens all the time
-                    Log.d(TAG, "Could not connect to contact with id: " + contact.getId().getInt());
-                }
-            } catch (DbException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     public void createAndStoreMessage(String message, PrivateGroup group) {
         try {
             LocalAuthor author = identityManager.getLocalAuthor();
@@ -629,14 +553,6 @@ public class ConnectionService {
             } catch (DbException e) {
                 throw new NoGroupMessageTextFoundException(e, new String(groupId.getBytes()));
             }
-        }
-    }
-
-    public void removePrivateGroup(PrivateGroup group) {
-        try {
-            privateGroupManager.removePrivateGroup(group.getId());
-        } catch (DbException e) {
-            e.printStackTrace();
         }
     }
 }

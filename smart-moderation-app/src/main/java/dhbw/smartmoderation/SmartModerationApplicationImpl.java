@@ -33,7 +33,6 @@ import dhbw.smartmoderation.data.model.DaoMaster;
 import dhbw.smartmoderation.data.model.DaoSession;
 import dhbw.smartmoderation.data.model.GroupUpdateObserver;
 import dhbw.smartmoderation.util.Client;
-import dhbw.smartmoderation.util.ExceptionHandlingActivity;
 import dhbw.smartmoderation.util.WebServer;
 
 public class SmartModerationApplicationImpl extends Application
@@ -48,9 +47,6 @@ public class SmartModerationApplicationImpl extends Application
     private ConnectionService connectionService;
     private DataService dataService;
     private SynchronizationService synchronizationService;
-    private UpdateChecker updateChecker;
-    private Thread updateThread;
-    private ExceptionHandlingActivity exceptionHandlingActivity;
     private WebServer webServer;
     private Client client;
 
@@ -74,8 +70,8 @@ public class SmartModerationApplicationImpl extends Application
             synchronizationService.addGroupUpdateObserver(group);
         }
 
-        updateChecker = new UpdateChecker(synchronizationService, connectionService);
-        updateThread = new Thread(updateChecker);
+        UpdateChecker updateChecker = new UpdateChecker(synchronizationService, connectionService);
+        Thread updateThread = new Thread(updateChecker);
         //updateThread.start();
 
         webServer = new WebServer(this);
@@ -127,20 +123,11 @@ public class SmartModerationApplicationImpl extends Application
     public DaoSession getDaoSession() {
         DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "notes-db");
         Database db = helper.getWritableDb();
-        DaoSession daoSession = new DaoMaster(db).newSession();
-        return daoSession;
+        return new DaoMaster(db).newSession();
     }
 
     public SynchronizationService getSynchronizationService() {
         return synchronizationService;
-    }
-
-    public void setCurrentActivity(ExceptionHandlingActivity exceptionHandlingActivity) {
-        this.exceptionHandlingActivity = exceptionHandlingActivity;
-    }
-
-    public ExceptionHandlingActivity getCurrentActivity() {
-        return exceptionHandlingActivity;
     }
 
     public void startWebServer() {

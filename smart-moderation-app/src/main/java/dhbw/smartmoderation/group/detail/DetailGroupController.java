@@ -94,6 +94,7 @@ public class DetailGroupController extends SmartModerationController {
 
         int count = 0;
 
+        assert group != null;
         for (Member member : group.getUniqueMembers())
             if (member.getRoles(group).contains(Role.MODERATOR)) count++;
 

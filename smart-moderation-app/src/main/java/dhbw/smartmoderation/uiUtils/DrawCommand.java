@@ -4,8 +4,8 @@ import android.graphics.drawable.Drawable;
 
 public class DrawCommand {
 
-    private Drawable icon;
-    private int backgroundColor;
+    private final Drawable icon;
+    private final int backgroundColor;
 
     public DrawCommand(Drawable icon, int backgroundColor) {
         this.icon = icon;

@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import javax.annotation.Nullable;
@@ -35,8 +36,8 @@ public class IntroFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
-        ((SmartModerationApplicationImpl)getActivity().getApplicationContext()).smartModerationComponent.inject(this);
+    public void onAttach(@NonNull Context context) {
+        ((SmartModerationApplicationImpl) requireActivity().getApplicationContext()).smartModerationComponent.inject(this);
         super.onAttach(context);
         screenSeenListener = (IntroScreenSeenListener) context;
     }

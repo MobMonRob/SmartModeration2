@@ -13,7 +13,6 @@ import java.util.List;
 
 import dhbw.smartmoderation.SmartModerationApplicationImpl;
 import dhbw.smartmoderation.connection.ConnectionService;
-import dhbw.smartmoderation.data.DataService;
 import dhbw.smartmoderation.data.events.GroupUpdateEvent;
 import dhbw.smartmoderation.data.model.GroupUpdateObserver;
 import dhbw.smartmoderation.data.model.ModelClass;
@@ -27,9 +26,8 @@ public class SynchronizationServiceImpl implements SynchronizationService {
 
 	private final String TAG = SynchronizationServiceImpl.class.getSimpleName();
 	private final ConnectionService connectionService = ((SmartModerationApplicationImpl)SmartModerationApplicationImpl.getApp()).getConnectionService();
-	private final DataService dataService = ((SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp()).getDataService();
 	private final SerializationService serializationService;
-	private final List<GroupUpdateObserver> groupUpdateObservers = new ArrayList<GroupUpdateObserver>();
+	private final List<GroupUpdateObserver> groupUpdateObservers = new ArrayList<>();
 
 	public void setLocalAuthor(LocalAuthor localAuthor) {
 		serializationService.setLocalAuthor(localAuthor);
@@ -44,7 +42,6 @@ public class SynchronizationServiceImpl implements SynchronizationService {
 	}
 
 	public boolean pull(PrivateGroup group) {
-
 		boolean success = false;
 		long lastSynchronized = 0;
 
@@ -95,7 +92,7 @@ public class SynchronizationServiceImpl implements SynchronizationService {
 				try{
 					String data = connectionService.getGroupMessageText(header.getId(), group.getId().toString());
 					if (data != null) {
-						ModelClassData modelClassData = serializationService.bulkDeserializeAndMerge(data);
+						serializationService.bulkDeserializeAndMerge(data);
 						fireGroupUpdateEvent(new GroupUpdateEvent(Util.bytesToLong(group.getId().getBytes())));
 						if (sync == null) {
 							sync = new Synchronization();
@@ -116,27 +113,16 @@ public class SynchronizationServiceImpl implements SynchronizationService {
 
 	@Override
 	public void addGroupUpdateObserver(GroupUpdateObserver observer) {
-
 		if (groupUpdateObservers.contains(observer)){
 			return;
 		}
-
 		this.groupUpdateObservers.add(observer);
 	}
 
 	@Override
-	public void deleteGroupUpdateObserver(GroupUpdateObserver observer) {
-
-		groupUpdateObservers.remove(observer);
-	}
-
-	@Override
 	public void fireGroupUpdateEvent(GroupUpdateEvent event) {
-
 		for (GroupUpdateObserver observer : groupUpdateObservers){
-
 			 observer.update(event);
 		}
 	}
-
 }

@@ -2,6 +2,7 @@ package dhbw.smartmoderation.consensus.overview;
 
 import static android.content.Context.WIFI_SERVICE;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -51,13 +52,10 @@ public class ConsensusProposalOverviewFragment extends Fragment {
 
     private final int REQUEST_CODE = 0;
 
-    private View view;
     private RadioGroup serverSwitch;
     private TextView serverLabel;
     private RecyclerView pollList;
     private PollAdapter pollAdapter;
-    private LinearLayoutManager pollLayoutManager;
-    private FloatingActionButton generalFab;
     private TextView serverInfo;
     private ConsensusProposalOverviewController controller;
     private Long meetingId;
@@ -72,33 +70,33 @@ public class ConsensusProposalOverviewFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        this.view = inflater.inflate(R.layout.fragment_poll_overview, container, false);
+        View view = inflater.inflate(R.layout.fragment_poll_overview, container, false);
 
-        Intent intent = getActivity().getIntent();
+        Intent intent = requireActivity().getIntent();
         Bundle extra = intent.getExtras();
         this.meetingId = extra.getLong("meetingId");
 
         this.controller = new ConsensusProposalOverviewController(meetingId);
-        this.serverInfo = this.view.findViewById(R.id.serverInfo);
-        this.pollList = this.view.findViewById(R.id.pollList);
+        this.serverInfo = view.findViewById(R.id.serverInfo);
+        this.pollList = view.findViewById(R.id.pollList);
         this.pollAdapter = new PollAdapter(getActivity(), this.controller);
         this.pollList.setAdapter(this.pollAdapter);
-        this.pollLayoutManager = new LinearLayoutManager(getActivity());
-        this.pollList.setLayoutManager(this.pollLayoutManager);
+        LinearLayoutManager pollLayoutManager = new LinearLayoutManager(getActivity());
+        this.pollList.setLayoutManager(pollLayoutManager);
         DividerItemDecoration pollDividerItemDecoration = new DividerItemDecoration(pollList.getContext(), pollLayoutManager.getOrientation());
         this.pollList.addItemDecoration(pollDividerItemDecoration);
 
-        this.generalFab = this.view.findViewById(R.id.generalFab);
+        FloatingActionButton generalFab = view.findViewById(R.id.generalFab);
 
         if (!this.controller.isLocalAuthorModerator()) {
-            this.generalFab.setVisibility(View.GONE);
+            generalFab.setVisibility(View.GONE);
         }
 
-        this.generalFab.setOnClickListener(this::onAddConsensusProposal);
+        generalFab.setOnClickListener(this::onAddConsensusProposal);
 
         instantiatePollSwipeHelper();
 
-        return this.view;
+        return view;
     }
 
     @Override
@@ -153,7 +151,7 @@ public class ConsensusProposalOverviewFragment extends Fragment {
 
     public void initIPAddress() {
 
-        WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(WIFI_SERVICE);
+        WifiManager wifiManager = (WifiManager) requireActivity().getApplicationContext().getSystemService(WIFI_SERVICE);
         int ipAddress = wifiManager.getConnectionInfo().getIpAddress();
 
         if (ByteOrder.nativeOrder().equals(ByteOrder.LITTLE_ENDIAN)) {
@@ -213,7 +211,7 @@ public class ConsensusProposalOverviewFragment extends Fragment {
                 this.controller.deletePoll(pollId);
                 this.pollAdapter.updatePollList(this.controller.getPolls());
             } catch (PollCantBeDeletedException exception) {
-                ((ExceptionHandlingActivity) getActivity()).handleException(exception);
+                ((ExceptionHandlingActivity) requireActivity()).handleException(exception);
             }
         }));
 
@@ -233,8 +231,8 @@ public class ConsensusProposalOverviewFragment extends Fragment {
                 PollAdapter.PollViewHolder pollViewHolder = (PollAdapter.PollViewHolder) viewHolder;
                 Poll currentPoll = pollViewHolder.getPoll();
 
-                underLayButtons.add(new UnderLayButton(getString(R.string.delete), 0,
-                        ResourcesCompat.getColor(getActivity().getResources(), R.color.default_red, null),
+                underLayButtons.add(new UnderLayButton(getString(R.string.delete),
+                        ResourcesCompat.getColor(requireActivity().getResources(), R.color.default_red, null),
                         (UnderLayButtonClickListener) position -> {
                             pollAdapter.getPollList().remove(position);
                             pollAdapter.notifyItemRemoved(position);
@@ -243,8 +241,8 @@ public class ConsensusProposalOverviewFragment extends Fragment {
                             consensusProposalOverviewAsyncTask.execute(currentPoll);
                         }));
 
-                underLayButtons.add(new UnderLayButton(getString(R.string.detail), 0,
-                        ResourcesCompat.getColor(getActivity().getResources(), R.color.default_blue, null),
+                underLayButtons.add(new UnderLayButton(getString(R.string.detail),
+                        ResourcesCompat.getColor(requireActivity().getResources(), R.color.default_blue, null),
                         (UnderLayButtonClickListener) position -> {
                             Intent intent = new Intent(getActivity(), ConsensusProposalDetail.class);
                             intent.putExtra("pollId", currentPoll.getPollId());
@@ -253,8 +251,8 @@ public class ConsensusProposalOverviewFragment extends Fragment {
 
                 if (!currentPoll.getIsOpen() && controller.isLocalAuthorModerator()) {
 
-                    underLayButtons.add(new UnderLayButton(getString(R.string.open), 0,
-                            ResourcesCompat.getColor(getActivity().getResources(), R.color.colorPrimary, null),
+                    underLayButtons.add(new UnderLayButton(getString(R.string.open),
+                            ResourcesCompat.getColor(requireActivity().getResources(), R.color.colorPrimary, null),
                             (UnderLayButtonClickListener) position -> {
                                 ConsensusProposalOverviewAsyncTask consensusProposalOverviewAsyncTask = new ConsensusProposalOverviewAsyncTask("openPoll");
                                 consensusProposalOverviewAsyncTask.execute(currentPoll);
@@ -264,6 +262,7 @@ public class ConsensusProposalOverviewFragment extends Fragment {
         };
     }
 
+    @SuppressLint("StaticFieldLeak")
     public class ConsensusProposalOverviewAsyncTask extends AsyncTask<Object, Exception, String> {
 
         String flag;
@@ -275,7 +274,7 @@ public class ConsensusProposalOverviewFragment extends Fragment {
         @Override
         protected void onProgressUpdate(Exception... values) {
             super.onProgressUpdate(values);
-            ((ExceptionHandlingActivity) getActivity()).handleException(values[0]);
+            ((ExceptionHandlingActivity) requireActivity()).handleException(values[0]);
         }
 
         @Override
@@ -312,7 +311,7 @@ public class ConsensusProposalOverviewFragment extends Fragment {
             switch (s) {
                 case "update":
                     pollAdapter.updatePollList(controller.getPolls());
-                    ((BaseActivity) getActivity()).getPullToRefresh().setRefreshing(false);
+                    ((BaseActivity) requireActivity()).getPullToRefresh().setRefreshing(false);
                     break;
                 case "updatePoll":
                     pollAdapter.updatePollList(controller.getPolls());

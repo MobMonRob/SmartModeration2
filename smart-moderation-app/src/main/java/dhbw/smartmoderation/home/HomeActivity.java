@@ -23,9 +23,7 @@ import dhbw.smartmoderation.util.UpdateableExceptionHandlingActivity;
 public class HomeActivity extends UpdateableExceptionHandlingActivity {
 
     private Button btnShowGroups;
-    private Button btnAddContact;
     private Button btnNewGroup;
-    private Button btnGroupInvitations;
     private HomeController homeController;
 
     @Override
@@ -42,9 +40,9 @@ public class HomeActivity extends UpdateableExceptionHandlingActivity {
 
 
         btnShowGroups = findViewById(R.id.btnShowGroups);
-        btnAddContact = findViewById(R.id.btnAddContact);
+        Button btnAddContact = findViewById(R.id.btnAddContact);
         btnNewGroup = findViewById(R.id.btnNewGroup);
-        btnGroupInvitations = findViewById(R.id.btnGroupInvitations);
+        Button btnGroupInvitations = findViewById(R.id.btnGroupInvitations);
 
         btnShowGroups.setOnClickListener(this::onShowGroups);
         btnAddContact.setOnClickListener(this::onAddContact);

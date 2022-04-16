@@ -23,9 +23,9 @@ class InvitationsAdapter extends RecyclerView.Adapter<InvitationsAdapter.Invitat
 
 	private static final String TAG = InvitationsAdapter.class.getSimpleName();
 
-	private Context context;
-	private List<Invitation> invitations;
-	private GroupInvitationHandler handler;
+	private final Context context;
+	private final List<Invitation> invitations;
+	private final GroupInvitationHandler handler;
 
 	InvitationsAdapter(Context context, List<Invitation> invitations, GroupInvitationHandler handler) {
 		this.context = context;
@@ -39,8 +39,7 @@ class InvitationsAdapter extends RecyclerView.Adapter<InvitationsAdapter.Invitat
 	public InvitationViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 		ConstraintLayout constraintLayout = new ConstraintLayout(context);
 		constraintLayout.setLayoutParams(new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, 150));
-		InvitationViewHolder invitationViewHolder = new InvitationViewHolder(constraintLayout, context, handler);
-		return invitationViewHolder;
+		return new InvitationViewHolder(constraintLayout, context, handler);
 	}
 
 	@Override
@@ -64,8 +63,7 @@ class InvitationsAdapter extends RecyclerView.Adapter<InvitationsAdapter.Invitat
 	static class InvitationViewHolder extends RecyclerView.ViewHolder {
 
 		private Invitation invitation;
-		private GroupInvitationHandler handler;
-		private Context context;
+		private final GroupInvitationHandler handler;
 
 		TextView txtGroupName;
 
@@ -73,9 +71,8 @@ class InvitationsAdapter extends RecyclerView.Adapter<InvitationsAdapter.Invitat
 			super(constraintLayout);
 
 			this.handler = handler;
-			this.context = context;
 
-			txtGroupName = new TextView(this.context);
+			txtGroupName = new TextView(context);
 			txtGroupName.setId(View.generateViewId());
 			txtGroupName.setTypeface(txtGroupName.getTypeface(), Typeface.BOLD);
 			constraintLayout.addView(txtGroupName);
@@ -86,11 +83,11 @@ class InvitationsAdapter extends RecyclerView.Adapter<InvitationsAdapter.Invitat
 			txtGroupNameCS.connect(txtGroupName.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, 20);
 			txtGroupNameCS.applyTo(constraintLayout);
 
-			ImageButton btnReject = new ImageButton(this.context);
+			ImageButton btnReject = new ImageButton(context);
 			btnReject.setId(View.generateViewId());
 			btnReject.setImageResource(R.drawable.ic_reject);
 			btnReject.setBackgroundResource(0);
-			btnReject.setColorFilter(ContextCompat.getColor(this.context, R.color.default_red));
+			btnReject.setColorFilter(ContextCompat.getColor(context, R.color.default_red));
 			btnReject.setOnClickListener(this::onReject);
 			constraintLayout.addView(btnReject);
 			ConstraintSet buttonRejectCS = new ConstraintSet();
@@ -100,11 +97,11 @@ class InvitationsAdapter extends RecyclerView.Adapter<InvitationsAdapter.Invitat
 			buttonRejectCS.connect(btnReject.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, 20);
 			buttonRejectCS.applyTo(constraintLayout);
 
-			ImageButton btnAccept = new ImageButton(this.context);
+			ImageButton btnAccept = new ImageButton(context);
 			btnAccept.setId(View.generateViewId());
 			btnAccept.setImageResource(R.drawable.ic_accept);
 			btnAccept.setBackgroundResource(0);
-			btnAccept.setColorFilter(ContextCompat.getColor(this.context, R.color.default_green));
+			btnAccept.setColorFilter(ContextCompat.getColor(context, R.color.default_green));
 			btnAccept.setOnClickListener(this::onAccept);
 			constraintLayout.addView(btnAccept);
 			ConstraintSet btnAcceptCS = new ConstraintSet();

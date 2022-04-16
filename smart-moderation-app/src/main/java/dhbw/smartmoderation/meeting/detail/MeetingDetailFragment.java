@@ -1,9 +1,9 @@
 package dhbw.smartmoderation.meeting.detail;
 
-import android.app.Activity;
-import android.content.Context;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
@@ -27,14 +28,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.beardedhen.androidbootstrap.BootstrapProgressBar;
-import com.beardedhen.androidbootstrap.api.attributes.BootstrapBrand;
 import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapBrand;
 
 import java.util.Collection;
 import java.util.List;
 
 import dhbw.smartmoderation.R;
-import dhbw.smartmoderation.SmartModerationApplication;
 import dhbw.smartmoderation.SmartModerationApplicationImpl;
 import dhbw.smartmoderation.data.model.Attendance;
 import dhbw.smartmoderation.data.model.Meeting;
@@ -58,11 +57,9 @@ public class MeetingDetailFragment extends Fragment {
     private View view;
     private RecyclerView memberList;
     private MemberAdapter memberAdapter;
-    private LinearLayoutManager memberLayoutManager;
 
     private RecyclerView topicList;
     private TopicAdapter topicAdapter;
-    private LinearLayoutManager topicLayoutManager;
     private BootstrapProgressBar progressBar;
     private StatusViewScroller stateProgressBar;
 
@@ -104,6 +101,7 @@ public class MeetingDetailFragment extends Fragment {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
@@ -115,20 +113,21 @@ public class MeetingDetailFragment extends Fragment {
             intent.putExtra("groupId", this.groupId);
             this.endProgressBarThread();
             startActivity(intent);
-            getActivity().finish();
+            requireActivity().finish();
         }
 
         return super.onOptionsItemSelected(item);
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        this.meetingDetailController = ((BaseActivity) getActivity()).getMeetingDetailController();
+        this.meetingDetailController = ((BaseActivity) requireActivity()).getMeetingDetailController();
         this.meeting = this.meetingDetailController.getMeeting();
-        getActivity().setTitle(getTitle(this.meeting.getCause()));
+        requireActivity().setTitle(getTitle(this.meeting.getCause()));
         this.meetingId = this.meeting.getMeetingId();
         this.groupId = this.meeting.getGroup().getGroupId();
         this.memberAdapter = new MemberAdapter(getActivity(), meetingDetailController);
@@ -159,14 +158,14 @@ public class MeetingDetailFragment extends Fragment {
 
         this.memberTag = view.findViewById(R.id.memberTag);
 
-        this.memberLayoutManager = new LinearLayoutManager(getActivity());
-        this.memberList.setLayoutManager(this.memberLayoutManager);
+        LinearLayoutManager memberLayoutManager = new LinearLayoutManager(getActivity());
+        this.memberList.setLayoutManager(memberLayoutManager);
         this.memberList.setAdapter(this.memberAdapter);
         DividerItemDecoration memberDividerItemDecoration = new DividerItemDecoration(memberList.getContext(), memberLayoutManager.getOrientation());
         this.memberList.addItemDecoration(memberDividerItemDecoration);
 
-        this.topicLayoutManager = new LinearLayoutManager(getActivity());
-        this.topicList.setLayoutManager(this.topicLayoutManager);
+        LinearLayoutManager topicLayoutManager = new LinearLayoutManager(getActivity());
+        this.topicList.setLayoutManager(topicLayoutManager);
         this.topicList.setAdapter(this.topicAdapter);
         DividerItemDecoration topicDividerItemDecoration = new DividerItemDecoration(topicList.getContext(), topicLayoutManager.getOrientation());
         this.topicList.addItemDecoration(topicDividerItemDecoration);
@@ -316,7 +315,7 @@ public class MeetingDetailFragment extends Fragment {
 
 
     public void createAlertDialog(String message) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
         builder.setMessage(message);
         builder.setCancelable(false);
         builder.setNeutralButton(getString(R.string.ok), ((dialog, which) -> dialog.cancel()));
@@ -333,7 +332,7 @@ public class MeetingDetailFragment extends Fragment {
                 MemberAdapter.MemberViewHolder memberViewHolder = (MemberAdapter.MemberViewHolder) viewHolder;
                 Member currentMember = memberViewHolder.getMember();
 
-                underLayButtons.add(new UnderLayButton(getString(R.string.delete), 0,
+                underLayButtons.add(new UnderLayButton(getString(R.string.delete),
                         ResourcesCompat.getColor(SmartModerationApplicationImpl.getApp().getApplicationContext().getResources(), R.color.default_red, null),
                         (UnderLayButtonClickListener) position -> {
                             MeetingDetailAsyncTask meetingDetailAsyncTask = new MeetingDetailAsyncTask("deleteMember");
@@ -342,14 +341,14 @@ public class MeetingDetailFragment extends Fragment {
 
                 if (currentMember.getAttendance(meeting) == Attendance.PRESENT) {
 
-                    underLayButtons.add(new UnderLayButton(getString(R.string.absent), 0,
+                    underLayButtons.add(new UnderLayButton(getString(R.string.absent),
                             ResourcesCompat.getColor(SmartModerationApplicationImpl.getApp().getApplicationContext().getResources(), R.color.default_blue, null),
                             (UnderLayButtonClickListener) position -> {
                                 MeetingDetailAsyncTask meetingDetailAsyncTask = new MeetingDetailAsyncTask("changeMemberStatus");
                                 meetingDetailAsyncTask.execute(currentMember, Attendance.ABSENT);
                             }));
 
-                    underLayButtons.add(new UnderLayButton(getString(R.string.excused), 0,
+                    underLayButtons.add(new UnderLayButton(getString(R.string.excused),
                             ResourcesCompat.getColor(SmartModerationApplicationImpl.getApp().getApplicationContext().getResources(), R.color.colorPrimaryDark, null),
                             (UnderLayButtonClickListener) position -> {
                                 MeetingDetailAsyncTask meetingDetailAsyncTask = new MeetingDetailAsyncTask("changeMemberStatus");
@@ -357,28 +356,28 @@ public class MeetingDetailFragment extends Fragment {
                             }));
                 } else if (currentMember.getAttendance(meeting) == Attendance.EXCUSED) {
 
-                    underLayButtons.add(new UnderLayButton(getString(R.string.absent), 0,
+                    underLayButtons.add(new UnderLayButton(getString(R.string.absent),
                             ResourcesCompat.getColor(SmartModerationApplicationImpl.getApp().getApplicationContext().getResources(), R.color.default_blue, null),
                             (UnderLayButtonClickListener) position -> {
                                 MeetingDetailAsyncTask meetingDetailAsyncTask = new MeetingDetailAsyncTask("changeMemberStatus");
                                 meetingDetailAsyncTask.execute(currentMember, Attendance.ABSENT);
                             }));
 
-                    underLayButtons.add(new UnderLayButton(getString(R.string.present), 0,
+                    underLayButtons.add(new UnderLayButton(getString(R.string.present),
                             ResourcesCompat.getColor(SmartModerationApplicationImpl.getApp().getApplicationContext().getResources(), R.color.default_green, null),
                             (UnderLayButtonClickListener) position -> {
                                 MeetingDetailAsyncTask meetingDetailAsyncTask = new MeetingDetailAsyncTask("changeMemberStatus");
                                 meetingDetailAsyncTask.execute(currentMember, Attendance.PRESENT);
                             }));
                 } else {
-                    underLayButtons.add(new UnderLayButton(getString(R.string.excused), 0,
+                    underLayButtons.add(new UnderLayButton(getString(R.string.excused),
                             ResourcesCompat.getColor(SmartModerationApplicationImpl.getApp().getApplicationContext().getResources(), R.color.colorPrimaryDark, null),
                             (UnderLayButtonClickListener) position -> {
                                 MeetingDetailAsyncTask meetingDetailAsyncTask = new MeetingDetailAsyncTask("changeMemberStatus");
                                 meetingDetailAsyncTask.execute(currentMember, Attendance.EXCUSED);
                             }));
 
-                    underLayButtons.add(new UnderLayButton(getString(R.string.present), 0,
+                    underLayButtons.add(new UnderLayButton(getString(R.string.present),
                             ResourcesCompat.getColor(SmartModerationApplicationImpl.getApp().getApplicationContext().getResources(), R.color.default_green, null),
                             (UnderLayButtonClickListener) position -> {
                                 MeetingDetailAsyncTask meetingDetailAsyncTask = new MeetingDetailAsyncTask("changeMemberStatus");
@@ -400,7 +399,7 @@ public class MeetingDetailFragment extends Fragment {
                 TopicAdapter.TopicViewHolder topicViewHolder = (TopicAdapter.TopicViewHolder) viewHolder;
                 Topic currentTopic = topicViewHolder.getTopic();
 
-                underLayButtons.add(new UnderLayButton(getString(R.string.delete), 0,
+                underLayButtons.add(new UnderLayButton(getString(R.string.delete),
                         ResourcesCompat.getColor(SmartModerationApplicationImpl.getApp().getApplicationContext().getResources(), R.color.default_red, null),
                         (UnderLayButtonClickListener) position -> {
                             MeetingDetailAsyncTask meetingDetailAsyncTask = new MeetingDetailAsyncTask("deleteTopic");
@@ -409,14 +408,14 @@ public class MeetingDetailFragment extends Fragment {
                         }));
 
                 if (currentTopic.getTopicStatus() == TopicStatus.UPCOMING) {
-                    underLayButtons.add(new UnderLayButton(getString(R.string.running), 0,
+                    underLayButtons.add(new UnderLayButton(getString(R.string.running),
                             ResourcesCompat.getColor(SmartModerationApplicationImpl.getApp().getApplicationContext().getResources(), R.color.colorPrimaryDark, null),
                             (UnderLayButtonClickListener) position -> {
                                 MeetingDetailAsyncTask meetingDetailAsyncTask = new MeetingDetailAsyncTask("changeTopicStatus");
                                 meetingDetailAsyncTask.execute(currentTopic, TopicStatus.RUNNING);
                             }));
                 } else if (currentTopic.getTopicStatus() == TopicStatus.RUNNING) {
-                    underLayButtons.add(new UnderLayButton(getString(R.string.finished), 0,
+                    underLayButtons.add(new UnderLayButton(getString(R.string.finished),
                             ResourcesCompat.getColor(SmartModerationApplicationImpl.getApp().getApplicationContext().getResources(), R.color.default_green, null),
                             (UnderLayButtonClickListener) position -> {
                                 MeetingDetailAsyncTask meetingDetailAsyncTask = new MeetingDetailAsyncTask("changeTopicStatus");
@@ -428,6 +427,7 @@ public class MeetingDetailFragment extends Fragment {
         };
     }
 
+    @SuppressLint("StaticFieldLeak")
     public class MeetingDetailAsyncTask extends AsyncTask<Object, Object, String> {
 
         String flag;
@@ -443,7 +443,7 @@ public class MeetingDetailFragment extends Fragment {
             String action = values[0].toString();
 
             if (action.equals("exception"))
-                ((ExceptionHandlingActivity) getActivity()).handleException((Exception) values[1]);
+                ((ExceptionHandlingActivity) requireActivity()).handleException((Exception) values[1]);
             else
                 createAlertDialog(values[1].toString());
         }
@@ -511,6 +511,7 @@ public class MeetingDetailFragment extends Fragment {
             return returnString;
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
@@ -545,7 +546,7 @@ public class MeetingDetailFragment extends Fragment {
                         updateStateProgressBar();
                     }
                     runProgressBarThread();
-                    ((BaseActivity) getActivity()).getPullToRefresh().setRefreshing(false);
+                    ((BaseActivity) requireActivity()).getPullToRefresh().setRefreshing(false);
                     break;
                 case "updateMember":
                     memberAdapter.updateMemberList(meetingDetailController.getMembers());

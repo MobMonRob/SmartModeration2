@@ -29,12 +29,12 @@ import dhbw.smartmoderation.uiUtils.OnStartDragListener;
 
 public class ParticipationAdapter extends RecyclerView.Adapter<ParticipationAdapter.ParticipationViewHolder> implements ItemTouchHelperAdapter {
 
-    private Context context;
-    private ArrayList<Participation> participationList;
-    private OnStartDragListener onStartDragListener;
-    private OnParticipationListener onParticipationListener;
-    private boolean isLocalAuthorModerator;
-    private ListOfSpeakersFragment fragment;
+    private final Context context;
+    private final ArrayList<Participation> participationList;
+    private final OnStartDragListener onStartDragListener;
+    private final OnParticipationListener onParticipationListener;
+    private final boolean isLocalAuthorModerator;
+    private final ListOfSpeakersFragment fragment;
 
     public ParticipationAdapter(ListOfSpeakersFragment fragment, Context context, OnParticipationListener onParticipationListener, boolean isLocalAuthorModerator, OnStartDragListener onStartDragListener) {
         this.fragment = fragment;
@@ -47,6 +47,7 @@ public class ParticipationAdapter extends RecyclerView.Adapter<ParticipationAdap
         this.updateParticipations(participations);
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void updateParticipations(Collection<Participation> participationList) {
 
         this.participationList.clear();
@@ -71,15 +72,13 @@ public class ParticipationAdapter extends RecyclerView.Adapter<ParticipationAdap
     public ParticipationViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ConstraintLayout constraintLayout = new ConstraintLayout(context);
         constraintLayout.setLayoutParams(new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, 130));
-        ParticipationViewHolder participationViewHolder = new ParticipationViewHolder(constraintLayout, context, this);
-        return participationViewHolder;
+        return new ParticipationViewHolder(constraintLayout, context, this);
     }
 
-    @SuppressLint("ClickableViewAccessibility")
+    @SuppressLint({"ClickableViewAccessibility", "SetTextI18n"})
     @Override
     public void onBindViewHolder(@NonNull ParticipationViewHolder holder, int position) {
         Participation participation = this.participationList.get(position);
-        holder.setParticipation(participation);
         holder.getNumber().setText(participation.getNumber() + "");
         holder.getName().setText(participation.getMember().getName());
         if (participation.getIsSpeaking()) {
@@ -147,18 +146,15 @@ public class ParticipationAdapter extends RecyclerView.Adapter<ParticipationAdap
 
     static class ParticipationViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder {
 
-        private ParticipationAdapter participationAdapter;
-        private Participation participation;
-        private ConstraintLayout constraintLayout;
-        private TextView number;
-        private TextView name;
-        private TextView speakingHint;
-        private ImageView reorder;
+        private final ParticipationAdapter participationAdapter;
+        private final TextView number;
+        private final TextView name;
+        private final TextView speakingHint;
+        private final ImageView reorder;
 
         public ParticipationViewHolder(ConstraintLayout constraintLayout, Context context, ParticipationAdapter participationAdapter) {
             super(constraintLayout);
             this.participationAdapter = participationAdapter;
-            this.constraintLayout = constraintLayout;
 
             number = new TextView(context);
             number.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -218,10 +214,6 @@ public class ParticipationAdapter extends RecyclerView.Adapter<ParticipationAdap
             reorderConstraintSet.connect(reorder.getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, 20);
             reorderConstraintSet.connect(reorder.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, 20);
             reorderConstraintSet.applyTo(constraintLayout);
-        }
-
-        public void setParticipation(Participation participation) {
-            this.participation = participation;
         }
 
         public TextView getNumber() {

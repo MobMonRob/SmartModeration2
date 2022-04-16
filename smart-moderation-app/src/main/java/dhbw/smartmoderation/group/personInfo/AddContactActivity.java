@@ -1,5 +1,6 @@
 package dhbw.smartmoderation.group.personInfo;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -23,12 +24,7 @@ public class AddContactActivity extends ExceptionHandlingActivity {
 
     private ContactAdapter contactAdapter;
     private PersonInfoController controller;
-    private TextView ghostName;
-    private RecyclerView addContactList;
-    private FloatingActionButton doneFab;
-    private LinearLayoutManager contactLayoutManager;
     private Long memberId;
-    private Long groupId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,19 +34,19 @@ public class AddContactActivity extends ExceptionHandlingActivity {
 
         Intent intent = getIntent();
         memberId = intent.getLongExtra("memberId", 0);
-        groupId = intent.getLongExtra("groupId", 0);
+        Long groupId = intent.getLongExtra("groupId", 0);
 
-        ghostName = findViewById(R.id.ghostName);
-        addContactList = findViewById(R.id.addContactList);
-        doneFab = findViewById(R.id.doneFab);
+        TextView ghostName = findViewById(R.id.ghostName);
+        RecyclerView addContactList = findViewById(R.id.addContactList);
+        FloatingActionButton doneFab = findViewById(R.id.doneFab);
         doneFab.setOnClickListener(v -> {
             AddContactAsyncTask addContactAsyncTask = new AddContactAsyncTask();
             addContactAsyncTask.execute();
         });
 
-        controller = new PersonInfoController(this.groupId);
+        controller = new PersonInfoController(groupId);
         ghostName.setText(controller.getGroup().getMember(this.memberId).getName());
-        contactLayoutManager = new LinearLayoutManager(this);
+        LinearLayoutManager contactLayoutManager = new LinearLayoutManager(this);
         addContactList.setLayoutManager(contactLayoutManager);
 
         try {
@@ -64,6 +60,7 @@ public class AddContactActivity extends ExceptionHandlingActivity {
         addContactList.addItemDecoration(contactsDividerItemDecoration);
     }
 
+    @SuppressLint("StaticFieldLeak")
     public class AddContactAsyncTask extends AsyncTask<String, Exception, Long> {
 
         @Override
@@ -77,12 +74,10 @@ public class AddContactActivity extends ExceptionHandlingActivity {
 
             try {
                 Contact selectedContact = contactAdapter.getSelectedContact();
-                Long memberId = controller.linkContactToMember(selectedContact, AddContactActivity.this.memberId);
-                return memberId;
+                return controller.linkContactToMember(selectedContact, AddContactActivity.this.memberId);
             } catch (CantLinkContactToMember exception) {
                 publishProgress(exception);
             }
-
             return null;
         }
 

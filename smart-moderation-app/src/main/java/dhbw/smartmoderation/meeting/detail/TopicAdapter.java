@@ -1,13 +1,16 @@
 package dhbw.smartmoderation.meeting.detail;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.content.res.ResourcesCompat;
@@ -16,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.concurrent.TimeUnit;
 
 import dhbw.smartmoderation.R;
@@ -24,22 +28,23 @@ import dhbw.smartmoderation.data.model.TopicStatus;
 
 public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHolder> {
 
-    private Context context;
-    private MeetingDetailController controller;
-    private ArrayList<Topic> topicList;
+    private final Context context;
+    private final ArrayList<Topic> topicList;
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public TopicAdapter(Context context, MeetingDetailController controller) {
         this.context = context;
-        this.controller = controller;
         this.topicList = new ArrayList<>();
-        Collection<Topic> topics = this.controller.getTopics();
+        Collection<Topic> topics = controller.getTopics();
         updateTopics(topics);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @SuppressLint("NotifyDataSetChanged")
     public void updateTopics(Collection<Topic> topics) {
         this.topicList.clear();
         this.topicList.addAll(topics);
-        Collections.sort(this.topicList, (o1, o2) -> o1.getStatus().compareTo(o2.getStatus()));
+        Collections.sort(this.topicList, Comparator.comparing(Topic::getStatus));
         this.notifyDataSetChanged();
     }
 
@@ -48,10 +53,10 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHol
     public TopicViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ConstraintLayout constraintLayout = new ConstraintLayout(context);
         constraintLayout.setLayoutParams(new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, 150));
-        TopicViewHolder topicViewHolder = new TopicViewHolder(constraintLayout, context, this);
-        return topicViewHolder;
+        return new TopicViewHolder(constraintLayout, context);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull TopicViewHolder holder, int position) {
         Topic topic = this.topicList.get(position);
@@ -87,11 +92,11 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHol
 
     static class TopicViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView title;
-        private TextView status;
+        private final TextView title;
+        private final TextView status;
         private Topic topic;
 
-        public TopicViewHolder(ConstraintLayout constraintLayout, Context context, TopicAdapter topicAdapter) {
+        public TopicViewHolder(ConstraintLayout constraintLayout, Context context) {
             super(constraintLayout);
 
             title = new TextView(context);

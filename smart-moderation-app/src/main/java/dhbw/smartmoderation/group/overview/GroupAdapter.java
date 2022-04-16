@@ -28,9 +28,9 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
 
     private static final String TAG = GroupAdapter.class.getSimpleName();
 
-    private Context context;
-    private List<Group> groups;
-    private OnGroupListener onGroupListener;
+    private final Context context;
+    private final List<Group> groups;
+    private final OnGroupListener onGroupListener;
 
     public GroupAdapter(Context context, Collection<Group> groups, OnGroupListener onGroupListener) {
         this.context = context;
@@ -64,6 +64,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
         return groups.size();
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void updateGroups(Collection<Group> groups) {
         if (groups.size() == 0) {
             int length = this.groups.size();
@@ -80,19 +81,14 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
 
     static class GroupViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private TextView groupName;
-        private ImageView icon;
-        private Context context;
-        private OnGroupListener onGroupListener;
-        private GroupAdapter adapter;
-        private ConstraintLayout layout;
-        private Group group;
+        private final TextView groupName;
+        private final ImageView icon;
+        private final OnGroupListener onGroupListener;
+        private final GroupAdapter adapter;
 
         public GroupViewHolder(ConstraintLayout layout, Context context, OnGroupListener onGroupListener, GroupAdapter adapter) {
             super(layout);
-            this.layout = layout;
             layout.setOnClickListener(this);
-            this.context = context;
             this.onGroupListener = onGroupListener;
             this.adapter = adapter;
 
@@ -101,38 +97,37 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
             groupName.setTextSize(15);
             groupName.setTypeface(groupName.getTypeface(), Typeface.BOLD);
             groupName.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            this.layout.addView(groupName);
+            layout.addView(groupName);
 
             ConstraintSet groupNameConstraintSet = new ConstraintSet();
-            groupNameConstraintSet.clone(this.layout);
+            groupNameConstraintSet.clone(layout);
             groupNameConstraintSet.connect(groupName.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, 20);
             groupNameConstraintSet.connect(groupName.getId(), ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT, 20);
             groupNameConstraintSet.connect(groupName.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, 20);
-            groupNameConstraintSet.applyTo(this.layout);
+            groupNameConstraintSet.applyTo(layout);
 
             icon = new ImageView(context);
             icon.setId(View.generateViewId());
             icon.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             icon.setImageResource(R.drawable.ic_circle_notifications);
-            icon.setColorFilter(ContextCompat.getColor(this.context, R.color.default_red));
-            this.layout.addView(icon);
+            icon.setColorFilter(ContextCompat.getColor(context, R.color.default_red));
+            layout.addView(icon);
 
             ConstraintSet iconConstraintSet = new ConstraintSet();
-            iconConstraintSet.clone(this.layout);
+            iconConstraintSet.clone(layout);
             iconConstraintSet.connect(icon.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, 20);
             iconConstraintSet.connect(icon.getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, 20);
             iconConstraintSet.connect(icon.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, 20);
-            iconConstraintSet.applyTo(this.layout);
+            iconConstraintSet.applyTo(layout);
         }
 
         public void setGroup(Group group) {
-            this.group = group;
 
-            this.groupName.setText(this.group.getName());
+            this.groupName.setText(group.getName());
 
-            if (this.group.hasBeenUpdated()) {
+            if (group.hasBeenUpdated()) {
                 icon.setVisibility(View.VISIBLE);
-                this.group.updateChecked();
+                group.updateChecked();
             } else {
                 icon.setVisibility(View.GONE);
             }

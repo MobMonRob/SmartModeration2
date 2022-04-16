@@ -1,5 +1,7 @@
 package dhbw.smartmoderation.data.model;
 
+import android.annotation.SuppressLint;
+
 import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
@@ -112,7 +114,7 @@ public class Meeting extends ModelClass {
 
     public String getDateAsString() {
         Date date = new Date(this.date);
-        Format format = new SimpleDateFormat("dd.MM.yyyy");
+        @SuppressLint("SimpleDateFormat") Format format = new SimpleDateFormat("dd.MM.yyyy");
         return format.format(date);
     }
 
@@ -290,12 +292,6 @@ public class Meeting extends ModelClass {
         return polls;
     }
 
-    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
-    @Generated(hash = 928798354)
-    public synchronized void resetPolls() {
-        polls = null;
-    }
-
     /**
      * To-many relationship, resolved on first access (and after reset).
      * Changes to to-many relations are not persisted, make changes to the target entity.
@@ -316,12 +312,6 @@ public class Meeting extends ModelClass {
             }
         }
         return topics;
-    }
-
-    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
-    @Generated(hash = 1067351932)
-    public synchronized void resetTopics() {
-        topics = null;
     }
 
     /**
@@ -346,12 +336,6 @@ public class Meeting extends ModelClass {
         return participations;
     }
 
-    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
-    @Generated(hash = 2135771202)
-    public synchronized void resetParticipations() {
-        participations = null;
-    }
-
     /**
      * To-many relationship, resolved on first access (and after reset).
      * Changes to to-many relations are not persisted, make changes to the target entity.
@@ -374,12 +358,6 @@ public class Meeting extends ModelClass {
         return members;
     }
 
-    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
-    @Generated(hash = 1358688666)
-    public synchronized void resetMembers() {
-        members = null;
-    }
-
     /**
      * Convenient call for {@link org.greenrobot.greendao.AbstractDao#delete(Object)}.
      * Entity must attached to an entity context.
@@ -390,18 +368,6 @@ public class Meeting extends ModelClass {
             throw new DaoException("Entity is detached from DAO context");
         }
         myDao.delete(this);
-    }
-
-    /**
-     * Convenient call for {@link org.greenrobot.greendao.AbstractDao#refresh(Object)}.
-     * Entity must attached to an entity context.
-     */
-    @Generated(hash = 1942392019)
-    public void refresh() {
-        if (myDao == null) {
-            throw new DaoException("Entity is detached from DAO context");
-        }
-        myDao.refresh(this);
     }
 
     /**
@@ -439,9 +405,45 @@ public class Meeting extends ModelClass {
     }
 
     /** Resets a to-many relationship, making the next get call to query for a fresh result. */
+    @Generated(hash = 928798354)
+    public synchronized void resetPolls() {
+        polls = null;
+    }
+
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
+    @Generated(hash = 1067351932)
+    public synchronized void resetTopics() {
+        topics = null;
+    }
+
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
+    @Generated(hash = 2135771202)
+    public synchronized void resetParticipations() {
+        participations = null;
+    }
+
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
     @Generated(hash = 1384012850)
     public synchronized void resetModerationCards() {
         moderationCards = null;
+    }
+
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
+    @Generated(hash = 1358688666)
+    public synchronized void resetMembers() {
+        members = null;
+    }
+
+    /**
+     * Convenient call for {@link org.greenrobot.greendao.AbstractDao#refresh(Object)}.
+     * Entity must attached to an entity context.
+     */
+    @Generated(hash = 1942392019)
+    public void refresh() {
+        if (myDao == null) {
+            throw new DaoException("Entity is detached from DAO context");
+        }
+        myDao.refresh(this);
     }
 
     /** called by internal mechanisms, do not call yourself. */

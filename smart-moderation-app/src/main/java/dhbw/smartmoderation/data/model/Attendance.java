@@ -4,7 +4,7 @@ public enum Attendance {
 
     PRESENT (0), EXCUSED(1), ABSENT(2);
 
-    private int number;
+    private final int number;
 
     Attendance(int number) {
         this.number = number;

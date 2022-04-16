@@ -24,7 +24,7 @@ import dhbw.smartmoderation.util.Util;
 
 public class PersonInfoController extends SmartModerationController {
 
-    private Long groupId;
+    private final Long groupId;
 
     public PersonInfoController(Long groupId) {
         this.groupId = groupId;
@@ -134,6 +134,7 @@ public class PersonInfoController extends SmartModerationController {
             e.printStackTrace();
         }
 
+        assert member != null;
         if (member.getIsGhost()) {
             group.removeMember(member);
             for (Meeting meeting : group.getMeetings())
