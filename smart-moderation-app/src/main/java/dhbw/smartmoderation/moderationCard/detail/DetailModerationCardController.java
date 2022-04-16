@@ -14,10 +14,10 @@ import dhbw.smartmoderation.exceptions.MeetingNotFoundException;
 import dhbw.smartmoderation.exceptions.ModerationCardNotFoundException;
 import dhbw.smartmoderation.util.Util;
 
-public class EditModerationCardController extends SmartModerationController {
+public class DetailModerationCardController extends SmartModerationController {
     public long meetingId;
 
-    public EditModerationCardController(long meetingId) {
+    public DetailModerationCardController(long meetingId) {
         this.meetingId = meetingId;
     }
 
@@ -75,7 +75,7 @@ public class EditModerationCardController extends SmartModerationController {
             throw new CouldNotDeleteModerationCard();
         }
         ModerationCard moderationCard = dataService.getModerationCard(cardId);
-        dataService.deleteModerationCard(moderationCard);
+        dataService.deleteModerationCard(cardId);
         Collection<ModelClass> data = new ArrayList<>();
         moderationCard.setIsDeleted(true);
         data.add(moderationCard);

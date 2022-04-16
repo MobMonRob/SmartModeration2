@@ -61,7 +61,7 @@ public class Client {
 
         Request request = new Request.Builder()
                 .url(url)
-                .method("POST", body)
+                .method("PUT", body)
                 .addHeader("Authorization", "Bearer " + apiKey)
                 .addHeader("Content-Type", "application/json")
                 .build();

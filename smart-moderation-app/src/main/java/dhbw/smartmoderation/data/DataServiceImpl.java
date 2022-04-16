@@ -933,7 +933,7 @@ public class DataServiceImpl implements DataService {
     @Override
     public void mergeModerationCard(ModerationCard moderationCard) {
         if (moderationCard.isDeleted()) {
-            deleteModerationCard(moderationCard);
+            deleteModerationCard(moderationCard.getCardId());
             return;
         }
 
@@ -951,8 +951,8 @@ public class DataServiceImpl implements DataService {
     }
 
     @Override
-    public void deleteModerationCard(ModerationCard moderationCard) {
-        moderationCardDao.deleteInTx(moderationCard);
+    public void deleteModerationCard(Long cardId) {
+        moderationCardDao.deleteByKey(cardId);
     }
 
     @Override

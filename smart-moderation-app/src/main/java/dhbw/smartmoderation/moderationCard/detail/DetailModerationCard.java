@@ -19,7 +19,7 @@ import dhbw.smartmoderation.moderationCard.overview.ModerationCardsFragment;
 import dhbw.smartmoderation.util.Client;
 import petrov.kristiyan.colorpicker.ColorPicker;
 
-public class EditModerationCard{
+public class DetailModerationCard {
     private long cardId;
     private String cardAuthor;
     private String moderationCardContent;
@@ -28,7 +28,7 @@ public class EditModerationCard{
     private AlertDialog alertDialog;
     private EditText moderationCardContentHolder;
     private SurfaceView cardColorViewer;
-    private EditModerationCardController controller;
+    private DetailModerationCardController controller;
     private ModerationCardsFragment moderationCardsFragment;
     private final View.OnClickListener pickColorButtonClickListener = v -> {
         ColorPicker colorPicker = new ColorPicker((Activity) v.getContext());
@@ -79,14 +79,14 @@ public class EditModerationCard{
         alertDialog.cancel();
     };
 
-    public EditModerationCard(ModerationCard moderationCard, ModerationCardsFragment moderationCardsFragment) {
+    public DetailModerationCard(ModerationCard moderationCard, ModerationCardsFragment moderationCardsFragment) {
         backgroundColor = moderationCard.getBackgroundColor();
         fontColor = moderationCard.getFontColor();
         moderationCardContent = moderationCard.getContent();
         cardId = moderationCard.getCardId();
         cardAuthor = moderationCard.getAuthor();
         long meetingId = moderationCard.getMeetingId();
-        controller = new EditModerationCardController(meetingId);
+        controller = new DetailModerationCardController(meetingId);
         this.moderationCardsFragment = moderationCardsFragment;
         initializePopup(moderationCardsFragment.getContext());
         fillInModerationCardData(moderationCard);
