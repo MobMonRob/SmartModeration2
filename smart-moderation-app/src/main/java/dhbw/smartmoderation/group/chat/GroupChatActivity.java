@@ -34,7 +34,6 @@ public class GroupChatActivity extends ExceptionHandlingActivity {
 		Intent intent = getIntent();
 		groupId = intent.getLongExtra("groupId", 0);
 
-
 		SendButton = findViewById(R.id.SendMessage);
 		AddContactButton = findViewById(R.id.AddContactButton);
 		MessageText = findViewById(R.id.MessageText);
@@ -54,7 +53,6 @@ public class GroupChatActivity extends ExceptionHandlingActivity {
 	}
 
 	private void loadItems(){
-
 		try {
 			Adapter.updateMessages(controller.loadItems(groupId));
 		} catch (SmartModerationException | NoGroupMessageTextFoundException exception) {
@@ -63,7 +61,6 @@ public class GroupChatActivity extends ExceptionHandlingActivity {
 	}
 
 	public void addContact(View v){
-
 	}
 
 	public void sendMessage(View v){
@@ -73,6 +70,4 @@ public class GroupChatActivity extends ExceptionHandlingActivity {
 			handleException(exception);
 		}
 	}
-
-
 }

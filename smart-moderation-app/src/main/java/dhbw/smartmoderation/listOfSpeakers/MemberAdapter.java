@@ -56,16 +56,10 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberView
             notifyDataSetChanged();
         });
 
-        if(index == position) {
-
+        if(index == position)
             holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.light_grey, null));
-        }
-
-        else {
-
+        else
             holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.default_color, null));
-        }
-
     }
 
     @Override

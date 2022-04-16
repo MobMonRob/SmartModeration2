@@ -32,7 +32,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
     private List<Group> groups;
     private OnGroupListener onGroupListener;
 
-    public GroupAdapter(Context context, Collection<Group> groups, OnGroupListener onGroupListener){
+    public GroupAdapter(Context context, Collection<Group> groups, OnGroupListener onGroupListener) {
         this.context = context;
         this.onGroupListener = onGroupListener;
         this.groups = new ArrayList<>();
@@ -42,10 +42,9 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
     @NonNull
     @Override
     public GroupViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
         ConstraintLayout layout = new ConstraintLayout(context);
         layout.setLayoutParams(new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, 160));
-        GroupAdapter.GroupViewHolder groupViewHolder = new GroupAdapter.GroupViewHolder(layout, context, onGroupListener,this);
+        GroupAdapter.GroupViewHolder groupViewHolder = new GroupAdapter.GroupViewHolder(layout, context, onGroupListener, this);
         TypedValue value = new TypedValue();
         context.getTheme().resolveAttribute(android.R.attr.selectableItemBackground, value, true);
         layout.setBackgroundResource(value.resourceId);
@@ -55,7 +54,6 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onBindViewHolder(@NonNull GroupViewHolder holder, int position) {
-
         Group group = groups.get(position);
         Log.d(TAG, "RecyclerView: Groups [" + position + "]: Group name: " + group.getName());
         holder.setGroup(group);
@@ -63,33 +61,24 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
 
     @Override
     public int getItemCount() {
-
         return groups.size();
     }
 
-    public void updateGroups(Collection<Group> groups){
-
-        if(groups.size() == 0) {
-
+    public void updateGroups(Collection<Group> groups) {
+        if (groups.size() == 0) {
             int length = this.groups.size();
             this.groups.clear();
-
-            for(int i = 0; i < length; i++) {
-
+            for (int i = 0; i < length; i++) {
                 notifyItemRemoved(i);
             }
-        }
-
-        else {
-
+        } else {
             this.groups.clear();
             this.groups.addAll(groups);
             notifyDataSetChanged();
-
         }
     }
 
-    static class GroupViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    static class GroupViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private TextView groupName;
         private ImageView icon;
@@ -125,7 +114,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
             icon.setId(View.generateViewId());
             icon.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             icon.setImageResource(R.drawable.ic_circle_notifications);
-            icon.setColorFilter(ContextCompat.getColor(this.context,R.color.default_red));
+            icon.setColorFilter(ContextCompat.getColor(this.context, R.color.default_red));
             this.layout.addView(icon);
 
             ConstraintSet iconConstraintSet = new ConstraintSet();
@@ -136,37 +125,29 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
             iconConstraintSet.applyTo(this.layout);
         }
 
-        public void setGroup(Group group){
-
+        public void setGroup(Group group) {
             this.group = group;
 
             this.groupName.setText(this.group.getName());
 
-            if (this.group.hasBeenUpdated()){
-
+            if (this.group.hasBeenUpdated()) {
                 icon.setVisibility(View.VISIBLE);
-
                 this.group.updateChecked();
-            }
-
-            else {
+            } else {
                 icon.setVisibility(View.GONE);
             }
         }
 
         @Override
         public void onClick(View v) {
-
             int position = getAdapterPosition();
             if (adapter.groups.size() >= position) {
-
                 onGroupListener.onGroupClick(adapter.groups.get(position).getGroupId());
             }
         }
     }
 
-    public interface OnGroupListener{
-
+    public interface OnGroupListener {
         void onGroupClick(Long groupId);
     }
 }

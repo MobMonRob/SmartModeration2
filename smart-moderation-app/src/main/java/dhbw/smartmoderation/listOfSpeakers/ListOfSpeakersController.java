@@ -30,43 +30,31 @@ public class ListOfSpeakersController extends SmartModerationController {
     private Long meetingId;
 
     public ListOfSpeakersController(Long meetingId) {
-
         this.meetingId = meetingId;
     }
 
     public void update() {
-
         try {
-
             this.synchronizationService.pull(getPrivateGroup());
-
         } catch (GroupNotFoundException e) {
             e.printStackTrace();
         }
     }
 
     public PrivateGroup getPrivateGroup() throws GroupNotFoundException {
-
         Collection<PrivateGroup> privateGroups = connectionService.getGroups();
 
-        for(PrivateGroup group : privateGroups) {
-
-            if(getMeeting().getGroup().getGroupId().equals(Util.bytesToLong(group.getId().getBytes()))) {
-
+        for (PrivateGroup group : privateGroups) {
+            if (getMeeting().getGroup().getGroupId().equals(Util.bytesToLong(group.getId().getBytes())))
                 return group;
-            }
         }
-
         return null;
     }
 
     public Meeting getMeeting() {
-
         try {
             return dataService.getMeeting(meetingId);
-
         } catch (MeetingNotFoundException e) {
-
             e.printStackTrace();
         }
 
@@ -74,173 +62,94 @@ public class ListOfSpeakersController extends SmartModerationController {
     }
 
     public Collection<Member> getPresentMembersNotInSpeechList() {
-
         Collection<Member> presentMembers = new ArrayList<>();
 
-        for(Member member : getMeeting().getMembers()) {
-
-
-            if(member.getAttendance(getMeeting()) == Attendance.PRESENT) {
-
+        for (Member member : getMeeting().getMembers()) {
+            if (member.getAttendance(getMeeting()) == Attendance.PRESENT) {
                 boolean alreadyExisting = participationAlreadyExistsFor(member.getMemberId());
-
-                if(alreadyExisting) {
-
+                if (alreadyExisting) {
                     Participation participation = getParticipation(member.getMemberId());
-
-                    if(!participation.getIsInListOfSpeakers()) {
-
+                    if (!participation.getIsInListOfSpeakers())
                         presentMembers.add(member);
-                    }
-
-                }
-
-                else {
-
+                } else
                     presentMembers.add(member);
-                }
-
             }
         }
-
         return presentMembers;
-
     }
 
     public Long getLocalAuthorId() {
-
         return connectionService.getLocalAuthorId();
     }
 
     public boolean isLocalAuthorModerator() {
-
         Group group = getMeeting().getGroup();
-        Long authorId =  connectionService.getLocalAuthorId();
+        Long authorId = connectionService.getLocalAuthorId();
         Member member = group.getMember(authorId);
-
-        if(member != null && member.getRoles(group).contains(Role.MODERATOR)) {
-
-            return true;
-        }
-
-        return false;
-
+        return member != null && member.getRoles(group).contains(Role.MODERATOR);
     }
 
     public boolean isLocalAuthorPresent() {
-
         Collection<Member> members = getMeeting().getMembers();
-
-        for(Member member : members) {
-
-            if(member.getMemberId().equals(getLocalAuthorId()) && member.getAttendance(getMeeting()) == Attendance.PRESENT) {
-
+        for (Member member : members) {
+            if (member.getMemberId().equals(getLocalAuthorId()) && member.getAttendance(getMeeting()) == Attendance.PRESENT)
                 return true;
-
-            }
         }
-
         return false;
-
     }
 
     public Collection<Participation> getParticipations() {
-
         Meeting meeting = getMeeting();
-
         return meeting.getParticipations();
-
     }
 
     public boolean participationAlreadyExistsFor(Long memberId) {
-
-        for(Participation participation : getParticipations()) {
-
-            if(participation.getMember().getMemberId().equals(memberId)) {
-
-                return true;
-            }
-        }
-
+        for (Participation participation : getParticipations())
+            if (participation.getMember().getMemberId().equals(memberId)) return true;
         return false;
     }
 
     public Participation getParticipation(Long memberId) {
-
-        for(Participation participation : getParticipations()) {
-
-            if(participation.getMember().getMemberId().equals(memberId)) {
-
-                return participation;
-            }
-        }
-
+        for (Participation participation : getParticipations())
+            if (participation.getMember().getMemberId().equals(memberId)) return participation;
         return null;
     }
 
 
     public Collection<Participation> getParticipationsInList() {
-
         Meeting meeting = getMeeting();
-
         Collection<Participation> participations = new ArrayList<>();
-
-        for(Participation participation : meeting.getParticipations()) {
-
-            if(participation.getIsInListOfSpeakers()) {
-                participations.add(participation);
-            }
-        }
-
+        for (Participation participation : meeting.getParticipations())
+            if (participation.getIsInListOfSpeakers()) participations.add(participation);
         return participations;
     }
 
     public Participation getNextParticipation() {
-
-        for (Participation participation : getParticipationsInList()) {
-
-            if(participation.getNumber() == 1) {
-
-                return participation;
-            }
-
-        }
-
+        for (Participation participation : getParticipationsInList())
+            if (participation.getNumber() == 1) return participation;
         return null;
     }
 
     public boolean isLocalAuthorInSpeechList() {
-
         Long authorId = connectionService.getLocalAuthorId();
-
-        for(Participation participation : getParticipationsInList()) {
-
-            if(participation.getMember().getMemberId().equals(authorId) && participation.getIsInListOfSpeakers()) {
-
+        for (Participation participation : getParticipationsInList()) {
+            if (participation.getMember().getMemberId().equals(authorId) && participation.getIsInListOfSpeakers())
                 return true;
-            }
         }
-
         return false;
     }
 
     public void changeParticipationNumbering(Collection<Participation> participations) throws ParitcipationCantBeChangedException {
-
         PrivateGroup group;
-
         try {
-
             group = getPrivateGroup();
-
-        } catch (GroupNotFoundException exception){
-
+        } catch (GroupNotFoundException exception) {
             throw new ParitcipationCantBeChangedException();
         }
 
         Collection<ModelClass> data = new ArrayList<>();
 
-        for(Participation participation : participations) {
-
+        for (Participation participation : participations) {
             dataService.mergeParticipation(participation);
             data.add(participation);
         }
@@ -249,15 +158,11 @@ public class ListOfSpeakersController extends SmartModerationController {
     }
 
     public void addParticipationToSpeechList(Participation participation) throws ParticipationCantBeAddedException {
-
         PrivateGroup group;
 
         try {
-
             group = getPrivateGroup();
-
-        } catch (GroupNotFoundException exception){
-
+        } catch (GroupNotFoundException exception) {
             throw new ParticipationCantBeAddedException();
         }
 
@@ -267,22 +172,16 @@ public class ListOfSpeakersController extends SmartModerationController {
         dataService.mergeParticipation(participation);
         data.add(participation);
         synchronizationService.push(group, data);
-
     }
 
-    public void createParticipationForLocalAuthor() throws  ParticipationCantBeCreatedException {
-
+    public void createParticipationForLocalAuthor() throws ParticipationCantBeCreatedException {
         PrivateGroup group;
-
         Member member;
 
         try {
-
             group = getPrivateGroup();
             member = dataService.getMember(connectionService.getLocalAuthorId());
-
-        } catch (GroupNotFoundException |MemberNotFoundException exception){
-
+        } catch (GroupNotFoundException | MemberNotFoundException exception) {
             throw new ParticipationCantBeCreatedException();
         }
 
@@ -296,19 +195,13 @@ public class ListOfSpeakersController extends SmartModerationController {
         dataService.mergeParticipation(participation);
         data.add(participation);
         synchronizationService.push(group, data);
-
     }
 
     public void createParticipation(Member member) throws ParticipationCantBeCreatedException {
-
         PrivateGroup group;
-
         try {
-
             group = getPrivateGroup();
-
-        } catch (GroupNotFoundException exception){
-
+        } catch (GroupNotFoundException exception) {
             throw new ParticipationCantBeCreatedException();
         }
 
@@ -325,25 +218,17 @@ public class ListOfSpeakersController extends SmartModerationController {
     }
 
     public void removeParticipationFromSpeechList(Participation participation) throws ParticipationCantBeDeletedException,
-		    CantDeleteCurrentSpeakerException {
-
+            CantDeleteCurrentSpeakerException {
         PrivateGroup group;
-
         try {
-
             group = getPrivateGroup();
-
-        } catch (GroupNotFoundException exception){
-
+        } catch (GroupNotFoundException exception) {
             throw new ParticipationCantBeDeletedException();
         }
 
         Collection<ModelClass> data = new ArrayList<>();
 
-        if(participation.getIsSpeaking()) {
-
-            throw new CantDeleteCurrentSpeakerException();
-        }
+        if (participation.getIsSpeaking()) throw new CantDeleteCurrentSpeakerException();
 
         participation.setIsInListOfSpeakers(false);
         dataService.mergeParticipation(participation);
@@ -352,39 +237,27 @@ public class ListOfSpeakersController extends SmartModerationController {
     }
 
     public long getTotalTime() {
-
         long totalTime = 0;
-
-        for(Participation participation : getParticipations()) {
-
+        for (Participation participation : getParticipations())
             totalTime += participation.getTime();
-        }
 
         return totalTime;
-
     }
 
     public void startNextSpeech() throws SpeechCantBeStartedException {
-
         PrivateGroup group;
 
         try {
-
             group = getPrivateGroup();
-
-        } catch (GroupNotFoundException exception){
-
+        } catch (GroupNotFoundException exception) {
             throw new SpeechCantBeStartedException();
         }
 
         Collection<ModelClass> data = new ArrayList<>();
 
         for (Participation participation : getParticipationsInList()) {
-
             participation.setIsSpeaking(false);
-
-            if(participation.getNumber() == 1) {
-
+            if (participation.getNumber() == 1) {
                 participation.setIsSpeaking(true);
                 participation.setStartTime(System.currentTimeMillis());
             }
@@ -392,17 +265,14 @@ public class ListOfSpeakersController extends SmartModerationController {
             dataService.mergeParticipation(participation);
             data.add(participation);
         }
-
         synchronizationService.push(group, data);
-
     }
 
     public void stopSpeech() throws ParticipationCantBeDeletedException, CantDeleteCurrentSpeakerException {
 
         Participation current = getNextParticipation();
 
-        if(current.getIsSpeaking()) {
-
+        if (current.getIsSpeaking()) {
             current.setIsSpeaking(false);
             current.setContributions(current.getContributions() + 1);
             long time = current.getTime() + (System.currentTimeMillis() - current.getStartTime());
@@ -410,26 +280,20 @@ public class ListOfSpeakersController extends SmartModerationController {
             current.setStartTime(0);
             removeParticipationFromSpeechList(current);
         }
-
     }
 
     public void clearParticipationList() throws ParticipationListCouldNotBeCleared {
 
         PrivateGroup group;
-
         try {
-
             group = getPrivateGroup();
-
-        } catch (GroupNotFoundException exception){
-
+        } catch (GroupNotFoundException exception) {
             throw new ParticipationListCouldNotBeCleared();
         }
 
         Collection<ModelClass> data = new ArrayList<>();
 
-        for(Participation participation : getParticipationsInList()) {
-
+        for (Participation participation : getParticipationsInList()) {
             participation.setIsInListOfSpeakers(false);
             dataService.mergeParticipation(participation);
             data.add(participation);
@@ -437,5 +301,4 @@ public class ListOfSpeakersController extends SmartModerationController {
 
         synchronizationService.push(group, data);
     }
-
 }

@@ -20,7 +20,7 @@ import dhbw.smartmoderation.util.Util;
 
 public class CreateMeetingController extends SmartModerationController {
 
-   Long groupId;
+    Long groupId;
 
     public CreateMeetingController(Long groupId) {
         this.groupId = groupId;
@@ -30,71 +30,43 @@ public class CreateMeetingController extends SmartModerationController {
 
         Collection<PrivateGroup> privateGroups = connectionService.getGroups();
 
-        for(PrivateGroup group : privateGroups) {
-
-            if(groupId.equals(Util.bytesToLong(group.getId().getBytes()))) {
-
-                return group;
-            }
-        }
-
+        for (PrivateGroup group : privateGroups)
+            if (groupId.equals(Util.bytesToLong(group.getId().getBytes()))) return group;
         return null;
     }
 
     public Group getGroup() {
-
-        for (Group group : dataService.getGroups()) {
-
-            if(group.getGroupId().equals(groupId)) {
-
-                return group;
-            }
-        }
-
+        for (Group group : dataService.getGroups())
+            if (group.getGroupId().equals(groupId)) return group;
         return null;
     }
 
     public Meeting getMeeting(Long meetingId) {
-
         try {
-
             return dataService.getMeeting(meetingId);
-
         } catch (MeetingNotFoundException e) {
-
             e.printStackTrace();
         }
-
         return null;
     }
 
     public Collection<ModelClass> createMeetingWithOpenEnd(Long id, boolean online, String cause, long date, long begin, String location, Collection<Topic> topics) {
-
         Collection<ModelClass> data = new ArrayList<>();
-
         Meeting meeting = null;
 
-        if(id != null) {
-
+        if (id != null) {
             try {
-
                 meeting = dataService.getMeeting(id);
-
             } catch (MeetingNotFoundException e) {
-
                 e.printStackTrace();
             }
 
-            for(Topic topic : meeting.getTopics()) {
-
+            for (Topic topic : meeting.getTopics()) {
                 topic.setIsDeleted(true);
                 data.add(topic);
                 dataService.deleteTopic(topic);
             }
-        }
-
-        else {
-
+        } else {
             meeting = new Meeting();
         }
 
@@ -106,21 +78,16 @@ public class CreateMeetingController extends SmartModerationController {
         meeting.setStartTime(begin);
         meeting.setGroup(getGroup());
 
-
         dataService.mergeMeeting(meeting);
 
-        for(Member member : getGroup().getUniqueMembers()) {
-
+        for (Member member : getGroup().getUniqueMembers()) {
             MemberMeetingRelation memberMeetingRelation = meeting.addMember(member, Attendance.ABSENT);
 
-            if(memberMeetingRelation != null) {
-
+            if (memberMeetingRelation != null)
                 dataService.saveMemberMeetingRelation(memberMeetingRelation);
-            }
         }
 
-        for(Topic topic : topics) {
-
+        for (Topic topic : topics) {
             topic.setMeeting(meeting);
             data.add(topic);
             dataService.mergeTopic(topic);
@@ -131,44 +98,29 @@ public class CreateMeetingController extends SmartModerationController {
         return data;
     }
 
-    public Collection<ModelClass> createMeetingWithPlannedEnd(Long id, boolean online, String cause, long date, long begin, String location, long end, Collection<Topic> topics ) {
+    public Collection<ModelClass> createMeetingWithPlannedEnd(Long id, boolean online, String cause, long date, long begin, String location, long end, Collection<Topic> topics) {
 
         Collection<ModelClass> data = new ArrayList<>();
 
         Meeting meeting = null;
 
-        if(id != null) {
-
+        if (id != null) {
             try {
-
                 meeting = dataService.getMeeting(id);
-
             } catch (MeetingNotFoundException e) {
-
                 e.printStackTrace();
             }
 
-            for(Topic topic : meeting.getTopics()) {
-
+            for (Topic topic : meeting.getTopics()) {
                 boolean delete = true;
-
-                for(Topic t : topics) {
-
-                    if(t.getTopicId().equals(topic.getTopicId())) {
-
-                        delete = false;
-
-                    }
-                }
+                for (Topic t : topics)
+                    if (t.getTopicId().equals(topic.getTopicId())) delete = false;
 
                 topic.setIsDeleted(delete);
                 data.add(topic);
                 dataService.deleteTopic(topic);
             }
-        }
-
-        else {
-
+        } else {
             meeting = new Meeting();
         }
 
@@ -183,19 +135,14 @@ public class CreateMeetingController extends SmartModerationController {
 
         dataService.mergeMeeting(meeting);
 
-        for(Member member : getGroup().getUniqueMembers()) {
-
+        for (Member member : getGroup().getUniqueMembers()) {
             MemberMeetingRelation memberMeetingRelation = meeting.addMember(member, Attendance.ABSENT);
 
-            if(memberMeetingRelation != null) {
-
+            if (memberMeetingRelation != null)
                 dataService.saveMemberMeetingRelation(memberMeetingRelation);
-            }
-
         }
 
-        for(Topic topic : topics) {
-
+        for (Topic topic : topics) {
             topic.setMeeting(meeting);
             data.add(topic);
             dataService.mergeTopic(topic);
@@ -211,23 +158,16 @@ public class CreateMeetingController extends SmartModerationController {
 
         try {
             group = getPrivateGroup();
-
         } catch (GroupNotFoundException exception) {
-
             throw new CantSubMitMeetingException();
         }
 
         Collection<ModelClass> data;
 
-        if (isOpenEnd){
-
-            data = createMeetingWithOpenEnd(id, online,  cause,  date,  begin,  location,  topics);
-
-        } else {
-
-            data = createMeetingWithPlannedEnd(id,  online,  cause,  date,  begin,  location,  end,  topics);
-        }
-
+        if (isOpenEnd)
+            data = createMeetingWithOpenEnd(id, online, cause, date, begin, location, topics);
+        else
+            data = createMeetingWithPlannedEnd(id, online, cause, date, begin, location, end, topics);
 
         synchronizationService.push(group, data);
     }

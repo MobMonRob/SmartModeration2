@@ -23,57 +23,43 @@ public class DetailGroupController extends SmartModerationController {
 
     protected Long groupId;
 
-    public DetailGroupController(Long groupId){
-
+    public DetailGroupController(Long groupId) {
         if (groupId == null) {
             throw new NullPointerException("GroupId can't be null or empty");
         }
-
         this.groupId = groupId;
     }
 
     public void update() {
-
         try {
-
             this.synchronizationService.pull(getPrivateGroup());
-
         } catch (GroupNotFoundException e) {
             e.printStackTrace();
         }
     }
 
-    public Long getGroupId(){
-
+    public Long getGroupId() {
         return groupId;
     }
 
     public Collection<Member> getMembers() throws GroupNotFoundException {
-
         return dataService.getGroup(groupId).getUniqueMembers();
     }
 
-    public Collection<Meeting> getMeetings() throws GroupNotFoundException{
-
+    public Collection<Meeting> getMeetings() throws GroupNotFoundException {
         return dataService.getGroup(groupId).getMeetings();
     }
 
-    public Group getGroup() throws GroupNotFoundException{
-
+    public Group getGroup() throws GroupNotFoundException {
         return dataService.getGroup(groupId);
     }
 
     private PrivateGroup getPrivateGroup() throws GroupNotFoundException {
-
-        for (PrivateGroup group : connectionService.getGroups()){
-
+        for (PrivateGroup group : connectionService.getGroups()) {
             Long privateGroupId = Util.bytesToLong(group.getId().getBytes());
 
-            if (privateGroupId.equals(this.groupId)) {
-
-                return group;
-            }
-        };
+            if (privateGroupId.equals(this.groupId)) return group;
+        }
 
         throw new GroupNotFoundException();
     }
@@ -83,25 +69,17 @@ public class DetailGroupController extends SmartModerationController {
         Group group;
 
         try {
-
             group = getGroup();
-
             Long authorId = connectionService.getLocalAuthorId();
             Member member = group.getMember(authorId);
-
-            if(member.getRoles(group).contains(Role.MODERATOR)) {
-
-                return true;
-            }
+            if (member.getRoles(group).contains(Role.MODERATOR)) return true;
 
         } catch (GroupNotFoundException e) {
-
             e.printStackTrace();
             return false;
         }
 
         return false;
-
     }
 
     public int getModeratorCount() {
@@ -110,26 +88,19 @@ public class DetailGroupController extends SmartModerationController {
 
         try {
             group = getGroup();
-
         } catch (GroupNotFoundException e) {
-
             e.printStackTrace();
         }
 
         int count = 0;
 
-        for(Member member : group.getUniqueMembers()) {
-
-            if(member.getRoles(group).contains(Role.MODERATOR)) {
-                count++;
-            }
-        }
+        for (Member member : group.getUniqueMembers())
+            if (member.getRoles(group).contains(Role.MODERATOR)) count++;
 
         return count;
     }
 
     public Long getLocalAuthorId() {
-
         return connectionService.getLocalAuthorId();
     }
 
@@ -143,8 +114,7 @@ public class DetailGroupController extends SmartModerationController {
 
         Collection<ModelClass> data = new ArrayList<>();
 
-        for(Meeting meeting : meetings) {
-
+        for (Meeting meeting : meetings) {
             meeting.removeMember(localAuthor);
             data.add(meeting);
         }
@@ -155,7 +125,7 @@ public class DetailGroupController extends SmartModerationController {
         dataService.deleteGroup(group);
     }
 
-    public void deleteGroup() throws GroupNotFoundException{
+    public void deleteGroup() throws GroupNotFoundException {
 
         Group group = getGroup();
         group.setIsDeleted(true);
@@ -163,7 +133,7 @@ public class DetailGroupController extends SmartModerationController {
 
         Collection<ModelClass> data = new ArrayList<>();
         data.add(group);
-        this.synchronizationService.push(getPrivateGroup(),data);
+        this.synchronizationService.push(getPrivateGroup(), data);
     }
 
     public void removeMember(Long memberId) throws GroupNotFoundException {
@@ -177,8 +147,7 @@ public class DetailGroupController extends SmartModerationController {
 
         data.add(group);
 
-        for(Meeting meeting : group.getMeetings()) {
-
+        for (Meeting meeting : group.getMeetings()) {
             meeting.removeMember(member);
             data.add(meeting);
         }
@@ -221,7 +190,7 @@ public class DetailGroupController extends SmartModerationController {
         data.add(group);
         data.add(member);
 
-        synchronizationService.push(getPrivateGroup(),data);
+        synchronizationService.push(getPrivateGroup(), data);
     }
 
     public Collection<IContact> getContacts() throws NoContactsFoundException {
@@ -229,9 +198,8 @@ public class DetailGroupController extends SmartModerationController {
         Collection<Contact> oldContactList = connectionService.getContacts();
         ArrayList<IContact> newContactList = new ArrayList<>();
 
-        for(Contact contact : oldContactList) {
-
-            dhbw.smartmoderation.data.model.Contact newContact = new  dhbw.smartmoderation.data.model.Contact(contact);
+        for (Contact contact : oldContactList) {
+            dhbw.smartmoderation.data.model.Contact newContact = new dhbw.smartmoderation.data.model.Contact(contact);
             newContactList.add(newContact);
         }
 
@@ -243,32 +211,22 @@ public class DetailGroupController extends SmartModerationController {
         Collection<Contact> contacts = new ArrayList<>();
 
         try {
-
             contacts = connectionService.getContacts();
-
         } catch (NoContactsFoundException e) {
-
             e.printStackTrace();
         }
 
         for (Contact contact : contacts) {
-
-            if(contactId.equals(Util.bytesToLong(contact.getAuthor().getId().getBytes()))) {
-
+            if (contactId.equals(Util.bytesToLong(contact.getAuthor().getId().getBytes())))
                 return contact;
-            }
+
         }
-
         return null;
-
     }
 
     public boolean isConnectedToContact(Contact contact) {
-
-        if(contact == null) {
-
+        if (contact == null)
             return false;
-        }
 
         return connectionService.isConnected(contact.getId());
     }
@@ -278,37 +236,21 @@ public class DetailGroupController extends SmartModerationController {
         Group group = getGroup();
         Collection<Member> oldMembers = group.getUniqueMembers();
 
-        for (IContact contact : selectedContacts){
-
-            for (Member member : oldMembers ) {
-
-                if (member.getMemberId().equals(contact.getId())) {
-
-                    selectedContacts.remove(contact);
-                }
-            }
+        for (IContact contact : selectedContacts) {
+            for (Member member : oldMembers)
+                if (member.getMemberId().equals(contact.getId())) selectedContacts.remove(contact);
         }
 
         if (selectedContacts.size() > 0) {
-
             Collection<Contact> contacts = connectionService.getContacts();
-
-            for (IContact contact : selectedContacts){
-
+            for (IContact contact : selectedContacts) {
                 Contact thisBriarContact = null;
-
                 for (Contact briarContact : contacts) {
-
-                    if (contact.getId().equals(Util.bytesToLong(briarContact.getAuthor().getId().getBytes()))) {
-
+                    if (contact.getId().equals(Util.bytesToLong(briarContact.getAuthor().getId().getBytes())))
                         thisBriarContact = briarContact;
-                    }
                 }
-
-
                 connectionService.addContactToGroup(getPrivateGroup(), thisBriarContact);
             }
-
         }
     }
 }

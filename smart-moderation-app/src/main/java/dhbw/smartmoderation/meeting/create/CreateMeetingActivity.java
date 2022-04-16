@@ -69,12 +69,12 @@ public class CreateMeetingActivity extends ExceptionHandlingActivity implements 
 
     @Override
     public void onTopicClick(View view, Topic topic) {
-
         onChangeTopic(view, topic);
-
     }
 
-    enum Answer {YES, NO};
+    enum Answer {YES, NO}
+
+    ;
 
     private View popUp;
     private AlertDialog alertDialog;
@@ -94,24 +94,17 @@ public class CreateMeetingActivity extends ExceptionHandlingActivity implements 
 
     private TimePickerDialog.OnTimeSetListener time = (view, hourOfDay, minute) -> {
 
-        if(callback.equals("for_planned_end_time")) {
-
+        if (callback.equals("for_planned_end_time")) {
             updateTimeLabel(plannedEndInput, hourOfDay, minute);
-        }
-
-        else if(callback.equals("for_start_time")) {
-
+        } else if (callback.equals("for_start_time")) {
             updateTimeLabel(beginTimeInput, hourOfDay, minute);
         }
 
-        if(openSwitch.getCheckedRadioButtonId() == R.id.openOn) {
+        if (openSwitch.getCheckedRadioButtonId() == R.id.openOn) {
             calculateExceptedEnd();
-        }
-
-        else {
+        } else {
             checkTopicsLength();
         }
-
     };
 
 
@@ -125,14 +118,11 @@ public class CreateMeetingActivity extends ExceptionHandlingActivity implements 
 
         Long groupId = intent.getLongExtra("groupId", 0);
 
-        if(intent.hasExtra("activity")) {
-
-            if(intent.getStringExtra("activity").equals("MeetingDetailFragment")) {
-
+        if (intent.hasExtra("activity")) {
+            if (intent.getStringExtra("activity").equals("MeetingDetailFragment")) {
                 this.isPrefilled = true;
                 this.meetingId = intent.getLongExtra("meetingId", 0);
             }
-
         }
 
         createMeetingController = new CreateMeetingController(groupId);
@@ -149,7 +139,7 @@ public class CreateMeetingActivity extends ExceptionHandlingActivity implements 
 
         topicList = findViewById(R.id.topicList);
 
-        endTag= findViewById(R.id.plannedEndTag);
+        endTag = findViewById(R.id.plannedEndTag);
         plannedEndInput = findViewById(R.id.plannedEndInput);
         expectedEndInput = findViewById(R.id.expectedEndInput);
         expectedEndInput.setVisibility(View.VISIBLE);
@@ -176,29 +166,20 @@ public class CreateMeetingActivity extends ExceptionHandlingActivity implements 
         allFabVisible = false;
 
         generalFab.setOnClickListener(v -> {
-
-            if(!allFabVisible) {
-
-                for(FloatingActionButton fab : fabList) {
+            if (!allFabVisible) {
+                for (FloatingActionButton fab : fabList)
                     fab.show();
-                }
 
-                for(TextView text : textList) {
+                for (TextView text : textList)
                     text.setVisibility(View.VISIBLE);
-                }
 
                 allFabVisible = true;
-            }
-
-            else {
-
-                for(FloatingActionButton fab : fabList) {
+            } else {
+                for (FloatingActionButton fab : fabList)
                     fab.hide();
-                }
 
-                for(TextView text : textList) {
+                for (TextView text : textList)
                     text.setVisibility(View.GONE);
-                }
 
                 allFabVisible = false;
             }
@@ -231,22 +212,17 @@ public class CreateMeetingActivity extends ExceptionHandlingActivity implements 
         openSwitch.setOnCheckedChangeListener(((group, checkedId) -> {
             int id = openSwitch.getCheckedRadioButtonId();
 
-            if(id == R.id.openOn) {
-
+            if (id == R.id.openOn) {
                 endTag.setText(getString(R.string.estimatedEnd));
                 plannedEndInput.setVisibility(View.GONE);
                 expectedEndInput.setVisibility(View.VISIBLE);
                 calculateExceptedEnd();
-            }
-
-            else {
-
+            } else {
                 endTag.setText(getString(R.string.plannedEnd));
                 plannedEndInput.setVisibility(View.VISIBLE);
                 expectedEndInput.setVisibility(View.GONE);
                 checkTopicsLength();
             }
-
         }));
 
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(topicAdapter, R.color.default_red, R.drawable.trash, ItemTouchHelper.START);
@@ -256,10 +232,8 @@ public class CreateMeetingActivity extends ExceptionHandlingActivity implements 
 
     @Override
     protected void onResume() {
-
-        if(this.isPrefilled) {
+        if (this.isPrefilled)
             prefill();
-        }
 
         super.onResume();
     }
@@ -274,24 +248,16 @@ public class CreateMeetingActivity extends ExceptionHandlingActivity implements 
         this.beginTimeInput.setText(Util.convertMilliSecondsToTimeString(meeting.getStartTime()));
         this.topicAdapter.updateTopics(meeting.getTopics());
 
-        if(meeting.getOnline()) {
-
+        if (meeting.getOnline())
             this.onlineSwitch.check(R.id.onlineOn);
-        }
-
-        else {
-
+        else
             this.onlineSwitch.check(R.id.onlineOff);
-        }
 
-        if(meeting.getOpen()) {
 
+        if (meeting.getOpen()) {
             this.openSwitch.check(R.id.openOn);
             calculateExceptedEnd();
-        }
-
-        else {
-
+        } else {
             this.openSwitch.check(R.id.openOff);
             this.plannedEndInput.setText(Util.convertMilliSecondsToTimeString(meeting.getEndTime()));
             checkTopicsLength();
@@ -301,30 +267,22 @@ public class CreateMeetingActivity extends ExceptionHandlingActivity implements 
     private void onCreateFabClicked(View view) {
 
         if (openSwitch.getCheckedRadioButtonId() == R.id.openOn) {
-
             if (!causeInput.getText().toString().isEmpty() && !beginDateInput.getText().toString().isEmpty() && !beginTimeInput.getText().toString().isEmpty()
                     && !locationInput.getText().toString().isEmpty()) {
-
                 createMeeting(true);
                 return;
             }
-
         } else {
-
             if (!causeInput.getText().toString().isEmpty() && !beginDateInput.getText().toString().isEmpty() && !beginTimeInput.getText().toString().isEmpty()
                     && !locationInput.getText().toString().isEmpty() && !plannedEndInput.getText().toString().isEmpty()) {
-
                 createMeeting(false);
                 return;
             }
-
         }
-
         createMessageDialog();
     }
 
     private void createMessageDialog() {
-
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(getString(R.string.allFieldsMustBeFilled));
         builder.setCancelable(false);
@@ -341,38 +299,28 @@ public class CreateMeetingActivity extends ExceptionHandlingActivity implements 
 
         long begin = Util.convertTimeStringToMilliSeconds(beginTimeInput.getText().toString());
 
-        boolean online = false;
-
-        if (onlineSwitch.getCheckedRadioButtonId() == R.id.onlineOn) {
-
-            online = true;
-        }
+        boolean online = onlineSwitch.getCheckedRadioButtonId() == R.id.onlineOn;
 
         long end = 0;
 
-        if(!open) {
-
+        if (!open)
             end = Util.convertTimeStringToMilliSeconds(plannedEndInput.getText().toString());
-        }
 
         CreateMeetingAsyncTask createMeetingAsyncTask = new CreateMeetingAsyncTask();
         createMeetingAsyncTask.execute(open, online, causeInput.getText().toString(), date, begin, locationInput.getText().toString(), end);
     }
 
     private void onSetStartTime(View view) {
-
         TimePickerDialog timePicker = new TimePickerDialog(this, R.style.TimePickerTheme, time, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true);
         timePicker.show();
     }
 
     private void onSetStartDate(View view) {
-
         new DatePickerDialog(this, R.style.TimePickerTheme, date, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
     }
 
 
     private void onChangeTopic(View view, Topic topic) {
-
         LayoutInflater inflater = LayoutInflater.from(this);
         popUp = inflater.inflate(R.layout.popup_topic, null);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
@@ -401,7 +349,6 @@ public class CreateMeetingActivity extends ExceptionHandlingActivity implements 
         durationInput.setText(String.valueOf(Util.milliSecondsToMinutes(topic.getDuration())));
 
         alertDialog.show();
-
     }
 
     private void onAddTopic(View view) {
@@ -432,47 +379,36 @@ public class CreateMeetingActivity extends ExceptionHandlingActivity implements 
 
     public void userChoice(Answer choice, Topic topic) {
 
-        if(choice == Answer.YES) {
+        if (choice == Answer.YES) {
 
             EditText titleInput = popUp.findViewById(R.id.title_input);
             EditText durationInput = popUp.findViewById(R.id.duration_input);
 
             boolean onlyNumbers = durationInput.getText().toString().matches("[0-9]+") && durationInput.getText().toString().length() > 0;
 
-            if(!(titleInput.getText().toString().isEmpty()) && !(durationInput.getText().toString().isEmpty()) && onlyNumbers) {
-
+            if (!(titleInput.getText().toString().isEmpty()) && !(durationInput.getText().toString().isEmpty()) && onlyNumbers) {
                 String title = String.valueOf(titleInput.getText());
                 String duration = String.valueOf(durationInput.getText());
-
-                if(topic != null) {
-
+                if (topic != null) {
                     topicAdapter.updateTopic(topic, title, duration);
-                }
-
-                else {
-
+                } else {
                     topicAdapter.addTopic(title, duration);
-
                 }
-
-                if(openSwitch.getCheckedRadioButtonId() == R.id.openOn) {
+                if (openSwitch.getCheckedRadioButtonId() == R.id.openOn) {
                     calculateExceptedEnd();
-                }
-
-                else {
+                } else {
                     checkTopicsLength();
                 }
-            }
-            else {
-
+            } else {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage(getString(R.string.bothFieldNeedToBeFilled));
                 builder.setCancelable(false);
-                builder.setNeutralButton(getString(R.string.ok), ((dialog, which) -> {dialog.cancel();}));
+                builder.setNeutralButton(getString(R.string.ok), ((dialog, which) -> {
+                    dialog.cancel();
+                }));
                 AlertDialog alertDialog = builder.create();
                 alertDialog.show();
             }
-
         }
     }
 
@@ -481,29 +417,22 @@ public class CreateMeetingActivity extends ExceptionHandlingActivity implements 
         String beginTime = String.valueOf(beginTimeInput.getText());
         String plannedEnd = String.valueOf(plannedEndInput.getText());
 
-        if(openSwitch.getCheckedRadioButtonId() == R.id.openOff && !beginTime.isEmpty() && !plannedEnd.isEmpty()) {
-
+        if (openSwitch.getCheckedRadioButtonId() == R.id.openOff && !beginTime.isEmpty() && !plannedEnd.isEmpty()) {
             long milliseconds = Util.convertTimeStringToMilliSeconds(beginTime);
-
-            for(Topic topic : topicAdapter.getTopicList()) {
-
+            for (Topic topic : topicAdapter.getTopicList())
                 milliseconds += topic.getDuration();
-            }
 
             long endMilliseconds = Util.convertTimeStringToMilliSeconds(plannedEnd);
 
-            if(milliseconds > endMilliseconds) {
-
+            if (milliseconds > endMilliseconds) {
                 topicList.setBackground(this.getResources().getDrawable(R.drawable.red_background_border, null));
                 return;
             }
         }
-
         topicList.setBackground(this.getResources().getDrawable(R.drawable.border, null));
     }
 
     public void updateDateLabel() {
-
         String format = "dd.MM.yyyy";
         SimpleDateFormat dateFormat = new SimpleDateFormat(format, Locale.GERMANY);
         this.beginDateInput.setText(dateFormat.format(calendar.getTime()));
@@ -512,38 +441,25 @@ public class CreateMeetingActivity extends ExceptionHandlingActivity implements 
     public void updateTimeLabel(EditText input, int hour, int minute) {
 
         String minuteStr = minute + "";
-
-        if(minute < 10) {
-
-            minuteStr = 0 +  minuteStr;
+        if (minute < 10) {
+            minuteStr = 0 + minuteStr;
         }
-
         input.setText(hour + ":" + minuteStr);
-
     }
 
     public void calculateExceptedEnd() {
 
         endTag.setText(getString(R.string.estimatedEnd));
-
         String beginTime = String.valueOf(beginTimeInput.getText());
 
         if (!beginTime.isEmpty()) {
-
-           long milliseconds = Util.convertTimeStringToMilliSeconds(beginTime);
-
+            long milliseconds = Util.convertTimeStringToMilliSeconds(beginTime);
             for (Topic topic : topicAdapter.getTopicList()) {
-
                 milliseconds += topic.getDuration();
             }
-
             String expectedEnd = Util.convertMilliSecondsToTimeString(milliseconds);
-
             expectedEndInput.setText(expectedEnd);
-        }
-
-        else {
-
+        } else {
             expectedEndInput.setText("");
         }
 
@@ -553,21 +469,13 @@ public class CreateMeetingActivity extends ExceptionHandlingActivity implements 
 
         @Override
         protected void onPreExecute() {
-
             super.onPreExecute();
-
             progressDialog = new ProgressDialog(CreateMeetingActivity.this, R.style.MyAlertDialogStyle);
-
-            if(isPrefilled) {
-
+            if (isPrefilled) {
                 progressDialog.setMessage(getString(R.string.updating_meeting));
-            }
-
-            else {
-
+            } else {
                 progressDialog.setMessage(getString(R.string.creating_meeting));
             }
-
             progressDialog.setCancelable(false);
             progressDialog.show();
         }
@@ -575,34 +483,26 @@ public class CreateMeetingActivity extends ExceptionHandlingActivity implements 
         @Override
         protected String doInBackground(Object... objects) {
 
-            boolean open = (Boolean)objects[0];
-            boolean online = (Boolean)objects[1];
+            boolean open = (Boolean) objects[0];
+            boolean online = (Boolean) objects[1];
             String cause = objects[2].toString();
-            long date = (long)objects[3];
-            long begin = (long)objects[4];
+            long date = (long) objects[3];
+            long begin = (long) objects[4];
             String location = objects[5].toString();
-            long end = (long)objects[6];
+            long end = (long) objects[6];
 
             try {
-
-                if(isPrefilled) {
-
+                if (isPrefilled)
                     createMeetingController.submitMeeting(meetingId, open, online, cause, date, begin, location, end, topicAdapter.getTopicList());
-                }
-
-                else {
-
-                    createMeetingController.submitMeeting(null, open,online, cause, date, begin, location, end, topicAdapter.getTopicList());
-                }
+                else
+                    createMeetingController.submitMeeting(null, open, online, cause, date, begin, location, end, topicAdapter.getTopicList());
 
 
             } catch (CantSubMitMeetingException exception) {
 
                 publishProgress(exception);
             }
-
             return null;
-
         }
 
         @Override
@@ -619,16 +519,12 @@ public class CreateMeetingActivity extends ExceptionHandlingActivity implements 
             progressDialog.dismiss();
             Toast toast;
 
-            if(isPrefilled) {
-
+            if (isPrefilled) {
                 Intent meetingDetailIntent = new Intent(CreateMeetingActivity.this, BaseActivity.class);
                 meetingDetailIntent.putExtra("meetingId", meetingId);
                 startActivity(meetingDetailIntent);
                 toast = Toast.makeText(getApplicationContext(), getString(R.string.meeting_updated), Toast.LENGTH_SHORT);
-            }
-
-            else {
-
+            } else {
                 toast = Toast.makeText(getApplicationContext(), getString(R.string.meeting_created), Toast.LENGTH_SHORT);
             }
 
@@ -636,6 +532,4 @@ public class CreateMeetingActivity extends ExceptionHandlingActivity implements 
             finish();
         }
     }
-
-
 }

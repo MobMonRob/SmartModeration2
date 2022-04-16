@@ -17,7 +17,7 @@ import java.util.Collection;
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
 
 	private Context context;
-	private ArrayList<String> Messages = new ArrayList<String>();
+	private ArrayList<String> Messages = new ArrayList<>();
 
 	public MessageAdapter(Context context,Collection<String> messages){
 		this.context = context;
@@ -73,7 +73,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 			messageConstraintSet.connect(MessageText.getId(), ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT);
 			messageConstraintSet.connect(MessageText.getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT);
 			messageConstraintSet.applyTo(layout);
-
 		}
 
 		public void setMessage(String message){

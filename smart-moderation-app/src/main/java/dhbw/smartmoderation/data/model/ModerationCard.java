@@ -26,7 +26,6 @@ public class ModerationCard extends ModelClass{
     /** Used to resolve relations */
     @Generated(hash = 2040040024)
     private transient DaoSession daoSession;
-
     /** Used for active entity operations. */
     @Generated(hash = 199570951)
     private transient ModerationCardDao myDao;
@@ -34,8 +33,8 @@ public class ModerationCard extends ModelClass{
     private transient Long meeting__resolvedKey;
 
     @Generated(hash = 1053031392)
-    public ModerationCard(Long cardId, String content, String author, int backgroundColor,
-            int fontColor, long meetingId) {
+    public ModerationCard(Long cardId, String content, String author, int backgroundColor, int fontColor,
+            long meetingId) {
         this.cardId = cardId;
         this.content = content;
         this.author = author;

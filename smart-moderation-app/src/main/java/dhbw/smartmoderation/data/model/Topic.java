@@ -33,7 +33,6 @@ public class Topic extends ModelClass{
 
     @Keep
     public Topic() {
-
         this.topicId = ((SmartModerationApplicationImpl)SmartModerationApplicationImpl.getApp()).getUniqueId();
     }
 
@@ -89,17 +88,13 @@ public class Topic extends ModelClass{
     public TopicStatus getTopicStatus() {
 
         try {
-
             return TopicStatus.valueOf(status);
-
         } catch (IllegalArgumentException ex) {
-
             return null;
         }
     }
 
     public void setTopicStatus(TopicStatus status) {
-
         this.status = status.name();
     }
 
@@ -178,6 +173,5 @@ public class Topic extends ModelClass{
         this.daoSession = daoSession;
         myDao = daoSession != null ? daoSession.getTopicDao() : null;
     }
-
 }
 

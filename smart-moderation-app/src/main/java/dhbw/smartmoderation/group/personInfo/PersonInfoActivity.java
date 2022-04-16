@@ -36,40 +36,28 @@ public class PersonInfoActivity extends ExceptionHandlingActivity {
         public void onCheckedChanged(RadioGroup group, int checkedId) {
             int id = moderatorSwitch.getCheckedRadioButtonId();
 
-            if(id == R.id.moderatorOn) {
-
+            if (id == R.id.moderatorOn) {
                 PersonInfoAsyncTask personInfoAsyncTask = new PersonInfoAsyncTask("addRole");
                 personInfoAsyncTask.execute(member, Role.MODERATOR);
-            }
-
-            else {
-
-                if(controller.isLocalAuthor(memberId))  {
-
-                    if(controller.countModeratorsInGroup() > 1) {
-
+            } else {
+                if (controller.isLocalAuthor(memberId)) {
+                    if (controller.countModeratorsInGroup() > 1) {
                         PersonInfoAsyncTask personInfoAsyncTask = new PersonInfoAsyncTask("removeRole");
                         personInfoAsyncTask.execute(member, Role.MODERATOR);
-                    }
-
-                    else {
+                    } else {
                         AlertDialog.Builder builder = new AlertDialog.Builder(PersonInfoActivity.this);
                         builder.setMessage(getString(R.string.canNotRemoveModeratorRights));
                         builder.setCancelable(false);
                         builder.setNeutralButton(getString(R.string.ok), (dialog, which) -> {
                             dialog.cancel();
                         });
-
                         AlertDialog alertDialog = builder.create();
                         alertDialog.show();
                         moderatorSwitch.setOnCheckedChangeListener(null);
                         moderatorSwitch.check(R.id.moderatorOn);
                         moderatorSwitch.setOnCheckedChangeListener(moderatorListener);
                     }
-                }
-
-                else {
-
+                } else {
                     PersonInfoAsyncTask personInfoAsyncTask = new PersonInfoAsyncTask("removeRole");
                     personInfoAsyncTask.execute(member, Role.MODERATOR);
                 }
@@ -83,27 +71,19 @@ public class PersonInfoActivity extends ExceptionHandlingActivity {
 
             int id = guestSwitch.getCheckedRadioButtonId();
 
-            if(id == R.id.guestOn) {
-
-                if(controller.isPollOpen()) {
-
-                  showAlertDialogForGuestSwitch(getString(R.string.canNotBeMarkedAsSpectator));
-                  return;
-
-                }
-
-                if(controller.countParticipantsInGroup() < 2) {
-
-                    showAlertDialogForGuestSwitch(getString(R.string.lastParticipant));
+            if (id == R.id.guestOn) {
+                if (controller.isPollOpen()) {
+                    showAlertDialogForGuestSwitch(getString(R.string.canNotBeMarkedAsSpectator));
                     return;
                 }
 
+                if (controller.countParticipantsInGroup() < 2) {
+                    showAlertDialogForGuestSwitch(getString(R.string.lastParticipant));
+                    return;
+                }
                 PersonInfoAsyncTask personInfoAsyncTask = new PersonInfoAsyncTask("changeRole");
                 personInfoAsyncTask.execute(member, Role.PARTICIPANT, Role.SPECTATOR);
-            }
-
-            else {
-
+            } else {
                 PersonInfoAsyncTask personInfoAsyncTask = new PersonInfoAsyncTask("changeRole");
                 personInfoAsyncTask.execute(member, Role.SPECTATOR, Role.PARTICIPANT);
             }
@@ -115,9 +95,7 @@ public class PersonInfoActivity extends ExceptionHandlingActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(PersonInfoActivity.this);
         builder.setMessage(text);
         builder.setCancelable(false);
-        builder.setNeutralButton(getString(R.string.ok), (dialog, which) -> {
-            dialog.cancel();
-        });
+        builder.setNeutralButton(getString(R.string.ok), (dialog, which) -> dialog.cancel());
 
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
@@ -156,11 +134,9 @@ public class PersonInfoActivity extends ExceptionHandlingActivity {
         name.setText(member.getName());
 
         linkContactButton.setOnClickListener(v -> {
-
             Intent i = new Intent(this, AddContactActivity.class);
             i.putExtra("memberId", this.memberId);
             i.putExtra("groupId", this.groupId);
-
             startActivityForResult(i, 0);
         });
     }
@@ -168,22 +144,18 @@ public class PersonInfoActivity extends ExceptionHandlingActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         this.memberId = data.getLongExtra("memberId", 0);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
         update();
-
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-
         PersonInfoAsyncTask personInfoAsyncTask = new PersonInfoAsyncTask("submit");
         personInfoAsyncTask.execute();
     }
@@ -193,35 +165,29 @@ public class PersonInfoActivity extends ExceptionHandlingActivity {
         moderatorSwitch.setOnCheckedChangeListener(null);
         guestSwitch.setOnCheckedChangeListener(null);
 
-        if(member.getRoles(group).contains(Role.MODERATOR)) {
+        if (member.getRoles(group).contains(Role.MODERATOR)) {
             moderatorSwitch.check(R.id.moderatorOn);
-        }
-
-        else {
+        } else {
             moderatorSwitch.check(R.id.moderatorOff);
         }
 
-        if(member.getRoles(group).contains(Role.SPECTATOR)) {
+        if (member.getRoles(group).contains(Role.SPECTATOR)) {
             guestSwitch.check(R.id.guestOn);
-        }
-
-        else {
+        } else {
             guestSwitch.check(R.id.guestOff);
         }
 
-        if(member.getIsGhost()) {
+        if (member.getIsGhost()) {
             moderatorText.setVisibility(View.GONE);
             moderatorSwitch.setVisibility(View.GONE);
             guestText.setVisibility(View.GONE);
             guestSwitch.setVisibility(View.GONE);
 
-            if(controller.isLocalAuthorModerator()) {
+            if (controller.isLocalAuthorModerator()) {
 
                 linkContactButton.setVisibility(View.VISIBLE);
             }
-        }
-
-        else if (!controller.isLocalAuthorModerator()) {
+        } else if (!controller.isLocalAuthorModerator()) {
 
             for (int i = 0; i < moderatorSwitch.getChildCount(); i++) {
 
@@ -258,35 +224,28 @@ public class PersonInfoActivity extends ExceptionHandlingActivity {
         @Override
         protected String doInBackground(Object... objects) {
 
-            switch(flag) {
-
+            switch (flag) {
                 case "addRole":
-                    Member memberToAdd = (Member)objects[0];
-                    Role roleToAdd = (Role)objects[1];
+                    Member memberToAdd = (Member) objects[0];
+                    Role roleToAdd = (Role) objects[1];
                     controller.addRole(memberToAdd, roleToAdd);
                     break;
-
                 case "removeRole":
-                    Member memberToRemove = (Member)objects[0];
-                    Role roleToRemove = (Role)objects[1];
+                    Member memberToRemove = (Member) objects[0];
+                    Role roleToRemove = (Role) objects[1];
                     controller.removeRole(memberToRemove, roleToRemove);
                     break;
-
                 case "changeRole":
-                    Member member = (Member)objects[0];
-                    Role previousRole = (Role)objects[1];
+                    Member member = (Member) objects[0];
+                    Role previousRole = (Role) objects[1];
                     controller.removeRole(member, previousRole);
-                    Role role = (Role)objects[2];
+                    Role role = (Role) objects[2];
                     controller.addRole(member, role);
                     break;
-
                 case "submit":
                     try {
-
                         controller.submitChanges();
-
                     } catch (GroupNotFoundException exception) {
-
                         publishProgress(exception);
                     }
             }
@@ -299,7 +258,6 @@ public class PersonInfoActivity extends ExceptionHandlingActivity {
             super.onPostExecute(s);
 
             switch (flag) {
-
                 case "submit":
                     finish();
             }

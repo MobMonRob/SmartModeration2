@@ -14,5 +14,4 @@ public class Contact implements IContact {
 
     public  org.briarproject.bramble.api.contact.Contact getBriarContact() { return this.delegate; }
 
-
 }

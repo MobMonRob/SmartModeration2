@@ -24,18 +24,15 @@ public class CardActivity extends ExceptionHandlingActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         this.getSupportActionBar().hide();
         setContentView(R.layout.activity_card);
-
         Intent intent = getIntent();
         Bundle extra = intent.getExtras();
         String name = extra.getString("name");
         String description = extra.getString("description");
         int color = extra.getInt("color");
-
         this.name = findViewById(R.id.consensusLevelName);
         this.name.setText(name);
         this.description = findViewById(R.id.consensusLevelDescription);

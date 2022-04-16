@@ -45,12 +45,15 @@ public class CreateGroup extends ExceptionHandlingActivity {
     private boolean allFabVisible;
     private View popup;
     private AlertDialog alertDialog;
-    enum Answer {YES, NO};
+
+    enum Answer {YES, NO}
+
+    ;
     private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        for (DuplexPlugin duplexPlugin :  ((SmartModerationApplicationImpl)SmartModerationApplicationImpl.getApp()).getConnectionService().getPluginManager().getDuplexPlugins()) {
+        for (DuplexPlugin duplexPlugin : ((SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp()).getConnectionService().getPluginManager().getDuplexPlugins()) {
             System.out.println("Duplex " + duplexPlugin.getId() + " | " + duplexPlugin.getState());
         }
         super.onCreate(savedInstanceState);
@@ -86,39 +89,26 @@ public class CreateGroup extends ExceptionHandlingActivity {
 
         generalFab.setOnClickListener(v -> {
 
-            if(!allFabVisible) {
-
-                for(FloatingActionButton fab : fabList) {
-
+            if (!allFabVisible) {
+                for (FloatingActionButton fab : fabList) {
                     fab.show();
                 }
 
-                for(TextView text : textList) {
-
+                for (TextView text : textList) {
                     text.setVisibility(View.VISIBLE);
                 }
 
                 allFabVisible = true;
-
                 onInputChange();
-            }
-
-            else {
-
-
-                for(FloatingActionButton fab : fabList) {
-
+            } else {
+                for (FloatingActionButton fab : fabList)
                     fab.hide();
-                }
 
-                for(TextView text : textList) {
-
+                for (TextView text : textList)
                     text.setVisibility(View.GONE);
-                }
 
                 allFabVisible = false;
             }
-
         });
 
         createGroupFab.setOnClickListener(this::onCreateGroup);
@@ -130,12 +120,9 @@ public class CreateGroup extends ExceptionHandlingActivity {
         recyclerView.setLayoutManager(contactLayoutManager);
 
         try {
-
             contactAdapter = new ContactAdapter(this, createGroupController.getContacts());
             recyclerView.setAdapter(contactAdapter);
-
-        } catch(NoContactsFoundException exception){
-
+        } catch (NoContactsFoundException exception) {
             handleException(exception);
         }
 
@@ -144,47 +131,34 @@ public class CreateGroup extends ExceptionHandlingActivity {
     }
 
     public void onInputChange() {
-
-        if(!Util.isEmpty(groupName) && contactAdapter.atLeastOneContactSelected()) {
-
+        if (!Util.isEmpty(groupName) && contactAdapter.atLeastOneContactSelected()) {
             createGroupFab.show();
             addGroupText.setVisibility(View.VISIBLE);
-        }
-
-        else {
-
+        } else {
             createGroupFab.hide();
             addGroupText.setVisibility(View.GONE);
-
         }
     }
 
     @Override
     protected void onResume() {
-
         super.onResume();
 
         try {
-
             contactAdapter.updateContacts(createGroupController.getContacts());
-
-        } catch (NoContactsFoundException exception){
+        } catch (NoContactsFoundException exception) {
             handleException(exception);
         }
-
     }
 
 
     private void onCreateGroup(View view) {
-
         String groupName = Util.getText(this.groupName);
         CreateGroupAsyncTask createGroupAsyncTask = new CreateGroupAsyncTask();
         createGroupAsyncTask.execute(groupName);
-
     }
 
     private void onAddGhost(View view) {
-
         LayoutInflater inflater = LayoutInflater.from(this);
         popup = inflater.inflate(R.layout.popup_add_ghost, null);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
@@ -209,25 +183,16 @@ public class CreateGroup extends ExceptionHandlingActivity {
         });
 
         alertDialog.show();
-
-
-
     }
 
     public void userChoice(Answer choice) {
-
         if (choice == Answer.YES) {
-
             EditText firstNameInput = popup.findViewById(R.id.firstNameInput);
             EditText lastNameInput = popup.findViewById(R.id.lastNameInput);
-
             String firstName = String.valueOf(firstNameInput.getText());
             String lastName = String.valueOf(lastNameInput.getText());
             contactAdapter.addGhost(firstName, lastName);
-        }
-
-        else {
-
+        } else {
             alertDialog.cancel();
         }
     }
@@ -237,7 +202,6 @@ public class CreateGroup extends ExceptionHandlingActivity {
 
         @Override
         protected void onPreExecute() {
-
             super.onPreExecute();
             progressDialog = new ProgressDialog(CreateGroup.this, R.style.MyAlertDialogStyle);
             progressDialog.setMessage(getString(R.string.creating_group));
@@ -251,16 +215,12 @@ public class CreateGroup extends ExceptionHandlingActivity {
             String groupName = strings[0];
 
             try {
-
                 createGroupController.createGroup(groupName, CreateGroup.this.contactAdapter.getSelectedContacts());
-
-            } catch(CantCreateGroupException exception){
-
-               publishProgress(exception);
+            } catch (CantCreateGroupException exception) {
+                publishProgress(exception);
             }
 
             return groupName;
-
         }
 
         @Override
@@ -272,7 +232,6 @@ public class CreateGroup extends ExceptionHandlingActivity {
 
         @Override
         protected void onPostExecute(String s) {
-
             super.onPostExecute(s);
             progressDialog.dismiss();
             Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.group_created), Toast.LENGTH_SHORT);

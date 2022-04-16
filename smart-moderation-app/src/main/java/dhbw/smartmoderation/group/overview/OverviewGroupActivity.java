@@ -42,10 +42,7 @@ public class OverviewGroupActivity extends UpdateableExceptionHandlingActivity i
         setTitle(R.string.title_activity_group_overview);
 
         pullToRefresh = findViewById(R.id.pullToRefresh);
-        pullToRefresh.setOnRefreshListener(() -> {
-
-            updateUI();
-        });
+        pullToRefresh.setOnRefreshListener(() -> updateUI());
 
         controller = new OverviewGroupController();
 
@@ -90,7 +87,6 @@ public class OverviewGroupActivity extends UpdateableExceptionHandlingActivity i
 
     @Override
     protected void updateUI() {
-
         OverviewGroupAsyncTask overviewGroupAsyncTask = new OverviewGroupAsyncTask();
         overviewGroupAsyncTask.execute();
     }
@@ -100,7 +96,6 @@ public class OverviewGroupActivity extends UpdateableExceptionHandlingActivity i
 
         @Override
         protected String doInBackground(String... strings) {
-
             controller.update();
             return null;
         }
@@ -108,7 +103,6 @@ public class OverviewGroupActivity extends UpdateableExceptionHandlingActivity i
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-
             Collection<Group> groups = controller.getGroups();
             groupAdapter.updateGroups(groups);
             Log.d(TAG, "Available groups: " + groups);

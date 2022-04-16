@@ -6,11 +6,13 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -20,7 +22,7 @@ import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.data.model.Topic;
 import dhbw.smartmoderation.data.model.TopicStatus;
 
-public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHolder>{
+public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHolder> {
 
     private Context context;
     private MeetingDetailController controller;
@@ -54,25 +56,21 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHol
     public void onBindViewHolder(@NonNull TopicViewHolder holder, int position) {
         Topic topic = this.topicList.get(position);
         String title = topic.getTitle();
-        String duration = TimeUnit.MILLISECONDS.toMinutes(topic.getDuration()) + " " + context.getString(R.string.minute) +".";
+        String duration = TimeUnit.MILLISECONDS.toMinutes(topic.getDuration()) + " " + context.getString(R.string.minute) + ".";
         holder.setTopic(topic);
         holder.getTitle().setText(title + " - " + duration);
 
         TopicStatus status = topic.getTopicStatus();
 
-        if(status == TopicStatus.RUNNING) {
+        if (status == TopicStatus.RUNNING) {
             holder.getStatus().setVisibility(View.VISIBLE);
             holder.getStatus().setBackgroundColor(ResourcesCompat.getColor(context.getResources(), R.color.colorPrimaryDark, null));
             holder.getStatus().setText(context.getString(R.string.running));
-        }
-
-        else if(status == TopicStatus.FINISHED) {
+        } else if (status == TopicStatus.FINISHED) {
             holder.getStatus().setVisibility(View.VISIBLE);
             holder.getStatus().setBackgroundColor(ResourcesCompat.getColor(context.getResources(), R.color.default_green, null));
             holder.getStatus().setText(context.getString(R.string.finished));
-        }
-
-        else {
+        } else {
             holder.getStatus().setVisibility(View.GONE);
         }
     }
@@ -139,7 +137,9 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHol
             return this.title;
         }
 
-        public TextView getStatus() { return this.status; }
+        public TextView getStatus() {
+            return this.status;
+        }
     }
 
 }

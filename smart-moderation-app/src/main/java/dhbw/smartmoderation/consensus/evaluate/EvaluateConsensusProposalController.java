@@ -19,23 +19,18 @@ public class EvaluateConsensusProposalController extends SmartModerationControll
     private Long pollId;
 
     public EvaluateConsensusProposalController(Long pollId) {
-
         this.pollId = pollId;
     }
 
     public void update() {
-
         try {
-
             this.synchronizationService.pull(getPrivateGroup());
-
         } catch (GroupNotFoundException e) {
             e.printStackTrace();
         }
     }
 
     public Poll getPoll() {
-
         for(Poll poll : dataService.getPolls()) {
             if(poll.getPollId().equals(this.pollId)) {
                 return poll;
@@ -45,11 +40,8 @@ public class EvaluateConsensusProposalController extends SmartModerationControll
     }
 
     public Member getMember() {
-
         Long authorId = connectionService.getLocalAuthorId();
-
         for(Member member : dataService.getMembers()) {
-
             if(member.getMemberId().equals(authorId)) {
                 return member;
             }
@@ -58,33 +50,25 @@ public class EvaluateConsensusProposalController extends SmartModerationControll
     }
 
     public Collection<ConsensusLevel> getConsensusLevels() {
-
         Group group = getPoll().getMeeting().getGroup();
         return group.getGroupSettings().getConsensusLevels();
     }
 
    public int getVoteMembersCount() {
-
         return getPoll().getMeeting().getPresentVoteMembers().size();
     }
 
     public int getVoiceCount() {
-
         return getPoll().getVoices().size();
     }
 
     public PrivateGroup getPrivateGroup() throws GroupNotFoundException {
-
         Collection<PrivateGroup> privateGroups = connectionService.getGroups();
-
         for(PrivateGroup group : privateGroups) {
-
             if(getPoll().getMeeting().getGroup().getGroupId().equals(Util.bytesToLong(group.getId().getBytes()))) {
-
                 return group;
             }
         }
-
         throw new GroupNotFoundException();
     }
 
@@ -93,11 +77,8 @@ public class EvaluateConsensusProposalController extends SmartModerationControll
         Voice voice = null;
 
         try{
-
             voice = new Voice();
-
             if(previousVoice != null) {
-
                 voice = previousVoice;
             }
 
@@ -112,12 +93,8 @@ public class EvaluateConsensusProposalController extends SmartModerationControll
             synchronizationService.push(getPrivateGroup(), data);
 
         } catch (GroupNotFoundException exception){
-
             dataService.deleteVoice(voice);
             throw new CantSendVoiceException();
         }
-
-
     }
-
 }

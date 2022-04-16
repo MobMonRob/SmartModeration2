@@ -89,12 +89,10 @@ public class KeyAgreementFragment extends Fragment implements EventListener, QrC
     private View statusView;
     private QrCodeView qrCodeView;
     private TextView status;
-
     private boolean gotRemotePayload;
     private volatile boolean gotLocalPayload;
     private KeyAgreementTask keyAgreementTask;
     private KeyAgreementEventListener listener;
-
     private BaseFragmentListener baseFragmentListener;
 
     public static KeyAgreementFragment newInstance() {
@@ -107,21 +105,19 @@ public class KeyAgreementFragment extends Fragment implements EventListener, QrC
 
     @Override
     public void onAttach(Context context) {
-        ((SmartModerationApplicationImpl)getActivity().getApplicationContext()).smartModerationComponent.inject(this);
+        ((SmartModerationApplicationImpl) getActivity().getApplicationContext()).smartModerationComponent.inject(this);
         super.onAttach(context);
-        listener = (KeyAgreementEventListener)context;
+        listener = (KeyAgreementEventListener) context;
         baseFragmentListener = (BaseFragmentListener) context;
     }
 
     public String getUniqueTag() {
-
         return TAG;
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         return inflater.inflate(R.layout.fragment_keyagreement, container, false);
     }
 
@@ -149,11 +145,8 @@ public class KeyAgreementFragment extends Fragment implements EventListener, QrC
         eventBus.addListener(this);
 
         try {
-
             cameraView.start();
-
         } catch (CameraException e) {
-
             logCameraExceptionAndFinish(e);
         }
 
@@ -167,11 +160,8 @@ public class KeyAgreementFragment extends Fragment implements EventListener, QrC
         stopListening();
 
         try {
-
             cameraView.stop();
-
         } catch (CameraException e) {
-
             logCameraExceptionAndFinish(e);
         }
     }
@@ -185,22 +175,15 @@ public class KeyAgreementFragment extends Fragment implements EventListener, QrC
         if (fullscreen) {
             statusParams = new LinearLayout.LayoutParams(0, 0, 0f);
             qrCodeParams = new LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT, 1f);
-
-        }
-
-        else {
-
+        } else {
             if (cameraOverlay.getOrientation() == HORIZONTAL) {
                 statusParams = new LinearLayout.LayoutParams(0, MATCH_PARENT, 1f);
                 qrCodeParams = new LinearLayout.LayoutParams(0, MATCH_PARENT, 1f);
-            }
-
-            else {
+            } else {
                 statusParams = new LinearLayout.LayoutParams(MATCH_PARENT, 0, 1f);
                 qrCodeParams = new LinearLayout.LayoutParams(MATCH_PARENT, 0, 1f);
             }
         }
-
         statusView.setLayoutParams(statusParams);
         qrCodeView.setLayoutParams(qrCodeParams);
         cameraOverlay.invalidate();
@@ -208,7 +191,6 @@ public class KeyAgreementFragment extends Fragment implements EventListener, QrC
 
     @UiThread
     private void logCameraExceptionAndFinish(CameraException e) {
-
         logException(LOG, WARNING, e);
         Toast.makeText(getActivity(), getString(R.string.CameraException_Message), LENGTH_LONG).show();
         finish();
@@ -216,11 +198,9 @@ public class KeyAgreementFragment extends Fragment implements EventListener, QrC
 
     @UiThread
     private void startListening() {
-
         KeyAgreementTask oldTask = keyAgreementTask;
         KeyAgreementTask newTask = keyAgreementTaskProvider.get();
-
-       keyAgreementTask = newTask;
+        keyAgreementTask = newTask;
 
         ioExecutor.execute(() -> {
             if (oldTask != null) oldTask.stopListening();
@@ -238,14 +218,10 @@ public class KeyAgreementFragment extends Fragment implements EventListener, QrC
 
     @UiThread
     private void reset() {
-
         if (gotRemotePayload) {
-
             try {
                 cameraView.start();
-
             } catch (CameraException e) {
-
                 logCameraExceptionAndFinish(e);
                 return;
             }
@@ -262,11 +238,9 @@ public class KeyAgreementFragment extends Fragment implements EventListener, QrC
     private void qrCodeScanned(String content) {
 
         try {
-
             byte[] payloadBytes = content.getBytes(ISO_8859_1);
 
             if (LOG.isLoggable(INFO)) {
-
                 LOG.info("Remote payload is " + payloadBytes.length + " bytes");
             }
 
@@ -281,29 +255,20 @@ public class KeyAgreementFragment extends Fragment implements EventListener, QrC
             keyAgreementTask.connectAndRunProtocol(remotePayload);
 
         } catch (UnsupportedVersionException e) {
-
             reset();
             String msg;
 
             if (e.isTooOld()) {
-
                 msg = getString(R.string.qrcode_old);
-
             } else {
-
                 msg = getString(R.string.qrcode_new);
             }
 
             ContactExchangeErrorFragment fragment = ContactExchangeErrorFragment.newInstance(msg);
-
             showNextFragment(fragment, fragment.getUniqueTag());
-
         } catch (CameraException e) {
-
             logCameraExceptionAndFinish(e);
-
         } catch (IOException | IllegalArgumentException e) {
-
             LOG.log(WARNING, "QR Code Invalid", e);
             reset();
             Toast.makeText(getActivity(), getString(R.string.qrcode_invalid), LENGTH_LONG).show();
@@ -311,41 +276,25 @@ public class KeyAgreementFragment extends Fragment implements EventListener, QrC
     }
 
 
-
     @Override
     public void eventOccurred(Event e) {
 
         if (e instanceof KeyAgreementListeningEvent) {
-
             KeyAgreementListeningEvent event = (KeyAgreementListeningEvent) e;
             gotLocalPayload = true;
             setQrCode(event.getLocalPayload());
-
-        }
-
-        else if (e instanceof KeyAgreementFailedEvent) {
+        } else if (e instanceof KeyAgreementFailedEvent) {
             keyAgreementFailed();
-
-        }
-
-        else if (e instanceof KeyAgreementWaitingEvent) {
+        } else if (e instanceof KeyAgreementWaitingEvent) {
             keyAgreementWaiting();
-
-        }
-
-        else if (e instanceof KeyAgreementStartedEvent) {
+        } else if (e instanceof KeyAgreementStartedEvent) {
             keyAgreementStarted();
-        }
-
-        else if (e instanceof KeyAgreementAbortedEvent) {
+        } else if (e instanceof KeyAgreementAbortedEvent) {
             KeyAgreementAbortedEvent event = (KeyAgreementAbortedEvent) e;
             keyAgreementAborted(event.didRemoteAbort());
-        }
-
-        else if (e instanceof KeyAgreementFinishedEvent) {
+        } else if (e instanceof KeyAgreementFinishedEvent) {
             keyAgreementFinished(((KeyAgreementFinishedEvent) e).getResult());
         }
-
     }
 
     @UiThread
@@ -390,7 +339,6 @@ public class KeyAgreementFragment extends Fragment implements EventListener, QrC
             byte[] payloadBytes = payloadEncoder.encode(localPayload);
 
             if (LOG.isLoggable(INFO)) {
-
                 LOG.info("Local payload is " + payloadBytes.length + " bytes");
             }
 
@@ -417,7 +365,6 @@ public class KeyAgreementFragment extends Fragment implements EventListener, QrC
     public void handleResult(Result result) {
 
         runOnUiThreadUnlessDestroyed(() -> {
-
             LOG.info("Got result from decoder");
             if (!gotLocalPayload) {
                 return;
@@ -435,13 +382,11 @@ public class KeyAgreementFragment extends Fragment implements EventListener, QrC
     }
 
     protected void showNextFragment(Fragment fragment, String tag) {
-
         baseFragmentListener.showNextFragment(fragment, tag);
     }
 
     @UiThread
     protected void handleException(Exception e) {
-
         baseFragmentListener.handleException(e);
     }
 

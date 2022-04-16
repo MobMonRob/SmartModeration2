@@ -42,14 +42,11 @@ public class ChartFragment extends Fragment {
     }
 
     public PieChart getDonutChart() {
-
         return  this.donutChart;
     }
 
     public void createDonutChart(){
-
         constraintLayout.removeAllViews();
-
         donutChart = new PieChart(getActivity());
         donutChart.setOnChartValueSelectedListener(((ConsensusProposalResult)getActivity()).chartValueSelectedListener);
         donutChart.setCenterTextSize(14f);
@@ -58,7 +55,6 @@ public class ChartFragment extends Fragment {
         String centerText = this.controller.getVoiceCount() + "/" + this.controller.getVoteMembersCount();
         donutChart.setCenterText(centerText);
         constraintLayout.addView(donutChart);
-
         donutChart.getLayoutParams().height = 600;
         donutChart.getLayoutParams().width = android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 
@@ -66,7 +62,6 @@ public class ChartFragment extends Fragment {
         List<Integer> colors = new ArrayList();
 
         for (Map.Entry<Long, Integer> entry : this.controller.getCountPerConsensusLevel().entrySet()) {
-
             ConsensusLevel consensusLevel = this.controller.getConsensusLevel(entry.getKey());
             float percentage = ((float)entry.getValue()/(float)this.controller.getVoteMembersCount())*100;
             chartData.add(new PieEntry(percentage, consensusLevel.getName()));
@@ -90,9 +85,7 @@ public class ChartFragment extends Fragment {
         donutChart.getDescription().setEnabled(false);
         donutChart.setDrawEntryLabels(false);
         donutChart.setUsePercentValues(false);
-
         donutChart.invalidate();
-
     }
 
     @Override

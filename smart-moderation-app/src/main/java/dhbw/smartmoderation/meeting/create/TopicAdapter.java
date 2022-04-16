@@ -49,7 +49,7 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHol
         notifyDataSetChanged();
     }
 
-    public void addTopic (String title, String duration) {
+    public void addTopic(String title, String duration) {
         Topic topic = new Topic();
         topic.setTitle(title);
         long minutes = Long.parseLong(duration);
@@ -107,7 +107,6 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHol
         private Topic topic;
         private TopicAdapter.OnTopicListener onTopicListener;
 
-
         public TopicViewHolder(ConstraintLayout constraintLayout, Context context, TopicAdapter topicAdapter, OnTopicListener onTopicListener) {
             super(constraintLayout);
             constraintLayout.setOnClickListener(this);
@@ -138,15 +137,11 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHol
 
         @Override
         public void onClick(View v) {
-
             onTopicListener.onTopicClick(v, topic);
-
         }
     }
 
     public interface OnTopicListener {
-
         void onTopicClick(View view, Topic topic);
-
     }
 }

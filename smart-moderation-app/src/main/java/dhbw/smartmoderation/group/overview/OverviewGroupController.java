@@ -12,7 +12,6 @@ import dhbw.smartmoderation.exceptions.GroupNotFoundException;
 public class OverviewGroupController extends SmartModerationController {
 
     public Collection<Group> getGroups() {
-
         return dataService.getGroups();
     }
 
@@ -21,16 +20,13 @@ public class OverviewGroupController extends SmartModerationController {
         Collection<PrivateGroup> groups = new ArrayList<>();
 
         try {
-
             groups = connectionService.getGroups();
 
         } catch (GroupNotFoundException e) {
-
             e.printStackTrace();
         }
 
         for(PrivateGroup privateGroup : groups) {
-
             synchronizationService.pull(privateGroup);
         }
     }

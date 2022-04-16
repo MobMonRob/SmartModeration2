@@ -32,7 +32,6 @@ public class UpdateChecker implements Runnable{
             Log.d(TAG,exception.getMessage());
         }
 
-
         try {
             Thread.sleep(10000);
         }catch (InterruptedException exception){

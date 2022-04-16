@@ -86,7 +86,6 @@ public class ResultTableFragment extends Fragment {
         description.setText(getString(R.string.explanation));
         header.addView(description);
 
-
         this.resultTable.addView(header);
     }
 
@@ -94,7 +93,6 @@ public class ResultTableFragment extends Fragment {
     private void createResultTable() {
 
         for(Voice voice : this.voices) {
-
             TableRow row = new TableRow(getActivity());
             row.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
 
@@ -152,10 +150,8 @@ public class ResultTableFragment extends Fragment {
         super.onResume();
 
         if(this.voices.size() > 0) {
-
             createTableHeader();
             createResultTable();
         }
-
     }
 }

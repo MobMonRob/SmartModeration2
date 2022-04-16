@@ -15,46 +15,35 @@ import dhbw.smartmoderation.controller.SmartModerationController;
 
 public class KeyAgreementController extends SmartModerationController  {
 
-
     public KeyAgreementController() {
-
     }
 
     public PluginManager getPluginManager() {
-
         return connectionService.getPluginManager();
     }
 
     public Plugin getWifiPlugin() {
-
         return connectionService.getPluginManager().getPlugin(LanTcpConstants.ID);
     }
 
     public Plugin getBluetoothPlugin() {
-
         return connectionService.getPluginManager().getPlugin(BluetoothConstants.ID);
     }
 
     public EventBus getEventBus() {
-
         return connectionService.getEventBus();
     }
 
 
     public Provider<KeyAgreementTask> getKeyAgreementTaskProvider() {
-
         return connectionService.getKeyAgreementTaskProvider();
-
     }
 
     public PayloadEncoder getPayloadEncoder() {
-
         return connectionService.getPayloadEncoder();
     }
 
     public PayloadParser getPayloadParser() {
-
         return connectionService.getPayloadParser();
     }
-
 }

@@ -6,7 +6,6 @@ import java.util.Collection;
 
 import dhbw.smartmoderation.data.model.*;
 
-
 public interface SerializationService {
 
 	void setLocalAuthor(LocalAuthor localAuthor);

@@ -30,23 +30,18 @@ public class CreateGroupController extends SmartModerationController {
     Context context;
 
     public CreateGroupController(Context context) {
-
         this.context = context;
-
     }
 
-    public Collection<IContact> getContacts() throws NoContactsFoundException{
+    public Collection<IContact> getContacts() throws NoContactsFoundException {
 
         ArrayList<IContact> newContactList = new ArrayList<>();
         Collection<Contact> oldContactList = connectionService.getContacts();
 
-
-        for(Contact contact : oldContactList) {
-
-            dhbw.smartmoderation.data.model.Contact newContact = new  dhbw.smartmoderation.data.model.Contact(contact);
+        for (Contact contact : oldContactList) {
+            dhbw.smartmoderation.data.model.Contact newContact = new dhbw.smartmoderation.data.model.Contact(contact);
             newContactList.add(newContact);
         }
-
 
         return newContactList;
     }
@@ -103,19 +98,13 @@ public class CreateGroupController extends SmartModerationController {
     public void createGroup(String name, Collection<IContact> contacts) throws CantCreateGroupException {
 
         ArrayList<Contact> newContactList = new ArrayList<>();
-
         ArrayList<Ghost> ghostList = new ArrayList<>();
 
-        for(IContact contact : contacts) {
-
-            if (contact instanceof  dhbw.smartmoderation.data.model.Contact) {
-
-                newContactList.add(((dhbw.smartmoderation.data.model.Contact)contact).getBriarContact());
-            }
-
-            else {
-
-                ghostList.add((Ghost)contact);
+        for (IContact contact : contacts) {
+            if (contact instanceof dhbw.smartmoderation.data.model.Contact) {
+                newContactList.add(((dhbw.smartmoderation.data.model.Contact) contact).getBriarContact());
+            } else {
+                ghostList.add((Ghost) contact);
             }
         }
 
@@ -132,8 +121,7 @@ public class CreateGroupController extends SmartModerationController {
 
         List<ConsensusLevel> consensusLevels = new ArrayList<>();
 
-        for(ConsensusLevel consensusLevel : createStandardConsensusLevels()) {
-
+        for (ConsensusLevel consensusLevel : createStandardConsensusLevels()) {
             consensusLevel.setGroupSettings(groupSettings);
             dataService.mergeConsensusLevel(consensusLevel);
             consensusLevels.add(consensusLevel);
@@ -141,15 +129,13 @@ public class CreateGroupController extends SmartModerationController {
 
         List<Member> members = new ArrayList<>();
 
-        for(GroupMember groupMember : groupMembers) {
-
+        for (GroupMember groupMember : groupMembers) {
             Member member = new Member(groupMember.getAuthor());
             member.setName(groupMember.getAuthor().getName());
             members.add(member);
             dataService.saveMember(member);
 
-            if(groupMember.getAuthor().getId().equals(connectionService.getLocalAuthor().getId())) {
-
+            if (groupMember.getAuthor().getId().equals(connectionService.getLocalAuthor().getId())) {
                 MemberGroupRelation memberGroupRelation = group.addMember(member, Role.MODERATOR);
                 dataService.saveMemberGroupRelation(memberGroupRelation);
             }
@@ -158,8 +144,7 @@ public class CreateGroupController extends SmartModerationController {
             dataService.saveMemberGroupRelation(memberGroupRelation);
         }
 
-        for(Ghost ghost : ghostList) {
-
+        for (Ghost ghost : ghostList) {
             Member member = new Member(ghost);
             members.add(member);
             dataService.saveMember(member);

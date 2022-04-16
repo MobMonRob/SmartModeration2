@@ -86,19 +86,16 @@ public class ContactExchangeViewModel extends AndroidViewModel {
     @UiThread
     @Nullable
     Author getRemoteAuthor() {
-
         return remoteAuthor;
     }
 
     @UiThread
     @Nullable
     Author getDuplicateAuthor() {
-
         return duplicateAuthor;
     }
 
     LiveData<Boolean> getSucceeded() {
-
         return succeeded;
     }
 }

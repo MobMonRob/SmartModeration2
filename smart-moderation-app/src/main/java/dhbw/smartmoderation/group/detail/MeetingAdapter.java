@@ -37,7 +37,7 @@ public class MeetingAdapter extends RecyclerView.Adapter<MeetingAdapter.MeetingV
     private Context context;
     private OnMeetingListener onMeetingListener;
 
-    public MeetingAdapter(Context context, Collection<Meeting> meetings, OnMeetingListener onMeetingListener){
+    public MeetingAdapter(Context context, Collection<Meeting> meetings, OnMeetingListener onMeetingListener) {
         super();
         this.context = context;
         updateMeetings(meetings);
@@ -49,27 +49,16 @@ public class MeetingAdapter extends RecyclerView.Adapter<MeetingAdapter.MeetingV
         this.meetings.addAll(meetings);
 
         Collections.sort(this.meetings, ((o1, o2) -> {
-
-            if(o1.getDate() < o2.getDate()) {
+            if (o1.getDate() < o2.getDate())
                 return -1;
-            }
-
-            else if(o1.getDate() > o2.getDate()) {
+            else if (o1.getDate() > o2.getDate())
                 return 1;
-            }
-
-            else if(o1.getDate() == o2.getDate() && o1.getStartTime() < o2.getStartTime()) {
+            else if (o1.getDate() == o2.getDate() && o1.getStartTime() < o2.getStartTime())
                 return -1;
-            }
-
-            else if(o1.getDate() == o2.getDate() && o1.getStartTime() > o2.getStartTime()) {
+            else if (o1.getDate() == o2.getDate() && o1.getStartTime() > o2.getStartTime())
                 return 1;
-
-            }
             return 0;
         }));
-
-
         notifyDataSetChanged();
     }
 
@@ -99,8 +88,8 @@ public class MeetingAdapter extends RecyclerView.Adapter<MeetingAdapter.MeetingV
 
     @Override
     public void onItemMove(int fromPosition, int toPosition) {
-        Collections.swap(meetings,fromPosition,toPosition);
-        notifyItemMoved(fromPosition,toPosition);
+        Collections.swap(meetings, fromPosition, toPosition);
+        notifyItemMoved(fromPosition, toPosition);
     }
 
     @Override
@@ -110,19 +99,15 @@ public class MeetingAdapter extends RecyclerView.Adapter<MeetingAdapter.MeetingV
         builder.setMessage(context.getString(R.string.meeting_reaffirmation, meetings.get(position).getCause()));
         builder.setCancelable(false);
         builder.setNegativeButton(context.getString(R.string.yes), ((dialog, which) -> {
-
             Long meetingId = meetings.get(position).getMeetingId();
             meetings.remove(position);
             notifyItemRemoved(position);
             onMeetingListener.onMeetingDismiss(meetingId);
-
         }));
 
         builder.setPositiveButton(context.getString(R.string.no), ((dialog, which) -> {
-
             dialog.cancel();
-            ((DetailGroupActivity)context).reloadMeetingItemTouchHelper();
-
+            ((DetailGroupActivity) context).reloadMeetingItemTouchHelper();
         }));
 
         AlertDialog alertDialog = builder.create();
@@ -142,7 +127,7 @@ public class MeetingAdapter extends RecyclerView.Adapter<MeetingAdapter.MeetingV
 
         private OnMeetingListener listener;
 
-        public MeetingViewHolder(ConstraintLayout layout ,Context context, OnMeetingListener listener) {
+        public MeetingViewHolder(ConstraintLayout layout, Context context, OnMeetingListener listener) {
             super(layout);
             layout.setOnClickListener(this);
             this.context = context;
@@ -159,7 +144,7 @@ public class MeetingAdapter extends RecyclerView.Adapter<MeetingAdapter.MeetingV
             startDateTime.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             layout.addView(startDateTime);
 
-            isOnline= new TextView(context);
+            isOnline = new TextView(context);
             isOnline.setId(View.generateViewId());
             isOnline.setTypeface(isOnline.getTypeface(), Typeface.BOLD);
             isOnline.setText(this.context.getString(R.string.online));
@@ -170,7 +155,6 @@ public class MeetingAdapter extends RecyclerView.Adapter<MeetingAdapter.MeetingV
             layout.addView(isOnline);
             isOnline.setVisibility(View.GONE);
 
-
             ConstraintSet meetingNameConstraintSet = new ConstraintSet();
             meetingNameConstraintSet.clone(layout);
             meetingNameConstraintSet.connect(name.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, 20);
@@ -180,16 +164,16 @@ public class MeetingAdapter extends RecyclerView.Adapter<MeetingAdapter.MeetingV
 
             ConstraintSet meetingDateTimeConstraintSet = new ConstraintSet();
             meetingDateTimeConstraintSet.clone(layout);
-            meetingDateTimeConstraintSet.connect(startDateTime.getId(),ConstraintSet.TOP,ConstraintSet.PARENT_ID,ConstraintSet.TOP, 20);
-            meetingDateTimeConstraintSet.connect(startDateTime.getId(),ConstraintSet.LEFT, name.getId(),ConstraintSet.RIGHT, 40);
-            meetingDateTimeConstraintSet.connect(startDateTime.getId(),ConstraintSet.BOTTOM,ConstraintSet.PARENT_ID,ConstraintSet.BOTTOM, 20);
+            meetingDateTimeConstraintSet.connect(startDateTime.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, 20);
+            meetingDateTimeConstraintSet.connect(startDateTime.getId(), ConstraintSet.LEFT, name.getId(), ConstraintSet.RIGHT, 40);
+            meetingDateTimeConstraintSet.connect(startDateTime.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, 20);
             meetingDateTimeConstraintSet.applyTo(layout);
 
             ConstraintSet meetingIsOnlineConstraintSet = new ConstraintSet();
             meetingIsOnlineConstraintSet.clone(layout);
-            meetingIsOnlineConstraintSet.connect(isOnline.getId(),ConstraintSet.TOP,ConstraintSet.PARENT_ID,ConstraintSet.TOP,20);
-            meetingIsOnlineConstraintSet.connect(isOnline.getId(),ConstraintSet.RIGHT,ConstraintSet.PARENT_ID,ConstraintSet.RIGHT,20);
-            meetingIsOnlineConstraintSet.connect(isOnline.getId(),ConstraintSet.BOTTOM,ConstraintSet.PARENT_ID,ConstraintSet.BOTTOM,20);
+            meetingIsOnlineConstraintSet.connect(isOnline.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, 20);
+            meetingIsOnlineConstraintSet.connect(isOnline.getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, 20);
+            meetingIsOnlineConstraintSet.connect(isOnline.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, 20);
             meetingIsOnlineConstraintSet.applyTo(layout);
         }
 
@@ -199,26 +183,26 @@ public class MeetingAdapter extends RecyclerView.Adapter<MeetingAdapter.MeetingV
             listener.onMeetingClick(this.meeting.getMeetingId());
         }
 
-        public void setMeeting(Meeting meeting){
+        public void setMeeting(Meeting meeting) {
             this.meeting = meeting;
             updateName();
             updateStartDateTime();
             updateIsOnline();
         }
 
-        private void updateName(){
+        private void updateName() {
             name.setText(meeting.getCause());
         }
 
-        private void updateStartDateTime(){
+        private void updateStartDateTime() {
             String timeString = this.meeting.getDateAsString() + " " + Util.convertMilliSecondsToTimeString(this.meeting.getStartTime()) + " Uhr";
             startDateTime.setText(timeString);
         }
 
-        private void updateIsOnline(){
-            if (meeting.getOnline()){
+        private void updateIsOnline() {
+            if (meeting.getOnline()) {
                 isOnline.setVisibility(View.VISIBLE);
-            }else{
+            } else {
                 isOnline.setVisibility(View.GONE);
             }
         }

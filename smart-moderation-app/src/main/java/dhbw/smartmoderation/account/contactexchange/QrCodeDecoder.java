@@ -26,13 +26,9 @@ import java.util.logging.Logger;
 public class QrCodeDecoder implements PreviewConsumer, Camera.PreviewCallback {
 
     private static final Logger LOG = Logger.getLogger(QrCodeDecoder.class.getName());
-
     private final Reader reader = new QRCodeReader();
-
     private ResultCallback callback;
-
     private Camera camera = null;
-
     private int cameraIndex = 0;
 
     public QrCodeDecoder(ResultCallback callback) {
@@ -44,15 +40,11 @@ public class QrCodeDecoder implements PreviewConsumer, Camera.PreviewCallback {
         this.camera = camera;
         this.cameraIndex = cameraIndex;
         askForPreviewFrame();
-
-
     }
 
     @UiThread
     private void askForPreviewFrame() {
-        if (camera != null) {
-            camera.setOneShotPreviewCallback(this);
-        }
+        if (camera != null) camera.setOneShotPreviewCallback(this);
     }
 
 
@@ -64,36 +56,24 @@ public class QrCodeDecoder implements PreviewConsumer, Camera.PreviewCallback {
 
     @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
-        if(camera == this.camera) {
-
+        if (camera == this.camera) {
             try {
-
                 Camera.Size size = camera.getParameters().getPreviewSize();
 
-                if(data.length == size.width * size.height * 3 / 2) {
-
+                if (data.length == size.width * size.height * 3 / 2) {
                     Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
                     Camera.getCameraInfo(cameraIndex, cameraInfo);
                     new DecoderTask(data, size.width, size.height, cameraInfo.orientation).execute();
-                }
-
-                else {
-
+                } else {
                     LOG.info("Preview size does not match camera parameters");
                     askForPreviewFrame();
                 }
-
             } catch (RuntimeException e) {
-
                 LOG.log(WARNING, "Error getting camera parameters", e);
             }
-        }
-
-        else {
-
+        } else {
             LOG.info("Camera has changed, ignoring preview frame");
         }
-
     }
 
     private class DecoderTask extends AsyncTask<Void, Void, Void> {
@@ -110,21 +90,16 @@ public class QrCodeDecoder implements PreviewConsumer, Camera.PreviewCallback {
             this.orientation = orientation;
         }
 
-
         @Override
         protected Void doInBackground(Void... voids) {
             BinaryBitmap bitmap = binarize(data, width, height, orientation);
             Result result;
             try {
                 result = reader.decode(bitmap, Collections.singletonMap(DecodeHintType.CHARACTER_SET, "ISO8859_1"));
-
             } catch (ReaderException e) {
-
                 LOG.warning("Invalid preview frame");
                 return null;
-
             } finally {
-
                 reader.reset();
             }
 
@@ -140,19 +115,16 @@ public class QrCodeDecoder implements PreviewConsumer, Camera.PreviewCallback {
     }
 
     private static BinaryBitmap binarize(byte[] data, int width, int height, int orientation) {
-
         int crop = Math.min(width, height);
         int left = orientation >= 180 ? width - crop : 0;
         int top = orientation >= 180 ? height - crop : 0;
         LuminanceSource src = new PlanarYUVLuminanceSource(data, width, height, left, top, crop, crop, false);
         return new BinaryBitmap(new HybridBinarizer(src));
-
     }
 
     @NotNullByDefault
     public
     interface ResultCallback {
-
         void handleResult(Result result);
     }
 }

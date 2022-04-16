@@ -49,14 +49,11 @@ public abstract class KeyAgreementActivity extends AppCompatActivity implements 
     int REQUEST_PERMISSION_CAMERA_LOCATION = 8;
 
     private enum BluetoothDecision {
-
         UNKNOWN, NO_ADAPTER, WAITING, ACCEPTED, REFUSED
     }
 
     private enum Permission {
-
         UNKNOWN, GRANTED, SHOW_RATIONALE, PERMANENTLY_DENIED
-
     }
 
     private static final Logger LOG = Logger.getLogger(KeyAgreementActivity.class.getName());
@@ -86,10 +83,10 @@ public abstract class KeyAgreementActivity extends AppCompatActivity implements 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        ((SmartModerationApplicationImpl)getApplicationContext()).smartModerationComponent.inject(this);
+        ((SmartModerationApplicationImpl) getApplicationContext()).smartModerationComponent.inject(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fragment_container);
-        if(savedInstanceState == null) {
+        if (savedInstanceState == null) {
             showInitialFragment(IntroFragment.newInstance());
         }
 
@@ -114,10 +111,7 @@ public abstract class KeyAgreementActivity extends AppCompatActivity implements 
     protected void onDestroy() {
         super.onDestroy();
 
-        if(bluetoothReceiver != null) {
-
-            unregisterReceiver(bluetoothReceiver);
-        }
+        if (bluetoothReceiver != null) unregisterReceiver(bluetoothReceiver);
     }
 
     @Override
@@ -150,78 +144,48 @@ public abstract class KeyAgreementActivity extends AppCompatActivity implements 
     @Override
     public void onActivityResult(int request, int result, @Nullable Intent data) {
 
-        if(request == REQUEST_BLUETOOTH_DISCOVERABLE) {
-
-            if(result == RESULT_CANCELED) {
-
+        if (request == REQUEST_BLUETOOTH_DISCOVERABLE) {
+            if (result == RESULT_CANCELED) {
                 LOG.info("Bluetooth discoverability was refused");
                 bluetoothDecision = BluetoothDecision.REFUSED;
-
-            }
-
-            else {
-
+            } else {
                 LOG.info("Bluetooth discoverability was accepted");
                 bluetoothDecision = BluetoothDecision.ACCEPTED;
-
             }
-
             showQrCodeFragmentIfAllowed();
-
-        }
-
-        else super.onActivityResult(request, result, data);
-
+        } else super.onActivityResult(request, result, data);
     }
 
     public void showNextScreen() {
 
         continueClicked = true;
 
-        if(bluetoothDecision == BluetoothDecision.REFUSED) {
+        if (bluetoothDecision == BluetoothDecision.REFUSED)
             bluetoothDecision = BluetoothDecision.UNKNOWN;
-        }
 
-        if(checkPermissions()) {
-
-            showQrCodeFragmentIfAllowed();
-
-        }
-
+        if (checkPermissions()) showQrCodeFragmentIfAllowed();
     }
 
     public boolean checkPermissions() {
+        if (areEssentialPermissionsGranted()) return true;
 
-        if(areEssentialPermissionsGranted()) {
-            return true;
-        }
-
-        if(cameraPermission == Permission.PERMANENTLY_DENIED) {
+        if (cameraPermission == Permission.PERMANENTLY_DENIED) {
             showDenialDialog(getString(R.string.camera_permission_title), getString(R.string.camera_permissions_message));
             return false;
         }
 
-        if(isBluetoothSupported() && locationPermission == Permission.PERMANENTLY_DENIED) {
+        if (isBluetoothSupported() && locationPermission == Permission.PERMANENTLY_DENIED) {
             showDenialDialog(getString(R.string.camera_permission_title), getString(R.string.camera_permissions_message));
             return false;
         }
 
-       if(cameraPermission == Permission.SHOW_RATIONALE && locationPermission == Permission.SHOW_RATIONALE) {
-           showRationale(getString(R.string.camera_permission_title) + " " + getString(R.string.location_permission_title), getString(R.string.camera_permissions_message) + "\n\n" + getString(R.string.location_permissions_message) );
-
-       }
-
-        else if(cameraPermission == Permission.SHOW_RATIONALE) {
+        if (cameraPermission == Permission.SHOW_RATIONALE && locationPermission == Permission.SHOW_RATIONALE) {
+            showRationale(getString(R.string.camera_permission_title) + " " + getString(R.string.location_permission_title), getString(R.string.camera_permissions_message) + "\n\n" + getString(R.string.location_permissions_message));
+        } else if (cameraPermission == Permission.SHOW_RATIONALE) {
             showRationale(getString(R.string.camera_permission_title), getString(R.string.camera_permissions_message));
-        }
-
-        else if(locationPermission == Permission.SHOW_RATIONALE) {
+        } else if (locationPermission == Permission.SHOW_RATIONALE) {
             showRationale(getString(R.string.camera_permission_title), getString(R.string.camera_permissions_message));
-
-        }
-
-        else {
-
+        } else {
             requestPermissions();
         }
 
@@ -231,13 +195,10 @@ public abstract class KeyAgreementActivity extends AppCompatActivity implements 
     private void requestPermissions() {
         String[] permissions;
 
-        if(isBluetoothSupported()) {
-            permissions = new String[] {CAMERA, ACCESS_FINE_LOCATION};
-        }
-
-        else {
-            permissions = new String[] {CAMERA};
-
+        if (isBluetoothSupported()) {
+            permissions = new String[]{CAMERA, ACCESS_FINE_LOCATION};
+        } else {
+            permissions = new String[]{CAMERA};
         }
 
         ActivityCompat.requestPermissions(this, permissions, REQUEST_PERMISSION_CAMERA_LOCATION);
@@ -245,80 +206,56 @@ public abstract class KeyAgreementActivity extends AppCompatActivity implements 
 
     private void showQrCodeFragmentIfAllowed() {
 
-        if(isResumed && continueClicked && areEssentialPermissionsGranted()) {
-
-            if(isWifiReady() && isBluetoothReady()) {
-
+        if (isResumed && continueClicked && areEssentialPermissionsGranted()) {
+            if (isWifiReady() && isBluetoothReady()) {
                 LOG.info("Wifi and Bluetooth are ready");
                 showQrCodeFragment();
-            }
-
-            else {
-
-                if(shouldEnableWifi()) {
+            } else {
+                if (shouldEnableWifi()) {
                     LOG.info("Enabling wifi plugin");
                     hasEnabledWifi = true;
                     pluginManager.setPluginEnabled(LanTcpConstants.ID, true);
                 }
-
-                if(bluetoothDecision == BluetoothDecision.UNKNOWN) {
+                if (bluetoothDecision == BluetoothDecision.UNKNOWN) {
                     requestBluetoothDiscoverable();
-                }
+                } else if (bluetoothDecision == BluetoothDecision.REFUSED) {
 
-                else if(bluetoothDecision == BluetoothDecision.REFUSED) {
-
-                }
-
-                else if(shouldEnableBluetooth()) {
+                } else if (shouldEnableBluetooth()) {
                     LOG.info("Enabling Bluetooth plugin");
                     hasEnabledBluetooth = true;
                     pluginManager.setPluginEnabled(BluetoothConstants.ID, true);
                 }
-
             }
         }
-
     }
 
     private boolean isWifiReady() {
 
-        if(wifiPlugin == null) {
-
+        if (wifiPlugin == null) {
             return true;
         }
 
         Plugin.State state = wifiPlugin.getState();
 
         return state == Plugin.State.ACTIVE || state == Plugin.State.INACTIVE;
-
     }
 
     private boolean isBluetoothReady() {
 
-        if(!isBluetoothSupported()) {
-            return true;
+        if (!isBluetoothSupported()) return true;
 
-        }
-
-        if(bluetoothDecision == BluetoothDecision.UNKNOWN || bluetoothDecision == BluetoothDecision.WAITING || bluetoothDecision == BluetoothDecision.REFUSED) {
+        if (bluetoothDecision == BluetoothDecision.UNKNOWN || bluetoothDecision == BluetoothDecision.WAITING || bluetoothDecision == BluetoothDecision.REFUSED)
             return false;
 
-        }
-
-        if(bluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
+        if (bluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE)
             return false;
-        }
 
         return bluetoothPlugin.getState() == Plugin.State.ACTIVE;
-
     }
 
     private boolean areEssentialPermissionsGranted() {
-
         return cameraPermission == Permission.GRANTED && (Build.VERSION.SDK_INT < 23 || locationPermission == Permission.GRANTED || !isBluetoothSupported());
-
     }
-
 
     private void showQrCodeFragment() {
         continueClicked = false;
@@ -328,81 +265,59 @@ public abstract class KeyAgreementActivity extends AppCompatActivity implements 
 
         FragmentManager fragmentManager = getSupportFragmentManager();
 
-        if(fragmentManager.findFragmentByTag(KeyAgreementFragment.TAG) == null) {
+        if (fragmentManager.findFragmentByTag(KeyAgreementFragment.TAG) == null) {
             KeyAgreementFragment fragment = KeyAgreementFragment.newInstance();
             fragmentManager.beginTransaction().replace(R.id.fragmentContainer, fragment, fragment.getUniqueTag()).addToBackStack(fragment.getUniqueTag()).commit();
         }
-
     }
 
     private boolean shouldEnableWifi() {
 
-        if(hasEnabledWifi) {
+        if (hasEnabledWifi) {
             return false;
-
         }
 
-        if(wifiPlugin == null) {
+        if (wifiPlugin == null) {
             return false;
-
         }
 
         Plugin.State state = wifiPlugin.getState();
         return state == Plugin.State.STARTING_STOPPING || state == Plugin.State.DISABLED;
-
     }
 
     private boolean shouldEnableBluetooth() {
 
-        if(bluetoothDecision != BluetoothDecision.ACCEPTED) {
-            return false;
-        }
+        if (bluetoothDecision != BluetoothDecision.ACCEPTED) return false;
 
-        if(hasEnabledBluetooth) {
-            return false;
-        }
+        if (hasEnabledBluetooth) return false;
 
-        if(!isBluetoothSupported()) {
-            return false;
-        }
+        if (!isBluetoothSupported()) return false;
 
         Plugin.State state = bluetoothPlugin.getState();
         return state == Plugin.State.STARTING_STOPPING || state == Plugin.State.DISABLED;
-
     }
 
     private void requestBluetoothDiscoverable() {
 
-        if(!isBluetoothSupported()) {
+        if (!isBluetoothSupported()) {
             bluetoothDecision = BluetoothDecision.NO_ADAPTER;
             showQrCodeFragmentIfAllowed();
-        }
-
-        else {
-
+        } else {
             Intent i = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
 
-            if(i.resolveActivity(getPackageManager()) != null) {
-
+            if (i.resolveActivity(getPackageManager()) != null) {
                 LOG.info("Asking for Bluetooth discoverability");
                 bluetoothDecision = BluetoothDecision.WAITING;
                 startActivityForResult(i, REQUEST_BLUETOOTH_DISCOVERABLE);
-            }
-
-            else {
-
+            } else {
                 bluetoothDecision = BluetoothDecision.NO_ADAPTER;
                 showQrCodeFragmentIfAllowed();
             }
-
         }
-
     }
 
     private boolean isBluetoothSupported() {
-
         return bluetoothAdapter != null && bluetoothPlugin != null;
-
     }
 
     private void showDenialDialog(String title, String body) {
@@ -414,7 +329,6 @@ public abstract class KeyAgreementActivity extends AppCompatActivity implements 
         builder.show();
     }
 
-
     private void goToSettings() {
         Intent i = new Intent();
         i.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
@@ -422,7 +336,6 @@ public abstract class KeyAgreementActivity extends AppCompatActivity implements 
         i.setData(Uri.parse("package:" + APPLICATION_ID));
         i.addFlags(FLAG_ACTIVITY_NEW_TASK);
         startActivity(i);
-
     }
 
     private void showRationale(String title, String body) {
@@ -433,94 +346,66 @@ public abstract class KeyAgreementActivity extends AppCompatActivity implements 
         builder.show();
     }
 
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if(requestCode != REQUEST_PERMISSION_CAMERA_LOCATION) {
-            throw new AssertionError();
-        }
+        if (requestCode != REQUEST_PERMISSION_CAMERA_LOCATION) throw new AssertionError();
 
-        if(gotPermission(CAMERA, permissions, grantResults)) {
+        if (gotPermission(CAMERA, permissions, grantResults)) {
             cameraPermission = Permission.GRANTED;
-        }
-
-        else if(shouldShowRationale(CAMERA)) {
+        } else if (shouldShowRationale(CAMERA)) {
             cameraPermission = Permission.SHOW_RATIONALE;
-        }
-
-        else {
+        } else {
             cameraPermission = Permission.PERMANENTLY_DENIED;
         }
 
-        if(isBluetoothSupported()) {
-
-            if(gotPermission(ACCESS_FINE_LOCATION, permissions, grantResults)) {
+        if (isBluetoothSupported()) {
+            if (gotPermission(ACCESS_FINE_LOCATION, permissions, grantResults)) {
                 locationPermission = Permission.GRANTED;
-            }
-
-            else if(shouldShowRationale(ACCESS_FINE_LOCATION)) {
+            } else if (shouldShowRationale(ACCESS_FINE_LOCATION)) {
                 locationPermission = Permission.SHOW_RATIONALE;
-            }
-
-            else {
+            } else {
                 locationPermission = Permission.PERMANENTLY_DENIED;
             }
         }
 
-        if(checkPermissions()) {
-
+        if (checkPermissions()) {
             showQrCodeFragmentIfAllowed();
         }
     }
 
-
-
     @Override
     public void eventOccurred(Event e) {
 
-        if(e instanceof TransportStateEvent) {
+        if (e instanceof TransportStateEvent) {
+            TransportStateEvent t = (TransportStateEvent) e;
 
-            TransportStateEvent t = (TransportStateEvent)e;
-
-            if(t.getTransportId().equals(BluetoothConstants.ID)) {
-
-                if(LOG.isLoggable(INFO)) {
+            if (t.getTransportId().equals(BluetoothConstants.ID)) {
+                if (LOG.isLoggable(INFO)) {
                     LOG.info("Bluetooth state changed to " + t.getState());
                 }
-
                 showQrCodeFragmentIfAllowed();
             }
-
         }
-
     }
 
     private boolean gotPermission(String permission, String[] permissions, int[] grantResults) {
 
-        for(int i = 0; i < permissions.length; i++) {
-
-            if(permission.equals(permissions[i])) {
+        for (int i = 0; i < permissions.length; i++) {
+            if (permission.equals(permissions[i])) {
                 return grantResults[i] == PERMISSION_GRANTED;
             }
-
         }
-
         return false;
-
     }
 
     private boolean shouldShowRationale(String permission) {
-
-    return ActivityCompat.shouldShowRequestPermissionRationale(this, permission);
-
+        return ActivityCompat.shouldShowRequestPermissionRationale(this, permission);
     }
 
 
-
     private class BluetoothStateReceiver extends BroadcastReceiver {
-
         @Override
         public void onReceive(Context context, Intent intent) {
             LOG.info("Bluetooth scan mode changed");

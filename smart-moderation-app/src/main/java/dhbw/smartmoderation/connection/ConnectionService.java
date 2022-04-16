@@ -103,9 +103,8 @@ public class ConnectionService {
     private final MessagingManager messagingManager;
     private final EventBus eventBus;
     private final Clock clock;
-    private LocalAuthor localAuthor;
-
     private final GroupInvitationVisitor groupInvitationVisitor;
+    private LocalAuthor localAuthor;
     private ContactExchangeCallback contactExchangeCallback;
     private KeyAgreementTask keyAgreementTask;
 
@@ -159,7 +158,6 @@ public class ConnectionService {
             e.printStackTrace();
         }
     }
-
 
     /**
      * Checks whether a Briar-account for the Smart Moderation App exists.

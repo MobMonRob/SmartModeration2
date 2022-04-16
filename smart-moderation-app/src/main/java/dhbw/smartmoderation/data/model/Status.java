@@ -16,8 +16,6 @@ public enum Status {
         this.number = number;
     }
 
-
-
     public String getTitle() { return this.title; }
 
     public int getNumber() { return this.number; }

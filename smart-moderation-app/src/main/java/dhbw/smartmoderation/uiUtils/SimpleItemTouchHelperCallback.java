@@ -9,11 +9,13 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.view.View;
+
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
+
 import dhbw.smartmoderation.R;
 
 public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
@@ -41,26 +43,17 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
     }
 
     private int getBackgroundColor(int firstColor, int secondColor, float dX, View viewItem) {
-
-        if(willActionBeTriggered(dX, viewItem.getWidth())) {
-
+        if (willActionBeTriggered(dX, viewItem.getWidth()))
             return ContextCompat.getColor(viewItem.getContext(), firstColor);
-        }
-
-        else {
-
+        else
             return ContextCompat.getColor(viewItem.getContext(), secondColor);
-        }
-
     }
 
     private boolean willActionBeTriggered(float dX, int viewWidth) {
-
-        return Math.abs(dX) >= viewWidth/500;
+        return Math.abs(dX) >= viewWidth / 500;
     }
 
     private void drawBackground(Canvas canvas, View viewItem, float dX, int color) {
-
         Paint backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         backgroundPaint.setColor(color);
         RectF backgroundRectangle = getBackgroundRectangle(viewItem, dX);
@@ -68,45 +61,31 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
     }
 
     private RectF getBackgroundRectangle(View viewItem, float dX) {
-
-        if(this.swipeFlag == ItemTouchHelper.START) {
-
+        if (this.swipeFlag == ItemTouchHelper.START)
             return new RectF(new Float(viewItem.getRight()) + dX, new Float(viewItem.getTop()), new Float(viewItem.getRight()), new Float(viewItem.getBottom()));
-        }
-
         return new RectF(new Float(viewItem.getLeft()), new Float(viewItem.getTop()), new Float(viewItem.getLeft() + dX), new Float(viewItem.getBottom()));
-
     }
 
     private int calculateTopMargin(Drawable icon, View viewItem) {
-
-        return (viewItem.getHeight() - icon.getIntrinsicHeight())/2;
+        return (viewItem.getHeight() - icon.getIntrinsicHeight()) / 2;
     }
 
     private Rect getStartContainerRectangle(View viewItem, int iconWidth, int topMargin, int sideOffset, float dx) {
-
-        if(this.swipeFlag == ItemTouchHelper.START) {
-
-            int leftBound = viewItem.getRight() + (int)dx + sideOffset;
-            int rightBound = viewItem.getRight() + (int)dx + sideOffset + iconWidth;
+        if (this.swipeFlag == ItemTouchHelper.START) {
+            int leftBound = viewItem.getRight() + (int) dx + sideOffset;
+            int rightBound = viewItem.getRight() + (int) dx + sideOffset + iconWidth;
             int topBound = viewItem.getTop() + topMargin;
             int bottomBound = viewItem.getBottom() - topMargin;
-
             return new Rect(leftBound, topBound, rightBound, bottomBound);
-
         }
-
-        int leftBound = viewItem.getLeft() + (int)dx - sideOffset - iconWidth;
-        int rightBound = viewItem.getLeft() + (int)dx - sideOffset;
+        int leftBound = viewItem.getLeft() + (int) dx - sideOffset - iconWidth;
+        int rightBound = viewItem.getLeft() + (int) dx - sideOffset;
         int topBound = viewItem.getTop() + topMargin;
         int bottomBound = viewItem.getBottom() - topMargin;
-
         return new Rect(leftBound, topBound, rightBound, bottomBound);
-
     }
 
     private void drawIcon(Canvas canvas, View viewItem, float dX, Drawable icon) {
-
         int topMargin = calculateTopMargin(icon, viewItem);
         icon.setBounds(getStartContainerRectangle(viewItem, icon.getIntrinsicWidth(), topMargin, 50, dX));
         icon.draw(canvas);
@@ -134,7 +113,6 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     @Override
     public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
-
         int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
         int swipeFlags = this.swipeFlag;
         return makeMovementFlags(dragFlags, swipeFlags);
@@ -142,53 +120,41 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     @Override
     public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-
         itemTouchHelperAdapter.onItemMove(viewHolder.getAdapterPosition(), target.getAdapterPosition());
         return true;
     }
 
     @Override
     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-
         itemTouchHelperAdapter.onItemDismiss(viewHolder.getAdapterPosition());
 
     }
 
     @Override
     public void onChildDraw(Canvas canvas, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
-
-        if(actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
-
+        if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
             View viewItem = viewHolder.itemView;
             paintCommandToStart(canvas, viewItem, this.icon, dX);
         }
-
         super.onChildDraw(canvas, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
-
     }
 
     @Override
     public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
-
-        if(actionState != ItemTouchHelper.ACTION_STATE_IDLE) {
-
-            if(viewHolder instanceof ItemTouchHelperViewHolder) {
-
-                ItemTouchHelperViewHolder itemTouchHelperViewHolder = (ItemTouchHelperViewHolder)viewHolder;
+        if (actionState != ItemTouchHelper.ACTION_STATE_IDLE) {
+            if (viewHolder instanceof ItemTouchHelperViewHolder) {
+                ItemTouchHelperViewHolder itemTouchHelperViewHolder = (ItemTouchHelperViewHolder) viewHolder;
                 itemTouchHelperViewHolder.onItemSelected();
             }
         }
-
         super.onSelectedChanged(viewHolder, actionState);
     }
 
     @Override
     public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-
         super.clearView(recyclerView, viewHolder);
-
-        if(viewHolder instanceof  ItemTouchHelperViewHolder) {
-            ItemTouchHelperViewHolder itemTouchHelperViewHolder = (ItemTouchHelperViewHolder)viewHolder;
+        if (viewHolder instanceof ItemTouchHelperViewHolder) {
+            ItemTouchHelperViewHolder itemTouchHelperViewHolder = (ItemTouchHelperViewHolder) viewHolder;
             itemTouchHelperViewHolder.onItemClear();
         }
     }

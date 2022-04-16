@@ -25,9 +25,7 @@ public class ConsensusProposalDetail extends UpdateableExceptionHandlingActivity
     private TextView notesText;
     private ConsensusProposalDetailController controller;
     private SwipeRefreshLayout pullToRefresh;
-
     private Poll poll;
-
     private Long pollId;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -36,33 +34,26 @@ public class ConsensusProposalDetail extends UpdateableExceptionHandlingActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_consensus_proposal_detail);
         setTitle(getString(R.string.ConsensusProposalDetail_title));
-
-
         pullToRefresh = findViewById(R.id.pullToRefresh);
+
         pullToRefresh.setOnRefreshListener(() -> {
-
             updateUI();
-
         });
 
         Intent intent = getIntent();
         pollId = intent.getLongExtra("pollId", 0);
-
         this.titleText = findViewById(R.id.titleText);
         this.titleText.setJustificationMode(LineBreaker.JUSTIFICATION_MODE_INTER_WORD);
         this.consensusProposalText = findViewById(R.id.consensusProposalText);
         this.consensusProposalText.setJustificationMode(LineBreaker.JUSTIFICATION_MODE_INTER_WORD);
         this.notesText = findViewById(R.id.notesText);
         this.notesText.setJustificationMode(LineBreaker.JUSTIFICATION_MODE_INTER_WORD);
-
         this.controller = new ConsensusProposalDetailController(this.pollId);
         this.poll = this.controller.getPoll();
-
         initializeTextViews();
     }
 
     public void initializeTextViews() {
-
         this.titleText.setText(this.poll.getTitle());
         this.consensusProposalText.setText(this.poll.getConsensusProposal());
         this.notesText.setText(this.poll.getNote());
@@ -70,7 +61,6 @@ public class ConsensusProposalDetail extends UpdateableExceptionHandlingActivity
 
     @Override
     protected void updateUI() {
-
         ConsensusProposalDetailAsyncTask consensusProposalDetailAsyncTask = new ConsensusProposalDetailAsyncTask();
         consensusProposalDetailAsyncTask.execute();
     }
@@ -82,12 +72,9 @@ public class ConsensusProposalDetail extends UpdateableExceptionHandlingActivity
         return dataTypes;
     }
 
-
     public class ConsensusProposalDetailAsyncTask extends AsyncTask<Object, Exception, String> {
-
         @Override
         protected String doInBackground(Object... objects) {
-
             controller.update();
             poll = controller.getPoll();
             return null;
@@ -100,6 +87,4 @@ public class ConsensusProposalDetail extends UpdateableExceptionHandlingActivity
             pullToRefresh.setRefreshing(false);
         }
     }
-
-
 }

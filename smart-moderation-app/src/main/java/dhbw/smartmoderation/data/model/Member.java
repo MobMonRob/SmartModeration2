@@ -48,35 +48,27 @@ public class Member extends ModelClass {
 
 	@Keep
 	public Member() {
-
 		this.memberId = ((SmartModerationApplicationImpl)SmartModerationApplicationImpl.getApp()).getUniqueId();
 	}
 
 	public Member(IContact contact){
-
 		this.memberId  = contact.getId();
 
 		if(contact instanceof Ghost) {
-
 			isGhost = true;
 			name  =((Ghost)contact).getName();
 		}
 	}
 
    public Member(Author author) {
-
 		this.memberId = Util.bytesToLong(author.getId().getBytes());
-
     }
 
     public Member(AuthorId authorId) {
-
 		this.memberId = Util.bytesToLong(authorId.getBytes());
-
     }
 
 	public Member(Long memberId) {
-
 		this.memberId = memberId;
 	}
 
@@ -117,13 +109,9 @@ public class Member extends ModelClass {
 		MemberMeetingRelationDao memberMeetingRelationDao = daoSession.getMemberMeetingRelationDao();
 
 		for(MemberMeetingRelation memberMeetingRelation : memberMeetingRelationDao.loadAll()) {
-
-			if(this.memberId.equals(memberMeetingRelation.getMemberId()) && meeting.getMeetingId().equals(memberMeetingRelation.getMeetingId())) {
-
+			if(this.memberId.equals(memberMeetingRelation.getMemberId()) && meeting.getMeetingId().equals(memberMeetingRelation.getMeetingId()))
 				return Attendance.valueOf(memberMeetingRelation.getAttendance());
-			}
 		}
-
 		return null;
 	}
 
@@ -133,47 +121,32 @@ public class Member extends ModelClass {
 		MemberMeetingRelationDao memberMeetingRelationDao = daoSession.getMemberMeetingRelationDao();
 
 		for(MemberMeetingRelation memberMeetingRelation : memberMeetingRelationDao.loadAll()) {
-
 			if(this.memberId.equals(memberMeetingRelation.getMemberId()) && meeting.getMeetingId().equals(memberMeetingRelation.getMeetingId())) {
-
 				memberMeetingRelation.setAttendance(attendance.name());
 				return memberMeetingRelation;
 			}
 		}
-
 		return null;
-
 	}
 
 	public Collection<Role> getRoles(Group group) {
 
 		Collection<Role> roles = new ArrayList<>();
-
-
 		DaoSession daoSession = ((SmartModerationApplicationImpl)SmartModerationApplicationImpl.getApp()).getDaoSession();
 		MemberGroupRelationDao memberGroupRelationDao = daoSession.getMemberGroupRelationDao();
 
 		for (MemberGroupRelation memberGroupRelation : memberGroupRelationDao.loadAll()) {
-
 			if(this.memberId.equals(memberGroupRelation.getMemberId()) && group.getGroupId().equals(memberGroupRelation.getGroupId())) {
 				roles.add(Role.valueOf(memberGroupRelation.getRole()));
-
 			}
 		}
 
 		return roles;
-
 	}
 
 	public boolean hasPermissionToVote(Group group) {
-
 		Collection<Role> roles = getRoles(group);
-
-		if (roles.contains(Role.SPECTATOR)) {
-			return false;
-		}
-
-		return true;
+		return !roles.contains(Role.SPECTATOR);
 	}
 
 	public boolean isOnline() {
@@ -335,5 +308,4 @@ public class Member extends ModelClass {
 		this.daoSession = daoSession;
 		myDao = daoSession != null ? daoSession.getMemberDao() : null;
 	}
-
 }

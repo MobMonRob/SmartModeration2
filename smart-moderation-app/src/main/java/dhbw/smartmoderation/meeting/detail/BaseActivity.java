@@ -36,7 +36,6 @@ public class BaseActivity extends UpdateableExceptionHandlingActivity {
     private Fragment moderationCardsFragment = new ModerationCardsFragment();
     Fragment selectedFragment;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,36 +65,28 @@ public class BaseActivity extends UpdateableExceptionHandlingActivity {
     protected void onResume() {
         super.onResume();
 
-        if(selectedFragment == meetingDetailFragment) {
-
+        if (selectedFragment == meetingDetailFragment)
             getSupportFragmentManager().beginTransaction().remove(meetingDetailFragment).commit();
-        }
 
         meetingDetailFragment = new MeetingDetailFragment();
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, meetingDetailFragment, "1").hide(meetingDetailFragment).commit();
 
-        if(selectedFragment == null) {
-
+        if (selectedFragment == null)
             selectedFragment = meetingDetailFragment;
-        }
 
-        if(selectedFragment == meetingDetailFragment) {
-
+        if (selectedFragment == meetingDetailFragment)
             getSupportFragmentManager().beginTransaction().show(meetingDetailFragment).commit();
-        }
+
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navigationListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-            if(selectedFragment == meetingDetailFragment) {
+            if (selectedFragment == meetingDetailFragment)
+                ((MeetingDetailFragment) meetingDetailFragment).endProgressBarThread();
 
-                ((MeetingDetailFragment)meetingDetailFragment).endProgressBarThread();
-
-            }
-            switch(item.getItemId()) {
-
+            switch (item.getItemId()) {
                 case R.id.meetingNavigation:
                     MeetingDetailFragment newMeetingDetailFragment = new MeetingDetailFragment();
                     getSupportFragmentManager().beginTransaction().remove(meetingDetailFragment).commit();
@@ -106,15 +97,15 @@ public class BaseActivity extends UpdateableExceptionHandlingActivity {
                     return true;
                 case R.id.consensNavigation:
                     getSupportFragmentManager().beginTransaction().hide(selectedFragment).show(consensusProposalOverviewFragment).commit();
-                    ((ConsensusProposalOverviewFragment)consensusProposalOverviewFragment).update();
+                    ((ConsensusProposalOverviewFragment) consensusProposalOverviewFragment).update();
                     selectedFragment = consensusProposalOverviewFragment;
-                    setTitle(((ConsensusProposalOverviewFragment)consensusProposalOverviewFragment).getTitle());
+                    setTitle(((ConsensusProposalOverviewFragment) consensusProposalOverviewFragment).getTitle());
                     return true;
                 case R.id.speechNavigation:
                     getSupportFragmentManager().beginTransaction().hide(selectedFragment).show(listOfSpeakersFragment).commit();
-                    ((ListOfSpeakersFragment)listOfSpeakersFragment).update();
+                    ((ListOfSpeakersFragment) listOfSpeakersFragment).update();
                     selectedFragment = listOfSpeakersFragment;
-                    setTitle(((ListOfSpeakersFragment)listOfSpeakersFragment).getTitle());
+                    setTitle(((ListOfSpeakersFragment) listOfSpeakersFragment).getTitle());
                     return true;
                 case R.id.speechTimesNavigation:
                     CumulativeSpeakingTimesFragment newCumulativeSpeakingTimesFragment = new CumulativeSpeakingTimesFragment();
@@ -132,7 +123,6 @@ public class BaseActivity extends UpdateableExceptionHandlingActivity {
                     getSupportFragmentManager().beginTransaction().hide(selectedFragment).show(moderationCardsFragment).commit();
                     selectedFragment = moderationCardsFragment;
                     return true;
-
             }
             return false;
         }
@@ -144,83 +134,52 @@ public class BaseActivity extends UpdateableExceptionHandlingActivity {
     }
 
     public ListOfSpeakersController getListOfSpeakersController() {
-
         return this.listOfSpeakersController;
     }
 
     public MeetingDetailController getMeetingDetailController() {
-
         return this.meetingDetailController;
     }
 
     @Override
     public Collection<SynchronizableDataType> getSynchronizableDataTypes() {
-
         Collection<SynchronizableDataType> dataTypes = new ArrayList<>();
 
-        if(selectedFragment == consensusProposalOverviewFragment){
+        if (selectedFragment == consensusProposalOverviewFragment) {
             dataTypes.add(SynchronizableDataType.POLL);
             dataTypes.add(SynchronizableDataType.VOICE);
             return dataTypes;
-
-        }
-
-        else if(selectedFragment == meetingDetailFragment){
-
+        } else if (selectedFragment == meetingDetailFragment) {
             dataTypes.add(SynchronizableDataType.MEETING);
             dataTypes.add(SynchronizableDataType.MEMBER);
             dataTypes.add(SynchronizableDataType.TOPIC);
-
-        }
-
-        else if (selectedFragment == listOfSpeakersFragment){
-
+        } else if (selectedFragment == listOfSpeakersFragment) {
             dataTypes.add(SynchronizableDataType.PARTICIPATION);
-
-        }
-
-        else if (selectedFragment == cumulativeSpeakingTimesFragment){
-
+        } else if (selectedFragment == cumulativeSpeakingTimesFragment) {
             dataTypes.add(SynchronizableDataType.PARTICIPATION);
         }
-
         return dataTypes;
     }
 
     @Override
     protected void updateUI() {
-
-        if(selectedFragment == consensusProposalOverviewFragment){
-
-            ((ConsensusProposalOverviewFragment)consensusProposalOverviewFragment).update();
-
-        }
-
-        else if(selectedFragment == meetingDetailFragment){
-
+        if (selectedFragment == consensusProposalOverviewFragment) {
+            ((ConsensusProposalOverviewFragment) consensusProposalOverviewFragment).update();
+        } else if (selectedFragment == meetingDetailFragment) {
             MeetingDetailFragment newMeetingDetailFragment = new MeetingDetailFragment();
             getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, newMeetingDetailFragment, "10").commit();
             getSupportFragmentManager().beginTransaction().hide(selectedFragment).show(newMeetingDetailFragment).commit();
             getSupportFragmentManager().beginTransaction().remove(meetingDetailFragment).commit();
             meetingDetailFragment = newMeetingDetailFragment;
             selectedFragment = meetingDetailFragment;
-
-        }
-
-        else if (selectedFragment == listOfSpeakersFragment) {
-
-            ((ListOfSpeakersFragment)listOfSpeakersFragment).update();
-
-        }
-
-        else if (selectedFragment == cumulativeSpeakingTimesFragment){
-
-            ((CumulativeSpeakingTimesFragment)cumulativeSpeakingTimesFragment).update();
+        } else if (selectedFragment == listOfSpeakersFragment) {
+            ((ListOfSpeakersFragment) listOfSpeakersFragment).update();
+        } else if (selectedFragment == cumulativeSpeakingTimesFragment) {
+            ((CumulativeSpeakingTimesFragment) cumulativeSpeakingTimesFragment).update();
         }
     }
 
     public SwipeRefreshLayout getPullToRefresh() {
-
         return pullToRefresh;
     }
 

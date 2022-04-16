@@ -28,7 +28,7 @@ import dhbw.smartmoderation.data.model.Participation;
 import dhbw.smartmoderation.meeting.detail.BaseActivity;
 import dhbw.smartmoderation.util.Util;
 
-public class  CumulativeSpeakingTimesFragment extends Fragment {
+public class CumulativeSpeakingTimesFragment extends Fragment {
 
     private LinearLayout tableContainer;
     private TableLayout speakingTimesTable;
@@ -36,14 +36,14 @@ public class  CumulativeSpeakingTimesFragment extends Fragment {
     private ListOfSpeakersController controller;
     private View view;
 
-    public String getTitle(){
+    public String getTitle() {
         return getString(R.string.cumulativeSpeakingTimesFragment_title);
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.controller = ((BaseActivity)getActivity()).getListOfSpeakersController();
+        this.controller = ((BaseActivity) getActivity()).getListOfSpeakersController();
     }
 
     @Nullable
@@ -90,7 +90,7 @@ public class  CumulativeSpeakingTimesFragment extends Fragment {
         contribution.setGravity(Gravity.CENTER);
 
         LayerDrawable layerDrawable = (LayerDrawable) ContextCompat.getDrawable(getActivity(), R.drawable.rectangle_trb_borders);
-        GradientDrawable shape = (GradientDrawable)layerDrawable.findDrawableByLayerId(R.id.trb_drawable);
+        GradientDrawable shape = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.trb_drawable);
         shape.setColor(ContextCompat.getColor(getActivity(), R.color.light_grey));
 
         contribution.setBackground(layerDrawable);
@@ -122,7 +122,7 @@ public class  CumulativeSpeakingTimesFragment extends Fragment {
 
     public void createSpeakingTimesTable() {
 
-        for(Participation participation : this.participations) {
+        for (Participation participation : this.participations) {
 
             TableRow row = new TableRow(getActivity());
             row.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
@@ -167,7 +167,7 @@ public class  CumulativeSpeakingTimesFragment extends Fragment {
             proportion.setTypeface(proportion.getTypeface(), Typeface.BOLD);
             proportion.setGravity(Gravity.CENTER);
             proportion.setBackground(rb_layerDrawable);
-            float percentage = ((float)participation.getTime()/(float)this.controller.getTotalTime())*100;
+            float percentage = ((float) participation.getTime() / (float) this.controller.getTotalTime()) * 100;
             DecimalFormat decimalFormat = new DecimalFormat("#.##");
             proportion.setText(decimalFormat.format(percentage));
             proportion.setSingleLine(true);
@@ -202,17 +202,14 @@ public class  CumulativeSpeakingTimesFragment extends Fragment {
     }
 
     public void update() {
-
         CumulativeSpeakingTimesAsyncTask cumulativeSpeakingTimesAsyncTask = new CumulativeSpeakingTimesAsyncTask();
         cumulativeSpeakingTimesAsyncTask.execute();
-
     }
 
     public class CumulativeSpeakingTimesAsyncTask extends AsyncTask<String, String, String> {
 
         @Override
         protected String doInBackground(String... strings) {
-
             participations = controller.getParticipations();
             return null;
         }
@@ -221,21 +218,15 @@ public class  CumulativeSpeakingTimesFragment extends Fragment {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
 
-            if(participations.size() > 0) {
-
+            if (participations.size() > 0) {
                 speakingTimesTable.removeAllViews();
                 createTableHeader();
                 createSpeakingTimesTable();
-            }
-
-            else {
-
+            } else {
                 createNoDataLabel();
             }
 
             ((BaseActivity) getActivity()).getPullToRefresh().setRefreshing(false);
         }
-
     }
-
 }

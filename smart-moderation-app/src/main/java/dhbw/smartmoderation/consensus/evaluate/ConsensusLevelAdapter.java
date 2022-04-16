@@ -9,14 +9,17 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.data.model.ConsensusLevel;
 import dhbw.smartmoderation.uiUtils.ItemTouchHelperAdapter;
@@ -43,15 +46,11 @@ public class ConsensusLevelAdapter extends RecyclerView.Adapter<ConsensusLevelAd
         this.consensusLevelList.addAll(consensusLevels);
 
         Collections.sort(this.consensusLevelList, ((o1, o2) -> {
-
-            if(o1.getNumber() < o2.getNumber()) {
+            if (o1.getNumber() < o2.getNumber()) {
                 return -1;
-            }
-
-            else if(o1.getNumber() > o2.getNumber()) {
+            } else if (o1.getNumber() > o2.getNumber()) {
                 return 1;
             }
-
             return 0;
         }));
 
@@ -77,9 +76,7 @@ public class ConsensusLevelAdapter extends RecyclerView.Adapter<ConsensusLevelAd
         holder.onBind = true;
         holder.getSelectCheckBox().setChecked(selectedPosition == position);
         holder.onBind = false;
-        if(selectionDisabled) {
-            holder.getSelectCheckBox().setEnabled(false);
-        }
+        if (selectionDisabled) holder.getSelectCheckBox().setEnabled(false);
     }
 
     @Override
@@ -88,7 +85,7 @@ public class ConsensusLevelAdapter extends RecyclerView.Adapter<ConsensusLevelAd
     }
 
     public Context getContext() {
-        return  this.context;
+        return this.context;
     }
 
     public void setSelectedPosition(int selectedPosition) {
@@ -103,17 +100,16 @@ public class ConsensusLevelAdapter extends RecyclerView.Adapter<ConsensusLevelAd
         return this.selectedPosition;
     }
 
-    public void setSelectionDisabled(boolean selectionDisabled) { this.selectionDisabled = selectionDisabled;  }
-
+    public void setSelectionDisabled(boolean selectionDisabled) {
+        this.selectionDisabled = selectionDisabled;
+    }
 
     @Override
     public void onItemMove(int fromPosition, int toPosition) {
-
     }
 
     @Override
     public void onItemDismiss(int position) {
-
         ConsensusLevel consensusLevel = this.consensusLevelList.get(position);
         Intent intent = new Intent(this.context, CardActivity.class);
         intent.putExtra("name", consensusLevel.getName());
@@ -123,7 +119,6 @@ public class ConsensusLevelAdapter extends RecyclerView.Adapter<ConsensusLevelAd
     }
 
     static class ConsensusLevelViewHolder extends RecyclerView.ViewHolder implements CheckBox.OnCheckedChangeListener {
-
         private ConsensusLevelAdapter consensusLevelAdapter;
         private ConsensusLevel consensusLevel;
         private ConstraintLayout constraintLayout;
@@ -136,21 +131,18 @@ public class ConsensusLevelAdapter extends RecyclerView.Adapter<ConsensusLevelAd
             super(constraintLayout);
             this.consensusLevelAdapter = consensusLevelAdapter;
             this.constraintLayout = constraintLayout;
-
             number = new TextView(context);
             number.setLayoutParams(new ViewGroup.LayoutParams(80, ViewGroup.LayoutParams.WRAP_CONTENT));
             number.setId(View.generateViewId());
             number.setTextSize(12);
             number.setTypeface(number.getTypeface(), Typeface.BOLD);
             constraintLayout.addView(number);
-
             title = new TextView(context);
             title.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             title.setId(View.generateViewId());
             title.setTextSize(12);
             title.setTypeface(title.getTypeface(), Typeface.BOLD);
             constraintLayout.addView(title);
-
             selectCheckBox = new CheckBox(context);
             selectCheckBox.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             selectCheckBox.setId(View.generateViewId());
@@ -206,8 +198,7 @@ public class ConsensusLevelAdapter extends RecyclerView.Adapter<ConsensusLevelAd
 
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-            if(!onBind) {
+            if (!onBind) {
                 this.consensusLevelAdapter.setSelectedPosition(getAdapterPosition());
                 this.consensusLevelAdapter.notifyDataSetChanged();
             }
