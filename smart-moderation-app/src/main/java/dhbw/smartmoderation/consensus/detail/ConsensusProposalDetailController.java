@@ -35,7 +35,6 @@ public class ConsensusProposalDetailController extends SmartModerationController
     }
 
     public Poll getPoll() throws PollNotFoundException {
-        dataService.getPoll(pollId);
-        return null;
+        return dataService.getPoll(pollId);
     }
 }
