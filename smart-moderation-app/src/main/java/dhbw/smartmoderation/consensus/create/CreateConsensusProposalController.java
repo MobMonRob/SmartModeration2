@@ -23,8 +23,7 @@ public class CreateConsensusProposalController extends SmartModerationController
     }
 
     private Meeting getMeeting() throws MeetingNotFoundException {
-        dataService.getMeeting(meetingId);
-        return null;
+        return dataService.getMeeting(meetingId);
     }
 
     public PrivateGroup getPrivateGroup() throws GroupNotFoundException, MeetingNotFoundException {

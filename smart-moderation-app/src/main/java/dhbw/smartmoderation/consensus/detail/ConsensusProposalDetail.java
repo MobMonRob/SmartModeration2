@@ -82,10 +82,6 @@ public class ConsensusProposalDetail extends UpdateableExceptionHandlingActivity
         protected String doInBackground(Object... objects) {
             try {
                 controller.update();
-            } catch (PollNotFoundException e) {
-                handleException(e);
-            }
-            try {
                 poll = controller.getPoll();
             } catch (PollNotFoundException e) {
                 handleException(e);
