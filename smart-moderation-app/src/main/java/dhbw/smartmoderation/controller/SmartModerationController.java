@@ -1,16 +1,9 @@
 package dhbw.smartmoderation.controller;
 
-import org.briarproject.briar.api.privategroup.PrivateGroup;
-
-import java.util.Collection;
-
-import dhbw.smartmoderation.SmartModerationApplication;
 import dhbw.smartmoderation.SmartModerationApplicationImpl;
 import dhbw.smartmoderation.connection.ConnectionService;
 import dhbw.smartmoderation.connection.synchronization.SynchronizationService;
 import dhbw.smartmoderation.data.DataService;
-import dhbw.smartmoderation.exceptions.GroupNotFoundException;
-import dhbw.smartmoderation.util.Util;
 
 /**
  * Controllers can extends this class for easily accessing all the services.
