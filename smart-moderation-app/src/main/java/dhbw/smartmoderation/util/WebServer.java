@@ -17,6 +17,7 @@ import dhbw.smartmoderation.data.model.ModerationCard;
 import dhbw.smartmoderation.data.model.Poll;
 import dhbw.smartmoderation.data.model.Voice;
 import dhbw.smartmoderation.exceptions.CouldNotDeleteModerationCard;
+import dhbw.smartmoderation.exceptions.MeetingNotFoundException;
 import dhbw.smartmoderation.exceptions.ModerationCardNotFoundException;
 import dhbw.smartmoderation.moderationCard.detail.DetailModerationCardController;
 import fi.iki.elonen.NanoHTTPD;
@@ -112,7 +113,7 @@ public class WebServer extends NanoHTTPD {
             try {
                 detailModerationCardController.deleteModerationCard(cardId);
                 return newFixedLengthResponse(Response.Status.OK, mimetype, "moderationcard " + cardId + " deleted successfully");
-            } catch (CouldNotDeleteModerationCard e) {
+            } catch (CouldNotDeleteModerationCard | MeetingNotFoundException e) {
                 return newFixedLengthResponse(Response.Status.INTERNAL_ERROR, mimetype, e.toString());
             } catch (ModerationCardNotFoundException e) {
                 return newFixedLengthResponse(Response.Status.NOT_FOUND, mimetype, e.toString());
