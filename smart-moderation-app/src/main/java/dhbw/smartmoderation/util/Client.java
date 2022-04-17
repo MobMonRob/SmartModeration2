@@ -46,6 +46,7 @@ public class Client {
             putJSON.put("backgroundColor", String.format("#%06X", (0xFFFFFF & moderationCard.getBackgroundColor())));
             putJSON.put("fontColor", String.format("#%06X", (0xFFFFFF & moderationCard.getFontColor())));
             putJSON.put("meetingId", moderationCard.getMeetingId());
+            putJSON.put("author", moderationCard.getAuthor());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -88,6 +89,7 @@ public class Client {
             putJSON.put("backgroundColor", String.format("#%06X", (0xFFFFFF & moderationCard.getBackgroundColor())));
             putJSON.put("fontColor", String.format("#%06X", (0xFFFFFF & moderationCard.getFontColor())));
             putJSON.put("meetingId", moderationCard.getMeetingId());
+            putJSON.put("author", moderationCard.getAuthor());
         } catch (JSONException e) {
             e.printStackTrace();
         }
