@@ -1,5 +1,6 @@
 package dhbw.smartmoderation.consensus.evaluate;
 
+import org.briarproject.bramble.api.identity.LocalAuthor;
 import org.briarproject.briar.api.privategroup.PrivateGroup;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import dhbw.smartmoderation.data.model.Poll;
 import dhbw.smartmoderation.data.model.Voice;
 import dhbw.smartmoderation.exceptions.CantSendVoiceException;
 import dhbw.smartmoderation.exceptions.GroupNotFoundException;
+import dhbw.smartmoderation.exceptions.MemberNotFoundException;
 import dhbw.smartmoderation.exceptions.PollNotFoundException;
 import dhbw.smartmoderation.util.Util;
 
@@ -34,14 +36,9 @@ public class EvaluateConsensusProposalController extends SmartModerationControll
         return null;
     }
 
-    public Member getMember() {
-        Long authorId = connectionService.getLocalAuthorId();
-        for (Member member : dataService.getMembers()) {
-            if (member.getMemberId().equals(authorId)) {
-                return member;
-            }
-        }
-        return null;
+    public Member getMember() throws MemberNotFoundException {
+        LocalAuthor author = connectionService.getLocalAuthor();
+        return dataService.getMember(author);
     }
 
     public Collection<ConsensusLevel> getConsensusLevels() throws PollNotFoundException {
@@ -87,7 +84,7 @@ public class EvaluateConsensusProposalController extends SmartModerationControll
             data.add(voice);
             synchronizationService.push(getPrivateGroup(), data);
 
-        } catch (GroupNotFoundException exception) {
+        } catch (GroupNotFoundException | MemberNotFoundException exception) {
             dataService.deleteVoice(voice);
             throw new CantSendVoiceException();
         }

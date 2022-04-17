@@ -28,6 +28,7 @@ import dhbw.smartmoderation.data.model.Status;
 import dhbw.smartmoderation.data.model.Voice;
 import dhbw.smartmoderation.exceptions.CantSendVoiceException;
 import dhbw.smartmoderation.exceptions.GroupNotFoundException;
+import dhbw.smartmoderation.exceptions.MemberNotFoundException;
 import dhbw.smartmoderation.exceptions.PollNotFoundException;
 import dhbw.smartmoderation.uiUtils.SimpleItemTouchHelperCallback;
 import dhbw.smartmoderation.util.UpdateableExceptionHandlingActivity;
@@ -105,7 +106,11 @@ public class EvaluateConsensusProposal extends UpdateableExceptionHandlingActivi
         this.itemTouchHelper = new ItemTouchHelper(callback);
         this.itemTouchHelper.attachToRecyclerView(consensusLevelList);
         if (isPrefilled) {
-            prefillRecyclerViewAndEditText();
+            try {
+                prefillRecyclerViewAndEditText();
+            } catch (MemberNotFoundException e) {
+                handleException(e);
+            }
         }
     }
 
@@ -115,7 +120,7 @@ public class EvaluateConsensusProposal extends UpdateableExceptionHandlingActivi
         updateUI();
     }
 
-    public void prefillRecyclerViewAndEditText() {
+    public void prefillRecyclerViewAndEditText() throws MemberNotFoundException {
         Voice voice = this.poll.getVoice(this.voiceId);
         int position = voice.getConsensusLevel().getNumber() - 1;
         this.consensusLevelAdapter.setSelectedPosition(position);
