@@ -16,6 +16,7 @@ import java.util.Collection;
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.connection.synchronization.SynchronizableDataType;
 import dhbw.smartmoderation.data.model.Poll;
+import dhbw.smartmoderation.exceptions.PollNotFoundException;
 import dhbw.smartmoderation.util.UpdateableExceptionHandlingActivity;
 
 public class ConsensusProposalDetail extends UpdateableExceptionHandlingActivity {
@@ -49,7 +50,11 @@ public class ConsensusProposalDetail extends UpdateableExceptionHandlingActivity
         this.notesText = findViewById(R.id.notesText);
         this.notesText.setJustificationMode(LineBreaker.JUSTIFICATION_MODE_INTER_WORD);
         this.controller = new ConsensusProposalDetailController(this.pollId);
-        this.poll = this.controller.getPoll();
+        try {
+            this.poll = this.controller.getPoll();
+        } catch (PollNotFoundException e) {
+            handleException(e);
+        }
         initializeTextViews();
     }
 
@@ -75,8 +80,16 @@ public class ConsensusProposalDetail extends UpdateableExceptionHandlingActivity
     public class ConsensusProposalDetailAsyncTask extends AsyncTask<Object, Exception, String> {
         @Override
         protected String doInBackground(Object... objects) {
-            controller.update();
-            poll = controller.getPoll();
+            try {
+                controller.update();
+            } catch (PollNotFoundException e) {
+                handleException(e);
+            }
+            try {
+                poll = controller.getPoll();
+            } catch (PollNotFoundException e) {
+                handleException(e);
+            }
             return null;
         }
 

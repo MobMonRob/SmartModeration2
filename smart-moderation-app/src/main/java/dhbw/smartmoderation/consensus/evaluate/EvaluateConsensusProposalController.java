@@ -1,8 +1,10 @@
 package dhbw.smartmoderation.consensus.evaluate;
 
 import org.briarproject.briar.api.privategroup.PrivateGroup;
+
 import java.util.ArrayList;
 import java.util.Collection;
+
 import dhbw.smartmoderation.controller.SmartModerationController;
 import dhbw.smartmoderation.data.model.ConsensusLevel;
 import dhbw.smartmoderation.data.model.Group;
@@ -12,6 +14,7 @@ import dhbw.smartmoderation.data.model.Poll;
 import dhbw.smartmoderation.data.model.Voice;
 import dhbw.smartmoderation.exceptions.CantSendVoiceException;
 import dhbw.smartmoderation.exceptions.GroupNotFoundException;
+import dhbw.smartmoderation.exceptions.PollNotFoundException;
 import dhbw.smartmoderation.util.Util;
 
 public class EvaluateConsensusProposalController extends SmartModerationController {
@@ -22,63 +25,55 @@ public class EvaluateConsensusProposalController extends SmartModerationControll
         this.pollId = pollId;
     }
 
-    public void update() {
-        try {
-            this.synchronizationService.pull(getPrivateGroup());
-        } catch (GroupNotFoundException e) {
-            e.printStackTrace();
-        }
+    public void update() throws PollNotFoundException, GroupNotFoundException {
+        this.synchronizationService.pull(getPrivateGroup());
     }
 
-    public Poll getPoll() {
-        for(Poll poll : dataService.getPolls()) {
-            if(poll.getPollId().equals(this.pollId)) {
-                return poll;
-            }
-        }
+    public Poll getPoll() throws PollNotFoundException {
+        dataService.getPoll(this.pollId);
         return null;
     }
 
     public Member getMember() {
         Long authorId = connectionService.getLocalAuthorId();
-        for(Member member : dataService.getMembers()) {
-            if(member.getMemberId().equals(authorId)) {
+        for (Member member : dataService.getMembers()) {
+            if (member.getMemberId().equals(authorId)) {
                 return member;
             }
         }
         return null;
     }
 
-    public Collection<ConsensusLevel> getConsensusLevels() {
+    public Collection<ConsensusLevel> getConsensusLevels() throws PollNotFoundException {
         Group group = getPoll().getMeeting().getGroup();
         return group.getGroupSettings().getConsensusLevels();
     }
 
-   public int getVoteMembersCount() {
+    public int getVoteMembersCount() throws PollNotFoundException {
         return getPoll().getMeeting().getPresentVoteMembers().size();
     }
 
-    public int getVoiceCount() {
+    public int getVoiceCount() throws PollNotFoundException {
         return getPoll().getVoices().size();
     }
 
-    public PrivateGroup getPrivateGroup() throws GroupNotFoundException {
+    public PrivateGroup getPrivateGroup() throws GroupNotFoundException, PollNotFoundException {
         Collection<PrivateGroup> privateGroups = connectionService.getGroups();
-        for(PrivateGroup group : privateGroups) {
-            if(getPoll().getMeeting().getGroup().getGroupId().equals(Util.bytesToLong(group.getId().getBytes()))) {
+        for (PrivateGroup group : privateGroups) {
+            if (getPoll().getMeeting().getGroup().getGroupId().equals(Util.bytesToLong(group.getId().getBytes()))) {
                 return group;
             }
         }
         throw new GroupNotFoundException();
     }
 
-    public void createVoice(Voice previousVoice, ConsensusLevel consensusLevel, String description) throws CantSendVoiceException {
+    public void createVoice(Voice previousVoice, ConsensusLevel consensusLevel, String description) throws CantSendVoiceException, PollNotFoundException {
 
         Voice voice = null;
 
-        try{
+        try {
             voice = new Voice();
-            if(previousVoice != null) {
+            if (previousVoice != null) {
                 voice = previousVoice;
             }
 
@@ -92,7 +87,7 @@ public class EvaluateConsensusProposalController extends SmartModerationControll
             data.add(voice);
             synchronizationService.push(getPrivateGroup(), data);
 
-        } catch (GroupNotFoundException exception){
+        } catch (GroupNotFoundException exception) {
             dataService.deleteVoice(voice);
             throw new CantSendVoiceException();
         }
