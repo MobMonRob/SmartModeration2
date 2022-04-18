@@ -36,7 +36,7 @@ public class MeetingDetailController extends SmartModerationController {
     public void update() {
 
         try {
-            this.synchronizationService.pull(getPrivateGroup());
+            this.synchronizationService.pull(getPrivateGroup(getMeeting().getGroupId()));
         } catch (GroupNotFoundException e) {
             e.printStackTrace();
         }
@@ -86,17 +86,6 @@ public class MeetingDetailController extends SmartModerationController {
         return null;
     }
 
-    public PrivateGroup getPrivateGroup() throws GroupNotFoundException {
-
-        Collection<PrivateGroup> privateGroups = connectionService.getGroups();
-
-        for (PrivateGroup group : privateGroups) {
-            if (getGroup().getGroupId().equals(Util.bytesToLong(group.getId().getBytes())))
-                return group;
-        }
-
-        return null;
-    }
 
     public Long getLocalAuthorId() {
         return connectionService.getLocalAuthorId();
@@ -113,7 +102,7 @@ public class MeetingDetailController extends SmartModerationController {
 
         PrivateGroup group;
         try {
-            group = getPrivateGroup();
+            group = getPrivateGroup(getMeeting().getGroupId());
         } catch (GroupNotFoundException exception) {
             throw new MemberCantBeChangedException();
         }
@@ -140,7 +129,7 @@ public class MeetingDetailController extends SmartModerationController {
     public void deleteMember(Member member) throws MemberCantBeDeleteException {
         PrivateGroup group;
         try {
-            group = getPrivateGroup();
+            group = getPrivateGroup(getMeeting().getGroupId());
         } catch (GroupNotFoundException exception) {
             throw new MemberCantBeDeleteException();
         }
@@ -158,7 +147,7 @@ public class MeetingDetailController extends SmartModerationController {
         PrivateGroup group;
 
         try {
-            group = getPrivateGroup();
+            group = getPrivateGroup(getMeeting().getGroupId());
         } catch (GroupNotFoundException exception) {
             throw new TopicCantBeChangedException();
         }
@@ -195,7 +184,7 @@ public class MeetingDetailController extends SmartModerationController {
     public void deleteTopic(Topic topic) throws TopicCantBeDeletedException {
         PrivateGroup group;
         try {
-            group = getPrivateGroup();
+            group = getPrivateGroup(getMeeting().getGroupId());
         } catch (GroupNotFoundException exception) {
             throw new TopicCantBeDeletedException();
         }

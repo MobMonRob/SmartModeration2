@@ -28,7 +28,7 @@ public class EvaluateConsensusProposalController extends SmartModerationControll
     }
 
     public void update() throws PollNotFoundException, GroupNotFoundException {
-        this.synchronizationService.pull(getPrivateGroup(getPoll().getMeeting()));
+        this.synchronizationService.pull(getPrivateGroup(getPoll().getMeeting().getGroupId()));
     }
 
     public Poll getPoll() throws PollNotFoundException {
@@ -71,7 +71,7 @@ public class EvaluateConsensusProposalController extends SmartModerationControll
 
             Collection<ModelClass> data = new ArrayList<>();
             data.add(voice);
-            synchronizationService.push(getPrivateGroup(getPoll().getMeeting()), data);
+            synchronizationService.push(getPrivateGroup(getPoll().getMeeting().getGroupId()), data);
 
         } catch (GroupNotFoundException | MemberNotFoundException exception) {
             dataService.deleteVoice(voice);

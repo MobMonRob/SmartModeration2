@@ -47,15 +47,6 @@ public class PersonInfoController extends SmartModerationController {
         return memberId.equals(connectionService.getLocalAuthorId());
     }
 
-    public PrivateGroup getPrivateGroup() throws GroupNotFoundException {
-        Collection<PrivateGroup> privateGroups = connectionService.getGroups();
-        for (PrivateGroup group : privateGroups) {
-            if (this.groupId.equals(Util.bytesToLong(group.getId().getBytes()))) {
-                return group;
-            }
-        }
-        throw new GroupNotFoundException();
-    }
 
     public Group getGroup() {
         Collection<Group> groups = dataService.getGroups();
@@ -105,7 +96,7 @@ public class PersonInfoController extends SmartModerationController {
 
 
     public void submitChanges() throws GroupNotFoundException {
-        PrivateGroup privateGroup = getPrivateGroup();
+        PrivateGroup privateGroup = getPrivateGroup(groupId);
         Group group = getGroup();
         Collection<ModelClass> pushData = new ArrayList<>();
         pushData.add(group);
@@ -119,7 +110,7 @@ public class PersonInfoController extends SmartModerationController {
     public Long linkContactToMember(Contact contact, Long memberId) throws CantLinkContactToMember {
         PrivateGroup privateGroup;
         try {
-            privateGroup = getPrivateGroup();
+            privateGroup = getPrivateGroup(groupId);
         } catch (GroupNotFoundException exception) {
             throw new CantLinkContactToMember();
         }

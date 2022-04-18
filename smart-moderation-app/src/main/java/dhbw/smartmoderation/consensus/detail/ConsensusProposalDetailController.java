@@ -16,7 +16,7 @@ public class ConsensusProposalDetailController extends SmartModerationController
 
     public void update() throws PollNotFoundException {
         try {
-            this.synchronizationService.pull(getPrivateGroup(getPoll().getMeeting()));
+            this.synchronizationService.pull(getPrivateGroup(getPoll().getMeeting().getGroupId()));
         } catch (GroupNotFoundException e) {
             e.printStackTrace();
         }

@@ -40,7 +40,7 @@ public class CreateConsensusProposalController extends SmartModerationController
             dataService.mergePoll(poll);
             Collection<ModelClass> data = new ArrayList<>();
             data.add(poll);
-            synchronizationService.push(getPrivateGroup(meeting), data);
+            synchronizationService.push(getPrivateGroup(meeting.getGroupId()), data);
         } catch (GroupNotFoundException | MeetingNotFoundException exception) {
             dataService.deletePoll(poll);
             throw new CantSendConsensusProposal();

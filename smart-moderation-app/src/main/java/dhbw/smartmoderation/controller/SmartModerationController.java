@@ -27,10 +27,9 @@ public abstract class SmartModerationController {
 		synchronizationService = ((SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp()).getSynchronizationService();
 	}
 
-	public PrivateGroup getPrivateGroup(Meeting meeting) throws GroupNotFoundException {
-		Collection<PrivateGroup> privateGroups = connectionService.getGroups();
-		for (PrivateGroup group : privateGroups) {
-			if (meeting.getGroup().getGroupId().equals(Util.bytesToLong(group.getId().getBytes())))
+	public PrivateGroup getPrivateGroup(Long groupId) throws GroupNotFoundException {
+		for (PrivateGroup group : connectionService.getGroups()) {
+			if (groupId.equals(Util.bytesToLong(group.getId().getBytes())))
 				return group;
 
 		}

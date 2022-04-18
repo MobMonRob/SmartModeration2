@@ -42,7 +42,7 @@ public class CreateModerationCardController extends SmartModerationController {
 
             Collection<ModelClass> data = new ArrayList<>();
             data.add(moderationCard);
-            synchronizationService.push(getPrivateGroup(meeting), data);
+            synchronizationService.push(getPrivateGroup(meeting.getGroupId()), data);
 
         } catch (GroupNotFoundException exception) {
             dataService.deleteModerationCard(moderationCard.getCardId());

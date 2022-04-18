@@ -33,11 +33,4 @@ public class GroupChatController extends SmartModerationController {
         PrivateGroup group = getPrivateGroup(groupId);
         return connectionService.getMessages(group);
     }
-
-    private PrivateGroup getPrivateGroup(Long groupId) throws GroupNotFoundException {
-        for (PrivateGroup group : connectionService.getGroups())
-            if (groupId.equals(Util.bytesToLong(group.getId().getBytes()))) return group;
-
-        throw new GroupNotFoundException();
-    }
 }

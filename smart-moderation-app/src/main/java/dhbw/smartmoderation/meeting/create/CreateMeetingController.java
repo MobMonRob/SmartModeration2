@@ -26,15 +26,6 @@ public class CreateMeetingController extends SmartModerationController {
         this.groupId = groupId;
     }
 
-    public PrivateGroup getPrivateGroup() throws GroupNotFoundException {
-
-        Collection<PrivateGroup> privateGroups = connectionService.getGroups();
-
-        for (PrivateGroup group : privateGroups)
-            if (groupId.equals(Util.bytesToLong(group.getId().getBytes()))) return group;
-        return null;
-    }
-
     public Group getGroup() {
         for (Group group : dataService.getGroups())
             if (group.getGroupId().equals(groupId)) return group;
@@ -157,7 +148,7 @@ public class CreateMeetingController extends SmartModerationController {
         PrivateGroup group;
 
         try {
-            group = getPrivateGroup();
+            group = getPrivateGroup(groupId);
         } catch (GroupNotFoundException exception) {
             throw new CantSubMitMeetingException();
         }

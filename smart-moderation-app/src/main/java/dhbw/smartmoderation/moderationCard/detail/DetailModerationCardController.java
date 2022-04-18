@@ -39,7 +39,7 @@ public class DetailModerationCardController extends SmartModerationController {
             dataService.mergeModerationCard(moderationCard);
             Collection<ModelClass> data = new ArrayList<>();
             data.add(moderationCard);
-            synchronizationService.push(getPrivateGroup(meeting), data);
+            synchronizationService.push(getPrivateGroup(meeting.getGroupId()), data);
         } catch (GroupNotFoundException exception) {
             throw new CantEditModerationCardException();
         }
@@ -49,7 +49,7 @@ public class DetailModerationCardController extends SmartModerationController {
     public void deleteModerationCard(long cardId) throws CouldNotDeleteModerationCard, ModerationCardNotFoundException {
         PrivateGroup group;
         try {
-            group = getPrivateGroup(getMeeting());
+            group = getPrivateGroup(getMeeting().getGroupId());
 
         } catch (GroupNotFoundException | MeetingNotFoundException groupNotFoundException) {
             throw new CouldNotDeleteModerationCard();

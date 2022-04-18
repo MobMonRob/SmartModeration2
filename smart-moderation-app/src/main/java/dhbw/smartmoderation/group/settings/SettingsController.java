@@ -29,20 +29,10 @@ public class SettingsController extends SmartModerationController  {
     public void update() {
 
         try {
-            this.synchronizationService.pull(getPrivateGroup());
+            this.synchronizationService.pull(getPrivateGroup(groupId));
         } catch (GroupNotFoundException e) {
             e.printStackTrace();
         }
-    }
-
-    public PrivateGroup getPrivateGroup() throws GroupNotFoundException{
-
-        Collection<PrivateGroup> privateGroups = connectionService.getGroups();
-
-        for(PrivateGroup group : privateGroups)
-            if (groupId.equals(Util.bytesToLong(group.getId().getBytes()))) return group;
-
-        throw new GroupNotFoundException();
     }
 
     public Group getGroup() throws GroupNotFoundException {
@@ -103,7 +93,7 @@ public class SettingsController extends SmartModerationController  {
         PrivateGroup group;
 
         try{
-            group = getPrivateGroup();
+            group = getPrivateGroup(groupId);
         } catch(GroupNotFoundException exception){
             throw new CouldNotAddConsensusLevel();
         }
@@ -118,7 +108,7 @@ public class SettingsController extends SmartModerationController  {
         PrivateGroup group;
 
         try{
-            group = getPrivateGroup();
+            group = getPrivateGroup(groupId);
         } catch (GroupNotFoundException exception){
             throw new CouldNotChangeConsensusLevel();
         }
@@ -133,7 +123,7 @@ public class SettingsController extends SmartModerationController  {
         PrivateGroup group;
 
         try {
-            group = getPrivateGroup();
+            group = getPrivateGroup(groupId);
         } catch (GroupNotFoundException exception) {
             throw new CouldNotChangeConsensusLevel();
         }
@@ -152,7 +142,7 @@ public class SettingsController extends SmartModerationController  {
         PrivateGroup group;
 
         try {
-            group = getPrivateGroup();
+            group = getPrivateGroup(groupId);
         } catch (GroupNotFoundException groupNotFoundException) {
             throw new CouldNotDeleteConsensusLevel();
         }

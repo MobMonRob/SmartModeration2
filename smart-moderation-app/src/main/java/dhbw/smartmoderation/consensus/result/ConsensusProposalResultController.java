@@ -29,7 +29,7 @@ public class ConsensusProposalResultController extends SmartModerationController
 
     public void update() {
         try {
-            this.synchronizationService.pull(getPrivateGroup(getPoll().getMeeting()));
+            this.synchronizationService.pull(getPrivateGroup(getPoll().getMeeting().getGroupId()));
         } catch (GroupNotFoundException e) {
             e.printStackTrace();
         }
@@ -127,7 +127,7 @@ public class ConsensusProposalResultController extends SmartModerationController
 
             Collection<ModelClass> data = new ArrayList<>();
             data.add(poll);
-            synchronizationService.push(getPrivateGroup(poll.getMeeting()), data);
+            synchronizationService.push(getPrivateGroup(poll.getMeeting().getGroupId()), data);
         } catch(GroupNotFoundException exception){
             //TODO rollback
             throw new PollCantBeClosedException();
