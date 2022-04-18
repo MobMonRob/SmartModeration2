@@ -22,14 +22,8 @@ public class ModerationCardsController extends SmartModerationController {
         return dataService.getMeeting(meetingId);
     }
 
-
     public Collection<ModerationCard> getAllModerationCards() throws MeetingNotFoundException, GroupNotFoundException {
-        this.synchronizationService.pull(getPrivateGroup(getMeeting().getGroupId()));
-        try {
-            return getMeeting().getModerationCards();
-        } catch (MeetingNotFoundException e) {
-            e.printStackTrace();
-            return null;
-        }
+       this.synchronizationService.pull(getPrivateGroup());
+        return getMeeting().getModerationCards();
     }
 }

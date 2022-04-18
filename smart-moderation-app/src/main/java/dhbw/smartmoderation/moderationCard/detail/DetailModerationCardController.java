@@ -1,8 +1,10 @@
 package dhbw.smartmoderation.moderationCard.detail;
 
 import org.briarproject.briar.api.privategroup.PrivateGroup;
+
 import java.util.ArrayList;
 import java.util.Collection;
+
 import dhbw.smartmoderation.controller.SmartModerationController;
 import dhbw.smartmoderation.data.model.Meeting;
 import dhbw.smartmoderation.data.model.ModelClass;
@@ -25,9 +27,10 @@ public class DetailModerationCardController extends SmartModerationController {
         return dataService.getMeeting(meetingId);
     }
 
-    public ModerationCard editModerationCard(String content, String author, int backgroundColor, int fontColor, long cardId) throws ModerationCardNotFoundException, CantEditModerationCardException, MeetingNotFoundException {
-        Meeting meeting = this.getMeeting();
 
+    public ModerationCard editModerationCard(String content, String author, int backgroundColor, int fontColor, long cardId) throws ModerationCardNotFoundException, CantEditModerationCardException, MeetingNotFoundException {
+        Meeting meeting = null;
+        meeting = this.getMeeting();
         ModerationCard moderationCard = new ModerationCard();
         try {
             moderationCard.setCardId(cardId);
@@ -46,7 +49,7 @@ public class DetailModerationCardController extends SmartModerationController {
         return moderationCard;
     }
 
-    public void deleteModerationCard(long cardId) throws CouldNotDeleteModerationCard, ModerationCardNotFoundException {
+    public void deleteModerationCard(long cardId) throws CouldNotDeleteModerationCard, ModerationCardNotFoundException, MeetingNotFoundException {
         PrivateGroup group;
         try {
             group = getPrivateGroup(getMeeting().getGroupId());

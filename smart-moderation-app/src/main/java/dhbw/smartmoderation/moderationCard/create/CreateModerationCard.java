@@ -20,6 +20,7 @@ import dhbw.smartmoderation.exceptions.ModerationCardNotFoundException;
 import dhbw.smartmoderation.moderationCard.ModerationCardColorImporter;
 import dhbw.smartmoderation.moderationCard.overview.ModerationCardsFragment;
 import dhbw.smartmoderation.util.Client;
+import dhbw.smartmoderation.util.ExceptionHandlingActivity;
 import petrov.kristiyan.colorpicker.ColorPicker;
 
 public class CreateModerationCard {
@@ -61,7 +62,7 @@ public class CreateModerationCard {
             Client client = ((SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp()).getClient();
             if(client != null && client.isRunning()) client.addModerationCard(moderationCard);
         } catch (CantCreateModerationCardException | ModerationCardNotFoundException | MeetingNotFoundException e) {
-            e.printStackTrace();
+            ((ExceptionHandlingActivity) moderationCardsFragment.getActivity()).handleException(e);
         }
         alertDialog.cancel();
     };

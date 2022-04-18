@@ -20,6 +20,7 @@ import dhbw.smartmoderation.exceptions.MeetingNotFoundException;
 import dhbw.smartmoderation.meeting.detail.BaseActivity;
 import dhbw.smartmoderation.moderationCard.DesktopLoginQRScanner;
 import dhbw.smartmoderation.moderationCard.create.CreateModerationCard;
+import dhbw.smartmoderation.util.ExceptionHandlingActivity;
 
 public class ModerationCardsFragment extends Fragment {
     private ModerationCardsController controller;
@@ -54,8 +55,8 @@ public class ModerationCardsFragment extends Fragment {
         RecyclerView moderationCardsRecyclerView = view.findViewById(R.id.moderationCardList);
         try {
             this.moderationCardAdapter = new ModerationCardAdapter(getActivity(), controller.getAllModerationCards());
-        } catch (GroupNotFoundException | MeetingNotFoundException e) {
-            ((BaseActivity)getActivity()).handleException(e);
+        } catch (MeetingNotFoundException | GroupNotFoundException e) {
+            ((ExceptionHandlingActivity) getActivity()).handleException(e);
         }
         moderationCardsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         moderationCardsRecyclerView.setAdapter(moderationCardAdapter);
@@ -68,8 +69,8 @@ public class ModerationCardsFragment extends Fragment {
         super.onResume();
         try {
             moderationCardAdapter.updateModerationCards(controller.getAllModerationCards());
-        } catch (GroupNotFoundException| MeetingNotFoundException e) {
-            ((BaseActivity)getActivity()).handleException(e);
+        } catch (MeetingNotFoundException | GroupNotFoundException e) {
+            ((ExceptionHandlingActivity) getActivity()).handleException(e);
         }
         ((BaseActivity)getActivity()).getPullToRefresh().setRefreshing(false);
     }

@@ -18,6 +18,7 @@ import dhbw.smartmoderation.exceptions.ModerationCardNotFoundException;
 import dhbw.smartmoderation.moderationCard.ModerationCardColorImporter;
 import dhbw.smartmoderation.moderationCard.overview.ModerationCardsFragment;
 import dhbw.smartmoderation.util.Client;
+import dhbw.smartmoderation.util.ExceptionHandlingActivity;
 import petrov.kristiyan.colorpicker.ColorPicker;
 
 public class DetailModerationCard {
@@ -62,7 +63,7 @@ public class DetailModerationCard {
             Client client = ((SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp()).getClient();
             if(client != null && client.isRunning()) client.updateModerationCard(moderationCard);
         } catch (ModerationCardNotFoundException | CantEditModerationCardException | MeetingNotFoundException e) {
-            e.printStackTrace();
+            ((ExceptionHandlingActivity) moderationCardsFragment.getActivity()).handleException(e);
         }
         alertDialog.cancel();
     };
@@ -74,8 +75,8 @@ public class DetailModerationCard {
             moderationCardsFragment.onResume();
             Client client = ((SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp()).getClient();
             if(client != null && client.isRunning()) client.deleteModerationCard(cardId);
-        } catch (CouldNotDeleteModerationCard | ModerationCardNotFoundException couldNotDeleteModerationCard) {
-            couldNotDeleteModerationCard.printStackTrace();
+        } catch (CouldNotDeleteModerationCard | ModerationCardNotFoundException | MeetingNotFoundException  e) {
+            ((ExceptionHandlingActivity)moderationCardsFragment.getActivity()).handleException(e);
         }
         alertDialog.cancel();
     };

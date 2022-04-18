@@ -26,9 +26,9 @@ public class CreateModerationCardController extends SmartModerationController {
         return dataService.getMeeting(meetingId);
     }
 
-
     public ModerationCard createModerationCard(String content, String author, int backgroundColor, int fontColor) throws CantCreateModerationCardException, ModerationCardNotFoundException, MeetingNotFoundException {
-        Meeting meeting = this.getMeeting();
+        Meeting meeting = null;
+        meeting = this.getMeeting();
 
         ModerationCard moderationCard = new ModerationCard();
 

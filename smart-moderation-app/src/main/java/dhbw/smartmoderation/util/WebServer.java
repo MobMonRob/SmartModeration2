@@ -113,7 +113,7 @@ public class WebServer extends NanoHTTPD {
             try {
                 detailModerationCardController.deleteModerationCard(cardId);
                 return newFixedLengthResponse(Response.Status.OK, mimetype, "moderationcard " + cardId + " deleted successfully");
-            } catch (CouldNotDeleteModerationCard e) {
+            } catch (CouldNotDeleteModerationCard | MeetingNotFoundException e) {
                 return newFixedLengthResponse(Response.Status.INTERNAL_ERROR, mimetype, e.toString());
             } catch (ModerationCardNotFoundException e) {
                 return newFixedLengthResponse(Response.Status.NOT_FOUND, mimetype, e.toString());
