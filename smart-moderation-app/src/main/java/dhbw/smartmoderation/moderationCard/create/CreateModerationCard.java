@@ -15,6 +15,7 @@ import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.SmartModerationApplicationImpl;
 import dhbw.smartmoderation.data.model.ModerationCard;
 import dhbw.smartmoderation.exceptions.CantCreateModerationCardException;
+import dhbw.smartmoderation.exceptions.MeetingNotFoundException;
 import dhbw.smartmoderation.exceptions.ModerationCardNotFoundException;
 import dhbw.smartmoderation.moderationCard.ModerationCardColorImporter;
 import dhbw.smartmoderation.moderationCard.overview.ModerationCardsFragment;
@@ -59,7 +60,7 @@ public class CreateModerationCard {
             moderationCardsFragment.onResume();
             Client client = ((SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp()).getClient();
             if(client != null && client.isRunning()) client.addModerationCard(moderationCard);
-        } catch (CantCreateModerationCardException | ModerationCardNotFoundException e) {
+        } catch (CantCreateModerationCardException | ModerationCardNotFoundException | MeetingNotFoundException e) {
             e.printStackTrace();
         }
         alertDialog.cancel();

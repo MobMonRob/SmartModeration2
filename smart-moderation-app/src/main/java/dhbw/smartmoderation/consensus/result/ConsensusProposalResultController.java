@@ -29,7 +29,7 @@ public class ConsensusProposalResultController extends SmartModerationController
 
     public void update() {
         try {
-            this.synchronizationService.pull(getPrivateGroup());
+            this.synchronizationService.pull(getPrivateGroup(getPoll().getMeeting()));
         } catch (GroupNotFoundException e) {
             e.printStackTrace();
         }
@@ -44,17 +44,6 @@ public class ConsensusProposalResultController extends SmartModerationController
         return null;
     }
 
-    public PrivateGroup getPrivateGroup() throws GroupNotFoundException {
-
-        Collection<PrivateGroup> privateGroups = connectionService.getGroups();
-
-        for(PrivateGroup group : privateGroups) {
-            if(getPoll().getMeeting().getGroup().getGroupId().equals(Util.bytesToLong(group.getId().getBytes()))) {
-                return group;
-            }
-        }
-        throw new GroupNotFoundException();
-    }
 
     public int getVoteMembersCount() {
 
@@ -138,7 +127,7 @@ public class ConsensusProposalResultController extends SmartModerationController
 
             Collection<ModelClass> data = new ArrayList<>();
             data.add(poll);
-            synchronizationService.push(getPrivateGroup(), data);
+            synchronizationService.push(getPrivateGroup(poll.getMeeting()), data);
         } catch(GroupNotFoundException exception){
             //TODO rollback
             throw new PollCantBeClosedException();

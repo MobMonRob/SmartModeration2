@@ -13,6 +13,7 @@ import dhbw.smartmoderation.SmartModerationApplicationImpl;
 import dhbw.smartmoderation.data.model.ModerationCard;
 import dhbw.smartmoderation.exceptions.CantEditModerationCardException;
 import dhbw.smartmoderation.exceptions.CouldNotDeleteModerationCard;
+import dhbw.smartmoderation.exceptions.MeetingNotFoundException;
 import dhbw.smartmoderation.exceptions.ModerationCardNotFoundException;
 import dhbw.smartmoderation.moderationCard.ModerationCardColorImporter;
 import dhbw.smartmoderation.moderationCard.overview.ModerationCardsFragment;
@@ -60,7 +61,7 @@ public class DetailModerationCard {
             moderationCardsFragment.onResume();
             Client client = ((SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp()).getClient();
             if(client != null && client.isRunning()) client.updateModerationCard(moderationCard);
-        } catch (ModerationCardNotFoundException | CantEditModerationCardException e) {
+        } catch (ModerationCardNotFoundException | CantEditModerationCardException | MeetingNotFoundException e) {
             e.printStackTrace();
         }
         alertDialog.cancel();
