@@ -75,12 +75,7 @@ public class ConsensusProposalResultController extends SmartModerationController
     }
 
     public ConsensusLevel getConsensusLevel(Long consensusLevelId) {
-        for(ConsensusLevel consensusLevel : dataService.getConsensusLevels()) {
-            if(consensusLevel.getConsensusLevelId().equals(consensusLevelId)) {
-                return consensusLevel;
-            }
-        }
-        return null;
+        return dataService.getConsensusLevel(consensusLevelId);
     }
 
     public TreeMap<Long, Integer> getCountPerConsensusLevel() {

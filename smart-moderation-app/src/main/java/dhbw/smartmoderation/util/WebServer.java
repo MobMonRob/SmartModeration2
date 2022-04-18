@@ -17,6 +17,7 @@ import dhbw.smartmoderation.data.model.ModerationCard;
 import dhbw.smartmoderation.data.model.Poll;
 import dhbw.smartmoderation.data.model.Voice;
 import dhbw.smartmoderation.exceptions.CouldNotDeleteModerationCard;
+import dhbw.smartmoderation.exceptions.MeetingNotFoundException;
 import dhbw.smartmoderation.exceptions.ModerationCardNotFoundException;
 import dhbw.smartmoderation.moderationCard.detail.DetailModerationCardController;
 import fi.iki.elonen.NanoHTTPD;
@@ -68,7 +69,7 @@ public class WebServer extends NanoHTTPD {
 
                 return newFixedLengthResponse(Response.Status.OK, mimetype, meetingJSON.toString());
 
-            } catch (JSONException e) {
+            } catch (JSONException | MeetingNotFoundException e) {
 
                 e.printStackTrace();
             }
@@ -100,7 +101,7 @@ public class WebServer extends NanoHTTPD {
                 String s = cardsOutputJSON.toString();
                 return newFixedLengthResponse(Response.Status.OK, mimetype, cardsOutputJSON.toString());
 
-            } catch (JSONException e) {
+            } catch (JSONException | MeetingNotFoundException e) {
                 return newFixedLengthResponse(Response.Status.BAD_REQUEST, mimetype, e.toString());
             }
 
@@ -147,7 +148,7 @@ public class WebServer extends NanoHTTPD {
 
                 return newFixedLengthResponse(Response.Status.OK, mimetype, pollJSON.toString());
 
-            } catch (JSONException e) {
+            } catch (JSONException | MeetingNotFoundException e) {
 
                 e.printStackTrace();
             }
@@ -178,7 +179,7 @@ public class WebServer extends NanoHTTPD {
 
                 return newFixedLengthResponse(Response.Status.OK, mimetype, consensusLevelJSON.toString());
 
-            } catch (JSONException e) {
+            } catch (JSONException | MeetingNotFoundException e) {
 
                 e.printStackTrace();
             }
@@ -186,18 +187,16 @@ public class WebServer extends NanoHTTPD {
         } else if (uri.contains("/result/members") && Method.GET.equals(method)) {
 
             mimetype = "application/json";
-
-            int count = getMeeting().getPresentVoteMembers().size();
-
-            JSONObject countJSON = new JSONObject();
-
             try {
+                int count = getMeeting().getPresentVoteMembers().size();
+
+                JSONObject countJSON = new JSONObject();
 
                 countJSON.put("count", count);
 
                 return newFixedLengthResponse(Response.Status.OK, mimetype, countJSON.toString());
 
-            } catch (JSONException e) {
+            } catch (JSONException | MeetingNotFoundException e) {
 
                 e.printStackTrace();
             }
@@ -286,17 +285,8 @@ public class WebServer extends NanoHTTPD {
         return this.meetingId;
     }
 
-    public Meeting getMeeting() {
-
-        for (Meeting meeting : app.getDataService().getMeetings()) {
-            if (meeting.getMeetingId().equals(meetingId)) {
-
-                return meeting;
-            }
-        }
-
-
-        return null;
+    public Meeting getMeeting() throws MeetingNotFoundException {
+        return app.getDataService().getMeeting(meetingId);
     }
 
     public static int getPort() {

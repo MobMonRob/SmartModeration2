@@ -1,6 +1,5 @@
 package dhbw.smartmoderation.controller;
 
-import dhbw.smartmoderation.SmartModerationApplication;
 import dhbw.smartmoderation.SmartModerationApplicationImpl;
 import dhbw.smartmoderation.connection.ConnectionService;
 import dhbw.smartmoderation.connection.synchronization.SynchronizationService;
@@ -20,5 +19,4 @@ public abstract class SmartModerationController {
 		dataService = ((SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp()).getDataService();
 		synchronizationService = ((SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp()).getSynchronizationService();
 	}
-
 }

@@ -27,6 +27,9 @@ import dhbw.smartmoderation.data.model.Poll;
 import dhbw.smartmoderation.data.model.Status;
 import dhbw.smartmoderation.data.model.Voice;
 import dhbw.smartmoderation.exceptions.CantSendVoiceException;
+import dhbw.smartmoderation.exceptions.GroupNotFoundException;
+import dhbw.smartmoderation.exceptions.MemberNotFoundException;
+import dhbw.smartmoderation.exceptions.PollNotFoundException;
 import dhbw.smartmoderation.uiUtils.SimpleItemTouchHelperCallback;
 import dhbw.smartmoderation.util.UpdateableExceptionHandlingActivity;
 
@@ -66,7 +69,11 @@ public class EvaluateConsensusProposal extends UpdateableExceptionHandlingActivi
         }
 
         this.controller = new EvaluateConsensusProposalController(pollId);
-        this.poll = this.controller.getPoll();
+        try {
+            this.poll = this.controller.getPoll();
+        } catch (PollNotFoundException e) {
+            handleException(e);
+        }
 
         this.title = findViewById(R.id.consensusProposalTitle);
         this.consensusProposal = findViewById(R.id.consensusProposal);
@@ -76,21 +83,34 @@ public class EvaluateConsensusProposal extends UpdateableExceptionHandlingActivi
 
         this.consensusLevelLayoutManager = new LinearLayoutManager(this);
         this.consensusLevelList.setLayoutManager(this.consensusLevelLayoutManager);
-        this.consensusLevelAdapter = new ConsensusLevelAdapter(this, this.controller);
+        try {
+            this.consensusLevelAdapter = new ConsensusLevelAdapter(this, this.controller);
+        } catch (PollNotFoundException e) {
+            handleException(e);
+        }
         this.consensusLevelList.setAdapter(this.consensusLevelAdapter);
         DividerItemDecoration consensusLevelDividerItemDecoration = new DividerItemDecoration(consensusLevelList.getContext(), consensusLevelLayoutManager.getOrientation());
         this.consensusLevelList.addItemDecoration(consensusLevelDividerItemDecoration);
 
         this.sendButton.setOnClickListener(this::onSendVoice);
 
-        String title = getString(R.string.EvaluateConsensusProposal_title) + " (" + this.controller.getVoiceCount() + "/" + this.controller.getVoteMembersCount() + ")";
+        String title = null;
+        try {
+            title = getString(R.string.EvaluateConsensusProposal_title) + " (" + this.controller.getVoiceCount() + "/" + this.controller.getVoteMembersCount() + ")";
+        } catch (PollNotFoundException e) {
+            handleException(e);
+        }
         setTitle(title);
 
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(consensusLevelAdapter, R.color.default_black, R.drawable.hand, ItemTouchHelper.END);
         this.itemTouchHelper = new ItemTouchHelper(callback);
         this.itemTouchHelper.attachToRecyclerView(consensusLevelList);
         if (isPrefilled) {
-            prefillRecyclerViewAndEditText();
+            try {
+                prefillRecyclerViewAndEditText();
+            } catch (MemberNotFoundException e) {
+                handleException(e);
+            }
         }
     }
 
@@ -100,7 +120,7 @@ public class EvaluateConsensusProposal extends UpdateableExceptionHandlingActivi
         updateUI();
     }
 
-    public void prefillRecyclerViewAndEditText() {
+    public void prefillRecyclerViewAndEditText() throws MemberNotFoundException {
         Voice voice = this.poll.getVoice(this.voiceId);
         int position = voice.getConsensusLevel().getNumber() - 1;
         this.consensusLevelAdapter.setSelectedPosition(position);
@@ -179,27 +199,30 @@ public class EvaluateConsensusProposal extends UpdateableExceptionHandlingActivi
 
         @Override
         protected String doInBackground(Object... objects) {
-
-            switch (flag) {
-                case "update":
-                    controller.update();
-                    poll = controller.getPoll();
-                    break;
-                case "sendVoice":
-                    String mode = objects[0].toString();
-                    ConsensusLevel consensusLevel = (ConsensusLevel) objects[1];
-                    String description = objects[2].toString();
-                    try {
-                        if (mode == "change") {
-                            Voice voice = (Voice) objects[3];
-                            controller.createVoice(voice, consensusLevel, description);
-                        } else {
-                            controller.createVoice(null, consensusLevel, description);
+            try {
+                switch (flag) {
+                    case "update":
+                        controller.update();
+                        poll = controller.getPoll();
+                        break;
+                    case "sendVoice":
+                        String mode = objects[0].toString();
+                        ConsensusLevel consensusLevel = (ConsensusLevel) objects[1];
+                        String description = objects[2].toString();
+                        try {
+                            if (mode == "change") {
+                                Voice voice = (Voice) objects[3];
+                                controller.createVoice(voice, consensusLevel, description);
+                            } else {
+                                controller.createVoice(null, consensusLevel, description);
+                            }
+                        } catch (CantSendVoiceException exception) {
+                            publishProgress(exception);
                         }
-                    } catch (CantSendVoiceException exception) {
-                        publishProgress(exception);
-                    }
-                    break;
+                        break;
+                }
+            } catch (PollNotFoundException | GroupNotFoundException e) {
+                handleException(e);
             }
             return null;
         }
@@ -210,7 +233,11 @@ public class EvaluateConsensusProposal extends UpdateableExceptionHandlingActivi
 
             switch (flag) {
                 case "update":
-                    consensusLevelAdapter.updateConsensusLevelList(controller.getConsensusLevels());
+                    try {
+                        consensusLevelAdapter.updateConsensusLevelList(controller.getConsensusLevels());
+                    } catch (PollNotFoundException e) {
+                        handleException(e);
+                    }
                     title.setText(poll.getTitle());
                     consensusProposal.setText(poll.getConsensusProposal());
                     pullToRefresh.setRefreshing(false);

@@ -22,6 +22,7 @@ import java.util.Collections;
 
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.data.model.ConsensusLevel;
+import dhbw.smartmoderation.exceptions.PollNotFoundException;
 import dhbw.smartmoderation.uiUtils.ItemTouchHelperAdapter;
 import dhbw.smartmoderation.util.Util;
 
@@ -33,7 +34,7 @@ public class ConsensusLevelAdapter extends RecyclerView.Adapter<ConsensusLevelAd
     private int selectedPosition = -1;
     private boolean selectionDisabled;
 
-    public ConsensusLevelAdapter(Context context, EvaluateConsensusProposalController controller) {
+    public ConsensusLevelAdapter(Context context, EvaluateConsensusProposalController controller) throws PollNotFoundException {
         this.context = context;
         this.controller = controller;
         this.consensusLevelList = new ArrayList<>();
