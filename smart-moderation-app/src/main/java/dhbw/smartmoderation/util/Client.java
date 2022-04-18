@@ -5,6 +5,8 @@ import static android.content.Context.WIFI_SERVICE;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -16,6 +18,8 @@ import java.nio.ByteOrder;
 
 import dhbw.smartmoderation.SmartModerationApplicationImpl;
 import dhbw.smartmoderation.data.model.ModerationCard;
+import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -174,21 +178,26 @@ public class Client {
                 .addHeader("Content-Type", "application/json")
                 .build();
 
-        Thread thread = new Thread(() -> {
-            try {
-                Response response = client.newCall(request).execute();
-                if (response.body() != null && response.body().string().equals("OK") && response.code() == 200) {
-                    System.out.println("Login OK!");
-                    isRunning = true;
-                }
-            } catch (Exception e) {
-                Log.e(TAG, e.getMessage());
-            }
-        });
-        thread.start();
+        client.newCall(request)
+                .enqueue(new Callback() {
+                    @Override
+                    public void onFailure(@NonNull final Call call, @NonNull IOException e) {
+                        System.out.println("Login failure!");
+                        System.out.println(e.getMessage());
+                    }
+
+                    @Override
+                    public void onResponse(@NonNull Call call, @NonNull final Response response) throws IOException {
+                        if (response.body() != null && response.body().string().equals("OK") && response.code() == 200) {
+                            System.out.println("Login OK!");
+                            isRunning = true;
+                        }
+                    }
+                });
     }
 
-    public void startClient(String ipAddress, int port, String apiKey, long meetingId) throws IOException, JSONException {
+    public void startClient(String ipAddress, int port, String apiKey, long meetingId) throws
+            IOException, JSONException {
         System.out.println("Start client.");
         this.ipAddress = ipAddress;
         this.port = port;
@@ -196,7 +205,7 @@ public class Client {
         app.startWebServer();
         WifiManager wifiManager = (WifiManager) app.getApplicationContext().getSystemService(WIFI_SERVICE);
         String androidIpAddress = getIpAddressAsString(wifiManager.getConnectionInfo().getIpAddress());
-        System.out.println("IP-Address: " + androidIpAddress);
+        System.out.println("Android device IP-Address: " + androidIpAddress);
         sendLoginInformation(androidIpAddress, meetingId);
     }
 
