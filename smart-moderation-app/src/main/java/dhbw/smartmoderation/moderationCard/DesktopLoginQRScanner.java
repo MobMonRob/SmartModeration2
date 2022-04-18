@@ -21,8 +21,9 @@ import java.io.IOException;
 
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.SmartModerationApplicationImpl;
+import dhbw.smartmoderation.util.ExceptionHandlingActivity;
 
-public class DesktopLoginQRScanner extends AppCompatActivity {
+public class DesktopLoginQRScanner extends ExceptionHandlingActivity {
 
     private CodeScanner mCodeScanner;
 
@@ -57,7 +58,7 @@ public class DesktopLoginQRScanner extends AppCompatActivity {
                 long meetingId = intent.getLongExtra("meetingId", 0);
                 app.getClient().startClient(ipAddress, port, apiKey, meetingId);
             } catch (JSONException | IOException e) {
-                e.printStackTrace();
+                handleException(e);
             }
             this.finish();
         }));

@@ -15,9 +15,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import dhbw.smartmoderation.R;
+import dhbw.smartmoderation.exceptions.GroupNotFoundException;
+import dhbw.smartmoderation.exceptions.MeetingNotFoundException;
 import dhbw.smartmoderation.meeting.detail.BaseActivity;
 import dhbw.smartmoderation.moderationCard.DesktopLoginQRScanner;
 import dhbw.smartmoderation.moderationCard.create.CreateModerationCard;
+import dhbw.smartmoderation.util.ExceptionHandlingActivity;
 
 public class ModerationCardsFragment extends Fragment {
     private ModerationCardsController controller;
@@ -50,7 +53,11 @@ public class ModerationCardsFragment extends Fragment {
         addButton.setOnClickListener(addButtonClickListener);
         loginButton.setOnClickListener(loginButtonClickListener);
         RecyclerView moderationCardsRecyclerView = view.findViewById(R.id.moderationCardList);
-        this.moderationCardAdapter = new ModerationCardAdapter(getActivity(), controller.getAllModerationCards());
+        try {
+            this.moderationCardAdapter = new ModerationCardAdapter(getActivity(), controller.getAllModerationCards());
+        } catch (MeetingNotFoundException | GroupNotFoundException e) {
+            ((ExceptionHandlingActivity) getActivity()).handleException(e);
+        }
         moderationCardsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         moderationCardsRecyclerView.setAdapter(moderationCardAdapter);
         ((BaseActivity)getActivity()).getPullToRefresh().setOnRefreshListener(this::onResume);
@@ -60,7 +67,11 @@ public class ModerationCardsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        moderationCardAdapter.updateModerationCards(controller.getAllModerationCards());
+        try {
+            moderationCardAdapter.updateModerationCards(controller.getAllModerationCards());
+        } catch (MeetingNotFoundException | GroupNotFoundException e) {
+            ((ExceptionHandlingActivity) getActivity()).handleException(e);
+        }
         ((BaseActivity)getActivity()).getPullToRefresh().setRefreshing(false);
     }
 
