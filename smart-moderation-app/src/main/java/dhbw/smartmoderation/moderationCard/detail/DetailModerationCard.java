@@ -89,7 +89,7 @@ public class DetailModerationCard {
         cardId = moderationCard.getCardId();
         cardAuthor = moderationCard.getAuthor();
         long meetingId = moderationCard.getMeetingId();
-        controller = new DetailModerationCardController(meetingId, new ModerationCardServiceController());
+        controller = new DetailModerationCardController(meetingId);
         this.moderationCardsFragment = moderationCardsFragment;
         initializePopup(moderationCardsFragment.getContext());
         fillInModerationCardData(moderationCard);

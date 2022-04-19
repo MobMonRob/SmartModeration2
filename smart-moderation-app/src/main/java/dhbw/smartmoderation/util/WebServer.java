@@ -109,7 +109,7 @@ public class WebServer extends NanoHTTPD {
         } else if (uri.startsWith("/moderationcard/") && Method.DELETE.equals(method)) {
 
             mimetype = "application/json";
-            DetailModerationCardController detailModerationCardController = new DetailModerationCardController(meetingId, new ModerationCardServiceController());
+            DetailModerationCardController detailModerationCardController = new DetailModerationCardController(meetingId);
             long cardId = Long.parseLong(uri.split("/")[2]);
             try {
                 detailModerationCardController.deleteModerationCard(cardId);

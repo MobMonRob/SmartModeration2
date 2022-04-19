@@ -26,6 +26,11 @@ public class DetailModerationCardController {
         this.moderationCardServiceController = moderationCardServiceController;
     }
 
+    public DetailModerationCardController(long meetingId) {
+        this.meetingId = meetingId;
+        moderationCardServiceController = new ModerationCardServiceController();
+    }
+
     private Meeting getMeeting() throws MeetingNotFoundException {
         return moderationCardServiceController.getDataService().getMeeting(meetingId);
     }
