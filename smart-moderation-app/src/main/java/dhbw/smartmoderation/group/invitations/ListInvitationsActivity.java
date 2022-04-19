@@ -8,12 +8,14 @@ import android.util.Log;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.connection.GroupInvitationHandler;
 import dhbw.smartmoderation.connection.Invitation;
 import dhbw.smartmoderation.exceptions.NoContactsFoundException;
 import dhbw.smartmoderation.exceptions.SmartModerationException;
+import dhbw.smartmoderation.meeting.detail.BaseActivity;
 import dhbw.smartmoderation.util.ExceptionHandlingActivity;
 
 /**
@@ -47,6 +49,12 @@ public class ListInvitationsActivity extends ExceptionHandlingActivity implement
 
 		DividerItemDecoration invitationsDividerItemDecoration = new DividerItemDecoration(recInvitations.getContext(), invitationsLayoutManager.getOrientation());
 		recInvitations.addItemDecoration(invitationsDividerItemDecoration);
+
+		SwipeRefreshLayout pullToRefresh = findViewById(R.id.pullToRefresh);
+		pullToRefresh.setOnRefreshListener(() -> {
+			onResume();
+			pullToRefresh.setRefreshing(false);
+		});
 	}
 
 	@Override
