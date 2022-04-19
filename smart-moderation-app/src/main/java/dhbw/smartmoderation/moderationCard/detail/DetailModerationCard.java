@@ -58,10 +58,15 @@ public class DetailModerationCard {
     private final View.OnClickListener saveModerationCardClickListener = v -> {
         try {
             moderationCardContent = moderationCardContentHolder.getText().toString();
-            ModerationCard moderationCard = controller.editModerationCard(moderationCardContent, cardAuthor, backgroundColor, fontColor, cardId);
-            moderationCardsFragment.onResume();
-            Client client = ((SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp()).getClient();
-            if(client != null && client.isRunning()) client.updateModerationCard(moderationCard);
+            if (!moderationCardContent.isEmpty()) {
+                ModerationCard moderationCard = controller.editModerationCard(moderationCardContent, cardAuthor, backgroundColor, fontColor, cardId);
+                moderationCardsFragment.onResume();
+                Client client = ((SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp()).getClient();
+                if (client != null && client.isRunning())
+                    client.updateModerationCard(moderationCard);
+            } else {
+                createErrorDialog();
+            }
         } catch (ModerationCardNotFoundException | CantEditModerationCardException | MeetingNotFoundException e) {
             ((ExceptionHandlingActivity) moderationCardsFragment.getActivity()).handleException(e);
         }
@@ -117,6 +122,18 @@ public class DetailModerationCard {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setView(popUp);
         alertDialog = builder.create();
+    }
+    private void createErrorDialog() {
+        Context context = moderationCardsFragment.getActivity();
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage(context.getString(R.string.allFieldsMustBeFilled));
+        builder.setCancelable(false);
+        builder.setNeutralButton(context.getString(R.string.ok), (dialog, which) -> {
+            dialog.cancel();
+            this.alertDialog.show();
+        });
+        AlertDialog errorDialog = builder.create();
+        errorDialog.show();
     }
 
     public void show() {
