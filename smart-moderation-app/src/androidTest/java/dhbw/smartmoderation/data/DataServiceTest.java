@@ -1,39 +1,8 @@
 package dhbw.smartmoderation.data;
 
-import android.content.Context;
-
-import org.briarproject.bramble.api.UniqueId;
-import org.briarproject.bramble.api.crypto.CryptoConstants;
-import org.briarproject.bramble.api.crypto.PublicKey;
-import org.briarproject.bramble.api.identity.Author;
-import org.briarproject.bramble.api.identity.AuthorId;
-import org.briarproject.bramble.api.identity.AuthorInfo;
-import org.briarproject.bramble.api.sync.GroupId;
-import org.briarproject.briar.api.privategroup.GroupMember;
-import org.briarproject.briar.api.privategroup.PrivateGroup;
-import org.briarproject.briar.api.privategroup.Visibility;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import java.util.Collection;
-
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.platform.app.InstrumentationRegistry;
-import dhbw.smartmoderation.data.entities.GroupEntity;
-import dhbw.smartmoderation.data.entities.MeetingEntity;
-import dhbw.smartmoderation.data.entities.MemberEntity;
-import dhbw.smartmoderation.data.entities.MemberGroupRelation;
-import dhbw.smartmoderation.data.model.Group;
-import dhbw.smartmoderation.data.model.Meeting;
-import dhbw.smartmoderation.data.model.Member;
-import dhbw.smartmoderation.data.model.Role;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import org.junit.runner.RunWith;
 
 
 /**
@@ -43,7 +12,7 @@ import static org.junit.Assert.fail;
  */
 @RunWith(AndroidJUnit4.class)
 public class DataServiceTest {
-
+/*
 	private static Context appContext;
 
 	private static DataService dataService;
@@ -815,5 +784,5 @@ public class DataServiceTest {
 		if (actualMeeting1 == null) fail();
 		if (actualMeeting2 == null) fail();
 	}
-
+*/
 }

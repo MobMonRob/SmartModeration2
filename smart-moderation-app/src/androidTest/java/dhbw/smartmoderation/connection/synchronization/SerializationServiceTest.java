@@ -1,26 +1,6 @@
 package dhbw.smartmoderation.connection.synchronization;
 
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-
-import dhbw.smartmoderation.data.entities.GroupEntity;
-import dhbw.smartmoderation.data.entities.MeetingEntity;
-import dhbw.smartmoderation.data.entities.MemberEntity;
-import dhbw.smartmoderation.data.entities.MemberGroupRelation;
-import dhbw.smartmoderation.data.model.Group;
-import dhbw.smartmoderation.data.model.Meeting;
-import dhbw.smartmoderation.data.model.Member;
-import dhbw.smartmoderation.data.model.ModelClass;
-import dhbw.smartmoderation.data.model.Role;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * ATTENTION: Sideeffectful!
@@ -28,7 +8,7 @@ import static org.junit.Assert.assertTrue;
  * Execution deletes all existing records! Only execute in test environment!
  */
 public class SerializationServiceTest {
-
+/*
 	private static SerializationService serializationService;
 
 	@BeforeClass
@@ -328,5 +308,5 @@ public class SerializationServiceTest {
 		assertEquals(note.getCreatedAt(), actNote.getCreatedAt());
 		assertEquals(note.getText(), actNote.getText());
 	}
-
+*/
 }

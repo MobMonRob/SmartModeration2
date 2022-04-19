@@ -1,45 +1,50 @@
 package dhbw.smartmoderation.group.create;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.ArrayList;
 import java.util.Collection;
+
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.data.model.Ghost;
 import dhbw.smartmoderation.data.model.IContact;
 
 public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactViewHolder> {
 
-   private Context context;
-   private ArrayList<IContact> contactList;
-   private ArrayList<IContact> selectedContacts;
+    private final Context context;
+    private final ArrayList<IContact> contactList;
+    private final ArrayList<IContact> selectedContacts;
 
-    public
-    ContactAdapter(Context context, Collection<IContact> contactList) {
+    public ContactAdapter(Context context, Collection<IContact> contactList) {
         this.context = context;
         this.contactList = new ArrayList<>();
         this.selectedContacts = new ArrayList<>();
         updateContacts(contactList);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @NonNull
     @Override
     public ContactViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ConstraintLayout constraintLayout = new ConstraintLayout(context);
         constraintLayout.setLayoutParams(new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, 130));
-        ContactViewHolder contactViewHolder = new ContactViewHolder(constraintLayout, context, this);
-        return contactViewHolder;
+        return new ContactViewHolder(constraintLayout, context, this);
     }
 
     @Override
@@ -49,7 +54,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
         holder.setContact(contact);
         holder.getTextView().setText(name);
 
-        if(contact instanceof Ghost) {
+        if (contact instanceof Ghost) {
             holder.getGhostHint().setText(context.getString(R.string.ghost));
             holder.getGhostHint().setVisibility(View.VISIBLE);
         }
@@ -77,6 +82,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
         return this.selectedContacts.size() > 0;
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void addGhost(String firstName, String lastName) {
         Ghost ghost = new Ghost();
         ghost.setFirstName(firstName);
@@ -85,12 +91,12 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
         notifyDataSetChanged();
     }
 
-   static class ContactViewHolder extends RecyclerView.ViewHolder {
-        private TextView contactName;
-        private CheckBox selectCheckBox;
-        private TextView ghostHint;
+    static class ContactViewHolder extends RecyclerView.ViewHolder {
+        private final TextView contactName;
+        private final TextView ghostHint;
         private IContact contact;
 
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         public ContactViewHolder(ConstraintLayout constraintLayout, Context context, ContactAdapter adapter) {
             super(constraintLayout);
 
@@ -98,7 +104,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
             contactName.setId(View.generateViewId());
             constraintLayout.addView(contactName);
 
-            selectCheckBox = new CheckBox(context);
+            CheckBox selectCheckBox = new CheckBox(context);
             selectCheckBox.setId(View.generateViewId());
             selectCheckBox.setButtonTintList(ColorStateList.valueOf(ResourcesCompat.getColor(context.getResources(), R.color.colorPrimary, null)));
             constraintLayout.addView(selectCheckBox);
@@ -114,6 +120,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
                 } else {
                     adapter.getSelectedContacts().remove(contact);
                 }
+                ((CreateGroup) context).onInputChange();
             });
 
             ConstraintSet checkBoxConstraintSet = new ConstraintSet();
