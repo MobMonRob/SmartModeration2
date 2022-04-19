@@ -57,17 +57,33 @@ public class CreateModerationCard {
         try {
             String moderationCardContent = moderationCardContentHolder.getText().toString();
             String cardAuthor = controller.getLocalAuthorName();
-            ModerationCard moderationCard = controller.createModerationCard(moderationCardContent, cardAuthor, backgroundColor, fontColor);
-            moderationCardsFragment.onResume();
-            Client client = ((SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp()).getClient();
-            if(client != null && client.isRunning()) client.addModerationCard(moderationCard);
+            if (!moderationCardContent.isEmpty()) {
+                ModerationCard moderationCard = controller.createModerationCard(moderationCardContent, cardAuthor, backgroundColor, fontColor);
+                moderationCardsFragment.onResume();
+                Client client = ((SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp()).getClient();
+                if (client != null && client.isRunning()) client.addModerationCard(moderationCard);
+            } else {
+                createErrorDialog();
+            }
+
         } catch (CantCreateModerationCardException | ModerationCardNotFoundException | MeetingNotFoundException e) {
             ((ExceptionHandlingActivity) moderationCardsFragment.getActivity()).handleException(e);
         }
         alertDialog.cancel();
     };
 
-
+    private void createErrorDialog() {
+        Context context = moderationCardsFragment.getActivity();
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage(context.getString(R.string.allFieldsMustBeFilled));
+        builder.setCancelable(false);
+        builder.setNeutralButton(context.getString(R.string.ok), (dialog, which) -> {
+            dialog.cancel();
+            this.alertDialog.show();
+        });
+        AlertDialog errorDialog = builder.create();
+        errorDialog.show();
+    }
     public CreateModerationCard(ModerationCardsFragment fragment) {
         Intent intent = fragment.getActivity().getIntent();
         Bundle extra = intent.getExtras();
