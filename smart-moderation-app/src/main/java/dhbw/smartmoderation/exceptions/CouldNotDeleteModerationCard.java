@@ -10,8 +10,7 @@ import dhbw.smartmoderation.R;
 public class CouldNotDeleteModerationCard extends SmartModerationException {
     @Override
     public String getMessage(Context context) {
-        //todo: i18n
-        return "Couldn't delete moderation card";
+        return context.getString(R.string.CantDeleteModerationCardException_Message);
     }
 
     @Override

@@ -5,11 +5,12 @@ import android.view.View;
 
 import androidx.appcompat.app.AlertDialog;
 
+import dhbw.smartmoderation.R;
+
 public class CantEditModerationCardException extends SmartModerationException {
     @Override
     public String getMessage(Context context) {
-        //todo
-        return "Moderation card couldn't be edited";
+        return context.getString(R.string.CantEditModerationCardException_Message);
     }
 
     @Override
