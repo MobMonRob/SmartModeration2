@@ -34,7 +34,6 @@ public class MeetingDetailController extends SmartModerationController {
     }
 
     public void update() {
-
         try {
             this.synchronizationService.pull(getPrivateGroup(getMeeting().getGroupId()));
         } catch (GroupNotFoundException e) {
