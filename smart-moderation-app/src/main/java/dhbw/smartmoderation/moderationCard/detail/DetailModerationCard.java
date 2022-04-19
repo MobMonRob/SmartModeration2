@@ -16,6 +16,7 @@ import dhbw.smartmoderation.exceptions.CouldNotDeleteModerationCard;
 import dhbw.smartmoderation.exceptions.MeetingNotFoundException;
 import dhbw.smartmoderation.exceptions.ModerationCardNotFoundException;
 import dhbw.smartmoderation.moderationCard.ModerationCardColorImporter;
+import dhbw.smartmoderation.moderationCard.ModerationCardServiceController;
 import dhbw.smartmoderation.moderationCard.overview.ModerationCardsFragment;
 import dhbw.smartmoderation.util.Client;
 import dhbw.smartmoderation.util.ExceptionHandlingActivity;
@@ -88,7 +89,7 @@ public class DetailModerationCard {
         cardId = moderationCard.getCardId();
         cardAuthor = moderationCard.getAuthor();
         long meetingId = moderationCard.getMeetingId();
-        controller = new DetailModerationCardController(meetingId);
+        controller = new DetailModerationCardController(meetingId, new ModerationCardServiceController());
         this.moderationCardsFragment = moderationCardsFragment;
         initializePopup(moderationCardsFragment.getContext());
         fillInModerationCardData(moderationCard);

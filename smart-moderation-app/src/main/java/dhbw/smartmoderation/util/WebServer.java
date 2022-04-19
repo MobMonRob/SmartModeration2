@@ -19,6 +19,7 @@ import dhbw.smartmoderation.data.model.Voice;
 import dhbw.smartmoderation.exceptions.CouldNotDeleteModerationCard;
 import dhbw.smartmoderation.exceptions.MeetingNotFoundException;
 import dhbw.smartmoderation.exceptions.ModerationCardNotFoundException;
+import dhbw.smartmoderation.moderationCard.ModerationCardServiceController;
 import dhbw.smartmoderation.moderationCard.detail.DetailModerationCardController;
 import fi.iki.elonen.NanoHTTPD;
 
@@ -108,7 +109,7 @@ public class WebServer extends NanoHTTPD {
         } else if (uri.startsWith("/moderationcard/") && Method.DELETE.equals(method)) {
 
             mimetype = "application/json";
-            DetailModerationCardController detailModerationCardController = new DetailModerationCardController(meetingId);
+            DetailModerationCardController detailModerationCardController = new DetailModerationCardController(meetingId, new ModerationCardServiceController());
             long cardId = Long.parseLong(uri.split("/")[2]);
             try {
                 detailModerationCardController.deleteModerationCard(cardId);
