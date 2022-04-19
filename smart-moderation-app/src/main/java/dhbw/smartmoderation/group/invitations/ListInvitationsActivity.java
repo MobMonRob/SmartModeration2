@@ -1,5 +1,6 @@
 package dhbw.smartmoderation.group.invitations;
 
+import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,10 +23,7 @@ public class ListInvitationsActivity extends ExceptionHandlingActivity implement
 
 	private static final String TAG = ListInvitationsActivity.class.getSimpleName();
 	private ListInvitationsController controller;
-	private RecyclerView recInvitations;
 	private InvitationsAdapter invitationsAdapter;
-	private LinearLayoutManager invitationsLayoutManager;
-	private Thread SynchronizeThread = new Thread();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -35,9 +33,9 @@ public class ListInvitationsActivity extends ExceptionHandlingActivity implement
 
 		controller = new ListInvitationsController();
 
-		recInvitations = findViewById(R.id.recInvitations);
+		RecyclerView recInvitations = findViewById(R.id.recInvitations);
 
-		invitationsLayoutManager = new LinearLayoutManager(this);
+		LinearLayoutManager invitationsLayoutManager = new LinearLayoutManager(this);
 		recInvitations.setLayoutManager(invitationsLayoutManager);
 
 		try {
@@ -53,7 +51,6 @@ public class ListInvitationsActivity extends ExceptionHandlingActivity implement
 
 	@Override
 	protected void onResume() {
-
 		super.onResume();
 		try {
 			invitationsAdapter.updateInvitations(controller.getGroupInvitations());
@@ -83,6 +80,7 @@ public class ListInvitationsActivity extends ExceptionHandlingActivity implement
 
 	}
 
+	@SuppressLint("StaticFieldLeak")
 	public class InvitationsAsyncTask extends AsyncTask<Object, Exception, String> {
 
 		String flag;
@@ -126,19 +124,18 @@ public class ListInvitationsActivity extends ExceptionHandlingActivity implement
 			return returnString;
 		}
 
+		@SuppressLint("NotifyDataSetChanged")
 		@Override
 		protected void onPostExecute(String s) {
 			super.onPostExecute(s);
 
-			switch(s) {
-				case "acceptOrReject":
-					try {
-						invitationsAdapter.updateInvitations(controller.getGroupInvitations());
-						invitationsAdapter.notifyDataSetChanged();
-					} catch (NoContactsFoundException exception) {
-						handleException(exception);
-					}
-					break;
+			if ("acceptOrReject".equals(s)) {
+				try {
+					invitationsAdapter.updateInvitations(controller.getGroupInvitations());
+					invitationsAdapter.notifyDataSetChanged();
+				} catch (NoContactsFoundException exception) {
+					handleException(exception);
+				}
 			}
 		}
 	}
