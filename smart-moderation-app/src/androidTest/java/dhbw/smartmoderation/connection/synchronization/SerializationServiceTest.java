@@ -1,4 +1,4 @@
-package dhbw.smartmoderation.connection.synchronization;
+/*package dhbw.smartmoderation.connection.synchronization;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -26,7 +26,7 @@ import static org.junit.Assert.assertTrue;
  * ATTENTION: Sideeffectful!
  * <p>
  * Execution deletes all existing records! Only execute in test environment!
- */
+ *//*
 public class SerializationServiceTest {
 
 	private static SerializationService serializationService;
@@ -329,4 +329,4 @@ public class SerializationServiceTest {
 		assertEquals(note.getText(), actNote.getText());
 	}
 
-}
+} */

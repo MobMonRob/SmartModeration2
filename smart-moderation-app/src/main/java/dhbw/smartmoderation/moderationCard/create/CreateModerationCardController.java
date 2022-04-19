@@ -13,17 +13,19 @@ import dhbw.smartmoderation.exceptions.CantCreateModerationCardException;
 import dhbw.smartmoderation.exceptions.GroupNotFoundException;
 import dhbw.smartmoderation.exceptions.MeetingNotFoundException;
 import dhbw.smartmoderation.exceptions.ModerationCardNotFoundException;
-import dhbw.smartmoderation.util.Util;
+import dhbw.smartmoderation.moderationCard.ModerationCardServiceController;
 
-public class CreateModerationCardController extends SmartModerationController {
+public class CreateModerationCardController {
+    private final ModerationCardServiceController moderationCardServiceController;
     public long meetingId;
 
-    public CreateModerationCardController(long meetingId) {
+    public CreateModerationCardController(long meetingId, ModerationCardServiceController moderationCardServiceController) {
         this.meetingId = meetingId;
+        this.moderationCardServiceController = moderationCardServiceController;
     }
 
     private Meeting getMeeting() throws MeetingNotFoundException {
-        return dataService.getMeeting(meetingId);
+        return moderationCardServiceController.getDataService().getMeeting(meetingId);
     }
 
     public ModerationCard createModerationCard(String content, String author, int backgroundColor, int fontColor) throws CantCreateModerationCardException, ModerationCardNotFoundException, MeetingNotFoundException {
@@ -38,20 +40,20 @@ public class CreateModerationCardController extends SmartModerationController {
             moderationCard.setFontColor(fontColor);
             moderationCard.setMeeting(meeting);
             moderationCard.setAuthor(author);
-            dataService.mergeModerationCard(moderationCard);
+            moderationCardServiceController.getDataService().mergeModerationCard(moderationCard);
 
             Collection<ModelClass> data = new ArrayList<>();
             data.add(moderationCard);
-            synchronizationService.push(getPrivateGroup(meeting.getGroupId()), data);
+            moderationCardServiceController.getSynchronizationService().push(moderationCardServiceController.getPrivateGroup(meeting.getGroupId()), data);
 
         } catch (GroupNotFoundException exception) {
-            dataService.deleteModerationCard(moderationCard.getCardId());
+            moderationCardServiceController.getDataService().deleteModerationCard(moderationCard.getCardId());
             throw new CantCreateModerationCardException();
         }
         return moderationCard;
     }
 
     public String getLocalAuthorName() {
-        return connectionService.getLocalAuthor().getName();
+        return moderationCardServiceController.getConnectionService().getLocalAuthor().getName();
     }
 }
