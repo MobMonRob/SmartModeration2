@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -48,15 +47,7 @@ public class DesktopLoginQRScanner extends ExceptionHandlingActivity {
             String loginJSONString = result.getText();
             System.out.println(loginJSONString);
             try {
-                JSONObject loginJSON = new JSONObject(loginJSONString);
-                String ipAddress = (String) loginJSON.get("ipAddress");
-                int port = (int) loginJSON.get("port");
-                String apiKey = (String) loginJSON.get("apiKey");
-
-                SmartModerationApplicationImpl app = (SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp();
-                Intent intent = getIntent();
-                long meetingId = intent.getLongExtra("meetingId", 0);
-                app.getClient().startClient(ipAddress, port, apiKey, meetingId);
+                startClient(loginJSONString);
             } catch (JSONException | IOException e) {
                 handleException(e);
             }
@@ -92,5 +83,16 @@ public class DesktopLoginQRScanner extends ExceptionHandlingActivity {
             mCodeScanner.releaseResources();
         }
         super.onPause();
+    }
+
+    private void startClient(String loginJSONString) throws JSONException, IOException {
+        JSONObject loginJSON = new JSONObject(loginJSONString);
+        String ipAddress = (String) loginJSON.get("ipAddress");
+        int port = (int) loginJSON.get("port");
+        String apiKey = (String) loginJSON.get("apiKey");
+        SmartModerationApplicationImpl app = (SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp();
+        Intent intent = getIntent();
+        long meetingId = intent.getLongExtra("meetingId", 0);
+        app.getClient().startClient(ipAddress, port, apiKey, meetingId);
     }
 }
