@@ -19,6 +19,7 @@ import dhbw.smartmoderation.data.model.Voice;
 import dhbw.smartmoderation.exceptions.CouldNotDeleteModerationCard;
 import dhbw.smartmoderation.exceptions.MeetingNotFoundException;
 import dhbw.smartmoderation.exceptions.ModerationCardNotFoundException;
+import dhbw.smartmoderation.moderationCard.ModerationCardServiceController;
 import dhbw.smartmoderation.moderationCard.detail.DetailModerationCardController;
 import fi.iki.elonen.NanoHTTPD;
 

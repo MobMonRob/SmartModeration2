@@ -1,4 +1,4 @@
-package dhbw.smartmoderation.data;
+/*package dhbw.smartmoderation.data;
 
 import android.content.Context;
 
@@ -40,7 +40,7 @@ import static org.junit.Assert.fail;
  * ATTENTION: Sideeffectful!
  * <p>
  * Execution deletes all existing records! Only execute in test environment!
- */
+ *//*
 @RunWith(AndroidJUnit4.class)
 public class DataServiceTest {
 
@@ -816,4 +816,4 @@ public class DataServiceTest {
 		if (actualMeeting2 == null) fail();
 	}
 
-}
+} */

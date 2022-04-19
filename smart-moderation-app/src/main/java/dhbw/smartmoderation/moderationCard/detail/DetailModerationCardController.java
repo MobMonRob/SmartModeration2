@@ -14,17 +14,25 @@ import dhbw.smartmoderation.exceptions.CouldNotDeleteModerationCard;
 import dhbw.smartmoderation.exceptions.GroupNotFoundException;
 import dhbw.smartmoderation.exceptions.MeetingNotFoundException;
 import dhbw.smartmoderation.exceptions.ModerationCardNotFoundException;
+import dhbw.smartmoderation.moderationCard.ModerationCardServiceController;
 import dhbw.smartmoderation.util.Util;
 
-public class DetailModerationCardController extends SmartModerationController {
+public class DetailModerationCardController {
     public long meetingId;
+    private final ModerationCardServiceController moderationCardServiceController;
+
+    public DetailModerationCardController(long meetingId, ModerationCardServiceController moderationCardServiceController) {
+        this.meetingId = meetingId;
+        this.moderationCardServiceController = moderationCardServiceController;
+    }
 
     public DetailModerationCardController(long meetingId) {
         this.meetingId = meetingId;
+        moderationCardServiceController = new ModerationCardServiceController();
     }
 
     private Meeting getMeeting() throws MeetingNotFoundException {
-        return dataService.getMeeting(meetingId);
+        return moderationCardServiceController.getDataService().getMeeting(meetingId);
     }
 
 
@@ -39,10 +47,10 @@ public class DetailModerationCardController extends SmartModerationController {
             moderationCard.setBackgroundColor(backgroundColor);
             moderationCard.setFontColor(fontColor);
             moderationCard.setMeeting(meeting);
-            dataService.mergeModerationCard(moderationCard);
+            moderationCardServiceController.getDataService().mergeModerationCard(moderationCard);
             Collection<ModelClass> data = new ArrayList<>();
             data.add(moderationCard);
-            synchronizationService.push(getPrivateGroup(meeting.getGroupId()), data);
+            moderationCardServiceController.getSynchronizationService().push(moderationCardServiceController.getPrivateGroup(meeting.getGroupId()), data);
         } catch (GroupNotFoundException exception) {
             throw new CantEditModerationCardException();
         }
@@ -52,16 +60,16 @@ public class DetailModerationCardController extends SmartModerationController {
     public void deleteModerationCard(long cardId) throws CouldNotDeleteModerationCard, ModerationCardNotFoundException, MeetingNotFoundException {
         PrivateGroup group;
         try {
-            group = getPrivateGroup(getMeeting().getGroupId());
+            group = moderationCardServiceController.getPrivateGroup(getMeeting().getGroupId());
 
         } catch (GroupNotFoundException | MeetingNotFoundException groupNotFoundException) {
             throw new CouldNotDeleteModerationCard();
         }
-        ModerationCard moderationCard = dataService.getModerationCard(cardId);
-        dataService.deleteModerationCard(cardId);
+        ModerationCard moderationCard = moderationCardServiceController.getDataService().getModerationCard(cardId);
+        moderationCardServiceController.getDataService().deleteModerationCard(cardId);
         Collection<ModelClass> data = new ArrayList<>();
         moderationCard.setIsDeleted(true);
         data.add(moderationCard);
-        synchronizationService.push(group, data);
+        moderationCardServiceController.getSynchronizationService().push(group, data);
     }
 }

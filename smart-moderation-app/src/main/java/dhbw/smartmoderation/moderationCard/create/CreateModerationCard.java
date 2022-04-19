@@ -18,6 +18,7 @@ import dhbw.smartmoderation.exceptions.CantCreateModerationCardException;
 import dhbw.smartmoderation.exceptions.MeetingNotFoundException;
 import dhbw.smartmoderation.exceptions.ModerationCardNotFoundException;
 import dhbw.smartmoderation.moderationCard.ModerationCardColorImporter;
+import dhbw.smartmoderation.moderationCard.ModerationCardServiceController;
 import dhbw.smartmoderation.moderationCard.overview.ModerationCardsFragment;
 import dhbw.smartmoderation.util.Client;
 import dhbw.smartmoderation.util.ExceptionHandlingActivity;
