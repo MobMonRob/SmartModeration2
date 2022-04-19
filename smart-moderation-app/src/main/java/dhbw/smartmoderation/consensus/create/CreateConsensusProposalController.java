@@ -26,16 +26,6 @@ public class CreateConsensusProposalController extends SmartModerationController
         return dataService.getMeeting(meetingId);
     }
 
-    public PrivateGroup getPrivateGroup() throws GroupNotFoundException, MeetingNotFoundException {
-        Collection<PrivateGroup> privateGroups = connectionService.getGroups();
-        for (PrivateGroup group : privateGroups) {
-            if (getMeeting().getGroup().getGroupId().equals(Util.bytesToLong(group.getId().getBytes()))) {
-                return group;
-            }
-        }
-
-        throw new GroupNotFoundException();
-    }
 
     public void createConsensusProposal(String title, String consensusProposal, String note) throws CantSendConsensusProposal {
         Poll poll = new Poll();
@@ -50,7 +40,7 @@ public class CreateConsensusProposalController extends SmartModerationController
             dataService.mergePoll(poll);
             Collection<ModelClass> data = new ArrayList<>();
             data.add(poll);
-            synchronizationService.push(getPrivateGroup(), data);
+            synchronizationService.push(getPrivateGroup(meeting.getGroupId()), data);
         } catch (GroupNotFoundException | MeetingNotFoundException exception) {
             dataService.deletePoll(poll);
             throw new CantSendConsensusProposal();

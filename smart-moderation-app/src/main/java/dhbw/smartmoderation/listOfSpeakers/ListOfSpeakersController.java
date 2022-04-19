@@ -35,20 +35,10 @@ public class ListOfSpeakersController extends SmartModerationController {
 
     public void update() {
         try {
-            this.synchronizationService.pull(getPrivateGroup());
+            this.synchronizationService.pull(getPrivateGroup(getMeeting().getGroupId()));
         } catch (GroupNotFoundException e) {
             e.printStackTrace();
         }
-    }
-
-    public PrivateGroup getPrivateGroup() throws GroupNotFoundException {
-        Collection<PrivateGroup> privateGroups = connectionService.getGroups();
-
-        for (PrivateGroup group : privateGroups) {
-            if (getMeeting().getGroup().getGroupId().equals(Util.bytesToLong(group.getId().getBytes())))
-                return group;
-        }
-        return null;
     }
 
     public Meeting getMeeting() {
@@ -142,7 +132,7 @@ public class ListOfSpeakersController extends SmartModerationController {
     public void changeParticipationNumbering(Collection<Participation> participations) throws ParitcipationCantBeChangedException {
         PrivateGroup group;
         try {
-            group = getPrivateGroup();
+            group = getPrivateGroup(getMeeting().getGroupId());
         } catch (GroupNotFoundException exception) {
             throw new ParitcipationCantBeChangedException();
         }
@@ -161,7 +151,7 @@ public class ListOfSpeakersController extends SmartModerationController {
         PrivateGroup group;
 
         try {
-            group = getPrivateGroup();
+            group = getPrivateGroup(getMeeting().getGroupId());
         } catch (GroupNotFoundException exception) {
             throw new ParticipationCantBeAddedException();
         }
@@ -179,7 +169,7 @@ public class ListOfSpeakersController extends SmartModerationController {
         Member member;
 
         try {
-            group = getPrivateGroup();
+            group = getPrivateGroup(getMeeting().getGroupId());
             member = dataService.getMember(connectionService.getLocalAuthorId());
         } catch (GroupNotFoundException | MemberNotFoundException exception) {
             throw new ParticipationCantBeCreatedException();
@@ -200,7 +190,7 @@ public class ListOfSpeakersController extends SmartModerationController {
     public void createParticipation(Member member) throws ParticipationCantBeCreatedException {
         PrivateGroup group;
         try {
-            group = getPrivateGroup();
+            group = getPrivateGroup(getMeeting().getGroupId());
         } catch (GroupNotFoundException exception) {
             throw new ParticipationCantBeCreatedException();
         }
@@ -221,7 +211,7 @@ public class ListOfSpeakersController extends SmartModerationController {
             CantDeleteCurrentSpeakerException {
         PrivateGroup group;
         try {
-            group = getPrivateGroup();
+            group = getPrivateGroup(getMeeting().getGroupId());
         } catch (GroupNotFoundException exception) {
             throw new ParticipationCantBeDeletedException();
         }
@@ -248,7 +238,7 @@ public class ListOfSpeakersController extends SmartModerationController {
         PrivateGroup group;
 
         try {
-            group = getPrivateGroup();
+            group = getPrivateGroup(getMeeting().getGroupId());
         } catch (GroupNotFoundException exception) {
             throw new SpeechCantBeStartedException();
         }
@@ -286,7 +276,7 @@ public class ListOfSpeakersController extends SmartModerationController {
 
         PrivateGroup group;
         try {
-            group = getPrivateGroup();
+            group = getPrivateGroup(getMeeting().getGroupId());
         } catch (GroupNotFoundException exception) {
             throw new ParticipationListCouldNotBeCleared();
         }

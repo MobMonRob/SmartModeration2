@@ -32,7 +32,7 @@ public class DetailGroupController extends SmartModerationController {
 
     public void update() {
         try {
-            this.synchronizationService.pull(getPrivateGroup());
+            this.synchronizationService.pull(getPrivateGroup(groupId));
         } catch (GroupNotFoundException e) {
             e.printStackTrace();
         }
@@ -54,15 +54,6 @@ public class DetailGroupController extends SmartModerationController {
         return dataService.getGroup(groupId);
     }
 
-    private PrivateGroup getPrivateGroup() throws GroupNotFoundException {
-        for (PrivateGroup group : connectionService.getGroups()) {
-            Long privateGroupId = Util.bytesToLong(group.getId().getBytes());
-
-            if (privateGroupId.equals(this.groupId)) return group;
-        }
-
-        throw new GroupNotFoundException();
-    }
 
     public boolean isLocalAuthorModerator() {
 
@@ -121,7 +112,7 @@ public class DetailGroupController extends SmartModerationController {
 
         data.add(group);
 
-        synchronizationService.push(getPrivateGroup(), data);
+        synchronizationService.push(getPrivateGroup(groupId), data);
         dataService.deleteGroup(group);
     }
 
@@ -133,7 +124,7 @@ public class DetailGroupController extends SmartModerationController {
 
         Collection<ModelClass> data = new ArrayList<>();
         data.add(group);
-        this.synchronizationService.push(getPrivateGroup(), data);
+        this.synchronizationService.push(getPrivateGroup(groupId), data);
     }
 
     public void removeMember(Long memberId) throws GroupNotFoundException {
@@ -152,7 +143,7 @@ public class DetailGroupController extends SmartModerationController {
             data.add(meeting);
         }
 
-        synchronizationService.push(getPrivateGroup(), data);
+        synchronizationService.push(getPrivateGroup(groupId), data);
     }
 
     public void deleteMeeting(Long meetingId) throws GroupNotFoundException {
@@ -165,7 +156,7 @@ public class DetailGroupController extends SmartModerationController {
         Collection<ModelClass> data = new ArrayList<>();
         data.add(meeting);
 
-        synchronizationService.push(getPrivateGroup(), data);
+        synchronizationService.push(getPrivateGroup(groupId), data);
         dataService.deleteMeeting(meeting);
     }
 
@@ -190,7 +181,7 @@ public class DetailGroupController extends SmartModerationController {
         data.add(group);
         data.add(member);
 
-        synchronizationService.push(getPrivateGroup(), data);
+        synchronizationService.push(getPrivateGroup(groupId), data);
     }
 
     public Collection<IContact> getContacts() throws NoContactsFoundException {
@@ -249,7 +240,7 @@ public class DetailGroupController extends SmartModerationController {
                     if (contact.getId().equals(Util.bytesToLong(briarContact.getAuthor().getId().getBytes())))
                         thisBriarContact = briarContact;
                 }
-                connectionService.addContactToGroup(getPrivateGroup(), thisBriarContact);
+                connectionService.addContactToGroup(getPrivateGroup(groupId), thisBriarContact);
             }
         }
     }

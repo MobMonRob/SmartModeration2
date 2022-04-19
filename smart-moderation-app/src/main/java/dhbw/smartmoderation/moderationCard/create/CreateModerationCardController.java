@@ -26,17 +26,6 @@ public class CreateModerationCardController extends SmartModerationController {
         return dataService.getMeeting(meetingId);
     }
 
-    public PrivateGroup getPrivateGroup() throws GroupNotFoundException, MeetingNotFoundException {
-        Collection<PrivateGroup> privateGroups = connectionService.getGroups();
-        for (PrivateGroup group : privateGroups) {
-            if (getMeeting().getGroup().getGroupId().equals(Util.bytesToLong(group.getId().getBytes())))
-                return group;
-
-        }
-        throw new GroupNotFoundException();
-    }
-
-
     public ModerationCard createModerationCard(String content, String author, int backgroundColor, int fontColor) throws CantCreateModerationCardException, ModerationCardNotFoundException, MeetingNotFoundException {
         Meeting meeting = null;
         meeting = this.getMeeting();
@@ -53,7 +42,7 @@ public class CreateModerationCardController extends SmartModerationController {
 
             Collection<ModelClass> data = new ArrayList<>();
             data.add(moderationCard);
-            synchronizationService.push(getPrivateGroup(), data);
+            synchronizationService.push(getPrivateGroup(meeting.getGroupId()), data);
 
         } catch (GroupNotFoundException exception) {
             dataService.deleteModerationCard(moderationCard.getCardId());

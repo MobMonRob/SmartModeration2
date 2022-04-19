@@ -27,20 +27,10 @@ public class DetailModerationCardController extends SmartModerationController {
         return dataService.getMeeting(meetingId);
     }
 
-    public PrivateGroup getPrivateGroup() throws GroupNotFoundException, MeetingNotFoundException {
-        Collection<PrivateGroup> privateGroups = connectionService.getGroups();
-
-        for (PrivateGroup group : privateGroups) {
-            if (getMeeting().getGroup().getGroupId().equals(Util.bytesToLong(group.getId().getBytes())))
-                return group;
-        }
-        throw new GroupNotFoundException();
-    }
 
     public ModerationCard editModerationCard(String content, String author, int backgroundColor, int fontColor, long cardId) throws ModerationCardNotFoundException, CantEditModerationCardException, MeetingNotFoundException {
         Meeting meeting = null;
         meeting = this.getMeeting();
-
         ModerationCard moderationCard = new ModerationCard();
         try {
             moderationCard.setCardId(cardId);
@@ -52,7 +42,7 @@ public class DetailModerationCardController extends SmartModerationController {
             dataService.mergeModerationCard(moderationCard);
             Collection<ModelClass> data = new ArrayList<>();
             data.add(moderationCard);
-            synchronizationService.push(getPrivateGroup(), data);
+            synchronizationService.push(getPrivateGroup(meeting.getGroupId()), data);
         } catch (GroupNotFoundException exception) {
             throw new CantEditModerationCardException();
         }
@@ -62,9 +52,9 @@ public class DetailModerationCardController extends SmartModerationController {
     public void deleteModerationCard(long cardId) throws CouldNotDeleteModerationCard, ModerationCardNotFoundException, MeetingNotFoundException {
         PrivateGroup group;
         try {
-            group = getPrivateGroup();
+            group = getPrivateGroup(getMeeting().getGroupId());
 
-        } catch (GroupNotFoundException groupNotFoundException) {
+        } catch (GroupNotFoundException | MeetingNotFoundException groupNotFoundException) {
             throw new CouldNotDeleteModerationCard();
         }
         ModerationCard moderationCard = dataService.getModerationCard(cardId);
