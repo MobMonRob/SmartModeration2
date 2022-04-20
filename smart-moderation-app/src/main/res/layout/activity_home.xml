@@ -81,8 +81,8 @@
 
 		<ImageView
 			android:id="@+id/lanIcon"
-			android:layout_width="32dp"
-			android:layout_height="32dp"
+			android:layout_width="34dp"
+			android:layout_height="match_parent"
 			android:layout_gravity="start"
 			android:layout_marginHorizontal="30dp"
 			app:srcCompat="@drawable/ic_internet" />
@@ -90,7 +90,7 @@
 		<ImageView
 			android:id="@+id/torIcon"
 			android:layout_width="32dp"
-			android:layout_height="32dp"
+			android:layout_height="match_parent"
 			android:layout_gravity="center"
 			android:layout_marginHorizontal="30dp"
 			app:srcCompat="@drawable/ic_tor" />
@@ -98,7 +98,7 @@
 		<ImageView
 			android:id="@+id/bluetoothIcon"
 			android:layout_width="32dp"
-			android:layout_height="32dp"
+			android:layout_height="match_parent"
 			android:layout_gravity="right"
 			android:layout_marginHorizontal="30dp"
 			app:srcCompat="@drawable/ic_bluetooth" />
