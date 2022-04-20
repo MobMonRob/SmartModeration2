@@ -9,7 +9,6 @@ import com.google.android.material.button.MaterialButton;
 import java.util.function.Function;
 
 public abstract class SmartModerationException extends Exception {
-    //TODO Kann man hier noch sachen erweitern?
 
     public SmartModerationException(){
         super();

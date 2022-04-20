@@ -5,11 +5,12 @@ import android.view.View;
 
 import androidx.appcompat.app.AlertDialog;
 
+import dhbw.smartmoderation.R;
+
 public class CantCreateModerationCardException extends SmartModerationException {
     @Override
     public String getMessage(Context context) {
-        //todo
-        return "Moderation Card couldn't be created";
+        return context.getString(R.string.CantCreateModerationCardException_Message);
     }
 
     @Override

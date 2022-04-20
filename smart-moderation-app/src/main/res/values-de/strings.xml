@@ -85,6 +85,10 @@
 	<string name="MemberCantBeDeleteException_Message">Mitglied konnte nicht gelöscht werden!</string>
 	<string name="TopicCantBeChangedException_Message">Thema konnte nicht geändert werden!</string>
 	<string name="TopicCantBeDeletedException_Message">Thema konnte nicht gelöscht werden!</string>
+	<string name="CantCreateModerationCardException_Message">Moderationskarte konnte nicht erstellt werden</string>
+	<string name="CantEditModerationCardException_Message">Moderationskarte konnte nicht bearbeitet werden</string>
+	<string name="CantDeleteModerationCardException_Message">Moderationskarte konnte nicht gelöscht werden</string>
+	<string name="CantfindModerationCardException_Message">Moderationskarte konnte nicht gefunden werden</string>
 	<!-- Errors-->
 	<string name="CameraException_Message">Die Kamera hat eine Ausnahme verursacht!</string>
 	<string name="qrcode_old">Der QR-Code ist von einer veralteten Version. Bitte Sie Ihren Kontakt die neueste Version runterzuladen</string>
@@ -266,4 +270,5 @@
 	<string name="abgeschlossen">Abgeschlossen</string>
 	<string name="deaktiviert">Deaktiviert</string>
 	<string name="addModerationCard">füge Moderationskarte hinzu</string>
+
 </resources>

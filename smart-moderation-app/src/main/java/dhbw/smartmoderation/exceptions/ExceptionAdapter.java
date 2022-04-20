@@ -17,9 +17,6 @@ import dhbw.smartmoderation.group.detail.MemberAdapter;
 
 //TODO Obsolete Klasse löschen
 public class ExceptionAdapter extends RecyclerView.Adapter<ExceptionAdapter.ExceptionViewHolder> {
-
-
-
     private List<Throwable> Exceptions;
     private Context Context;
 
@@ -59,11 +56,7 @@ public class ExceptionAdapter extends RecyclerView.Adapter<ExceptionAdapter.Exce
 
         public ExceptionViewHolder(@NonNull ConstraintLayout itemView, Context context) {
             super(itemView);
-
             Context = context;
-
-
-
         }
 
         public void setException(Throwable exception){
