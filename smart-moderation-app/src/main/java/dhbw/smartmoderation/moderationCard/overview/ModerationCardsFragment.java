@@ -48,7 +48,7 @@ public class ModerationCardsFragment extends Fragment {
         this.meetingId = extra.getLong("meetingId");
         controller = new ModerationCardsController(meetingId);
         getActivity().setTitle(getString(R.string.moderationCardTitle));
-        FloatingActionButton addButton = view.findViewById(R.id.floatingActionButton);
+        FloatingActionButton addButton = view.findViewById(R.id.addCardButton);
         FloatingActionButton loginButton = view.findViewById(R.id.floatingActionButtonQRCode);
         addButton.setOnClickListener(addButtonClickListener);
         loginButton.setOnClickListener(loginButtonClickListener);
