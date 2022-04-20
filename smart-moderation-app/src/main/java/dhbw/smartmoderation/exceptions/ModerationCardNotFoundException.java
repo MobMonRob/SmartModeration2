@@ -10,8 +10,7 @@ import dhbw.smartmoderation.R;
 public class ModerationCardNotFoundException extends SmartModerationException {
     @Override
     public String getMessage(Context context) {
-        //todo
-        return context.getString(R.string.GroupSettingsNotFoundException_Message);
+        return context.getString(R.string.CantfindModerationCardException_Message);
     }
 
     @Override

@@ -85,6 +85,10 @@
     <string name="MemberCantBeDeleteException_Message">Member could not be deleted</string>
     <string name="TopicCantBeChangedException_Message">Topic could not be changed</string>
     <string name="TopicCantBeDeletedException_Message">Topic could not be deleted</string>
+    <string name="CantCreateModerationCardException_Message">Moderation card couldn\'t be created</string>
+    <string name="CantEditModerationCardException_Message">Moderation card couldn\'t be edited</string>
+    <string name="CantDeleteModerationCardException_Message">Moderation card couldn\'t be deleted</string>
+    <string name="CantfindModerationCardException_Message">Moderation card couldn\'t be found</string>
 
     <!-- Errors-->
     <string name="CameraException_Message">Camera had an exception</string>
