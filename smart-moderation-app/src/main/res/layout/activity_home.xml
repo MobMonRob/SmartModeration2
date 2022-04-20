@@ -67,5 +67,40 @@
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@+id/btnNewGroup"
 		android:background="@drawable/rounded"/>
+
+	<LinearLayout
+		android:id="@+id/plugins"
+		android:layout_width="136dp"
+		android:layout_height="32dp"
+		android:layout_marginTop="36dp"
+		android:orientation="horizontal"
+		android:gravity="center"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent">
+
+
+		<ImageView
+			android:id="@+id/lanIcon"
+			android:layout_width="32dp"
+			android:layout_height="32dp"
+
+			app:srcCompat="@drawable/ic_internet" />
+
+		<ImageView
+			android:id="@+id/torIcon"
+			android:layout_width="32dp"
+			android:layout_height="32dp"
+			android:layout_marginLeft="20dp"
+			android:layout_marginRight="20dp"
+			app:srcCompat="@drawable/ic_tor" />
+
+		<ImageView
+			android:id="@+id/bluetoothIcon"
+			android:layout_width="32dp"
+			android:layout_height="32dp"
+			app:srcCompat="@drawable/ic_bluetooth" />
+	</LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
