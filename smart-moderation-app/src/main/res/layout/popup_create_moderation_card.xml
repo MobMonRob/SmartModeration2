@@ -5,17 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/moderationCardContent"
-        android:layout_width="331dp"
-        android:layout_height="118dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="68dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
@@ -23,6 +12,17 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="40dp"
         android:text="@string/moderationCardText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/moderationCardContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="68dp"
+        android:ems="10"
+        android:inputType="textMultiLine"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -41,11 +41,9 @@
         android:layout_width="42dp"
         android:layout_height="34dp"
         android:layout_marginTop="28dp"
-        android:layout_marginEnd="120dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/pickColorButton"
-        app:layout_constraintTop_toBottomOf="@+id/moderationCardContent" />
+        app:layout_constraintTop_toBottomOf="@+id/moderationCardContent"  />
 
     <Button
         android:id="@+id/addButton"
@@ -53,7 +51,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="48dp"
-        android:text="@string/add"
+        android:text="@string/save"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/pickColorButton" />
 
