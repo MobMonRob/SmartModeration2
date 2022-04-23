@@ -3,6 +3,7 @@ package dhbw.smartmoderation.home;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -30,6 +31,8 @@ import dhbw.smartmoderation.group.invitations.ListInvitationsActivity;
 import dhbw.smartmoderation.group.overview.OverviewGroupActivity;
 import dhbw.smartmoderation.moderationCard.DesktopLoginQRScanner;
 import dhbw.smartmoderation.util.UpdateableExceptionHandlingActivity;
+import dhbw.smartmoderation.util.Util;
+import okhttp3.Response;
 
 /**
  * Activity for navigating to all other activities.
@@ -120,14 +123,25 @@ public class HomeActivity extends UpdateableExceptionHandlingActivity {
 
     @Override
     protected void updateUI() {
-        this.updateNetworkPluginsState();
-        if (this.homeController.atLeastOneGroupExists()) {
-            btnShowGroups.setVisibility(View.VISIBLE);
-            btnNewGroup.setVisibility(View.GONE);
-        } else {
-            btnShowGroups.setVisibility(View.GONE);
-            btnNewGroup.setVisibility(View.VISIBLE);
-        }
+        Thread thread = new Thread(() -> {
+            while (!Thread.currentThread().isInterrupted()) {
+                this.updateNetworkPluginsState();
+                if (this.homeController.atLeastOneGroupExists()) {
+                    btnShowGroups.setVisibility(View.VISIBLE);
+                    btnNewGroup.setVisibility(View.GONE);
+                } else {
+                    btnShowGroups.setVisibility(View.GONE);
+                    btnNewGroup.setVisibility(View.VISIBLE);
+                }
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    Thread.currentThread().interrupt();
+                }
+            }
+        });
+        thread.start();
     }
 
     private void updateNetworkPluginsState() {
