@@ -92,6 +92,7 @@
 			android:layout_width="32dp"
 			android:layout_height="match_parent"
 			android:layout_gravity="center"
+			android:tag=""
 			android:layout_marginHorizontal="30dp"
 			app:srcCompat="@drawable/ic_tor" />
 
@@ -102,6 +103,13 @@
 			android:layout_gravity="right"
 			android:layout_marginHorizontal="30dp"
 			app:srcCompat="@drawable/ic_bluetooth" />
+		<ImageView
+			android:id="@+id/desktopIcon"
+			android:layout_width="32dp"
+			android:layout_height="match_parent"
+			android:layout_gravity="right"
+			android:layout_marginHorizontal="30dp"
+			app:srcCompat="@drawable/ic_desktop" />
 	</LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

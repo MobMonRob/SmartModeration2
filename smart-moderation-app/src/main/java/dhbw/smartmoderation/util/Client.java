@@ -30,6 +30,7 @@ import okhttp3.Response;
 public class Client {
     private static final String TAG = "Client";
     private boolean isRunning;
+    private boolean isHostAlive;
     private String ipAddress;
     private int port;
     private String apiKey;
@@ -85,7 +86,6 @@ public class Client {
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
         MediaType mediaType = MediaType.parse("application/json");
-
         JSONObject putJSON = new JSONObject();
         try {
             putJSON.put("cardId", moderationCard.getCardId());
@@ -161,6 +161,42 @@ public class Client {
         thread.start();
     }
 
+    public void updateHostStatus() {
+        System.out.println("check host alive");
+        if (ipAddress == null || apiKey == null) {
+            isHostAlive = false;
+            return;
+        }
+        OkHttpClient client = new OkHttpClient().newBuilder()
+                .build();
+
+        HttpUrl url = new HttpUrl.Builder()
+                .scheme("http")
+                .host(ipAddress)
+                .port(port)
+                .build();
+
+        System.out.println("URL: " + url);
+
+        Request request = new Request.Builder()
+                .url(url)
+                .method("GET", null)
+                .addHeader("Authorization", "Bearer " + apiKey)
+                .build();
+
+        System.out.println("Get request: " + request);
+        Thread thread = new Thread(() -> {
+            try {
+                Response response = client.newCall(request).execute();
+                isHostAlive = response.code() == 200;
+            } catch (Exception e) {
+                Log.e(TAG, e.getMessage());
+                isHostAlive = false;
+            }
+        });
+        thread.start();
+    }
+
     public void sendLoginInformation(String androidIpAddress, long meetingId) throws JSONException {
         System.out.println("Send login information");
         JSONObject loginJSON = new JSONObject();
@@ -230,6 +266,11 @@ public class Client {
 
     public boolean isRunning() {
         return isRunning;
+    }
+
+    public boolean isHostAlive() {
+        updateHostStatus();
+        return isHostAlive;
     }
 
 }

@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat;
 import com.budiyev.android.codescanner.CodeScanner;
 import com.budiyev.android.codescanner.CodeScannerView;
 
+import org.briarproject.bramble.api.plugin.TransportId;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,6 +26,7 @@ import dhbw.smartmoderation.util.ExceptionHandlingActivity;
 public class DesktopLoginQRScanner extends ExceptionHandlingActivity {
 
     private CodeScanner mCodeScanner;
+    public static final TransportId DESKTOPID = new TransportId("DESKTOPAPP");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

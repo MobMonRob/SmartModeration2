@@ -12,8 +12,15 @@ import java.util.Map;
 
 import dhbw.smartmoderation.SmartModerationApplicationImpl;
 import dhbw.smartmoderation.controller.SmartModerationController;
+import dhbw.smartmoderation.moderationCard.DesktopLoginQRScanner;
+import dhbw.smartmoderation.util.Client;
 
 public class HomeController extends SmartModerationController {
+    Client client;
+
+    public HomeController() {
+        this.client = ((SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp()).getClient();
+    }
 
     public boolean atLeastOneGroupExists() {
         if(dataService.getGroups().size() > 0)
@@ -26,6 +33,11 @@ public class HomeController extends SmartModerationController {
         Collection<DuplexPlugin> plugins = ((SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp()).getConnectionService().getPluginManager().getDuplexPlugins();
         for (DuplexPlugin plugin : plugins) {
             pluginsMap.put(plugin.getId(), plugin.getState());
+        }
+        if (client.isHostAlive()) {
+            pluginsMap.put(DesktopLoginQRScanner.DESKTOPID, Plugin.State.ACTIVE);
+        } else {
+            pluginsMap.put(DesktopLoginQRScanner.DESKTOPID, Plugin.State.INACTIVE);
         }
         return pluginsMap;
     }
