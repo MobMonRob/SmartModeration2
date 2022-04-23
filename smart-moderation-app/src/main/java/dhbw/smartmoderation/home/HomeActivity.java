@@ -17,6 +17,8 @@ import org.briarproject.bramble.api.plugin.TorConstants;
 import org.briarproject.bramble.api.plugin.TransportId;
 import org.briarproject.bramble.api.plugin.duplex.DuplexPlugin;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
@@ -26,6 +28,7 @@ import dhbw.smartmoderation.connection.synchronization.SynchronizableDataType;
 import dhbw.smartmoderation.group.create.CreateGroup;
 import dhbw.smartmoderation.group.invitations.ListInvitationsActivity;
 import dhbw.smartmoderation.group.overview.OverviewGroupActivity;
+import dhbw.smartmoderation.moderationCard.DesktopLoginQRScanner;
 import dhbw.smartmoderation.util.UpdateableExceptionHandlingActivity;
 
 /**
@@ -38,10 +41,7 @@ public class HomeActivity extends UpdateableExceptionHandlingActivity {
     private Button btnNewGroup;
     private Button btnGroupInvitations;
     private HomeController homeController;
-    private LinearLayout pluginIconsHolder;
-    private ImageView bluetoothIcon;
-    private ImageView lanIcon;
-    private ImageView torIcon;
+    ArrayList<ImageView> statusIcons;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,10 +60,8 @@ public class HomeActivity extends UpdateableExceptionHandlingActivity {
         btnAddContact = findViewById(R.id.btnAddContact);
         btnNewGroup = findViewById(R.id.btnNewGroup);
         btnGroupInvitations = findViewById(R.id.btnGroupInvitations);
-        pluginIconsHolder = findViewById(R.id.plugins);
-        bluetoothIcon = findViewById(R.id.bluetoothIcon);
-        lanIcon = findViewById(R.id.lanIcon);
-        torIcon = findViewById(R.id.torIcon);
+        initializeStatusIcons();
+
 
         btnShowGroups.setOnClickListener(this::onShowGroups);
         btnAddContact.setOnClickListener(this::onAddContact);
@@ -71,6 +69,22 @@ public class HomeActivity extends UpdateableExceptionHandlingActivity {
         btnGroupInvitations.setOnClickListener(this::onGroupInvitations);
 
         this.homeController = new HomeController();
+    }
+
+    private void initializeStatusIcons() {
+        statusIcons = new ArrayList<>();
+        ImageView lanIcon = findViewById(R.id.lanIcon);
+        ImageView torIcon = findViewById(R.id.torIcon);
+        ImageView bluetoothIcon = findViewById(R.id.bluetoothIcon);
+        ImageView desktopAppIcon = findViewById(R.id.desktopIcon);
+        torIcon.setTag(TorConstants.ID);
+        lanIcon.setTag(LanTcpConstants.ID);
+        bluetoothIcon.setTag(BluetoothConstants.ID);
+        desktopAppIcon.setTag(DesktopLoginQRScanner.DESKTOPID);
+        statusIcons.add(torIcon);
+        statusIcons.add(lanIcon);
+        statusIcons.add(bluetoothIcon);
+        statusIcons.add(desktopAppIcon);
     }
 
     @Override
@@ -118,42 +132,18 @@ public class HomeActivity extends UpdateableExceptionHandlingActivity {
 
     private void updateNetworkPluginsState() {
         Map<TransportId, Plugin.State> pluginsStates = homeController.getPluginsStates();
-        Plugin.State torPluginState = pluginsStates.get(TorConstants.ID);
-        Plugin.State lanPluginState = pluginsStates.get(LanTcpConstants.ID);
-        Plugin.State bluetoothPluginState = pluginsStates.get(BluetoothConstants.ID);
-        switch (torPluginState) {
-            case ACTIVE:
-                torIcon.setColorFilter(Color.GREEN);
-                break;
-            case INACTIVE:
-                torIcon.setColorFilter(Color.GRAY);
-                break;
-            case DISABLED:
-                torIcon.setColorFilter(Color.RED);
-                break;
+        for (ImageView icon : statusIcons) {
+            switch (pluginsStates.get(icon.getTag())) {
+                case ACTIVE:
+                    icon.setColorFilter(Color.GREEN);
+                    break;
+                case INACTIVE:
+                    icon.setColorFilter(Color.GRAY);
+                    break;
+                case DISABLED:
+                    icon.setColorFilter(Color.RED);
+                    break;
+            }
         }
-        switch (lanPluginState) {
-            case ACTIVE:
-                lanIcon.setColorFilter(Color.GREEN);
-                break;
-            case INACTIVE:
-                lanIcon.setColorFilter(Color.GRAY);
-                break;
-            case DISABLED:
-                lanIcon.setColorFilter(Color.RED);
-                break;
-        }
-        switch (bluetoothPluginState) {
-            case ACTIVE:
-                bluetoothIcon.setColorFilter(Color.GREEN);
-                break;
-            case INACTIVE:
-                bluetoothIcon.setColorFilter(Color.GRAY);
-                break;
-            case DISABLED:
-                bluetoothIcon.setColorFilter(Color.RED);
-                break;
-        }
-
     }
 }
