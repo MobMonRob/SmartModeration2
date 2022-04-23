@@ -202,6 +202,7 @@ public class Client {
         this.ipAddress = ipAddress;
         this.port = port;
         this.apiKey = apiKey;
+        app.setMeetingId(meetingId);
         app.startWebServer();
         WifiManager wifiManager = (WifiManager) app.getApplicationContext().getSystemService(WIFI_SERVICE);
         String androidIpAddress = getIpAddressAsString(wifiManager.getConnectionInfo().getIpAddress());

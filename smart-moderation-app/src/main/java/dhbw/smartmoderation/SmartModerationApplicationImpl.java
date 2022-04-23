@@ -144,16 +144,11 @@ public class SmartModerationApplicationImpl extends Application
     }
 
     public void startWebServer() {
-
+        if (webServer == null)  webServer = new WebServer(this);
         if (!webServer.isAlive()) {
-
             try {
-
-                webServer = new WebServer(this);
                 webServer.start();
-
             } catch (IOException e) {
-
                 e.printStackTrace();
             }
         }
