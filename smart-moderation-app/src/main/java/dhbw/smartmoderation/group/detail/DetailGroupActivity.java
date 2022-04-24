@@ -1,5 +1,6 @@
 package dhbw.smartmoderation.group.detail;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -50,40 +51,20 @@ import dhbw.smartmoderation.util.UpdateableExceptionHandlingActivity;
 public class DetailGroupActivity extends UpdateableExceptionHandlingActivity implements MemberAdapter.OnMemberListener, MeetingAdapter.OnMeetingListener, OnStartDragListener {
 
     private static final String TAG = DetailGroupActivity.class.getSimpleName();
-
     private DetailGroupController controller;
-
     private boolean allFabVisible;
     private View popup;
     private AlertDialog alertDialog;
-
     enum Answer {YES, NO}
-
-    ;
-
     private ItemTouchHelper memberItemTouchHelper;
     private ItemTouchHelper meetingsItemTouchHelper;
-
     private RecyclerView recMembers;
     private RecyclerView recMeetings;
-
     private MemberAdapter memberAdapter;
     private MeetingAdapter meetingAdapter;
-
     private ArrayList<FloatingActionButton> fabList;
     private ArrayList<TextView> textList;
-
-    private FloatingActionButton generalFab;
-    private FloatingActionButton createMemberFab;
-    private FloatingActionButton createMeetingFab;
-    private FloatingActionButton createGhostFab;
-
-    private TextView createMemberText;
-    private TextView createMeetingText;
-    private TextView createGhostText;
-
     private SwipeRefreshLayout pullToRefresh;
-
     private final ContactAdapter adapter = getContactAdapter();
 
     private ContactAdapter getContactAdapter() {
@@ -97,7 +78,7 @@ public class DetailGroupActivity extends UpdateableExceptionHandlingActivity imp
         setContentView(R.layout.activity_detail_group);
 
         pullToRefresh = findViewById(R.id.pullToRefresh);
-        pullToRefresh.setOnRefreshListener(() -> updateUI());
+        pullToRefresh.setOnRefreshListener(this::updateUI);
 
         Intent intent = getIntent();
         Long groupId = intent.getLongExtra("groupId", 0);
@@ -125,15 +106,15 @@ public class DetailGroupActivity extends UpdateableExceptionHandlingActivity imp
         recMembers = findViewById(R.id.recMembers);
         recMeetings = findViewById(R.id.recMeetings);
 
-        generalFab = findViewById(R.id.generalFab);
+        FloatingActionButton generalFab = findViewById(R.id.generalFab);
         generalFab.setVisibility(View.GONE);
-        createMemberFab = findViewById(R.id.createMemberFab);
-        createMeetingFab = findViewById(R.id.createMeetingFab);
-        createGhostFab = findViewById(R.id.createGhostFab);
+        FloatingActionButton createMemberFab = findViewById(R.id.createMemberFab);
+        FloatingActionButton createMeetingFab = findViewById(R.id.createMeetingFab);
+        FloatingActionButton createGhostFab = findViewById(R.id.createGhostFab);
 
-        createMemberText = findViewById(R.id.createMemberText);
-        createMeetingText = findViewById(R.id.createMeetingText);
-        createGhostText = findViewById(R.id.createGhostText);
+        TextView createMemberText = findViewById(R.id.createMemberText);
+        TextView createMeetingText = findViewById(R.id.createMeetingText);
+        TextView createGhostText = findViewById(R.id.createGhostText);
 
         textList.add(createMemberText);
 
@@ -297,6 +278,7 @@ public class DetailGroupActivity extends UpdateableExceptionHandlingActivity imp
         return dataTypes;
     }
 
+    @SuppressLint("InflateParams")
     private void onCreateGhost(View view) {
 
         LayoutInflater inflater = LayoutInflater.from(this);
@@ -325,6 +307,7 @@ public class DetailGroupActivity extends UpdateableExceptionHandlingActivity imp
         alertDialog.show();
     }
 
+    @SuppressLint("InflateParams")
     private void onAddMember(View view) {
 
         LayoutInflater inflater = LayoutInflater.from(this);
@@ -503,6 +486,7 @@ public class DetailGroupActivity extends UpdateableExceptionHandlingActivity imp
     public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
     }
 
+    @SuppressLint("StaticFieldLeak")
     public class DetailGroupAsyncTask extends AsyncTask<String, Exception, String> {
 
         String flag;

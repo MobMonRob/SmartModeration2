@@ -120,7 +120,8 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
                 } else {
                     adapter.getSelectedContacts().remove(contact);
                 }
-                ((CreateGroup) context).onInputChange();
+                if (context instanceof CreateGroup)
+                    ((CreateGroup) context).onInputChange();
             });
 
             ConstraintSet checkBoxConstraintSet = new ConstraintSet();

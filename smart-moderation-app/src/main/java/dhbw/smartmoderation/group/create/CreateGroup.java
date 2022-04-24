@@ -79,7 +79,7 @@ public class CreateGroup extends ExceptionHandlingActivity {
         addGroupText.setVisibility(View.GONE);
         addGhostText.setVisibility(View.GONE);
 
-        allFabVisible = true;
+        allFabVisible = false;
 
         generalFab.setOnClickListener(v -> {
             if (!allFabVisible) {
