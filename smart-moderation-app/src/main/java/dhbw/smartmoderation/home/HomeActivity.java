@@ -3,11 +3,13 @@ package dhbw.smartmoderation.home;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import androidx.lifecycle.Lifecycle;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import org.briarproject.bramble.api.plugin.BluetoothConstants;
@@ -30,6 +32,8 @@ import dhbw.smartmoderation.group.invitations.ListInvitationsActivity;
 import dhbw.smartmoderation.group.overview.OverviewGroupActivity;
 import dhbw.smartmoderation.moderationCard.DesktopLoginQRScanner;
 import dhbw.smartmoderation.util.UpdateableExceptionHandlingActivity;
+import dhbw.smartmoderation.util.Util;
+import okhttp3.Response;
 
 /**
  * Activity for navigating to all other activities.
@@ -42,6 +46,7 @@ public class HomeActivity extends UpdateableExceptionHandlingActivity {
     private Button btnGroupInvitations;
     private HomeController homeController;
     ArrayList<ImageView> statusIcons;
+    private Thread updateThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +98,12 @@ public class HomeActivity extends UpdateableExceptionHandlingActivity {
         updateUI();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        updateThread.interrupt();
+    }
+
     public void onShowGroups(View v) {
         Intent showGroupsIntent = new Intent(HomeActivity.this, OverviewGroupActivity.class);
         startActivity(showGroupsIntent);
@@ -120,13 +131,27 @@ public class HomeActivity extends UpdateableExceptionHandlingActivity {
 
     @Override
     protected void updateUI() {
-        this.updateNetworkPluginsState();
-        if (this.homeController.atLeastOneGroupExists()) {
-            btnShowGroups.setVisibility(View.VISIBLE);
-            btnNewGroup.setVisibility(View.GONE);
-        } else {
-            btnShowGroups.setVisibility(View.GONE);
-            btnNewGroup.setVisibility(View.VISIBLE);
+        if (updateThread == null || updateThread.isInterrupted() || !updateThread.isAlive()) {
+            updateThread = new Thread(() -> {
+                while (!Thread.currentThread().isInterrupted()) {
+                    System.out.println("updatingPluginStates");
+                    this.updateNetworkPluginsState();
+                    if (this.homeController.atLeastOneGroupExists()) {
+                        btnShowGroups.setVisibility(View.VISIBLE);
+                        btnNewGroup.setVisibility(View.GONE);
+                    } else {
+                        btnShowGroups.setVisibility(View.GONE);
+                        btnNewGroup.setVisibility(View.VISIBLE);
+                    }
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            });
+            updateThread.start();
         }
     }
 
