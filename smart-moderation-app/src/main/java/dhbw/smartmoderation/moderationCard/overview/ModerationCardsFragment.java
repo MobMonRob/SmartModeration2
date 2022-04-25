@@ -2,6 +2,8 @@ package dhbw.smartmoderation.moderationCard.overview;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -75,5 +77,10 @@ public class ModerationCardsFragment extends Fragment {
             ((ExceptionHandlingActivity) requireActivity()).handleException(e);
         }
         ((BaseActivity) requireActivity()).getPullToRefresh().setRefreshing(false);
+    }
+
+    public void refresh() {
+        final Handler UIHandler = new Handler(Looper.getMainLooper());
+        UIHandler.post(this::onResume);
     }
 }
