@@ -79,7 +79,7 @@ public class CreateGroup extends ExceptionHandlingActivity {
         addGroupText.setVisibility(View.GONE);
         addGhostText.setVisibility(View.GONE);
 
-        allFabVisible = true;
+        allFabVisible = false;
 
         generalFab.setOnClickListener(v -> {
             if (!allFabVisible) {
@@ -122,6 +122,7 @@ public class CreateGroup extends ExceptionHandlingActivity {
     }
 
     public void onInputChange() {
+        if (!allFabVisible) return;
         if (!Util.isEmpty(groupName) && contactAdapter.atLeastOneContactSelected()) {
             createGroupFab.show();
             addGroupText.setVisibility(View.VISIBLE);
