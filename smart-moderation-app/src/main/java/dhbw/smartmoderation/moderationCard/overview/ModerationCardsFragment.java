@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import dhbw.smartmoderation.R;
+import dhbw.smartmoderation.SmartModerationApplicationImpl;
 import dhbw.smartmoderation.exceptions.GroupNotFoundException;
 import dhbw.smartmoderation.exceptions.MeetingNotFoundException;
 import dhbw.smartmoderation.meeting.detail.BaseActivity;
@@ -43,11 +44,11 @@ public class ModerationCardsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_moderation_cards, container, false);
-        Intent intent = getActivity().getIntent();
+        Intent intent = requireActivity().getIntent();
         Bundle extra = intent.getExtras();
         this.meetingId = extra.getLong("meetingId");
         controller = new ModerationCardsController(meetingId);
-        getActivity().setTitle(getString(R.string.moderationCardTitle));
+        requireActivity().setTitle(getString(R.string.moderationCardTitle));
         FloatingActionButton addButton = view.findViewById(R.id.addCardButton);
         FloatingActionButton loginButton = view.findViewById(R.id.floatingActionButtonQRCode);
         addButton.setOnClickListener(addButtonClickListener);
@@ -56,23 +57,23 @@ public class ModerationCardsFragment extends Fragment {
         try {
             this.moderationCardAdapter = new ModerationCardAdapter(getActivity(), controller.getAllModerationCards());
         } catch (MeetingNotFoundException | GroupNotFoundException e) {
-            ((ExceptionHandlingActivity) getActivity()).handleException(e);
+            ((ExceptionHandlingActivity) requireActivity()).handleException(e);
         }
         moderationCardsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         moderationCardsRecyclerView.setAdapter(moderationCardAdapter);
-        ((BaseActivity)getActivity()).getPullToRefresh().setOnRefreshListener(this::onResume);
-
+        ((BaseActivity) requireActivity()).getPullToRefresh().setOnRefreshListener(this::onResume);
+        ((SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp()).getWebServer().initObserver(this);
         return view;
     }
+
     @Override
     public void onResume() {
         super.onResume();
         try {
             moderationCardAdapter.updateModerationCards(controller.getAllModerationCards());
         } catch (MeetingNotFoundException | GroupNotFoundException e) {
-            ((ExceptionHandlingActivity) getActivity()).handleException(e);
+            ((ExceptionHandlingActivity) requireActivity()).handleException(e);
         }
-        ((BaseActivity)getActivity()).getPullToRefresh().setRefreshing(false);
+        ((BaseActivity) requireActivity()).getPullToRefresh().setRefreshing(false);
     }
-
 }

@@ -19,8 +19,8 @@ import dhbw.smartmoderation.data.model.Voice;
 import dhbw.smartmoderation.exceptions.CouldNotDeleteModerationCard;
 import dhbw.smartmoderation.exceptions.MeetingNotFoundException;
 import dhbw.smartmoderation.exceptions.ModerationCardNotFoundException;
-import dhbw.smartmoderation.moderationCard.ModerationCardServiceController;
 import dhbw.smartmoderation.moderationCard.detail.DetailModerationCardController;
+import dhbw.smartmoderation.moderationCard.overview.ModerationCardsFragment;
 import fi.iki.elonen.NanoHTTPD;
 
 public class WebServer extends NanoHTTPD {
@@ -28,6 +28,7 @@ public class WebServer extends NanoHTTPD {
     public static final int PORT = 8765;
     public SmartModerationApplicationImpl app;
     public Long meetingId;
+    private ModerationCardsFragment moderationCardsFragment;
 
     public WebServer(SmartModerationApplicationImpl app) {
         super(PORT);
@@ -99,7 +100,6 @@ public class WebServer extends NanoHTTPD {
                 JSONObject cardsOutputJSON = new JSONObject();
                 cardsOutputJSON.put("meetingId", getMeeting().getMeetingId());
                 cardsOutputJSON.put("moderationCards", cardsArray);
-                String s = cardsOutputJSON.toString();
                 return newFixedLengthResponse(Response.Status.OK, mimetype, cardsOutputJSON.toString());
 
             } catch (JSONException | MeetingNotFoundException e) {
@@ -107,19 +107,19 @@ public class WebServer extends NanoHTTPD {
             }
 
         } else if (uri.startsWith("/moderationcard/") && Method.DELETE.equals(method)) {
-
             mimetype = "application/json";
             DetailModerationCardController detailModerationCardController = new DetailModerationCardController(meetingId);
             long cardId = Long.parseLong(uri.split("/")[2]);
             try {
                 detailModerationCardController.deleteModerationCard(cardId);
+                if (moderationCardsFragment != null)
+                    moderationCardsFragment.onResume();
                 return newFixedLengthResponse(Response.Status.OK, mimetype, "moderationcard " + cardId + " deleted successfully");
             } catch (CouldNotDeleteModerationCard | MeetingNotFoundException e) {
                 return newFixedLengthResponse(Response.Status.INTERNAL_ERROR, mimetype, e.toString());
             } catch (ModerationCardNotFoundException e) {
                 return newFixedLengthResponse(Response.Status.NOT_FOUND, mimetype, e.toString());
             }
-
 
         } else if (uri.contains("/result/voices") && Method.GET.equals(method)) {
 
@@ -238,47 +238,30 @@ public class WebServer extends NanoHTTPD {
         }
 
         if (is_ascii) {
-
             StringBuilder response = new StringBuilder();
             String line;
-
             try {
-
                 BufferedReader reader = new BufferedReader(new InputStreamReader(app.getApplicationContext().getAssets().open(filename)));
-
                 while ((line = reader.readLine()) != null) {
-
                     response.append(line);
                 }
-
                 reader.close();
-
             } catch (IOException e) {
-
                 e.printStackTrace();
             }
-
             return newFixedLengthResponse(Response.Status.OK, mimetype, response.toString());
-
         } else {
-
             try {
-
                 InputStream inputStream = app.getApplicationContext().getAssets().open(filename);
                 return newFixedLengthResponse(Response.Status.OK, mimetype, inputStream, inputStream.available());
-
             } catch (IOException e) {
-
                 e.printStackTrace();
             }
-
         }
-
         return super.serve(session);
     }
 
     public void setMeetingId(Long meetingId) {
-
         this.meetingId = meetingId;
     }
 
@@ -294,7 +277,8 @@ public class WebServer extends NanoHTTPD {
         return PORT;
     }
 
-    public String getIpAddress() {
-        return this.getHostname();
+    public void initObserver(ModerationCardsFragment observer) {
+        moderationCardsFragment = observer;
     }
+
 }
