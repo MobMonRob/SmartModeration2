@@ -44,7 +44,6 @@ public class ModerationCardAdapter extends RecyclerView.Adapter<ModerationCardAd
 
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
-
         this.recyclerView = recyclerView;
     }
 

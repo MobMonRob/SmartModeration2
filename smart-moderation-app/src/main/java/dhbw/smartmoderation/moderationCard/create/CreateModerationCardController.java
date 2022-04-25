@@ -1,11 +1,8 @@
 package dhbw.smartmoderation.moderationCard.create;
 
-import org.briarproject.briar.api.privategroup.PrivateGroup;
-
 import java.util.ArrayList;
 import java.util.Collection;
 
-import dhbw.smartmoderation.controller.SmartModerationController;
 import dhbw.smartmoderation.data.model.Meeting;
 import dhbw.smartmoderation.data.model.ModelClass;
 import dhbw.smartmoderation.data.model.ModerationCard;
@@ -34,7 +31,7 @@ public class CreateModerationCardController {
     }
 
     public ModerationCard createModerationCard(String content, String author, int backgroundColor, int fontColor) throws CantCreateModerationCardException, ModerationCardNotFoundException, MeetingNotFoundException {
-        Meeting meeting = null;
+        Meeting meeting;
         meeting = this.getMeeting();
 
         ModerationCard moderationCard = new ModerationCard();

@@ -8,6 +8,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
 import dhbw.smartmoderation.R;
 import dhbw.smartmoderation.SmartModerationApplicationImpl;
 import dhbw.smartmoderation.data.model.ModerationCard;
@@ -16,7 +17,6 @@ import dhbw.smartmoderation.exceptions.CouldNotDeleteModerationCard;
 import dhbw.smartmoderation.exceptions.MeetingNotFoundException;
 import dhbw.smartmoderation.exceptions.ModerationCardNotFoundException;
 import dhbw.smartmoderation.moderationCard.ModerationCardColorImporter;
-import dhbw.smartmoderation.moderationCard.ModerationCardServiceController;
 import dhbw.smartmoderation.moderationCard.overview.ModerationCardsFragment;
 import dhbw.smartmoderation.util.Client;
 import dhbw.smartmoderation.util.ExceptionHandlingActivity;
@@ -69,7 +69,7 @@ public class DetailModerationCard {
                 createErrorDialog();
             }
         } catch (ModerationCardNotFoundException | CantEditModerationCardException | MeetingNotFoundException e) {
-            ((ExceptionHandlingActivity) moderationCardsFragment.getActivity()).handleException(e);
+            ((ExceptionHandlingActivity) moderationCardsFragment.requireActivity()).handleException(e);
         }
         alertDialog.cancel();
     };
@@ -80,9 +80,9 @@ public class DetailModerationCard {
             controller.deleteModerationCard(cardId);
             moderationCardsFragment.onResume();
             Client client = ((SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp()).getClient();
-            if(client != null && client.isRunning()) client.deleteModerationCard(cardId);
-        } catch (CouldNotDeleteModerationCard | ModerationCardNotFoundException | MeetingNotFoundException  e) {
-            ((ExceptionHandlingActivity)moderationCardsFragment.getActivity()).handleException(e);
+            if (client != null && client.isRunning()) client.deleteModerationCard(cardId);
+        } catch (CouldNotDeleteModerationCard | ModerationCardNotFoundException | MeetingNotFoundException e) {
+            ((ExceptionHandlingActivity) moderationCardsFragment.requireActivity()).handleException(e);
         }
         alertDialog.cancel();
     };
@@ -106,7 +106,6 @@ public class DetailModerationCard {
         cardColorViewer.setBackgroundColor(moderationCard.getBackgroundColor());
     }
 
-
     private void initializePopup(Context context) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View popUp = inflater.inflate(R.layout.popup_edit_moderation_card, null);
@@ -124,9 +123,11 @@ public class DetailModerationCard {
         builder.setView(popUp);
         alertDialog = builder.create();
     }
+
     private void createErrorDialog() {
         Context context = moderationCardsFragment.getActivity();
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        assert context != null;
         builder.setMessage(context.getString(R.string.allFieldsMustBeFilled));
         builder.setCancelable(false);
         builder.setNeutralButton(context.getString(R.string.ok), (dialog, which) -> {
