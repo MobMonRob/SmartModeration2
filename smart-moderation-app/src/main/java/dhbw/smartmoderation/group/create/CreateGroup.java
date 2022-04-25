@@ -122,6 +122,7 @@ public class CreateGroup extends ExceptionHandlingActivity {
     }
 
     public void onInputChange() {
+        if (!allFabVisible) return;
         if (!Util.isEmpty(groupName) && contactAdapter.atLeastOneContactSelected()) {
             createGroupFab.show();
             addGroupText.setVisibility(View.VISIBLE);
