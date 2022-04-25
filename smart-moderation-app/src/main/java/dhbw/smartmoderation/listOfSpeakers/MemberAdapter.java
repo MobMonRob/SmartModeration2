@@ -1,11 +1,14 @@
 package dhbw.smartmoderation.listOfSpeakers;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,8 +21,8 @@ import dhbw.smartmoderation.data.model.Member;
 
 public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberViewHolder> {
 
-    private Context context;
-    private ArrayList<Member> memberList;
+    private final Context context;
+    private final ArrayList<Member> memberList;
     private Member selectedMember;
     private int index = -1;
 
@@ -29,6 +32,7 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberView
         updateMemberList(members);
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void updateMemberList(Collection<Member> memberList) {
         this.memberList.clear();
         this.memberList.addAll(memberList);
@@ -40,14 +44,14 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberView
     public MemberViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ConstraintLayout constraintLayout = new ConstraintLayout(context);
         constraintLayout.setLayoutParams(new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, 110));
-        MemberViewHolder memberViewHolder = new MemberViewHolder(constraintLayout, context, this);
-        return memberViewHolder;
+        return new MemberViewHolder(constraintLayout, context);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    @SuppressLint("NotifyDataSetChanged")
     @Override
-    public void onBindViewHolder(@NonNull MemberViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MemberViewHolder holder, @SuppressLint("RecyclerView") int position) {
         Member member = this.memberList.get(position);
-        holder.setMember(member);
         holder.getMemberName().setText(member.getName());
 
         holder.itemView.setOnClickListener(v -> {
@@ -56,7 +60,7 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberView
             notifyDataSetChanged();
         });
 
-        if(index == position)
+        if (index == position)
             holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.light_grey, null));
         else
             holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.default_color, null));
@@ -77,10 +81,9 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberView
 
     static class MemberViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView memberName;
-        private Member member;
+        private final TextView memberName;
 
-        public MemberViewHolder (ConstraintLayout constraintLayout, Context context, MemberAdapter memberAdapter) {
+        public MemberViewHolder(ConstraintLayout constraintLayout, Context context) {
 
             super(constraintLayout);
             memberName = new TextView(context);
@@ -96,9 +99,6 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberView
             memberConstraintSet.applyTo(constraintLayout);
         }
 
-        public void setMember(Member member) {
-            this.member = member;
-        }
 
         public TextView getMemberName() {
             return this.memberName;
