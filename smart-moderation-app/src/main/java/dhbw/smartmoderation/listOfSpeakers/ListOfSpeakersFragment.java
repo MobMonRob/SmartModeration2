@@ -101,6 +101,9 @@ public class ListOfSpeakersFragment extends Fragment implements OnStartDragListe
         AlertDialog alertDialog = builder.create();
 
         Button addBtn = popUp.findViewById(R.id.addButton);
+        if (presentMembers.size() == 0)
+            addBtn.setEnabled(false);
+
         addBtn.setOnClickListener(view -> {
             ListOfSpeakersAsyncTask listOfSpeakersAsyncTask = new ListOfSpeakersAsyncTask("addSpeaker");
             listOfSpeakersAsyncTask.execute(alertDialog);
@@ -109,7 +112,6 @@ public class ListOfSpeakersFragment extends Fragment implements OnStartDragListe
         Button cancelBtn = popUp.findViewById(R.id.cancelButton);
         cancelBtn.setOnClickListener(view -> alertDialog.cancel());
         alertDialog.show();
-
     };
 
     private final View.OnClickListener clearSpeechListButtonClickListener = v -> {
@@ -277,7 +279,6 @@ public class ListOfSpeakersFragment extends Fragment implements OnStartDragListe
     }
 
     private void initializeSubscribePanel() {
-
         if (this.controller.isLocalAuthorModerator()) {
             this.subscribePanelModerator.setVisibility(View.VISIBLE);
             this.subscribePanelParticipant.setVisibility(View.GONE);
@@ -321,12 +322,10 @@ public class ListOfSpeakersFragment extends Fragment implements OnStartDragListe
                         e.printStackTrace();
                         Thread.currentThread().interrupt();
                     }
-
                 }
             });
             this.durationThread.start();
         }
-
     }
 
     public void endDurationThread() {
