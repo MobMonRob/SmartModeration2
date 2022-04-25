@@ -113,7 +113,7 @@ public class WebServer extends NanoHTTPD {
             try {
                 detailModerationCardController.deleteModerationCard(cardId);
                 if (moderationCardsFragment != null)
-                    moderationCardsFragment.onResume();
+                    moderationCardsFragment.refresh();
                 return newFixedLengthResponse(Response.Status.OK, mimetype, "moderationcard " + cardId + " deleted successfully");
             } catch (CouldNotDeleteModerationCard | MeetingNotFoundException e) {
                 return newFixedLengthResponse(Response.Status.INTERNAL_ERROR, mimetype, e.toString());
