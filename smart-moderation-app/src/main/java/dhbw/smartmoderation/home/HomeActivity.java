@@ -46,7 +46,7 @@ public class HomeActivity extends UpdateableExceptionHandlingActivity {
     private Button btnGroupInvitations;
     private HomeController homeController;
     ArrayList<ImageView> statusIcons;
-    private Thread updateThread;
+//    private Thread updateThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,7 +101,7 @@ public class HomeActivity extends UpdateableExceptionHandlingActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        updateThread.interrupt();
+//        updateThread.interrupt();
     }
 
     public void onShowGroups(View v) {
@@ -131,11 +131,11 @@ public class HomeActivity extends UpdateableExceptionHandlingActivity {
 
     @Override
     protected void updateUI() {
-        if (updateThread == null || updateThread.isInterrupted() || !updateThread.isAlive()) {
-            updateThread = new Thread(() -> {
-                while (!Thread.currentThread().isInterrupted()) {
-                    System.out.println("updatingPluginStates");
-                    this.updateNetworkPluginsState();
+//        if (updateThread == null || updateThread.isInterrupted() || !updateThread.isAlive()) {
+//            updateThread = new Thread(() -> {
+//                while (!Thread.currentThread().isInterrupted()) {
+//                    System.out.println("updatingPluginStates");
+//                    this.updateNetworkPluginsState();
                     if (this.homeController.atLeastOneGroupExists()) {
                         btnShowGroups.setVisibility(View.VISIBLE);
                         btnNewGroup.setVisibility(View.GONE);
@@ -143,16 +143,16 @@ public class HomeActivity extends UpdateableExceptionHandlingActivity {
                         btnShowGroups.setVisibility(View.GONE);
                         btnNewGroup.setVisibility(View.VISIBLE);
                     }
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                        Thread.currentThread().interrupt();
-                    }
-                }
-            });
-            updateThread.start();
-        }
+//                    try {
+//                        Thread.sleep(2000);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                        Thread.currentThread().interrupt();
+//                    }
+//                }
+//            });
+//            updateThread.start();
+//        }
     }
 
     private void updateNetworkPluginsState() {

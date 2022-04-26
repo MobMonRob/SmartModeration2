@@ -964,6 +964,8 @@ public class DataServiceImpl implements DataService {
 
     @Override
     public void deleteModerationCard(Long cardId) {
+        Client client = ((SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp()).getClient();
+        if(client.isRunning()) client.deleteModerationCard(cardId);
         moderationCardDao.deleteByKey(cardId);
     }
 

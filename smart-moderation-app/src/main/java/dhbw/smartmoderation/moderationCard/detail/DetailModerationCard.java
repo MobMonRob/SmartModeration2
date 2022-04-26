@@ -76,8 +76,6 @@ public class DetailModerationCard {
         try {
             controller.deleteModerationCard(cardId);
             moderationCardsFragment.onResume();
-            Client client = ((SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp()).getClient();
-            if (client != null && client.isRunning()) client.deleteModerationCard(cardId);
         } catch (CouldNotDeleteModerationCard | ModerationCardNotFoundException | MeetingNotFoundException e) {
             ((ExceptionHandlingActivity) moderationCardsFragment.requireActivity()).handleException(e);
         }
