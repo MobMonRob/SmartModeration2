@@ -3,13 +3,12 @@ package dhbw.smartmoderation.home;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
-import androidx.lifecycle.Lifecycle;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import org.briarproject.bramble.api.plugin.BluetoothConstants;
@@ -17,9 +16,7 @@ import org.briarproject.bramble.api.plugin.LanTcpConstants;
 import org.briarproject.bramble.api.plugin.Plugin;
 import org.briarproject.bramble.api.plugin.TorConstants;
 import org.briarproject.bramble.api.plugin.TransportId;
-import org.briarproject.bramble.api.plugin.duplex.DuplexPlugin;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -32,18 +29,11 @@ import dhbw.smartmoderation.group.invitations.ListInvitationsActivity;
 import dhbw.smartmoderation.group.overview.OverviewGroupActivity;
 import dhbw.smartmoderation.moderationCard.DesktopLoginQRScanner;
 import dhbw.smartmoderation.util.UpdateableExceptionHandlingActivity;
-import dhbw.smartmoderation.util.Util;
-import okhttp3.Response;
 
-/**
- * Activity for navigating to all other activities.
- */
 public class HomeActivity extends UpdateableExceptionHandlingActivity {
 
     private Button btnShowGroups;
-    private Button btnAddContact;
     private Button btnNewGroup;
-    private Button btnGroupInvitations;
     private HomeController homeController;
     ArrayList<ImageView> statusIcons;
     private Thread updateThread;
@@ -62,9 +52,9 @@ public class HomeActivity extends UpdateableExceptionHandlingActivity {
 
 
         btnShowGroups = findViewById(R.id.btnShowGroups);
-        btnAddContact = findViewById(R.id.btnAddContact);
+        Button btnAddContact = findViewById(R.id.btnAddContact);
         btnNewGroup = findViewById(R.id.btnNewGroup);
-        btnGroupInvitations = findViewById(R.id.btnGroupInvitations);
+        Button btnGroupInvitations = findViewById(R.id.btnGroupInvitations);
         initializeStatusIcons();
 
 
@@ -95,7 +85,7 @@ public class HomeActivity extends UpdateableExceptionHandlingActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        updateUI();
+        createUpdateUIThread();
     }
 
     @Override
@@ -131,28 +121,30 @@ public class HomeActivity extends UpdateableExceptionHandlingActivity {
 
     @Override
     protected void updateUI() {
-        if (updateThread == null || updateThread.isInterrupted() || !updateThread.isAlive()) {
-            updateThread = new Thread(() -> {
-                while (!Thread.currentThread().isInterrupted()) {
-                    System.out.println("updatingPluginStates");
-                    this.updateNetworkPluginsState();
-                    if (this.homeController.atLeastOneGroupExists()) {
-                        btnShowGroups.setVisibility(View.VISIBLE);
-                        btnNewGroup.setVisibility(View.GONE);
-                    } else {
-                        btnShowGroups.setVisibility(View.GONE);
-                        btnNewGroup.setVisibility(View.VISIBLE);
-                    }
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                        Thread.currentThread().interrupt();
-                    }
-                }
-            });
-            updateThread.start();
+        updateNetworkPluginsState();
+        if (homeController.atLeastOneGroupExists()) {
+            btnShowGroups.setVisibility(View.VISIBLE);
+            btnNewGroup.setVisibility(View.GONE);
+        } else {
+            btnShowGroups.setVisibility(View.GONE);
+            btnNewGroup.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void createUpdateUIThread(){
+        updateThread = new Thread(() -> {
+            Handler handler = new Handler(Looper.getMainLooper());
+            while (!Thread.currentThread().isInterrupted()) {
+                handler.post(this::updateUI);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    break;
+                }
+            }
+         });
+        updateThread.start();
     }
 
     private void updateNetworkPluginsState() {
