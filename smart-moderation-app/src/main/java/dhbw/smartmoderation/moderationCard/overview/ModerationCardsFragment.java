@@ -53,11 +53,15 @@ public class ModerationCardsFragment extends Fragment {
         requireActivity().setTitle(getString(R.string.moderationCardTitle));
         FloatingActionButton addButton = view.findViewById(R.id.addCardButton);
         FloatingActionButton loginButton = view.findViewById(R.id.floatingActionButtonQRCode);
+
         addButton.setOnClickListener(addButtonClickListener);
         loginButton.setOnClickListener(loginButtonClickListener);
         RecyclerView moderationCardsRecyclerView = view.findViewById(R.id.moderationCardList);
         try {
             this.moderationCardAdapter = new ModerationCardAdapter(getActivity(), controller.getAllModerationCards());
+            if (!controller.isLocalAuthorModerator()) {
+                loginButton.setVisibility(View.INVISIBLE);
+            }
         } catch (MeetingNotFoundException | GroupNotFoundException e) {
             ((ExceptionHandlingActivity) requireActivity()).handleException(e);
         }
