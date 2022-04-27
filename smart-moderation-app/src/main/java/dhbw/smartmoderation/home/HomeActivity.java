@@ -148,7 +148,7 @@ public class HomeActivity extends UpdateableExceptionHandlingActivity {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                         Thread.currentThread().interrupt();
-                    }
+                   }
                 }
             });
             updateThread.start();

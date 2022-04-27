@@ -59,10 +59,8 @@ public class CreateModerationCard {
             String moderationCardContent = moderationCardContentHolder.getText().toString();
             String cardAuthor = controller.getLocalAuthorName();
             if (!moderationCardContent.isEmpty()) {
-                ModerationCard moderationCard = controller.createModerationCard(moderationCardContent, cardAuthor, backgroundColor, fontColor);
+                controller.createModerationCard(moderationCardContent, cardAuthor, backgroundColor, fontColor);
                 moderationCardsFragment.onResume();
-                Client client = ((SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp()).getClient();
-                if (client != null && client.isRunning()) client.addModerationCard(moderationCard);
             } else {
                 createErrorDialog();
             }
