@@ -29,6 +29,7 @@ public class ModerationCardsFragment extends Fragment {
     private ModerationCardsController controller;
     private long meetingId;
     private ModerationCardAdapter moderationCardAdapter;
+    private Thread updateThread;
 
     public final View.OnClickListener addButtonClickListener = v -> {
         CreateModerationCard createModerationCard = new CreateModerationCard(this);
@@ -75,16 +76,42 @@ public class ModerationCardsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        refreshModerationCardList();
+        ((BaseActivity) requireActivity()).getPullToRefresh().setRefreshing(false);
+        createUpdateUIThread();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        updateThread.interrupt();
+    }
+
+    public void refresh() {
+        final Handler UIHandler = new Handler(Looper.getMainLooper());
+        UIHandler.post(this::refreshModerationCardList);
+    }
+
+    private void refreshModerationCardList(){
         try {
             moderationCardAdapter.updateModerationCards(controller.getAllModerationCards());
         } catch (MeetingNotFoundException | GroupNotFoundException e) {
             ((ExceptionHandlingActivity) requireActivity()).handleException(e);
         }
-        ((BaseActivity) requireActivity()).getPullToRefresh().setRefreshing(false);
     }
 
-    public void refresh() {
-        final Handler UIHandler = new Handler(Looper.getMainLooper());
-        UIHandler.post(this::onResume);
+    private void createUpdateUIThread() {
+        updateThread = new Thread(() -> {
+            Handler handler = new Handler(Looper.getMainLooper());
+            while (!Thread.currentThread().isInterrupted()) {
+                handler.post(this::refreshModerationCardList);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    break;
+                }
+            }
+        });
+        updateThread.start();
     }
 }
