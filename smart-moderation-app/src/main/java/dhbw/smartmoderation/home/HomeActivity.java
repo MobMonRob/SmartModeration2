@@ -121,7 +121,6 @@ public class HomeActivity extends UpdateableExceptionHandlingActivity {
 
     @Override
     protected void updateUI() {
-        System.out.println("updatingPluginStates");
         updateNetworkPluginsState();
         if (homeController.atLeastOneGroupExists()) {
             btnShowGroups.setVisibility(View.VISIBLE);
