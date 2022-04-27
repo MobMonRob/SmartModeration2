@@ -60,11 +60,8 @@ public class DetailModerationCard {
         try {
             moderationCardContent = moderationCardContentHolder.getText().toString();
             if (!moderationCardContent.isEmpty()) {
-                ModerationCard moderationCard = controller.editModerationCard(moderationCardContent, cardAuthor, backgroundColor, fontColor, cardId);
+                controller.editModerationCard(moderationCardContent, cardAuthor, backgroundColor, fontColor, cardId);
                 moderationCardsFragment.onResume();
-                Client client = ((SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp()).getClient();
-                if (client != null && client.isRunning())
-                    client.updateModerationCard(moderationCard);
             } else {
                 createErrorDialog();
             }
@@ -79,8 +76,6 @@ public class DetailModerationCard {
         try {
             controller.deleteModerationCard(cardId);
             moderationCardsFragment.onResume();
-            Client client = ((SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp()).getClient();
-            if (client != null && client.isRunning()) client.deleteModerationCard(cardId);
         } catch (CouldNotDeleteModerationCard | ModerationCardNotFoundException | MeetingNotFoundException e) {
             ((ExceptionHandlingActivity) moderationCardsFragment.requireActivity()).handleException(e);
         }

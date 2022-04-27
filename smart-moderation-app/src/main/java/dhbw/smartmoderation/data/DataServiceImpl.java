@@ -1,6 +1,7 @@
 package dhbw.smartmoderation.data;
 
 
+import org.bouncycastle.math.raw.Mod;
 import org.briarproject.bramble.api.identity.Author;
 import org.briarproject.briar.api.privategroup.GroupMember;
 import org.greenrobot.greendao.database.Database;
@@ -47,6 +48,7 @@ import dhbw.smartmoderation.exceptions.MemberNotFoundException;
 import dhbw.smartmoderation.exceptions.ModerationCardNotFoundException;
 import dhbw.smartmoderation.exceptions.PollNotFoundException;
 import dhbw.smartmoderation.exceptions.VoiceNotFoundException;
+import dhbw.smartmoderation.util.Client;
 import dhbw.smartmoderation.util.Util;
 
 public class DataServiceImpl implements DataService {
@@ -947,11 +949,23 @@ public class DataServiceImpl implements DataService {
 
         if (meeting == null) return;
 
+        Client client = ((SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp()).getClient();
+        if (client.isRunning()) {
+            if (moderationCardDao.load(moderationCard.getCardId()) == null) {
+                client.addModerationCard(moderationCard);
+
+            } else {
+                client.updateModerationCard(moderationCard);
+            }
+        }
+
         moderationCardDao.insertOrReplaceInTx(moderationCard);
     }
 
     @Override
     public void deleteModerationCard(Long cardId) {
+        Client client = ((SmartModerationApplicationImpl) SmartModerationApplicationImpl.getApp()).getClient();
+        if(client.isRunning()) client.deleteModerationCard(cardId);
         moderationCardDao.deleteByKey(cardId);
     }
 
