@@ -134,7 +134,7 @@ public class HomeActivity extends UpdateableExceptionHandlingActivity {
     private void createUpdateUIThread(){
         updateThread = new Thread(() -> {
             Handler handler = new Handler(Looper.getMainLooper());
-            while (true) {
+            while (!Thread.currentThread().isInterrupted()) {
                 handler.post(this::updateUI);
                 try {
                     Thread.sleep(1000);
