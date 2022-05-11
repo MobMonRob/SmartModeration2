@@ -55,7 +55,9 @@ public class DetailGroupActivity extends UpdateableExceptionHandlingActivity imp
     private boolean allFabVisible;
     private View popup;
     private AlertDialog alertDialog;
+
     enum Answer {YES, NO}
+
     private ItemTouchHelper memberItemTouchHelper;
     private ItemTouchHelper meetingsItemTouchHelper;
     private RecyclerView recMembers;
@@ -417,8 +419,7 @@ public class DetailGroupActivity extends UpdateableExceptionHandlingActivity imp
     }
 
     private void onLeaveGroup() {
-
-        if (controller.getModeratorCount() < 2) {
+        if (controller.isLocalAuthorModerator() && controller.getModeratorCount() < 2) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage(getString(R.string.SingleModerator));
             builder.setCancelable(false);

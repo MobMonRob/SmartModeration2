@@ -111,9 +111,22 @@ public class DetailGroupController extends SmartModerationController {
         }
 
         data.add(group);
-
         synchronizationService.push(getPrivateGroup(groupId), data);
         dataService.deleteGroup(group);
+
+        Thread thread = new Thread(() -> {
+            try {
+                Thread.sleep(4000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            try {
+                connectionService.removePrivateGroup(getPrivateGroup(groupId));
+            } catch (GroupNotFoundException e) {
+                e.printStackTrace();
+            }
+        });
+        thread.start();
     }
 
     public void deleteGroup() throws GroupNotFoundException {
