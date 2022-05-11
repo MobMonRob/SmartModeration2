@@ -93,6 +93,11 @@ public class HomeActivity extends UpdateableExceptionHandlingActivity {
         super.onPause();
         updateThread.interrupt();
     }
+    
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+    }
 
     public void onShowGroups(View v) {
         Intent showGroupsIntent = new Intent(HomeActivity.this, OverviewGroupActivity.class);
@@ -161,5 +166,4 @@ public class HomeActivity extends UpdateableExceptionHandlingActivity {
                     break;
             }
         }
-    }
-}
+    }}
