@@ -428,11 +428,14 @@ public class ConnectionService {
      * @param invitation The invitation to accept
      */
     public void acceptGroupInvitation(Invitation invitation) {
-        try {
-            groupInvitationManager.respondToInvitation(invitation.getContactId(), invitation.getPrivateGroup(), true);
-        } catch (DbException e) {
-            e.printStackTrace();
-        }
+        Thread thread = new Thread(() -> {
+            try {
+                groupInvitationManager.respondToInvitation(invitation.getContactId(), invitation.getPrivateGroup(), true);
+            } catch (DbException e) {
+                e.printStackTrace();
+            }
+        });
+        thread.start();
     }
 
     /**
@@ -633,10 +636,13 @@ public class ConnectionService {
     }
 
     public void removePrivateGroup(PrivateGroup group) {
-        try {
-            privateGroupManager.removePrivateGroup(group.getId());
-        } catch (DbException e) {
-            e.printStackTrace();
-        }
+        Thread thread = new Thread(() -> {
+            try {
+                privateGroupManager.removePrivateGroup(group.getId());
+            } catch (DbException e) {
+                e.printStackTrace();
+            }
+        });
+        thread.start();
     }
 }

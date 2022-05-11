@@ -15,7 +15,6 @@ import dhbw.smartmoderation.connection.GroupInvitationHandler;
 import dhbw.smartmoderation.connection.Invitation;
 import dhbw.smartmoderation.exceptions.NoContactsFoundException;
 import dhbw.smartmoderation.exceptions.SmartModerationException;
-import dhbw.smartmoderation.meeting.detail.BaseActivity;
 import dhbw.smartmoderation.util.ExceptionHandlingActivity;
 
 /**
@@ -71,29 +70,31 @@ public class ListInvitationsActivity extends ExceptionHandlingActivity implement
 	@Override
 	protected void onPause() {
 		super.onPause();
-		InvitationsAsyncTask invitationsAsyncTask = new InvitationsAsyncTask("synchronize");
+		InvitationsAsyncTask invitationsAsyncTask = new InvitationsAsyncTask();
+		invitationsAsyncTask.setFlag("synchronize");
 		invitationsAsyncTask.execute();
 	}
 
 	@Override
 	public void acceptGroupInvitation(Invitation invitation) {
-		InvitationsAsyncTask invitationsAsyncTask = new InvitationsAsyncTask("accept");
+		InvitationsAsyncTask invitationsAsyncTask = new InvitationsAsyncTask();
+		invitationsAsyncTask.setFlag("accept");
 		invitationsAsyncTask.execute(invitation);
 	}
 
 	@Override
 	public void rejectGroupInvitation(Invitation invitation) {
-		InvitationsAsyncTask invitationsAsyncTask = new InvitationsAsyncTask("reject");
+		InvitationsAsyncTask invitationsAsyncTask = new InvitationsAsyncTask();
+		invitationsAsyncTask.setFlag("reject");
 		invitationsAsyncTask.execute(invitation);
 
 	}
 
 	@SuppressLint("StaticFieldLeak")
 	public class InvitationsAsyncTask extends AsyncTask<Object, Exception, String> {
-
 		String flag;
 
-		public InvitationsAsyncTask(String flag) {
+		public void setFlag(String flag) {
 			this.flag = flag;
 		}
 
